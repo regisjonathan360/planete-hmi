@@ -1,0 +1,19 @@
+# Système / OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Éditeurs
+*.swp
+*~
+.idea/
+
+# Dépendances / build (si un jour ajoutés)
+node_modules/
+dist/
+build/
+.cache/
+
+# Logs
+*.log
+npm-debug.log*
