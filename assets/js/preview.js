@@ -241,6 +241,9 @@
      CÂBLAGE DES ÉVÉNEMENTS
      ========================================================= */
   function initCarte(carte) {
+    if (carte.dataset.previewBound === "1") return; // évite un double câblage
+    carte.dataset.previewBound = "1";
+
     var timerPreload = null;
     var timerLecture = null;
 
@@ -294,8 +297,15 @@
     if (lecteurActif) { definirEtat(lecteurActif, "indispo"); lecteurActif = null; }
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function rafraichir() {
     var cartes = document.querySelectorAll("[data-preview-artist]");
     cartes.forEach(initCarte);
-  });
+  }
+
+  document.addEventListener("DOMContentLoaded", rafraichir);
+
+  // Exposé pour ré-attacher l'aperçu aux cartes générées dynamiquement
+  // (après chargement des données réelles).
+  window.HMI = window.HMI || {};
+  window.HMI.rafraichirPreview = rafraichir;
 })();

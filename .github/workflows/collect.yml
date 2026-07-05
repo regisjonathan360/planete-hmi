@@ -1,0 +1,51 @@
+name: Collecte des données musicales
+
+on:
+  # Tous les jours à 05:00 UTC (≈ 00:00 heure d'Haïti).
+  schedule:
+    - cron: "0 5 * * *"
+  # Déclenchement manuel depuis l'onglet Actions.
+  workflow_dispatch:
+
+# Nécessaire pour committer les données mises à jour sur main.
+permissions:
+  contents: write
+
+concurrency:
+  group: collecte-donnees
+  cancel-in-progress: false
+
+jobs:
+  collecte:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Lancer la collecte
+        env:
+          # Optionnels : définis-les dans Settings → Secrets and variables
+          # → Actions pour activer Spotify et YouTube. Sans eux, seul
+          # Deezer (public, sans clé) est utilisé.
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/collect-data.mjs
+
+      - name: Committer les données si elles ont changé
+        run: |
+          git config user.name "hmi-bot"
+          git config user.email "hmi-bot@users.noreply.github.com"
+          if [ -n "$(git status --porcelain data/)" ]; then
+            git add data/
+            git commit -m "data: mise à jour automatique des classements"
+            git push
+            echo "Données mises à jour et poussées."
+          else
+            echo "Aucun changement dans les données."
+          fi
