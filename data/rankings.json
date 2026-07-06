@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-05T13:49:57.793Z",
+    "genereLe": "2026-07-06T09:06:09.357Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,6 +10,14 @@
   "classement": [
     {
       "rang": 1,
+      "nom": "Belo",
+      "genre": "Reggae",
+      "titre": "Dom de Sonhar / Encaixe Perfeito / Só Me Dá Prazer (Ao Vivo)",
+      "score": 73.6,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "titre": "4 Kampé",
@@ -17,84 +25,76 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 2,
+      "rang": 3,
       "nom": "Kevinna",
       "genre": "Pop",
-      "titre": "The Dark Don’t Hide It",
-      "score": 42.5,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg"
+      "titre": "San Lucas",
+      "score": 68.9,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/a9f746f4eaa1bc8e41181ecec8bb9aed/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 3,
+      "rang": 4,
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "titre": "ONE TRACK MIND",
+      "titre": "ONE TRACK MIND (PART II)",
       "score": 40.2,
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 4,
+      "rang": 5,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Tolere w",
+      "titre": "Safe",
       "score": 27.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 5,
+      "rang": 6,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Dous Pou Dous",
+      "titre": "Tranble",
       "score": 25.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 6,
+      "rang": 7,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Ayo Girl (Haitian Konpa Remix)",
+      "titre": "Fè Lapli",
       "score": 24.2,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 7,
+      "rang": 8,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": null,
+      "titre": "Gason Malen",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 8,
+      "rang": 9,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": null,
+      "titre": "Timoun",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 9,
+      "rang": 10,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Bon Pou Mwen",
+      "titre": "Lotto",
       "score": 18.6,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 10,
+      "rang": 11,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "Drive",
+      "titre": "Manyen m la (feat. Kenny Haiti)",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 11,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Rise Again",
-      "score": 2.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }

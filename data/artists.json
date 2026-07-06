@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-05T13:49:57.793Z",
+    "genereLe": "2026-07-06T09:06:09.357Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg",
-      "topTitre": "Dous Pou Dous",
+      "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 8891,
+        "deezerFans": 8893,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 483551,
+        "deezerFans": 483685,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,8 +49,8 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
-      "topTitre": "Ayo Girl (Haitian Konpa Remix)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
+      "topTitre": "Fè Lapli",
       "metriques": {
         "deezerFans": 7858,
         "spotifyFollowers": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Tolere w",
+      "topTitre": "Safe",
       "metriques": {
-        "deezerFans": 10269,
+        "deezerFans": 10272,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -88,9 +88,9 @@
       "nom": "Naïka",
       "genre": "Pop / R&B",
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
-      "topTitre": "ONE TRACK MIND",
+      "topTitre": "ONE TRACK MIND (PART II)",
       "metriques": {
-        "deezerFans": 30628,
+        "deezerFans": 30705,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -107,7 +107,7 @@
       "nom": "Wanito",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "topTitre": "Gason Malen",
       "metriques": {
         "deezerFans": 6808,
         "spotifyFollowers": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "topTitre": "Timoun",
       "metriques": {
         "deezerFans": 6710,
         "spotifyFollowers": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg",
-      "topTitre": "Bon Pou Mwen",
+      "topTitre": "Lotto",
       "metriques": {
-        "deezerFans": 4894,
+        "deezerFans": 4895,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,27 +163,27 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
-      "topTitre": "Rise Again",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
+      "topTitre": "Dom de Sonhar / Encaixe Perfeito / Só Me Dá Prazer (Ao Vivo)",
       "metriques": {
-        "deezerFans": 1222,
+        "deezerFans": 527355,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5858154",
+        "deezer": "https://www.deezer.com/artist/74478",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 2.4
+      "scoreHMI": 73.6
     },
     {
       "nom": "BIC",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/84240697bd32e502dc2cf878636c76c5/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "topTitre": "Let's get Scratchin'",
       "metriques": {
         "deezerFans": 25,
         "spotifyFollowers": null,
@@ -202,7 +202,7 @@
       "nom": "Vwadèzil",
       "genre": "Rabòday",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9ffa465479a45f27c8a8492c4fedcdec/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "topTitre": "Tèt Tizo Zo",
       "metriques": {
         "deezerFans": 181,
         "spotifyFollowers": null,
@@ -221,7 +221,7 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "Drive",
+      "topTitre": "Manyen m la (feat. Kenny Haiti)",
       "metriques": {
         "deezerFans": 2199,
         "spotifyFollowers": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg",
-      "topTitre": "The Dark Don’t Hide It",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/a9f746f4eaa1bc8e41181ecec8bb9aed/250x250-000000-80-0-0.jpg",
+      "topTitre": "San Lucas",
       "metriques": {
-        "deezerFans": 37438,
+        "deezerFans": 353409,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5326126",
+        "deezer": "https://www.deezer.com/artist/53441822",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 42.5
+      "scoreHMI": 68.9
     }
   ]
 }
