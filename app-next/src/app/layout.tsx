@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Planète HMI — Haitian Music Index",
+  title: {
+    default: "Planète HMI — Haitian Music Index",
+    template: "%s — Planète HMI",
+  },
   description: "Planète HMI : classements, profils d'artistes et découverte de la musique haïtienne. Là où les étoiles de la musique haïtienne deviennent des légendes.",
   metadataBase: new URL("https://planete-hmi-4eqk.vercel.app"),
   openGraph: {
@@ -9,7 +12,16 @@ export const metadata: Metadata = {
     description: "Charts, artistes, districts et HMI Shorts. L'univers de référence de la musique haïtienne.",
     type: "website",
     images: ["/image/social/planet-hmi-social.png"],
+    siteName: "Planète HMI",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Planète HMI — Haitian Music Index",
+    description: "Charts, artistes et découverte de la musique haïtienne.",
+    images: ["/image/social/planet-hmi-social.png"],
+  },
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://planete-hmi-4eqk.vercel.app" },
 };
 
 export default function RootLayout({

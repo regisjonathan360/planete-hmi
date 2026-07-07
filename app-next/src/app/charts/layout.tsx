@@ -25,6 +25,7 @@ export default function ChartsLayout({ children }: { children: React.ReactNode }
             <Link href="/charts" className="is-active">Classements</Link>
             <Link href="/actualites">Actualités</Link>
             <Link href="/evenements">Événements</Link>
+            <Link href="/boutique">Boutique</Link>
           </div>
         </div>
       </nav>

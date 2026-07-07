@@ -94,6 +94,29 @@
 
   /* (L'icône loupe ouvre la recherche globale : géré dans features.js) */
 
+  /* ---------- Tri artistes ---------- */
+  var selectTri = document.querySelector('select.select[aria-label="Trier par"]');
+  if (selectTri && grille) {
+    selectTri.addEventListener("change", function () {
+      var valeur = norm(selectTri.value);
+      var items = Array.from(grille.children);
+      items.sort(function (a, b) {
+        if (valeur.indexOf("a") !== -1 && valeur.indexOf("z") !== -1) {
+          // Nom A→Z
+          return nomDe(a).localeCompare(nomDe(b));
+        }
+        // Popularité (ordre original = déjà trié par popularité par le script data)
+        // On utilise l'index original stocké
+        var ia = parseInt(a.getAttribute("data-orig-idx") || "0", 10);
+        var ib = parseInt(b.getAttribute("data-orig-idx") || "0", 10);
+        return ia - ib;
+      });
+      items.forEach(function (el) { grille.appendChild(el); });
+    });
+    // Stocker l'ordre original pour pouvoir revenir à "Popularité"
+    Array.from(grille.children).forEach(function (el, i) { el.setAttribute("data-orig-idx", i); });
+  }
+
   /* ---------- Actions de démonstration (retour visuel) ---------- */
   document.addEventListener("click", function (e) {
     var lien = e.target.closest('a[href="#"], .product__body .btn, .event-row .btn, .pagination a, .socials a');

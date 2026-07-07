@@ -386,7 +386,8 @@ a.section-link:hover { color: var(--flame-orange); }
 @media (max-width: 860px) {
   .nav, .topbar__actions .btn-ghost { display: none; }
   .nav-toggle { display: flex; }
-  .menu-mobile { display: flex; }
+  .menu-mobile[hidden] { display: none; }
+  .menu-mobile:not([hidden]) { display: flex; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .podium { grid-template-columns: 1fr; gap: 1.2rem; }
   .podium__card--gold { transform: none; order: -1; }
