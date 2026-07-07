@@ -136,6 +136,9 @@
 .hmi__meta { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; align-items: center; font-size: 0.85rem; color: var(--cream-dim); margin-bottom: 1rem; }
 .hmi__link { color: var(--electric-2); text-decoration: none; font-weight: 500; }
 .hmi__link:hover { text-decoration: underline; }
+.genre-tabs { display: flex; gap: 0.45rem; overflow-x: auto; padding: 0.35rem 0 0.85rem; margin: 0.25rem 0 0.45rem; scrollbar-width: thin; }
+.genre-tabs__item { flex: 0 0 auto; border: 1px solid rgba(244,239,228,0.16); border-radius: 999px; color: var(--cream-dim); font-size: 0.82rem; font-weight: 700; line-height: 1; padding: 0.55rem 0.75rem; text-decoration: none; white-space: nowrap; }
+.genre-tabs__item:hover, .genre-tabs__item.is-active { border-color: rgba(70,183,255,0.55); color: var(--cream); background: rgba(70,183,255,0.12); }
 
 /* ---- Rangée plateforme ---- */
 .row { margin: 2.5rem 0; padding-top: 1.5rem; border-top: 1px solid rgba(244, 239, 228, 0.06); }

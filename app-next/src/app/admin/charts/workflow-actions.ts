@@ -69,6 +69,41 @@ async function resoudreOuCreerTrack(
   return nouveau.id;
 }
 
+async function enregistrerPlatformTrack(
+  supabase: SupabaseClient,
+  params: {
+    platform: string;
+    trackId: string;
+    externalId: string;
+    title: string;
+    artistText: string;
+    externalUrl?: string | null;
+    artworkUrl?: string | null;
+    isrc?: string | null;
+  }
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("platform_tracks")
+    .upsert({
+      track_id: params.trackId,
+      platform: params.platform,
+      external_id: params.externalId,
+      external_url: params.externalUrl ?? null,
+      platform_title: params.title,
+      platform_artist_text: params.artistText,
+      isrc: params.isrc ?? null,
+      artwork_url: params.artworkUrl ?? null,
+      match_status: "admin_import",
+      match_confidence: 1,
+      verified_at: new Date().toISOString(),
+    }, { onConflict: "platform,external_id" })
+    .select("id")
+    .single();
+
+  if (error) throw new Error(`Correspondance plateforme echouee : ${error.message}`);
+  return data?.id ?? null;
+}
+
 export interface ResultatCommit {
   ok: boolean;
   editionId?: string;
@@ -84,7 +119,7 @@ export async function commitImport(sourceKey: string, rowsBrutes: unknown[]): Pr
 
   const { data: source } = await supabase
     .from("chart_sources")
-    .select("id")
+    .select("id, platform")
     .eq("source_key", sourceKey)
     .single();
   if (!source) return { ok: false, message: "Source inconnue." };
@@ -128,9 +163,20 @@ export async function commitImport(sourceKey: string, rowsBrutes: unknown[]): Pr
 
   for (const r of valides) {
     const trackId = await resoudreOuCreerTrack(supabase, r.track_title, r.artist_names, r.isrc);
+    const platformTrackId = await enregistrerPlatformTrack(supabase, {
+      platform: source.platform,
+      trackId,
+      externalId: r.source_identifier ?? r.source_url ?? `${sourceKey}:${periodStart}:${r.source_position}`,
+      title: r.track_title,
+      artistText: r.artist_names,
+      externalUrl: r.source_url ?? null,
+      artworkUrl: r.artwork_url ?? null,
+      isrc: r.isrc ?? null,
+    });
     await supabase.from("chart_entries").insert({
       chart_edition_id: editionId,
       track_id: trackId,
+      platform_track_id: platformTrackId,
       source_position: r.source_position,
       raw_track_title: r.track_title,
       raw_artist_text: r.artist_names,

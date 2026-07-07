@@ -12,6 +12,10 @@ import { calculerPositionsFiltrees } from "../../src/lib/charts/ranking/calculat
 import { calculerMouvement } from "../../src/lib/charts/ranking/calculate-movement";
 import { calculerHistorique } from "../../src/lib/charts/ranking/calculate-chart-history";
 import { validerEdition } from "../../src/lib/charts/validation/validate-edition";
+import {
+  AUDIOMACK_HAITI_CHART_SOURCES,
+  getAudiomackHaitiChartSource,
+} from "../../src/lib/charts/audiomack-sources";
 import type { CreditArtiste } from "../../src/lib/charts/types";
 
 describe("normalizeTitle", () => {
@@ -192,5 +196,28 @@ describe("validerEdition", () => {
     expect(
       validerEdition({ ...base, entries: [{ ...entreeOk, periodStart: "2026-06-01T00:00:00Z" }] }).valid
     ).toBe(false);
+  });
+});
+
+describe("sources Audiomack Haiti", () => {
+  it("inclut tous les genres publics suivis, dont Gospel", () => {
+    expect(AUDIOMACK_HAITI_CHART_SOURCES.map((source) => source.genreId)).toEqual([
+      "all",
+      "afrosounds",
+      "hip-hop-rap",
+      "latin",
+      "jazz-blues",
+      "caribbean",
+      "pop",
+      "r-b",
+      "gospel",
+      "electronic",
+      "rock",
+      "punjabi",
+      "country",
+      "instrumental",
+      "podcast",
+    ]);
+    expect(getAudiomackHaitiChartSource("gospel").sourceKey).toBe("audiomack_haiti_top_songs_gospel");
   });
 });

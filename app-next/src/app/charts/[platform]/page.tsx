@@ -6,16 +6,25 @@ import { ChartTop20Table } from "@/components/charts/ChartTop20Table";
 import { ChartSourceBadge } from "@/components/charts/ChartSourceBadge";
 import { ChartStaleWarning } from "@/components/charts/ChartStaleWarning";
 import { ChartEmptyState } from "@/components/charts/ChartEmptyState";
+import {
+  AUDIOMACK_HAITI_CHART_SOURCES,
+  getAudiomackHaitiChartSource,
+} from "@/lib/charts/audiomack-sources";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlatformChartPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ platform: string }>;
+  searchParams: Promise<{ genre?: string | string[] }>;
 }) {
   const { platform } = await params;
-  const sourceKey = SOURCE_KEY_PAR_SLUG[platform];
+  const query = await searchParams;
+  const requestedGenre = Array.isArray(query.genre) ? query.genre[0] : query.genre;
+  const audiomackSource = platform === "audiomack" ? getAudiomackHaitiChartSource(requestedGenre) : null;
+  const sourceKey = audiomackSource?.sourceKey ?? SOURCE_KEY_PAR_SLUG[platform];
   if (!sourceKey) notFound();
 
   const chart = await getPlatformChart(sourceKey, 20);
@@ -34,6 +43,19 @@ export default async function PlatformChartPage({
       ) : (
         <>
           <h1 className="hmi__title">{chart.display_name}</h1>
+          {platform === "audiomack" && (
+            <nav className="genre-tabs" aria-label="Genres Audiomack Haiti">
+              {AUDIOMACK_HAITI_CHART_SOURCES.map((source) => {
+                const active = source.sourceKey === sourceKey;
+                const href = source.genreId === "all" ? "/charts/audiomack" : `/charts/audiomack?genre=${source.genreId}`;
+                return (
+                  <Link key={source.sourceKey} className={active ? "genre-tabs__item is-active" : "genre-tabs__item"} href={href}>
+                    {source.genreLabel}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
           <div className="hmi__meta">
             {chart.chart_context && <span>{chart.chart_context}</span>}
             <ChartSourceBadge

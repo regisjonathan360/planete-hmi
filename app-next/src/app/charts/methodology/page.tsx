@@ -21,8 +21,8 @@ const PLATEFORMES = [
     nom: "Audiomack — Weekly 100 Haiti",
     mesure: "Chansons les plus performantes sur Audiomack pour la région Haïti.",
     territoire: "Haïti",
-    metrique: "Position. Le classement hebdomadaire global n'est jamais présenté comme Haïti.",
-    methode: "Import administratif vérifié (flux partenaire possible ultérieurement).",
+    metrique: "Position source Audiomack conservée, puis position HMI filtrée après validation des artistes.",
+    methode: "Import administratif vérifié par genre Audiomack : All, Afrosounds, Hip-Hop/Rap, Latin, Jazz/Blues, Caribbean, Pop, R&B, Gospel, Electronic, Rock, Punjabi, Country, Instrumental et Podcast.",
   },
   {
     nom: "Apple Music — Haïti / HMI Worldwide",

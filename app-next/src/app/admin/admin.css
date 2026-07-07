@@ -25,10 +25,13 @@
   cursor: pointer; text-decoration: none; font: inherit;
 }
 .admin__btn--ghost { background: transparent; border: 1px solid rgba(244,239,228,0.25); color: var(--cream); }
+.admin__actions { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.admin__actions .admin__btn { padding: 0.42rem 0.72rem; font-size: 0.78rem; }
 .admin__card { background: var(--panel); border: 1px solid rgba(244,239,228,0.1); border-radius: 12px; padding: 1.1rem; margin: 0.75rem 0; }
 .admin__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
 .admin__err { color: var(--down); }
 .admin__ok { color: var(--up); }
+.admin__muted { color: var(--cream-dim); font-size: 0.78rem; }
 .admin table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.88rem; }
 .admin th, .admin td { text-align: left; padding: 0.5rem 0.5rem; border-bottom: 1px solid rgba(244,239,228,0.1); vertical-align: top; }
 .admin th { color: var(--cream-dim); font-size: 0.75rem; text-transform: uppercase; }
