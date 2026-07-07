@@ -21,14 +21,34 @@ const COLONNES: Record<string, string[]> = {
   tiktok_haiti_sounds: ["source_position", "sound_title", "linked_track_title", "linked_artist_names", "tiktok_music_id", "tiktok_sound_url", "posts_count", "source_period_start", "source_period_end", "source_updated_at"],
 };
 
-const EXEMPLE = JSON.stringify(
-  [
-    { source_position: 3, track_title: "Chanson Test A", artist_names: "Artiste Test HMI Un", source_url: "https://exemple/chart", source_period_start: "2026-07-03", source_period_end: "2026-07-09" },
-    { source_position: 5, track_title: "Chanson Test B (Official Video)", artist_names: "Artiste Test HMI Deux", source_url: "https://exemple/chart", source_period_start: "2026-07-03", source_period_end: "2026-07-09" },
-  ],
-  null,
-  2
-);
+const EXEMPLE = `1. Joé Dwèt Filé - 4 Kampé
+2. Rutshelle Guillaume - Tolere w
+3. Roody Roodboy - Dous Pou Dous
+4. Mikaben - Ayo Girl
+5. Baky - Bon Pou Mwen`;
+
+/** Parse du texte ligne par ligne : "N. Artiste - Titre" ou "N. Titre - Artiste" */
+function parseTexteSimple(texte: string, periodStart: string, periodEnd: string): unknown[] {
+  return texte
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0)
+    .map((l) => {
+      // Format : "3. Artiste - Titre" ou "3) Artiste - Titre" ou "3 Artiste - Titre"
+      const match = l.match(/^(\d+)[.):\s-]+\s*(.+?)\s*[-–—]\s*(.+)$/);
+      if (!match) return null;
+      const [, pos, part1, part2] = match;
+      return {
+        source_position: parseInt(pos, 10),
+        artist_names: part1.trim(),
+        track_title: part2.trim(),
+        source_url: "https://import-manuel-verifie",
+        source_period_start: periodStart,
+        source_period_end: periodEnd,
+      };
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
+}
 
 function pill(res: string) {
   if (res === "auto") return "pill pill--ok";
@@ -39,21 +59,35 @@ function pill(res: string) {
 export default function ImportPage() {
   const [sourceKey, setSourceKey] = useState(SOURCES[1].key);
   const [texte, setTexte] = useState(EXEMPLE);
+  const [mode, setMode] = useState<"simple" | "json">("simple");
+  const [periodStart, setPeriodStart] = useState("2026-07-04");
+  const [periodEnd, setPeriodEnd] = useState("2026-07-10");
   const [res, setRes] = useState<ResultatPreview | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
   const [chargement, setChargement] = useState(false);
   const [commit, setCommit] = useState<string | null>(null);
   const [commitOk, setCommitOk] = useState(false);
 
+  function getRows(): unknown[] | null {
+    if (mode === "simple") {
+      const rows = parseTexteSimple(texte, periodStart, periodEnd);
+      if (!rows.length) { setErreur("Aucune ligne reconnue. Format attendu : « 1. Artiste - Titre »"); return null; }
+      return rows;
+    }
+    try {
+      const rows = JSON.parse(texte);
+      if (!Array.isArray(rows)) { setErreur("Le JSON doit être un tableau."); return null; }
+      return rows;
+    } catch (e) {
+      setErreur(e instanceof Error ? e.message : "JSON invalide.");
+      return null;
+    }
+  }
+
   async function onCommit() {
     setCommit(null);
-    let rows: unknown[];
-    try {
-      rows = JSON.parse(texte);
-    } catch {
-      setCommit("JSON invalide.");
-      return;
-    }
+    const rows = getRows();
+    if (!rows) return;
     setChargement(true);
     try {
       const r = await commitImport(sourceKey, rows);
@@ -80,14 +114,8 @@ export default function ImportPage() {
   async function onPreview() {
     setErreur(null);
     setRes(null);
-    let rows: unknown[];
-    try {
-      rows = JSON.parse(texte);
-      if (!Array.isArray(rows)) throw new Error("Le JSON doit être un tableau de lignes.");
-    } catch (e) {
-      setErreur(e instanceof Error ? e.message : "JSON invalide.");
-      return;
-    }
+    const rows = getRows();
+    if (!rows) return;
     setChargement(true);
     try {
       setRes(await previsualiserImport(sourceKey, rows));
@@ -119,8 +147,26 @@ export default function ImportPage() {
         </button>
       </p>
 
-      <label htmlFor="rows">Lignes (JSON)</label>
-      <textarea id="rows" value={texte} onChange={(e) => setTexte(e.target.value)} />
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "0.75rem" }}>
+        <div>
+          <label htmlFor="ps">Début de semaine</label>
+          <input id="ps" type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} />
+        </div>
+        <div>
+          <label htmlFor="pe">Fin de semaine</label>
+          <input id="pe" type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} />
+        </div>
+        <div>
+          <label>Format</label>
+          <select value={mode} onChange={(e) => setMode(e.target.value as "simple" | "json")}>
+            <option value="simple">Texte simple (1. Artiste - Titre)</option>
+            <option value="json">JSON avancé</option>
+          </select>
+        </div>
+      </div>
+
+      <label htmlFor="rows">{mode === "simple" ? "Classement (une ligne par chanson)" : "Lignes (JSON)"}</label>
+      <textarea id="rows" value={texte} onChange={(e) => setTexte(e.target.value)} placeholder={mode === "simple" ? "1. Artiste - Titre\n2. Artiste - Titre" : '[{"source_position":1,...}]'} />
 
       {erreur && <p className="admin__err">{erreur}</p>}
 
