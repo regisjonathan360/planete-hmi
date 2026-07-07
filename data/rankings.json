@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-06T09:06:09.357Z",
+    "genereLe": "2026-07-07T08:29:45.540Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,7 +12,7 @@
       "rang": 1,
       "nom": "Belo",
       "genre": "Reggae",
-      "titre": "Dom de Sonhar / Encaixe Perfeito / Só Me Dá Prazer (Ao Vivo)",
+      "titre": "Procura-se Um Amor (Ao Vivo)",
       "score": 73.6,
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg"
     },
@@ -28,9 +28,9 @@
       "rang": 3,
       "nom": "Kevinna",
       "genre": "Pop",
-      "titre": "San Lucas",
-      "score": 68.9,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/a9f746f4eaa1bc8e41181ecec8bb9aed/250x250-000000-80-0-0.jpg"
+      "titre": "100,000",
+      "score": 42.5,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 4,
@@ -45,14 +45,14 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "titre": "Safe",
-      "score": 27.3,
+      "score": 27.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Tranble",
+      "titre": "Apiye (feat. Zile)",
       "score": 25.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg"
     },
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Fè Lapli",
+      "titre": "Ayo Girl (Haitian Konpa Remix)",
       "score": 24.2,
       "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
     },
