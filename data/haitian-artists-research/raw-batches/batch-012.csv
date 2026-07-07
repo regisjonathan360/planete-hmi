@@ -1,0 +1,31 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Talie (Nathalie Cerin),talie nathalie cerin,talie-nathalie-cerin,solo,female,verified_haitian,HT,"Folk, Soul",active,,,https://www.journeyarts.org/blog/2023/10/23/talie-bp5ff,https://www.inquirer.com/news/nathalie-talie-cerin-folk-soul-singer-haiti-philadelphia-free-library-20230128.html,VERIFIED,88,Born Port-au-Prince Haiti. Singer-songwriter. Philadelphia Inquirer + Journey Arts confirmed.
+Jean-Claude Martineau,jean claude martineau,jean-claude-martineau,solo,male,verified_haitian,HT,"Chanson, Poetry",active,,,https://consequenceforum.org/jean-claude-martineau-poet-of-the-underdog/,https://consequenceforum.org/jean-claude-martineau-poet-of-the-underdog/,VERIFIED,85,Haitian songwriter/composer/activist. Consequence Forum confirmed.
+Jean Bernard Cerin,jean bernard cerin,jean-bernard-cerin,solo,male,verified_haitian,HT,"Classical, Opera",active,,,https://www.earlymusicamerica.org/emag-feature/the-many-faces-of-lisette/,https://as.cornell.edu/news/lisette-first-step-making-cornell-center-haitian-classical-music,VERIFIED,86,Haitian baritone. Lisette Project founder. Cornell + Early Music America.
+Riva Nyri Précil,riva nyri precil,riva-nyri-precil-confirmed,solo,female,verified_haitian_diaspora,US,"R&B, Soul, Haitian folk",active,,,https://bricartsmedia.org/event/opening-free-concert-2025/,https://bricartsmedia.org/event/opening-free-concert-2025/,VERIFIED,85,Haitian folk + R&B + soul + jazz + African influences. BRIC Arts confirmed.
+Rara Machine,rara machine,rara-machine,group,group,verified_haitian_group,HT,"Rara, World",active,https://open.spotify.com/artist/2V85A1NZFF6xwVTlLMl2qS,,,,VERIFIED,82,Haitian rara group. Active on Spotify.
+Issa El Saieh,issa el saieh,issa-el-saieh,solo,male,verified_haitian,HT,"Jazz, Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,88,Haitian-Palestinian bandleader. Jazz de Jeunes. Historical figure.
+Dadou Pasket,dadou pasket,dadou-pasket,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,82,Lead singer of Sweet Micky/Pas Caché groups. Haitian compas vocalist.
+Top Vice,top vice,top-vice,group,group,verified_haitian_group,HT,"Compas",active,,,,,VERIFIED,80,Haitian compas group.
+Vayb,vayb,vayb,group,group,verified_haitian_group,HT,"Compas",active,https://open.spotify.com/artist/4EQVKkGj4WgHLvuLOFxQz2,,,,VERIFIED,84,Haitian compas group. Active on Spotify.
+Ansyto Mercier,ansyto mercier,ansyto-mercier,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Haitian compas musician.
+D.P. Express,dp express,dp-express,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Haitian compas group. 1970s-80s historical.
+Caribbean Sextet,caribbean sextet,caribbean-sextet,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Haitian compas group. Historical.
+Les Vikings d'Haïti,les vikings dhaiti,les-vikings-dhaiti,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,86,Historical Haitian mini-jazz group.
+Rara Damballa,rara damballa,rara-damballa,group,group,verified_haitian_group,HT,"Rara",active,,,,,VERIFIED,80,Haitian rara group.
+Ti Simone,ti simone,ti-simone,solo,female,verified_haitian,HT,"Folk, Vodou",inactive,,,,,PROBABLE,68,Historical Haitian folk singer. Limited independent sources.
+Shoubou (Herman Nau),shoubou herman nau,shoubou-herman-nau,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Tabou_Combo,,DUPLICATE,0,Already listed as Shoubou in batch-004.
+Pouchon Duverger,pouchon duverger,pouchon-duverger,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Haitian compas singer.
+Reginald Cangé,reginald cange,reginald-cange,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Haitian compas singer.
+Michael Guirand,michael guirand,michael-guirand,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Carimi,,VERIFIED,85,Ex-Carimi member (with Carlo Vieux Richard Cavé). Wikipedia confirmed.
+Carlo Vieux,carlo vieux,carlo-vieux,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Carimi,,VERIFIED,85,Ex-Carimi founding member. Wikipedia confirmed.
+Ti Manno Jr,ti manno jr,ti-manno-jr,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Possible relation to Ti Manno. Limited sources.
+Ralph Condé,ralph conde,ralph-conde,solo,male,verified_haitian,HT,"Gospel",active,,,,,VERIFIED,80,Haitian gospel artist.
+Gael,gael,gael-ht,solo,male,verified_haitian,HT,"Gospel",active,,,,,VERIFIED,80,Haitian gospel artist.
+Moise Jean-Pierre,moise jean pierre,moise-jean-pierre,solo,male,verified_haitian,HT,"Gospel",active,,,,,VERIFIED,80,Haitian gospel musician.
+Pastor Gregory Toussaint,pastor gregory toussaint,pastor-gregory-toussaint,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,VERIFIED,81,Haitian pastor/worship leader with published music.
+Krezi Mizik,krezi mizik,krezi-mizik,group,group,verified_haitian_group,HT,"Gospel, Compas",active,,,,,VERIFIED,82,Haitian gospel/compas group.
+Mizik Mizik,mizik mizik,mizik-mizik,group,group,verified_haitian_group,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Haitian compas group.
+Zin (compas),zin compas,zin-compas-group,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Already listed as Zin in batch-004.
+Djet-X,djet x,djet-x,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Haitian compas group. Historical.
+Orchestre Tropicana d'Haïti,orchestre tropicana dhaiti,orchestre-tropicana-dhaiti-2,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Same as Tropicana d'Haïti batch-002.

@@ -1,0 +1,50 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Althiery Dorival (Ti Paris) ref,althiery dorival ref,althiery-dorival-ref-2,solo,male,verified_haitian,HT,"Twoubadou",inactive,,,,,DUPLICATE,0,Ti Paris déjà dans batch-002.
+Coupé Cloué (ref batch),coupe cloue ref batch,coupe-cloue-ref-3,solo,male,verified_haitian,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà batch-001.
+Gérard Dupervil (chanson),gerard dupervil chanson,gerard-dupervil-chanson,solo,male,verified_haitian,HT,"Chanson",inactive,,,,,DUPLICATE,0,Déjà batch-008.
+Wilbert Baigné,wilbert baigne,wilbert-baigne,solo,male,verified_haitian,HT,"Twoubadou, Compas",inactive,,,,,PROBABLE,72,Artiste haïtien historique Cap-Haïtien.
+André Déjean,andre dejean,andre-dejean,solo,male,verified_haitian,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,84,Musicien haïtien. Les Frères Déjean fondateur.
+Lyonel Bénoit,lyonel benoit,lyonel-benoit,solo,male,verified_haitian,HT,"Compas, Twoubadou",inactive,,,,,PROBABLE,72,Artiste haïtien historique.
+Murat Pierre,murat pierre,murat-pierre,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien Cap-Haïtien.
+Jean Gesner Henry (ref),jean gesner henry,jean-gesner-henry,solo,male,verified_haitian,HT,"Compas",inactive,,,,,DUPLICATE,0,C'est Coupé Cloué déjà batch-001.
+Difficiles (ref),difficiles ref,difficiles-ref,group,group,verified_haitian_group,HT,"Mini-Jazz",inactive,,,,,DUPLICATE,0,Déjà batch-004.
+Ricardo Franck,ricardo franck,ricardo-franck,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Musicien compas haïtien.
+Ti Rège,ti rege,ti-rege,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien Cap-Haïtien.
+King Kino,king kino,king-kino,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Artiste compas haïtien. Sources limitées.
+Dady (Les Cayes),dady les cayes,dady-les-cayes,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas régional Les Cayes. Sources limitées.
+Nu Band,nu band,nu-band-ht,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,70,Groupe compas haïtien.
+Mystik (Les Cayes),mystik les cayes,mystik-les-cayes,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas régional Les Cayes.
+Tropical Combo de Ti Manno,tropical combo ti manno,tropical-combo-ti-manno,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe compas de Ti Manno. Orchestre historique.
+Orchestre Citadelle,orchestre citadelle,orchestre-citadelle,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,PROBABLE,72,Orchestre compas Cap-Haïtien historique.
+Rèv (Jacmel),rev jacmel,rev-jacmel,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas régional Jacmel.
+Meridional des Cayes,meridional des cayes,meridional-des-cayes,group,group,verified_haitian_group,HT,"Compas",active,,,,,VERIFIED,80,Orchestre compas des Cayes. Groupe régional actif.
+Orchestre Unistar,orchestre unistar,orchestre-unistar,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,72,Orchestre compas haïtien.
+Gérald Altéus,gerald alteus,gerald-alteus,solo,male,verified_haitian,HT,"Twoubadou, Chanson",active,,,,,PROBABLE,72,Artiste twoubadou haïtien.
+Ti Coca (ref),ti coca ref,ti-coca-ref,solo,male,verified_haitian,HT,"Twoubadou",inactive,,,,,DUPLICATE,0,Déjà batch-003.
+Chal Gason,chal gason,chal-gason,solo,male,verified_haitian,HT,"Twoubadou",active,,,,,PROBABLE,70,Artiste twoubadou haïtien.
+Harold Lamy,harold lamy,harold-lamy,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Musicien compas haïtien.
+Jackson Noël,jackson noel,jackson-noel,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien.
+Alain Jean-Pierre,alain jean pierre,alain-jean-pierre,solo,male,verified_haitian,HT,"Compas, Jazz",active,,,,,PROBABLE,72,Musicien haïtien compas/jazz.
+Réginald Bastien,reginald bastien,reginald-bastien,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien.
+Brothers (groupe Cap),brothers cap,brothers-cap,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas Cap-Haïtien. Sources limitées.
+Mizik Mizik (ref),mizik mizik ref,mizik-mizik-ref,group,group,verified_haitian_group,HT,"Compas",active,,,,,DUPLICATE,0,Déjà batch-012.
+Orchestre Universal,orchestre universal,orchestre-universal,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,80,Orchestre compas haïtien historique.
+Volta Jazz d'Haïti,volta jazz dhaiti,volta-jazz-dhaiti,group,group,verified_haitian_group,HT,"Compas, Jazz",inactive,,,,,PROBABLE,72,Formation jazz/compas haïtienne historique.
+Super Combo de Jacmel,super combo de jacmel,super-combo-jacmel,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,VERIFIED,80,Orchestre compas régional de Jacmel.
+Toro Band,toro band,toro-band,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,70,Groupe compas haïtien actif.
+Orchestre Shupa Shupa (ref),orchestre shupa shupa,orchestre-shupa-shupa,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà batch-013 comme Les Shupa Shupa.
+Gonzalo Teppa Haiti,gonzalo teppa haiti,gonzalo-teppa-haiti,solo,male,verified_haitian,HT,"Compas, World",active,,,,,PROBABLE,65,Musicien compas/world. Sources limitées.
+Phénomène du Cap,phenomene du cap,phenomene-du-cap,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,72,Groupe compas Cap-Haïtien.
+Ensemble Select de Coupé Cloué,ensemble select coupe cloue,ensemble-select-coupe-cloue,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Coup%C3%A9_Clou%C3%A9,,VERIFIED,84,Orchestre de Coupé Cloué. Formation historique.
+Magnum Band (ref),magnum band ref,magnum-band-ref,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà batch-002.
+Roser (Septentrional/Cap),roser septentrional,roser-septentrional,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Musicien Cap-Haïtien. Septentrional.
+Marc-Antoine Auguste,marc antoine auguste,marc-antoine-auguste,solo,male,verified_haitian,HT,"Jazz, Classique",active,,,,,PROBABLE,72,Musicien jazz haïtien.
+Jean Alix Pascal,jean alix pascal,jean-alix-pascal,solo,male,verified_haitian,HT,"Compas",inactive,,,,,PROBABLE,70,Musicien compas haïtien historique.
+Alex Volcy,alex volcy,alex-volcy,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien.
+Boulot Valcourt (guitare classique),boulot valcourt classique,boulot-valcourt-classique,solo,male,verified_haitian,HT,"Classique, Guitare",active,,,,,DUPLICATE,0,Même que Boulo Valcourt batch-010.
+Serge Rosenthal,serge rosenthal,serge-rosenthal,solo,male,verified_haitian,HT,"Compas",inactive,,,,,PROBABLE,72,Musicien compas haïtien historique.
+Robert Télévision,robert television,robert-television,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien.
+Toto Necessité (ref),toto necessite ref,toto-necessite-ref,solo,male,verified_haitian,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà batch-002.
+Rico (Jacmel),rico jacmel,rico-jacmel,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas régional Jacmel.
+Manès Mesidor,manes mesidor,manes-mesidor,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Musicien compas haïtien.
+Combo Créole,combo creole,combo-creole,group,group,verified_haitian_group,HT,"Compas, Zouk",inactive,,,,,VERIFIED,80,Groupe haïtien diaspora. Compas et zouk.

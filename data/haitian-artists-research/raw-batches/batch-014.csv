@@ -1,0 +1,51 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Jude Célestin,jude celestin,jude-celestin-gospel,solo,male,verified_haitian,HT,"Gospel, Worship",active,https://open.spotify.com/artist/5C7XFqeVVkVK1QmH9i7PaK,,,,VERIFIED,82,Chanteur gospel haïtien. Présence Spotify confirmée.
+Evenson Pierre,evenson pierre,evenson-pierre,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,72,Artiste gospel haïtien. Sources limitées.
+Joel Dejean,joel dejean,joel-dejean,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,PROBABLE,72,Chanteur gospel haïtien.
+Gétro Guevara,getro guevara,getro-guevara,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,PROBABLE,70,Artiste gospel haïtien. Sources limitées.
+Widlore Mérancourt,widlore merancourt,widlore-merancourt,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Artiste gospel haïtien. Sources limitées.
+Jacques Sauveur Jean,jacques sauveur jean,jacques-sauveur-jean,solo,male,verified_haitian,HT,"Gospel, Chanson",active,,,,,VERIFIED,82,Chanteur gospel haïtien populaire. Figure connue du gospel créole.
+Reynold Bazile,reynold bazile,reynold-bazile,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,72,Artiste gospel haïtien.
+Yollande Mathurin,yollande mathurin,yollande-mathurin,solo,female,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteuse gospel haïtienne.
+Pierre-Louis Macena,pierre louis macena,pierre-louis-macena,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien. Sources limitées.
+Toby Charles,toby charles,toby-charles,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Artiste gospel haïtien.
+Jonathan Seymour,jonathan seymour,jonathan-seymour,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,72,Artiste gospel haïtien.
+Jean Gardy Bien-Aimé,jean gardy bien aime,jean-gardy-bien-aime,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteur gospel haïtien.
+Joseph Augustin,joseph augustin,joseph-augustin,solo,male,verified_haitian,HT,"Gospel, Chanson",active,,,,,PROBABLE,70,Artiste gospel haïtien.
+Carl-Henry Desmornes,carl henry desmornes,carl-henry-desmornes,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteur gospel haïtien.
+Louissaint Voltaire,louissaint voltaire,louissaint-voltaire,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien. Sources limitées.
+Pasteur Muscadin,pasteur muscadin,pasteur-muscadin,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,PROBABLE,72,Pasteur/chanteur gospel haïtien.
+Ti Wòch,ti woch,ti-woch,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien. Sources limitées.
+Franck Lefèvre,franck lefevre,franck-lefevre,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien.
+Konbit Lakay,konbit lakay,konbit-lakay,group,group,verified_haitian_group,HT,"Gospel, Worship",active,,,,,PROBABLE,72,Groupe gospel haïtien.
+La Chapelle (gospel),la chapelle gospel,la-chapelle-gospel,group,group,verified_haitian_group,HT,"Gospel, Worship",active,,,,,PROBABLE,70,Groupe worship haïtien. Sources limitées.
+Ayizan (racine confirmé),ayizan racine,ayizan-racine,group,group,verified_haitian_group,HT,"Racine",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,DUPLICATE,0,Déjà dans batch-008.
+Foula (racine confirmé),foula racine,foula-racine,group,group,verified_haitian_group,HT,"Racine",inactive,,,,,DUPLICATE,0,Déjà dans batch-008.
+Simbi,simbi,simbi,group,group,verified_haitian_group,HT,"Racine, Vodou",active,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Groupe racine haïtien. Nommé d'après le lwa Simbi.
+Koudjay (ref),koudjay ref,koudjay-ref,group,group,verified_haitian_group,HT,"Racine",active,,,,,DUPLICATE,0,Déjà dans batch-008.
+Chandèl,chandel,chandel,group,group,verified_haitian_group,HT,"Racine, Vodou rock",active,,,,,PROBABLE,72,Groupe racine haïtien.
+Tokay,tokay,tokay,group,group,verified_haitian_group,HT,"Racine",active,,,,,PROBABLE,70,Groupe racine haïtien. Sources limitées.
+Racine Mapou de Azor,racine mapou de azor,racine-mapou-de-azor,group,group,verified_haitian_group,HT,"Racine, Vodou",active,,,,,VERIFIED,82,Groupe racine haïtien. Tradition vodou.
+Racine de Vivre,racine de vivre,racine-de-vivre,group,group,verified_haitian_group,HT,"Racine",active,,,,,PROBABLE,70,Groupe racine haïtien. Sources limitées.
+Brothers of the Drum (Haiti),brothers of the drum haiti,brothers-drum-haiti,group,group,verified_haitian_group,HT,"Racine, Percussion",active,,,,,PROBABLE,68,Collectif percussionnistes haïtiens. Sources limitées.
+Awozam,awozam,awozam,group,group,verified_haitian_group,HT,"Racine",active,,,,,PROBABLE,68,Groupe racine haïtien. Sources limitées.
+Karizma (gospel Haiti),karizma gospel,karizma-gospel,group,group,verified_haitian_group,HT,"Gospel",active,,,,,PROBABLE,70,Groupe gospel haïtien.
+Mécène Jean-Louis,mecene jean louis,mecene-jean-louis,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Musicien compas haïtien historique. Orchestre Septentrional.
+Lyonel Désmarattes,lyonel desmarattes,lyonel-desmarattes,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,80,Musicien compas haïtien classique.
+Théodore Lys Jean Bart,theodore lys jean bart,theodore-lys-jean-bart,solo,male,verified_haitian,HT,"Classique, Chanson",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Compositeur haïtien. Hymnes et chansons patriotiques.
+Jaegerhuber (Werner A.),jaegerhuber werner,jaegerhuber-werner,solo,male,verified_haitian,HT,"Classique",inactive,,,,,DUPLICATE,0,Déjà dans batch-008.
+Réginald Policard,reginald policard ref,reginald-policard-ref,solo,male,verified_haitian,HT,"Jazz",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+Mushy Widmaier,mushy widmaier,mushy-widmaier,solo,male,verified_haitian,HT,"Jazz, Compas",active,,,,,VERIFIED,82,Pianiste/producteur haïtien. Famille Widmaier. Radio Métropole.
+Joël Widmaier (ref),joel widmaier ref,joel-widmaier-ref,solo,male,verified_haitian,HT,"Pop, Compas",active,,,,,DUPLICATE,0,Déjà dans batch-004.
+James Germain (cross ref),james germain cross,james-germain-cross,solo,male,verified_haitian,HT,"Folk",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+Raphaël Nérestant,raphael nerestant,raphael-nerestant,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Artiste gospel haïtien.
+Rony Théophile,rony theophile,rony-theophile,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,PROBABLE,70,Chanteur gospel haïtien.
+Marc Herman Benjamin,marc herman benjamin,marc-herman-benjamin,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien.
+Samuel Français,samuel francais,samuel-francais,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien.
+Ericka Fleurival,ericka fleurival,ericka-fleurival,solo,female,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteuse gospel haïtienne.
+Serge Belot,serge belot,serge-belot,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien.
+Béthanie (groupe gospel),bethanie gospel,bethanie-gospel,group,group,verified_haitian_group,HT,"Gospel",active,,,,,PROBABLE,70,Groupe gospel haïtien.
+Rédemption (gospel Haiti),redemption gospel,redemption-gospel,group,group,verified_haitian_group,HT,"Gospel",active,,,,,PROBABLE,68,Groupe gospel haïtien.
+Grâce Divine (worship),grace divine worship,grace-divine-worship,group,group,verified_haitian_group,HT,"Gospel, Worship",active,,,,,PROBABLE,68,Groupe worship haïtien.
+Impact Gospel,impact gospel,impact-gospel,group,group,verified_haitian_group,HT,"Gospel",active,,,,,PROBABLE,68,Groupe gospel haïtien.
+Moïse Télémaque,moise telemaque,moise-telemaque,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteur gospel haïtien.
