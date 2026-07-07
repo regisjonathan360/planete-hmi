@@ -5,12 +5,12 @@ import type { HaitianStatus } from "@/lib/charts/types";
 export const dynamic = "force-dynamic";
 
 const STATUT_LABELS: Record<HaitianStatus, string> = {
-  verified_haitian: "haitien confirme",
-  verified_haitian_diaspora: "diaspora confirmee",
-  verified_haitian_group: "groupe confirme",
-  pending_review: "a verifier",
-  insufficient_evidence: "preuve insuffisante",
-  rejected: "retire",
+  verified_haitian: "Haïtien confirmé",
+  verified_haitian_diaspora: "Diaspora confirmée",
+  verified_haitian_group: "Groupe confirmé",
+  pending_review: "À vérifier",
+  insufficient_evidence: "Preuve insuffisante",
+  rejected: "Retiré",
 };
 
 function statutClass(status: HaitianStatus): string {
@@ -19,121 +19,121 @@ function statutClass(status: HaitianStatus): string {
   return "pill pill--warn";
 }
 
-interface ArtistRow {
-  id: string;
-  name: string;
-  status: HaitianStatus;
-  countryCode: string | null;
-  appearances: string[];
-}
-
-export default async function AudiomackArtistReviewPage() {
+export default async function ArtistsAdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; q?: string }>;
+}) {
   const { supabase } = await requireAdmin();
+  const params = await searchParams;
+  const filterStatus = params.status || "";
+  const searchQuery = params.q || "";
 
-  const { data: sources } = await supabase
-    .from("chart_sources")
-    .select("id")
-    .eq("platform", "audiomack");
-  const sourceIds = (sources ?? []).map((source) => source.id);
+  let query = supabase
+    .from("artists")
+    .select("id, name, slug, haitian_status, country_code, is_active, confidence_score, created_at")
+    .order("name")
+    .limit(200);
 
-  const { data: editions } = sourceIds.length
-    ? await supabase
-        .from("chart_editions")
-        .select("id")
-        .in("chart_source_id", sourceIds)
-        .order("period_start", { ascending: false })
-        .limit(20)
-    : { data: [] };
-  const editionIds = (editions ?? []).map((edition) => edition.id);
-
-  const { data: entries } = editionIds.length
-    ? await supabase
-        .from("chart_entries")
-        .select("track_id, raw_track_title, raw_artist_text, source_position, filtered_position, chart_edition_id")
-        .in("chart_edition_id", editionIds)
-        .order("source_position")
-    : { data: [] };
-
-  const trackIds = [
-    ...new Set((entries ?? []).map((entry) => entry.track_id).filter((trackId): trackId is string => !!trackId)),
-  ];
-
-  const artists = new Map<string, ArtistRow>();
-  if (trackIds.length) {
-    const { data: credits } = await supabase
-      .from("track_artists")
-      .select("track_id, role, billing_order, artists(id, name, haitian_status, country_code)")
-      .in("track_id", trackIds)
-      .in("role", ["primary", "co_primary"]);
-
-    for (const credit of credits ?? []) {
-      const relatedArtists = credit.artists as unknown;
-      const artist = (Array.isArray(relatedArtists) ? relatedArtists[0] : relatedArtists) as {
-        id: string;
-        name: string;
-        haitian_status: HaitianStatus;
-        country_code: string | null;
-      } | null;
-      if (!artist) continue;
-
-      const entry = (entries ?? []).find((candidate) => candidate.track_id === credit.track_id);
-      const current = artists.get(artist.id) ?? {
-        id: artist.id,
-        name: artist.name,
-        status: artist.haitian_status,
-        countryCode: artist.country_code,
-        appearances: [],
-      };
-
-      if (entry && current.appearances.length < 4) {
-        current.appearances.push(`#${entry.source_position} ${entry.raw_track_title ?? "Titre inconnu"}`);
-      }
-      artists.set(artist.id, current);
-    }
+  if (filterStatus) {
+    query = query.eq("haitian_status", filterStatus);
+  }
+  if (searchQuery) {
+    query = query.ilike("name", `%${searchQuery}%`);
   }
 
-  const rows = [...artists.values()].sort((a, b) => {
-    const statusOrder = a.status.localeCompare(b.status);
-    return statusOrder || a.name.localeCompare(b.name);
+  const { data: artists, count } = await query;
+
+  // Compter par statut
+  const { data: allArtists } = await supabase
+    .from("artists")
+    .select("haitian_status");
+  const statsCounts: Record<string, number> = {};
+  (allArtists ?? []).forEach((a) => {
+    statsCounts[a.haitian_status] = (statsCounts[a.haitian_status] || 0) + 1;
   });
+  const total = allArtists?.length ?? 0;
 
   return (
     <>
-      <h1>Artistes Audiomack</h1>
+      <h1>Gestion des artistes</h1>
       <p>
-        Decide ici quels artistes restent dans les classements haitiens.
-        Les positions Audiomack source restent intactes; seules les positions HMI
-        filtrees sont recalculees.
+        Gère le statut haïtien de tous les artistes. Les modifications affectent
+        le filtrage des classements (seuls les artistes vérifiés apparaissent dans
+        les positions HMI filtrées).
       </p>
 
-      {rows.length === 0 ? (
-        <p className="admin__err">Aucun artiste Audiomack trouve dans les editions importees.</p>
+      {/* Statistiques */}
+      <div className="admin__grid">
+        <div className="admin__card">
+          <p>Total artistes</p>
+          <p style={{ fontSize: "2rem", color: "var(--cream)" }}>{total}</p>
+        </div>
+        <div className="admin__card">
+          <p>Vérifiés</p>
+          <p style={{ fontSize: "2rem", color: "var(--up)" }}>
+            {(statsCounts.verified_haitian || 0) + (statsCounts.verified_haitian_diaspora || 0) + (statsCounts.verified_haitian_group || 0)}
+          </p>
+        </div>
+        <div className="admin__card">
+          <p>À vérifier</p>
+          <p style={{ fontSize: "2rem", color: "var(--gold)" }}>{statsCounts.pending_review || 0}</p>
+        </div>
+        <div className="admin__card">
+          <p>Retirés</p>
+          <p style={{ fontSize: "2rem", color: "var(--down)" }}>{statsCounts.rejected || 0}</p>
+        </div>
+      </div>
+
+      {/* Filtres */}
+      <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", margin: "1.5rem 0" }}>
+        <form method="get" style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+          <input name="q" defaultValue={searchQuery} placeholder="Rechercher un artiste..." style={{ minWidth: 200 }} />
+          <select name="status" defaultValue={filterStatus}>
+            <option value="">Tous les statuts</option>
+            <option value="verified_haitian">Haïtien confirmé</option>
+            <option value="verified_haitian_diaspora">Diaspora confirmée</option>
+            <option value="verified_haitian_group">Groupe confirmé</option>
+            <option value="pending_review">À vérifier</option>
+            <option value="insufficient_evidence">Preuve insuffisante</option>
+            <option value="rejected">Retiré</option>
+          </select>
+          <button className="admin__btn" type="submit">Filtrer</button>
+        </form>
+      </div>
+
+      {/* Tableau */}
+      {(!artists || artists.length === 0) ? (
+        <p className="admin__err">Aucun artiste trouvé avec ces filtres.</p>
       ) : (
         <table>
           <thead>
             <tr>
               <th>Artiste</th>
               <th>Statut</th>
-              <th>Dernieres entrees Audiomack</th>
-              <th>Decision</th>
+              <th>Pays</th>
+              <th>Score</th>
+              <th>Actif</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((artist) => (
-              <tr key={artist.id}>
-                <td>
-                  <strong>{artist.name}</strong>
-                  <br />
-                  <span className="admin__muted">{artist.countryCode ?? "pays non renseigne"}</span>
-                </td>
-                <td><span className={statutClass(artist.status)}>{STATUT_LABELS[artist.status]}</span></td>
-                <td>{artist.appearances.length ? artist.appearances.join(" | ") : "Aucune entree recente"}</td>
-                <td><ArtistStatusButtons artistId={artist.id} /></td>
+            {artists.map((a) => (
+              <tr key={a.id}>
+                <td><strong>{a.name}</strong><br /><span style={{ fontSize: "0.75rem", color: "var(--cream-dim)" }}>{a.slug}</span></td>
+                <td><span className={statutClass(a.haitian_status as HaitianStatus)}>{STATUT_LABELS[a.haitian_status as HaitianStatus] ?? a.haitian_status}</span></td>
+                <td>{a.country_code ?? "—"}</td>
+                <td>{a.confidence_score ?? "—"}</td>
+                <td>{a.is_active ? <span className="pill pill--ok">oui</span> : <span className="pill pill--err">non</span>}</td>
+                <td><ArtistStatusButtons artistId={a.id} /></td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+      <p style={{ color: "var(--cream-dim)", marginTop: "1rem", fontSize: "0.85rem" }}>
+        Affichage limité à 200 résultats. Utilisez la recherche pour affiner.
+      </p>
     </>
   );
 }
