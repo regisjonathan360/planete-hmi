@@ -1,0 +1,51 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Pastor Gregory Toussaint,pastor gregory toussaint,pastor-gregory-toussaint,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,VERIFIED,82,Pasteur/chanteur gospel haïtien. Tabernacle de Gloire.
+Gael,gael,gael-ht,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,VERIFIED,80,Chanteur gospel haïtien.
+Moise Jean-Pierre,moise jean pierre,moise-jean-pierre,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,VERIFIED,82,Chanteur gospel haïtien populaire.
+Jéhovah Nissi,jehovah nissi,jehovah-nissi,group,group,verified_haitian_group,HT,"Gospel, Worship",active,,,,,VERIFIED,80,Groupe gospel haïtien.
+Évangélisation par la Musique,evangelisation par la musique,evangelisation-par-la-musique,group,group,verified_haitian_group,HT,"Gospel",active,,,,,PROBABLE,72,Groupe gospel haïtien. Sources limitées.
+Ralph Conde,ralph conde,ralph-conde,solo,male,verified_haitian,HT,"Gospel, Compas",active,,,,,VERIFIED,82,Chanteur gospel haïtien.
+Adorons l'Éternel,adorons l eternel,adorons-l-eternel,group,group,verified_haitian_group,HT,"Gospel, Worship",active,,,,,PROBABLE,72,Groupe worship haïtien. Sources limitées.
+Jean Jean Pierre Gospel,jean jean pierre gospel,jean-jean-pierre-gospel,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien. Sources limitées.
+Maggie Blanchard,maggie blanchard,maggie-blanchard,solo,female,verified_haitian,HT,"Gospel",active,,,,,VERIFIED,82,Chanteuse gospel haïtienne populaire.
+Harold Isaac,harold isaac,harold-isaac,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,PROBABLE,72,Chanteur gospel haïtien.
+Nehemie,nehemie,nehemie,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Artiste gospel haïtien. Sources limitées.
+Fré Gabe,fre gabe,fre-gabe,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteur gospel haïtien. Sources limitées.
+Joel Lorquet,joel lorquet,joel-lorquet,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,VERIFIED,80,Chanteur gospel haïtien.
+Rockfam (gospel tracks),rockfam gospel,rockfam-gospel,group,group,verified_haitian_group,HT,"Gospel",active,,,,,DUPLICATE,0,Rockfam déjà dans batch-005 (rap).
+Delly Benson (ref),delly benson ref,delly-benson-ref,solo,male,verified_haitian,HT,"Gospel",active,,,,,DUPLICATE,0,Déjà dans batch-001.
+Steeve Khé,steeve khe,steeve-khe,solo,male,verified_haitian,HT,"Gospel, Compas",active,,,,,VERIFIED,80,Chanteur gospel/compas haïtien.
+Frantz Sephirin,frantz sephirin,frantz-sephirin,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,72,Chanteur gospel haïtien.
+Marie-Yolène Gilles,marie yolene gilles,marie-yolene-gilles,solo,female,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteuse gospel haïtienne.
+Rémy Fils-Aimé,remy fils aime,remy-fils-aime,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,72,Chanteur gospel haïtien.
+Ginou Thylma,ginou thylma,ginou-thylma,solo,female,verified_haitian,HT,"Gospel, Worship",active,,,,,PROBABLE,72,Chanteuse gospel haïtienne.
+Yanick Lemoine,yanick lemoine,yanick-lemoine,solo,female,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteuse gospel haïtienne.
+Fabien Pricis,fabien pricis,fabien-pricis,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien. Sources limitées.
+Eliézer,eliezer,eliezer-ht,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien. Sources limitées.
+Evancia Barthélemy,evancia barthelemy,evancia-barthelemy,solo,female,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteuse gospel haïtienne.
+Marc Arthur Pierre,marc arthur pierre,marc-arthur-pierre,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteur gospel haïtien.
+Daphne,daphne,daphne-ht,solo,female,verified_haitian,HT,"Gospel, R&B",active,,,,,VERIFIED,80,Chanteuse gospel/R&B haïtienne.
+Joe Praize Haiti,joe praize haiti,joe-praize-haiti,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,65,Artiste gospel haïtien. Sources limitées.
+Osner Fevry,osner fevry,osner-fevry,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,72,Chanteur gospel haïtien.
+Shékinah,shekinah,shekinah-ht,group,group,verified_haitian_group,HT,"Gospel, Worship",active,,,,,PROBABLE,70,Groupe gospel haïtien.
+Vision Céleste,vision celeste,vision-celeste,group,group,verified_haitian_group,HT,"Gospel",active,,,,,PROBABLE,68,Groupe gospel haïtien. Sources limitées.
+Haïti Louange,haiti louange,haiti-louange,group,group,verified_haitian_group,HT,"Gospel, Worship",active,,,,,PROBABLE,68,Groupe worship haïtien. Sources limitées.
+Jude Célestin,jude celestin,jude-celestin,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,72,Chanteur gospel haïtien.
+Samuel Robuste,samuel robuste,samuel-robuste,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteur gospel haïtien.
+Daniel Estimé,daniel estime,daniel-estime,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Artiste gospel haïtien.
+Fresh Gospel,fresh gospel,fresh-gospel,group,group,verified_haitian_group,HT,"Gospel",active,,,,,PROBABLE,65,Groupe gospel haïtien. Sources limitées.
+Pierre Richard Gervais,pierre richard gervais,pierre-richard-gervais,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien. Sources limitées.
+Réginald Laurent,reginald laurent,reginald-laurent,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Chanteur gospel haïtien.
+Yves et Yvan (ref),yves et yvan ref,yves-et-yvan-ref,group,group,verified_haitian_group,HT,"Gospel",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+Jobina (ref),jobina ref,jobina-ref,solo,female,verified_haitian,HT,"Gospel",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+Emma Achille (ref),emma achille ref,emma-achille-ref,solo,female,verified_haitian,HT,"Gospel",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+Levanjil,levanjil,levanjil,group,group,verified_haitian_group,HT,"Gospel",active,,,,,PROBABLE,68,Groupe gospel haïtien.
+Ti Jean (gospel),ti jean gospel,ti-jean-gospel,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,65,Artiste gospel haïtien. Sources limitées.
+Manouchka Duret,manouchka duret,manouchka-duret,solo,female,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,72,Chanteuse gospel haïtienne.
+Pè Noël,pe noel,pe-noel,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Prêtre/chanteur gospel haïtien. Sources limitées.
+Yvrose (gospel),yvrose gospel,yvrose-gospel,solo,female,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Chanteuse gospel haïtienne.
+Prophète (musicien),prophete musicien,prophete-musicien,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,65,Artiste gospel haïtien. Sources limitées.
+Laguerre Bossou,laguerre bossou,laguerre-bossou,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,65,Artiste gospel haïtien. Sources limitées.
+Daphnée Charles,daphnee charles,daphnee-charles,solo,female,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,70,Chanteuse gospel haïtienne.
+Bro Michel Louis,bro michel louis,bro-michel-louis,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Artiste gospel haïtien.
+Frère Tob,frere tob,frere-tob,solo,male,verified_haitian,HT,"Gospel",active,,,,,PROBABLE,68,Chanteur gospel haïtien.

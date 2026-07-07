@@ -1,0 +1,49 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Wyclef Jean (Carnival),wyclef carnival,wyclef-carnival,solo,male,verified_haitian_diaspora,HT,"Compas, Carnival",active,,,,,DUPLICATE,0,Wyclef déjà batch-001.
+Boulo Valcourt,boulo valcourt,boulo-valcourt,solo,male,verified_haitian,HT,"Compas, Guitare",active,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Guitariste compas haïtien vétéran.
+Eddy Brisseaux,eddy brisseaux,eddy-brisseaux,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Musicien compas haïtien.
+Ti Plume,ti plume,ti-plume,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien.
+Cubano,cubano,cubano-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Gonzales,gonzales,gonzales-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Yvon Faille,yvon faille,yvon-faille,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Musicien compas haïtien.
+King Richard,king richard,king-richard-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Joël Lochard,joel lochard,joel-lochard,solo,male,verified_haitian,HT,"Compas, Jazz",active,,,,,PROBABLE,72,Musicien haïtien. Sources limitées.
+Emile Desamours,emile desamours,emile-desamours,solo,male,verified_haitian,HT,"Compas, Big Band",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Musicien haïtien historique. Big band.
+Dadou Pasket (ref),dadou pasket ref,dadou-pasket-ref,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Déjà dans batch-005.
+Skah (groupe ref),skah groupe,skah-groupe,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Skah Shah déjà batch-004.
+Watson Lalanne,watson lalanne,watson-lalanne,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Musicien compas haïtien.
+Marie Josee Lord,marie josee lord,marie-josee-lord,solo,female,verified_haitian_diaspora,HT,"Opéra, Classique",active,https://open.spotify.com/artist/0e5oPBCxVKvVBGu5hptl9F,,https://en.wikipedia.org/wiki/Marie-Jos%C3%A9e_Lord,https://en.wikipedia.org/wiki/Marie-Jos%C3%A9e_Lord,VERIFIED,92,Soprano haïtienne-canadienne. Née à Port-au-Prince. Opéra de Montréal.
+Alex Abélard,alex abelard,alex-abelard,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Musicien compas haïtien.
+Smith Jean-Baptiste,smith jean baptiste,smith-jean-baptiste,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Musicien compas haïtien.
+Toto St-Marc,toto st marc,toto-st-marc,solo,male,verified_haitian,HT,"Compas",inactive,,,,,PROBABLE,70,Artiste compas haïtien historique.
+Ansyto Mercier,ansyto mercier,ansyto-mercier,solo,male,verified_haitian,HT,"Chanson, Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Chanteur/compositeur haïtien. Décédé 2020.
+Edith Lefel,edith lefel,edith-lefel,solo,female,verified_haitian_diaspora,FR,"Zouk",inactive,https://open.spotify.com/artist/15cJiDdSXxoL2e4aIVdtQj,,https://en.wikipedia.org/wiki/Edith_Lefel,https://en.wikipedia.org/wiki/Edith_Lefel,VERIFIED,85,Chanteuse zouk. Née en France de parents haïtiens/martiniquais. 1963-2003.
+Lionel Benjamin,lionel benjamin,lionel-benjamin,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,80,Chanteur compas haïtien.
+Dominique Fils-Aimé,dominique fils aime,dominique-fils-aime,solo,female,verified_haitian_diaspora,CA,"Jazz, Soul, Blues",active,https://open.spotify.com/artist/0dMSvHikvLAKvMBIWb79bQ,,https://en.wikipedia.org/wiki/Dominique_Fils-Aim%C3%A9,https://en.wikipedia.org/wiki/Dominique_Fils-Aim%C3%A9,VERIFIED,92,Née à Montréal de parents haïtiens. Jazz/soul. Juno Award.
+Sarah Renelik,sarah renelik,sarah-renelik,solo,female,verified_haitian_diaspora,FR,"R&B, Pop",active,,,,,PROBABLE,70,Chanteuse française d'origine haïtienne.
+Sabine Bellevue,sabine bellevue,sabine-bellevue,solo,female,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,72,Chanteuse haïtienne.
+James Germain (ref),james germain ref,james-germain-ref,solo,male,verified_haitian,HT,"World",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+Beethova Obas (ref),beethova ref,beethova-ref,solo,male,verified_haitian,HT,"Twoubadou",active,,,,,DUPLICATE,0,Déjà dans batch-001.
+Alix Pascal,alix pascal,alix-pascal,solo,male,verified_haitian,HT,"Compas",inactive,,,,,PROBABLE,70,Musicien compas haïtien historique.
+Max Dougé,max douge,max-douge,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Musicien compas haïtien.
+Farah Juste,farah juste,farah-juste,solo,female,verified_haitian,HT,"Pop, R&B",active,,,,,VERIFIED,80,Chanteuse pop haïtienne.
+Vayb,vayb,vayb,group,group,verified_haitian_group,HT,"Compas",active,https://open.spotify.com/artist/23q0e97mHHuXqQfyIuIE1u,,,,VERIFIED,85,Groupe compas haïtien populaire. Mickey leader.
+Moment Donné,moment donne,moment-donne,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,70,Groupe compas haïtien.
+Nu-Soul,nu soul,nu-soul-ht,group,group,verified_haitian_group,HT,"Compas, R&B",active,,,,,PROBABLE,68,Groupe compas/R&B haïtien.
+Team Haiti,team haiti,team-haiti,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,65,Collectif compas haïtien.
+Vwadèzil (ref),vwadezil ref,vwadezil-ref,group,group,verified_haitian_group,HT,"Rabòday",active,,,,,DUPLICATE,0,Déjà batch-001.
+Radio Star (Septentrional),radio star septentrional,radio-star-septentrional,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,70,Groupe compas haïtien Cap-Haïtien.
+D-Fi,d fi,d-fi,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas haïtien.
+Triple Kay,triple kay,triple-kay,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,65,Groupe compas haïtien. Sources limitées.
+Klass Mizik,klass mizik,klass-mizik,group,group,verified_haitian_group,HT,"Compas",active,,,,,DUPLICATE,0,Même que Klass (batch-002).
+4 Let Nan Pwen,4 let nan pwen,4-let-nan-pwen,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas haïtien.
+Manzè Karabela,manze karabela,manze-karabela,solo,female,verified_haitian,HT,"Rabòday, Pop",active,,,,,PROBABLE,68,Artiste haïtienne. Sources limitées.
+Stanley Georges (ref),stanley georges ref,stanley-georges-ref,solo,male,verified_haitian,HT,"Gospel",active,,,,,DUPLICATE,0,Déjà dans batch-005.
+Jean Erich René,jean erich rene,jean-erich-rene,solo,male,verified_haitian,HT,"Compas, Jazz",inactive,,,,,PROBABLE,70,Musicien haïtien historique.
+Wawa (rapper),wawa rapper,wawa-rapper,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,PROBABLE,68,Rappeur haïtien. Sources limitées.
+Manzè Bèl Nan Pwen,manze bel nan pwen,manze-bel-nan-pwen,solo,female,verified_haitian,HT,"Compas",active,,,,,PROBABLE,65,Artiste haïtienne. Sources limitées.
+Beethova Edmond,beethova edmond,beethova-edmond,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Musicien compas haïtien.
+Tamise,tamise,tamise-ht,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,68,Artiste compas haïtien.
+Maudely Mesidor,maudely mesidor,maudely-mesidor,solo,female,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,70,Chanteuse compas haïtienne.
+Jerry Duplessis,jerry duplessis,jerry-duplessis,solo,male,verified_haitian_diaspora,HT,"Hip-Hop, Production",active,,,https://en.wikipedia.org/wiki/Jerry_Duplessis,https://en.wikipedia.org/wiki/Jerry_Duplessis,VERIFIED,90,Producteur haïtien. Cousin de Wyclef. Co-producteur Fugees. Né en Haïti.
+Rodney Nunes,rodney nunes,rodney-nunes,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,70,Musicien compas haïtien.
