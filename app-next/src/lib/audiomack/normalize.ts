@@ -10,26 +10,42 @@ function buildTrackUrl(artistSlug: string | null, trackSlug: string | null, rawU
   return "https://audiomack.com";
 }
 
+function firstHttp(...values: Array<string | null | undefined>): string | null {
+  return values.find((value) => typeof value === "string" && value.startsWith("http")) ?? null;
+}
+
+function slugsFromTrackUrl(url: string | null | undefined): { artistSlug: string | null; trackSlug: string | null } {
+  if (!url) return { artistSlug: null, trackSlug: null };
+  const match = url.match(/^https?:\/\/(?:www\.)?audiomack\.com\/([^/]+)\/song\/([^/?#]+)/i);
+  return {
+    artistSlug: match?.[1] ?? null,
+    trackSlug: match?.[2] ?? null,
+  };
+}
+
 export function normalizeAudiomackResponse(raw: AudiomackRawPlaylist): AudiomackNormalizedEntry[] {
   const tracks = raw.results ?? raw.tracks ?? [];
-  return tracks.map((t: AudiomackRawTrack, i: number) => ({
-    platform: "audiomack" as const,
-    countryCode: "HT" as const,
-    rank: i + 1,
-    platformTrackId: t.id != null ? String(t.id) : null,
-    title: String(t.title ?? "Sans titre").trim(),
-    artistName: String(t.artist ?? "Artiste inconnu").trim(),
-    artworkUrl: t.image && String(t.image).startsWith("http") ? String(t.image) : null,
-    sourceTrackUrl: buildTrackUrl(
-      t.artist_url_slug ? String(t.artist_url_slug) : null,
-      t.url_slug ? String(t.url_slug) : null,
-      t.url ? String(t.url) : undefined
-    ),
-    artistSlug: t.artist_url_slug ? String(t.artist_url_slug) : null,
-    trackSlug: t.url_slug ? String(t.url_slug) : null,
-    albumName: t.album ? String(t.album) : null,
-    genre: t.genre ? String(t.genre) : null,
-  }));
+  return tracks.map((t: AudiomackRawTrack, i: number) => {
+    const directUrl = firstHttp(t.links?.self, t.url);
+    const urlSlugs = slugsFromTrackUrl(directUrl);
+    const artistSlug = t.artist_url_slug ? String(t.artist_url_slug) : t.uploader?.url_slug ? String(t.uploader.url_slug) : urlSlugs.artistSlug;
+    const trackSlug = t.url_slug ? String(t.url_slug) : urlSlugs.trackSlug;
+
+    return {
+      platform: "audiomack" as const,
+      countryCode: "HT" as const,
+      rank: i + 1,
+      platformTrackId: t.id != null ? String(t.id) : null,
+      title: String(t.title ?? "Sans titre").trim(),
+      artistName: String(t.artist ?? "Artiste inconnu").trim(),
+      artworkUrl: firstHttp(t.image, t.image_base, t.images?.original?.filename),
+      sourceTrackUrl: buildTrackUrl(artistSlug, trackSlug, directUrl ?? undefined),
+      artistSlug,
+      trackSlug,
+      albumName: t.album ? String(t.album) : null,
+      genre: t.genre ? String(t.genre) : null,
+    };
+  });
 }
 
 /** Clé d'identification unique pour comparer deux semaines. */

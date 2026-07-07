@@ -40,11 +40,26 @@ export interface AudiomackRawTrack {
   title?: string;
   artist?: string;
   image?: string | null;
+  image_base?: string | null;
   url?: string;
   url_slug?: string;
   artist_url_slug?: string;
   album?: string;
   genre?: string;
+  links?: {
+    self?: string;
+    [key: string]: unknown;
+  };
+  uploader?: {
+    url_slug?: string;
+    [key: string]: unknown;
+  };
+  images?: {
+    original?: {
+      filename?: string;
+    };
+    [key: string]: unknown;
+  };
   [key: string]: unknown;
 }
 

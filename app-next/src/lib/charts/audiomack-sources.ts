@@ -16,7 +16,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreId: "all",
     genreLabel: "All",
     displayName: "Audiomack - Weekly 100 Haiti",
-    chartContext: "Top Songs Haiti - All",
+    chartContext: "Weekly 100: Haiti officiel Audiomack",
     sourceUrl: AUDIOMACK_HAITI_SOURCE_URL,
   },
   {

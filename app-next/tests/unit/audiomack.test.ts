@@ -2,6 +2,11 @@ import { describe, it, expect } from "vitest";
 import { normalizeAudiomackResponse, trackIdentityKey } from "../../src/lib/audiomack/normalize";
 import { calculateMovements } from "../../src/lib/audiomack/movements";
 import { validateEntries } from "../../src/lib/audiomack/schemas";
+import {
+  extractAudiomackMetaSongTitles,
+  extractAudiomackSourceUpdatedAt,
+  extractAudiomackTracksFromHtml,
+} from "../../src/lib/audiomack/official-page-parser";
 import type { AudiomackSnapshotEntry } from "../../src/lib/audiomack/types";
 
 const MOCK_RAW = {

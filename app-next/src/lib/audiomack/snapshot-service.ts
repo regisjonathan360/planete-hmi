@@ -69,7 +69,8 @@ export async function getLastSuccessfulEntries(
 /** Enregistre un nouveau snapshot si le contenu a changé. Retourne true si créé. */
 export async function saveSnapshot(
   supabase: SupabaseClient,
-  normalized: AudiomackNormalizedEntry[]
+  normalized: AudiomackNormalizedEntry[],
+  options: { sourceUpdatedAt?: string | null } = {}
 ): Promise<{ created: boolean; error?: string }> {
   // Validation Zod
   const { valid, entries: validated, errors } = validateEntries(normalized);
@@ -102,6 +103,7 @@ export async function saveSnapshot(
       country_code: COUNTRY,
       chart_name: CHART_NAME,
       source_url: SOURCE_URL,
+      source_updated_at: options.sourceUpdatedAt ?? null,
       content_hash: hash,
       status: "success",
     })

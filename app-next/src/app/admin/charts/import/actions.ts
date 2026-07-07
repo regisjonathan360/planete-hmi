@@ -1,11 +1,16 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { validerLignesImport } from "@/lib/charts/validation/schemas";
 import { normalizeTitle } from "@/lib/charts/normalization/normalize-title";
 import { normalizeArtists, normalizeArtistName } from "@/lib/charts/normalization/normalize-artists";
 import { trouverCorrespondance, CandidatPiste } from "@/lib/charts/matching/match-track";
 import { estAdmissiblePrincipal } from "@/lib/charts/matching/match-artist";
+import { getProvider } from "@/lib/audiomack/provider";
+import { saveSnapshot } from "@/lib/audiomack/snapshot-service";
+import { syncAudiomackEntriesToCharts } from "@/lib/audiomack/chart-sync";
+import { logAudit } from "@/lib/charts/audit";
 import type { CreditArtiste } from "@/lib/charts/types";
 
 export interface LignePreview {
@@ -134,5 +139,49 @@ export async function previsualiserImport(
     lignesInvalides: invalides.length,
     invalides,
     preview,
+  };
+}
+
+export async function synchroniserAudiomackOfficiel(): Promise<{ ok: boolean; message: string }> {
+  const { user, supabase } = await requireAdmin();
+  const provider = getProvider();
+  const result = await provider.fetchChart();
+
+  if (!result.ok || !result.entries.length) {
+    return {
+      ok: false,
+      message: result.error ?? "Impossible de lire la charte Audiomack Haiti officielle.",
+    };
+  }
+
+  await saveSnapshot(supabase, result.entries, {
+    sourceUpdatedAt: result.sourceUpdatedAt ?? null,
+  });
+  const synced = await syncAudiomackEntriesToCharts(supabase, result.entries, {
+    sourceUpdatedAt: result.sourceUpdatedAt ?? null,
+  });
+
+  await logAudit(supabase, {
+    userId: user.id,
+    action: "audiomack_official_sync",
+    entityType: "chart_edition",
+    entityId: synced.editionId,
+    newValue: {
+      provider: provider.name,
+      imported: synced.imported,
+      eligible: synced.eligible,
+      sourceUpdatedAt: result.sourceUpdatedAt ?? null,
+    },
+  });
+
+  revalidatePath("/charts");
+  revalidatePath("/charts/[platform]", "page");
+  revalidatePath("/admin/charts");
+  revalidatePath("/admin/charts/artists");
+  revalidatePath("/admin/charts/history");
+
+  return {
+    ok: true,
+    message: `${synced.imported} entree(s) Audiomack officielles importees. ${synced.eligible} chanson(s) haitienne(s) admissible(s) apres filtre admin.`,
   };
 }
