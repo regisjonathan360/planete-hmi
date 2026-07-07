@@ -12,13 +12,13 @@ insert into chart_sources (id, platform, source_key, display_name, chart_context
   ('11111111-0000-0000-0000-000000000001','youtube','youtube_haiti_official','YouTube Music — Haïti','Chansons populaires en Haïti','HT','VERIFIED_ADMIN_IMPORT',true,false),
   ('11111111-0000-0000-0000-000000000002','youtube','youtube_hmi_weekly_delta','YouTube HMI — Vues gagnées en 7 jours','Vues mondiales gagnées en 7 jours',null,'OFFICIAL_API',true,true),
   ('11111111-0000-0000-0000-000000000003','spotify','spotify_haiti_popular','Spotify — Populaire en Haïti','Populaire en Haïti','HT','VERIFIED_ADMIN_IMPORT',true,false),
-  ('11111111-0000-0000-0000-000000000004','audiomack','audiomack_haiti_weekly100','Audiomack — Weekly 100 Haiti','Weekly 100 Haiti','HT','VERIFIED_ADMIN_IMPORT',true,false),
+  ('11111111-0000-0000-0000-000000000004','audiomack','audiomack_haiti_weekly100','Audiomack - Weekly 100 Haiti','Weekly 100: Haiti officiel Audiomack','HT','OFFICIAL_EXPORT',true,true),
   ('11111111-0000-0000-0000-000000000005','apple_music','apple_hmi_worldwide','Apple Music — HMI Worldwide','Présence internationale (Worldwide)',null,'OFFICIAL_API',true,true),
   ('11111111-0000-0000-0000-000000000006','tiktok','tiktok_haiti_sounds','TikTok — Sons populaires en Haïti','Sons populaires en Haïti','HT','VERIFIED_ADMIN_IMPORT',true,false);
 
 -- ---------- Sources Audiomack Haiti par genre ----------
 insert into chart_sources (platform, source_key, display_name, chart_context, market_code, genre_id, ingestion_mode, source_url, is_enabled, is_automatic) values
-  ('audiomack','audiomack_haiti_weekly100','Audiomack - Weekly 100 Haiti','Top Songs Haiti - All','HT','all','VERIFIED_ADMIN_IMPORT','https://audiomack.com/geo-charts/playlist/haiti',true,false),
+  ('audiomack','audiomack_haiti_weekly100','Audiomack - Weekly 100 Haiti','Weekly 100: Haiti officiel Audiomack','HT','all','OFFICIAL_EXPORT','https://audiomack.com/geo-charts/playlist/haiti',true,true),
   ('audiomack','audiomack_haiti_top_songs_afrosounds','Audiomack - Haiti Afrosounds','Top Songs Haiti - Afrosounds','HT','afrosounds','VERIFIED_ADMIN_IMPORT','https://audiomack.com/charts',true,false),
   ('audiomack','audiomack_haiti_top_songs_hip_hop_rap','Audiomack - Haiti Hip-Hop/Rap','Top Songs Haiti - Hip-Hop/Rap','HT','hip-hop-rap','VERIFIED_ADMIN_IMPORT','https://audiomack.com/charts',true,false),
   ('audiomack','audiomack_haiti_top_songs_latin','Audiomack - Haiti Latin','Top Songs Haiti - Latin','HT','latin','VERIFIED_ADMIN_IMPORT','https://audiomack.com/charts',true,false),

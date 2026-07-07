@@ -1,68 +1,86 @@
 /**
- * Système de providers pour Audiomack.
- * Permet de basculer entre :
- *  - AudiomackOAuthProvider (API officielle OAuth 1.0a)
- *  - MockAudiomackProvider (développement/démo)
- *  - ManualAudiomackProvider (import JSON validé)
- * sans modifier les composants React.
+ * Provider selection for Audiomack.
+ *
+ * Priority:
+ * 1. Official OAuth API, when keys are configured.
+ * 2. Official public Audiomack Haiti page.
+ * 3. Optional mock data only when AUDIOMACK_USE_MOCK=true.
  */
 import "server-only";
 import type { AudiomackNormalizedEntry, AudiomackRawPlaylist } from "./types";
 import { normalizeAudiomackResponse } from "./normalize";
 import { fetchAudiomackHaitiChart, hasAudiomackKeys } from "./oauth-client";
+import { fetchAudiomackOfficialHaitiChart } from "./official-page";
+
+export interface AudiomackProviderResult {
+  ok: boolean;
+  entries: AudiomackNormalizedEntry[];
+  sourceUpdatedAt?: string | null;
+  error?: string;
+}
 
 export interface AudiomackProvider {
   name: string;
   isAvailable(): boolean;
-  fetchChart(): Promise<{ ok: boolean; entries: AudiomackNormalizedEntry[]; error?: string }>;
+  fetchChart(): Promise<AudiomackProviderResult>;
 }
 
-/** Provider officiel OAuth 1.0a */
 export const oauthProvider: AudiomackProvider = {
   name: "oauth",
   isAvailable: () => hasAudiomackKeys(),
   async fetchChart() {
     const result = await fetchAudiomackHaitiChart();
-    if (!result) return { ok: false, entries: [], error: "Clés Audiomack non configurées." };
+    if (!result) return { ok: false, entries: [], error: "Cles Audiomack non configurees." };
     if (!result.ok) return { ok: false, entries: [], error: result.error };
+
     const entries = normalizeAudiomackResponse(result.data as AudiomackRawPlaylist);
-    if (!entries.length) return { ok: false, entries: [], error: "Réponse vide." };
-    return { ok: true, entries };
+    if (!entries.length) return { ok: false, entries: [], error: "Reponse vide." };
+
+    return { ok: true, entries, sourceUpdatedAt: null };
   },
 };
 
-/** Provider mock (développement) — génère des données fictives */
+export const officialPageProvider: AudiomackProvider = {
+  name: "official_page",
+  isAvailable: () => true,
+  async fetchChart() {
+    return fetchAudiomackOfficialHaitiChart();
+  },
+};
+
 export const mockProvider: AudiomackProvider = {
   name: "mock",
-  isAvailable: () => true,
+  isAvailable: () => process.env.AUDIOMACK_USE_MOCK === "true",
   async fetchChart() {
     const mockTracks = [
       { title: "Konpa Love", artist: "Demo Artist HT 1", id: "mock-1" },
       { title: "Raboday Fire", artist: "Demo Artist HT 2", id: "mock-2" },
       { title: "Island Vibes", artist: "Demo Artist HT 3", id: "mock-3" },
-      { title: "Kreyòl Riddim", artist: "Demo Artist HT 4", id: "mock-4" },
+      { title: "Kreyol Riddim", artist: "Demo Artist HT 4", id: "mock-4" },
       { title: "Port-au-Prince Nights", artist: "Demo Artist HT 5", id: "mock-5" },
     ];
-    const entries: AudiomackNormalizedEntry[] = mockTracks.map((t, i) => ({
+
+    const entries: AudiomackNormalizedEntry[] = mockTracks.map((track, index) => ({
       platform: "audiomack",
       countryCode: "HT",
-      rank: i + 1,
-      platformTrackId: t.id,
-      title: t.title,
-      artistName: t.artist,
+      rank: index + 1,
+      platformTrackId: track.id,
+      title: track.title,
+      artistName: track.artist,
       artworkUrl: null,
-      sourceTrackUrl: `https://audiomack.com/demo/song/mock-${i + 1}`,
+      sourceTrackUrl: `https://audiomack.com/demo/song/mock-${index + 1}`,
       artistSlug: "demo",
-      trackSlug: `mock-${i + 1}`,
+      trackSlug: `mock-${index + 1}`,
       albumName: null,
       genre: "Konpa",
     }));
-    return { ok: true, entries };
+
+    return { ok: true, entries, sourceUpdatedAt: null };
   },
 };
 
-/** Sélectionne le provider approprié. */
 export function getProvider(): AudiomackProvider {
   if (oauthProvider.isAvailable()) return oauthProvider;
-  return mockProvider;
+  if (mockProvider.isAvailable()) return mockProvider;
+  return officialPageProvider;
 }

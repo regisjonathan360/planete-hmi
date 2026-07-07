@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { previsualiserImport, type ResultatPreview } from "./actions";
+import { previsualiserImport, synchroniserAudiomackOfficiel, type ResultatPreview } from "./actions";
 import { commitImport } from "../workflow-actions";
 import { AUDIOMACK_HAITI_CHART_SOURCES } from "@/lib/charts/audiomack-sources";
 
@@ -112,6 +112,8 @@ export default function ImportPage() {
   const [chargement, setChargement] = useState(false);
   const [commit, setCommit] = useState<string | null>(null);
   const [commitOk, setCommitOk] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [syncOk, setSyncOk] = useState(false);
 
   function getRows(): unknown[] | null {
     if (mode === "simple") {
@@ -171,6 +173,22 @@ export default function ImportPage() {
     }
   }
 
+  async function onSyncAudiomack() {
+    setErreur(null);
+    setSyncMessage(null);
+    setChargement(true);
+    try {
+      const result = await synchroniserAudiomackOfficiel();
+      setSyncMessage(result.message);
+      setSyncOk(result.ok);
+    } catch (e) {
+      setSyncMessage(e instanceof Error ? e.message : "Synchronisation Audiomack echouee.");
+      setSyncOk(false);
+    } finally {
+      setChargement(false);
+    }
+  }
+
   return (
     <>
       <h1>Import de classement</h1>
@@ -178,6 +196,29 @@ export default function ImportPage() {
         Import administratif vérifié. Colle les lignes du classement (JSON) puis
         prévisualise avant toute validation. Aucune donnée n’est écrite à ce stade.
       </p>
+
+      <div className="admin__card">
+        <h2 style={{ marginTop: 0 }}>Audiomack Haiti officiel</h2>
+        <p>
+          Importe directement la charte officielle Weekly 100: Haiti depuis Audiomack.
+          Les positions source restent intactes; les nouveaux artistes restent a verifier
+          avant d'apparaitre dans le classement public filtre.
+        </p>
+        <button className="admin__btn" type="button" onClick={onSyncAudiomack} disabled={chargement}>
+          {chargement ? "Synchronisation..." : "Synchroniser Audiomack Haiti"}
+        </button>
+        {syncMessage && (
+          <p className={syncOk ? "admin__ok" : "admin__err"}>
+            {syncMessage}
+            {syncOk && (
+              <>
+                {" "}
+                <Link className="hmi__link" href="/admin/charts/artists">Verifier les artistes Audiomack</Link>
+              </>
+            )}
+          </p>
+        )}
+      </div>
 
       <label htmlFor="src">Plateforme / classement</label>
       <select id="src" value={sourceKey} onChange={(e) => setSourceKey(e.target.value)}>
