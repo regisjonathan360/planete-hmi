@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planète HMI — Haitian Music Index</title>
+  <meta name="description" content="Planète HMI (Haitian Music Index) : classements, profils d'artistes et découverte de la musique haïtienne. Là où les étoiles de la musique haïtienne deviennent des légendes." />
+
+  <meta property="og:title" content="Planète HMI — Haitian Music Index" />
+  <meta property="og:description" content="Charts, artistes, districts et HMI Shorts. L'univers de référence de la musique haïtienne." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="image/social/planet-hmi-social.png" />
+  <meta name="theme-color" content="#08070d" />
+
+  <link rel="icon" type="image/svg+xml" href="brand/planet-hmi-icon-dark.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <!-- Grain + fond cosmique + projecteurs de scène -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cosmos" aria-hidden="true">
+    <div class="cosmos__layer cosmos__stars-distant" data-depth="0.06"></div>
+    <div class="cosmos__layer cosmos__stars-near" data-depth="0.14"></div>
+    <div class="cosmos__layer cosmos__nebula-left" data-depth="0.10"></div>
+    <div class="cosmos__layer cosmos__nebula-right" data-depth="0.10"></div>
+    <div class="cosmos__glow"></div>
+    <div class="cosmos__planet" data-depth="0.04"></div>
+  </div>
+  <div class="stage-lights" aria-hidden="true" data-intensity="subtle" data-smoke="true" data-variant="hero">
+    <span class="stage-lights__beam stage-lights__beam--tl"></span>
+    <span class="stage-lights__beam stage-lights__beam--tr"></span>
+    <span class="stage-lights__beam stage-lights__beam--bl"></span>
+    <span class="stage-lights__beam stage-lights__beam--br"></span>
+    <span class="stage-lights__smoke"></span>
+  </div>
+
+  <a class="skip-link" href="#contenu">Aller au contenu principal</a>
+
+  <!-- ============ EN-TÊTE ============ -->
+  <header class="topbar" id="haut">
+    <div class="wrap topbar__inner">
+      <a class="brand" href="#haut" aria-label="Planète HMI, accueil">
+        <img src="/brand/logo1.png" alt="Planète HMI — Haitian Music Index" class="brand__logo" width="46" height="46" />
+      </a>
+
+      <nav class="nav" aria-label="Navigation principale">
+        <a href="/" class="is-active">Accueil</a>
+        <a href="/artistes">Artistes</a>
+        <a href="/charts">Classements</a>
+        <a href="/actualites">Actualités</a>
+        <a href="/evenements">Événements</a>
+        <a href="/boutique">Boutique</a>
+      </nav>
+
+      <div class="topbar__actions">
+        <button class="icon-btn" type="button" aria-label="Rechercher">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <a class="btn btn-ghost" href="#connexion">Connexion</a>
+        <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-mobile">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="menu-mobile" id="menu-mobile" aria-label="Navigation mobile" hidden>
+      <a href="/">Accueil</a>
+      <a href="/artistes">Artistes</a>
+      <a href="/charts">Classements</a>
+      <a href="/actualites">Actualités</a>
+      <a href="/evenements">Événements</a>
+      <a href="/boutique">Boutique</a>
+      <a class="btn btn-primary" href="#connexion">Connexion</a>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <!-- ============ HERO ============ -->
+    <section class="hero" aria-labelledby="hero-titre">
+      <div class="hero__scene" aria-hidden="true"></div>
+      <div class="hero__scrim" aria-hidden="true"></div>
+      <div class="wrap hero__inner reveal">
+        <p class="eyebrow"><span class="eyebrow__star">★</span> La planète officielle de la musique haïtienne</p>
+        <h1 class="hero__title" id="hero-titre">
+          Là où les <span class="fx-ice">étoiles</span><br />
+          deviennent des <span class="fx-fire">légendes</span>
+        </h1>
+        <p class="hero__lead">
+          Bienvenue sur Planète HMI, la planète où la musique haïtienne brille plus fort que les étoiles.
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn-primary" href="#districts">Découvrir la planète</a>
+          <a class="btn btn-ghost" href="#classement">Voir le classement</a>
+        </div>
+        <div class="scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></div>
+      </div>
+
+      <!-- Ticker de tendances (données de démonstration) -->
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker__track">
+          <span class="ticker__item"><b class="up">▲</b> Roody Roodboy <em>12,78M</em></span>
+          <span class="ticker__item"><b class="up">▲</b> Joé Dwèt Filé <em>8,45M</em></span>
+          <span class="ticker__item"><b class="down">▼</b> Kevinna <em>6,31M</em></span>
+          <span class="ticker__item"><b class="up">▲</b> Pi-Jean <em>5,22M</em></span>
+          <span class="ticker__item"><b class="up">▲</b> Dadju <em>4,87M</em></span>
+          <span class="ticker__item"><b class="up">▲</b> Naïka <em>3,90M</em></span>
+          <!-- doublon pour un défilement continu -->
+          <span class="ticker__item"><b class="up">▲</b> Roody Roodboy <em>12,78M</em></span>
+          <span class="ticker__item"><b class="up">▲</b> Joé Dwèt Filé <em>8,45M</em></span>
+          <span class="ticker__item"><b class="down">▼</b> Kevinna <em>6,31M</em></span>
+          <span class="ticker__item"><b class="up">▲</b> Pi-Jean <em>5,22M</em></span>
+          <span class="ticker__item"><b class="up">▲</b> Dadju <em>4,87M</em></span>
+          <span class="ticker__item"><b class="up">▲</b> Naïka <em>3,90M</em></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <!-- ============ DISTRICTS (zones) ============ -->
+      <section class="section" id="districts" aria-labelledby="districts-titre">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-tag">// Explore la planète</span>
+            <h2 class="section-title" id="districts-titre">Les districts de <span class="fx-o">Planète HMI</span></h2>
+          </div>
+          <span class="section-link">Faites glisser →</span>
+        </div>
+
+        <div class="zone-rail reveal" role="list" aria-label="Districts (défilement horizontal)">
+          <a class="zone zone--club" role="listitem" href="#classement">
+            <span class="zone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <h3 class="zone__title">Club HMI</h3>
+            <p class="zone__desc">L'entrée de la planète. Les artistes font la queue, les néons brillent.</p>
+            <span class="btn btn-chip">Entrer</span>
+          </a>
+          <a class="zone zone--galaxie" role="listitem" href="#artistes">
+            <span class="zone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="4" fill="currentColor"/><ellipse cx="12" cy="12" rx="10" ry="4.2" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(-20 12 12)"/></svg>
+            </span>
+            <h3 class="zone__title">Galaxie des artistes</h3>
+            <p class="zone__desc">Découvrez tous les artistes qui illuminent Planète HMI.</p>
+            <span class="btn btn-chip">Explorer</span>
+          </a>
+          <a class="zone zone--arene" role="listitem" href="#classement">
+            <span class="zone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26"><path d="M6 4h12v3a6 6 0 0 1-12 0V4z" fill="currentColor"/><path d="M9 15h6v3H9zM7 20h10v1.5H7z" fill="currentColor"/></svg>
+            </span>
+            <h3 class="zone__title">Arène des hits</h3>
+            <p class="zone__desc">Classements, battles et tendances. Qui domine la planète ?</p>
+            <span class="btn btn-chip">Découvrir</span>
+          </a>
+          <a class="zone zone--fusion" role="listitem" href="#shorts">
+            <span class="zone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 2c1 4-2 5-2 8a2 2 0 0 0 4 0c0-1 0-1 .5-2 1.5 2 3.5 3.5 3.5 7a6 6 0 1 1-12 0c0-4 4-5 6-13z" fill="currentColor"/></svg>
+            </span>
+            <h3 class="zone__title">Zone en fusion</h3>
+            <p class="zone__desc">Nouveautés, morceaux viraux et artistes en pleine ascension.</p>
+            <span class="btn btn-chip">Explorer</span>
+          </a>
+        </div>
+
+        <!-- Genres (pills défilables) -->
+        <div class="pill-row reveal" role="list" aria-label="Genres (défilement horizontal)">
+          <span class="pill" role="listitem">Konpa / Compas</span>
+          <span class="pill" role="listitem">Rap kreyòl / Hip-hop</span>
+          <span class="pill" role="listitem">Afrobeats / Afro-pop / Amapiano</span>
+          <span class="pill" role="listitem">Rabòday</span>
+          <span class="pill" role="listitem">Reggae / Dancehall</span>
+          <span class="pill" role="listitem">Pop haïtienne / R&amp;B créole</span>
+          <span class="pill" role="listitem">Gospel / Musique évangélique</span>
+        </div>
+      </section>
+
+      <!-- ============ CLASSEMENT PLANÉTAIRE (podium) ============ -->
+      <section class="section" id="classement" aria-labelledby="classement-titre">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-tag">// Les artistes qui dominent la planète</span>
+            <h2 class="section-title" id="classement-titre">Classement <span class="fx-b">planétaire</span></h2>
+          </div>
+          <a class="section-link" href="#classement">Voir le Top 100 →</a>
+        </div>
+
+        <div class="podium reveal" id="artistes">
+          <!-- #2 -->
+          <article class="podium__card podium__card--silver" data-preview-artist="Joé Dwèt Filé">
+            <span class="podium__rank">2</span>
+            <div class="podium__media">
+              <img src="/image/artists/planet-hmi-artist-placeholder-square.webp.webp" alt="Joé Dwèt Filé" loading="lazy" width="300" height="300" />
+              <button class="preview-btn" type="button" aria-label="Écouter un extrait de Joé Dwèt Filé" data-preview-toggle>
+                <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+                <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+                <span class="preview-btn__spinner" aria-hidden="true"></span>
+                <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              </button>
+            </div>
+            <h3 class="podium__name">Joé Dwèt Filé</h3>
+            <p class="podium__stat"><span class="star">★</span> 8,45M <span class="trend up">▲ 2</span></p>
+            <a class="btn btn-outline" href="#classement">Voir le profil</a>
+          </article>
+
+          <!-- #1 -->
+          <article class="podium__card podium__card--gold" data-preview-artist="Roody Roodboy">
+            <span class="podium__crown" aria-hidden="true">♛</span>
+            <span class="podium__rank">1</span>
+            <div class="podium__media">
+              <img src="/image/artists/planet-hmi-artist-placeholder-square.webp.webp" alt="Roody Roodboy" loading="lazy" width="340" height="340" />
+              <button class="preview-btn" type="button" aria-label="Écouter un extrait de Roody Roodboy" data-preview-toggle>
+                <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+                <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+                <span class="preview-btn__spinner" aria-hidden="true"></span>
+                <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              </button>
+            </div>
+            <h3 class="podium__name">Roody Roodboy</h3>
+            <p class="podium__stat"><span class="star">★</span> 12,78M <span class="trend up">▲ 5</span></p>
+            <a class="btn btn-primary" href="#classement">Voir le profil</a>
+          </article>
+
+          <!-- #3 -->
+          <article class="podium__card podium__card--bronze" data-preview-artist="Kevinna">
+            <span class="podium__rank">3</span>
+            <div class="podium__media">
+              <img src="/image/artists/planet-hmi-artist-placeholder-square.webp.webp" alt="Kevinna" loading="lazy" width="300" height="300" />
+              <button class="preview-btn" type="button" aria-label="Écouter un extrait de Kevinna" data-preview-toggle>
+                <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+                <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+                <span class="preview-btn__spinner" aria-hidden="true"></span>
+                <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              </button>
+            </div>
+            <h3 class="podium__name">Kevinna</h3>
+            <p class="podium__stat"><span class="star">★</span> 6,31M <span class="trend down">▼ 1</span></p>
+            <a class="btn btn-outline" href="#classement">Voir le profil</a>
+          </article>
+        </div>
+
+        <!-- #4 et #5 -->
+        <div class="rank-mini reveal">
+          <article class="mini" data-preview-artist="Pi-Jean">
+            <span class="mini__rank">4</span>
+            <img src="/image/artists/planet-hmi-artist-placeholder-square.webp.webp" alt="Pi-Jean" loading="lazy" width="72" height="72" />
+            <div class="mini__meta"><span class="mini__name">Pi-Jean</span><span class="mini__stat"><span class="star">★</span> 5,22M</span></div>
+            <span class="trend up">▲ 3</span>
+            <button class="preview-btn preview-btn--sm" type="button" aria-label="Écouter un extrait de Pi-Jean" data-preview-toggle>
+              <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+              <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+              <span class="preview-btn__spinner" aria-hidden="true"></span>
+              <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </button>
+          </article>
+          <article class="mini" data-preview-artist="Dadju">
+            <span class="mini__rank">5</span>
+            <img src="/image/artists/planet-hmi-artist-placeholder-square.webp.webp" alt="Dadju" loading="lazy" width="72" height="72" />
+            <div class="mini__meta"><span class="mini__name">Dadju</span><span class="mini__stat"><span class="star">★</span> 4,87M</span></div>
+            <span class="trend up">▲ 7</span>
+            <button class="preview-btn preview-btn--sm" type="button" aria-label="Écouter un extrait de Dadju" data-preview-toggle>
+              <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+              <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+              <span class="preview-btn__spinner" aria-hidden="true"></span>
+              <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </button>
+          </article>
+        </div>
+        <p class="disclaimer">Classement de démonstration. Les extraits (30 s) proviennent de l'API publique Deezer par recherche du nom d'artiste ; certains noms peuvent ne pas correspondre.</p>
+      </section>
+
+      <!-- ============ BANDE FEATURES ============ -->
+      <section class="feature-strip reveal" aria-label="Ce que propose Planète HMI">
+        <div class="feature"><span class="feature__ico" aria-hidden="true">♪</span> 100% musique haïtienne</div>
+        <div class="feature"><span class="feature__ico" aria-hidden="true">▮▮▮</span> Classements en temps réel</div>
+        <div class="feature"><span class="feature__ico" aria-hidden="true">⚔</span> Battles épiques</div>
+        <div class="feature"><span class="feature__ico" aria-hidden="true">◈</span> Communauté passionnée</div>
+        <div class="feature"><span class="feature__ico" aria-hidden="true">◆</span> Événements exclusifs</div>
+      </section>
+
+      <!-- ============ HMI SHORTS ============ -->
+      <section class="section" id="shorts" aria-labelledby="shorts-titre">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-tag">// Découverte verticale</span>
+            <h2 class="section-title">HMI <span class="fx-o">Shorts</span></h2>
+          </div>
+          <span class="section-link">Extraits autorisés uniquement</span>
+        </div>
+        <div class="shorts reveal">
+          <div class="short" data-preview-artist="Naïka">
+            <img src="/image/covers/planet-hmi-cover-placeholder-square.webp.webp" alt="Aperçu — Naïka" loading="lazy" width="300" height="533" />
+            <span class="short__name">Naïka</span>
+            <button class="preview-btn preview-btn--lg" type="button" aria-label="Écouter un extrait de Naïka" data-preview-toggle>
+              <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+              <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+              <span class="preview-btn__spinner" aria-hidden="true"></span>
+              <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </button>
+          </div>
+          <div class="short" data-preview-artist="Emeline Michel">
+            <img src="/image/covers/planet-hmi-cover-placeholder-square.webp.webp" alt="Aperçu — Emeline Michel" loading="lazy" width="300" height="533" />
+            <span class="short__name">Emeline Michel</span>
+            <button class="preview-btn preview-btn--lg" type="button" aria-label="Écouter un extrait de Emeline Michel" data-preview-toggle>
+              <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+              <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+              <span class="preview-btn__spinner" aria-hidden="true"></span>
+              <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </button>
+          </div>
+          <div class="short" data-preview-artist="Belo">
+            <img src="/image/covers/planet-hmi-cover-placeholder-square.webp.webp" alt="Aperçu — Belo" loading="lazy" width="300" height="533" />
+            <span class="short__name">Belo</span>
+            <button class="preview-btn preview-btn--lg" type="button" aria-label="Écouter un extrait de Belo" data-preview-toggle>
+              <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+              <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+              <span class="preview-btn__spinner" aria-hidden="true"></span>
+              <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </button>
+          </div>
+          <div class="short" data-preview-artist="Vwadèzil">
+            <img src="/image/covers/planet-hmi-cover-placeholder-square.webp.webp" alt="Aperçu — Vwadèzil" loading="lazy" width="300" height="533" />
+            <span class="short__name">Vwadèzil</span>
+            <button class="preview-btn preview-btn--lg" type="button" aria-label="Écouter un extrait de Vwadèzil" data-preview-toggle>
+              <span class="preview-btn__icon preview-btn__icon--play" aria-hidden="true"></span>
+              <span class="preview-btn__icon preview-btn__icon--pause" aria-hidden="true"></span>
+              <span class="preview-btn__spinner" aria-hidden="true"></span>
+              <span class="preview-btn__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CTA ============ -->
+      <section class="section cta-band" id="connexion" aria-labelledby="cta-titre">
+        <div class="cta-band__inner reveal">
+          <h2 class="section-title" id="cta-titre">Rejoins la <span class="fx-fire">planète</span></h2>
+          <p class="cta-band__desc">Crée ton compte pour suivre tes artistes favoris, ou revendique ton profil d'artiste.</p>
+          <div class="hero__cta">
+            <a class="btn btn-primary" href="#connexion">Créer un compte</a>
+            <a class="btn btn-ghost" href="#connexion">Revendiquer mon profil</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ============ PIED DE PAGE ============ -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="#haut" aria-label="Planète HMI, accueil">
+            <img src="/brand/logo1.png" alt="Planète HMI — Haitian Music Index" class="brand__logo" width="42" height="42" />
+          </a>
+          <p>Là où les étoiles de la musique haïtienne deviennent des légendes.</p>
+          <div class="socials" aria-label="Réseaux sociaux">
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="Instagram">◉</a>
+            <a href="#" aria-label="YouTube">▶</a>
+            <a href="#" aria-label="TikTok">♪</a>
+            <a href="#" aria-label="X">✕</a>
+          </div>
+        </div>
+        <nav class="footer-col" aria-label="Découvrir">
+          <h4>Découvrir</h4>
+          <a href="/charts">Classements</a>
+          <a href="/artistes">Artistes</a>
+          <a href="/actualites">Actualités</a>
+          <a href="/evenements">Événements</a>
+          <a href="/boutique">Boutique</a>
+        </nav>
+        <nav class="footer-col" aria-label="À propos">
+          <h4>À propos</h4>
+          <a href="#">Méthodologie</a>
+          <a href="#">À propos</a>
+          <a href="#">Contact</a>
+        </nav>
+        <nav class="footer-col" aria-label="Légal">
+          <h4>Légal</h4>
+          <a href="#">Confidentialité</a>
+          <a href="#">Conditions</a>
+          <a href="#">Droits d'auteur</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <p>Planète HMI © 2026 — Tous droits réservés</p>
+        <p>Version de démonstration — contenu illustratif</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/ui.js" defer></script>
+  <script src="/assets/js/features.js" defer></script>
+  <script src="/assets/js/preview.js" defer></script>
+</body>
+</html>
