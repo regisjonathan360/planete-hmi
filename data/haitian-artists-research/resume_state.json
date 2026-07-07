@@ -1,0 +1,13 @@
+{
+  "lastCompletedBatch": 1,
+  "totalCandidates": 50,
+  "verified": 47,
+  "probable": 1,
+  "ambiguous": 0,
+  "duplicate": 0,
+  "insufficientEvidence": 0,
+  "rejected": 0,
+  "nextTask": "batch-002: Rap Kreyòl, Trap, Rabòday + artistes compas supplémentaires",
+  "filesProduced": ["raw-batches/batch-001.csv"],
+  "errors": ["Tonymix possible doublon de Tony Mix (PROBABLE)"]
+}
