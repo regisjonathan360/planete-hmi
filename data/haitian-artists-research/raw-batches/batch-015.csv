@@ -1,0 +1,50 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Zoey Dollaz (ref),zoey dollaz ref,zoey-dollaz-ref,solo,male,verified_haitian_diaspora,HT,"Hip-Hop, Trap",active,,,,,DUPLICATE,0,Déjà dans batch-007.
+Haitian Fresh (ref),haitian fresh ref,haitian-fresh-ref,solo,male,verified_haitian_diaspora,US,"Hip-Hop",active,,,,,DUPLICATE,0,Déjà dans batch-007.
+Niska (ref),niska ref,niska-ref,solo,male,verified_haitian_diaspora,FR,"Rap, Trap",active,,,,,DUPLICATE,0,Déjà dans batch-007. Mère haïtienne confirmée.
+Damso,damso,damso,solo,male,not_haitian,CD,"Rap, Trap",active,https://open.spotify.com/artist/4FpJcNgOvIpSBeJQVDpMnB,,https://en.wikipedia.org/wiki/Damso,,REJECTED,10,William Kalubi. Né en RD Congo. Belge d'origine congolaise. PAS haïtien.
+J. Holiday,j holiday,j-holiday,solo,male,not_haitian,US,"R&B",active,https://open.spotify.com/artist/1Zk2e7fqGmEBSdoJK7cXU1,,https://en.wikipedia.org/wiki/J._Holiday,,REJECTED,15,Nahum Thorton Grymes. Américain d'origine chinoise/afro-américaine. PAS haïtien.
+Badly,badly,badly,solo,male,verified_haitian,HT,"Rap Kreyòl, Trap",active,,,,,VERIFIED,80,Rappeur haïtien actif.
+Flav (solo carrière),flav solo,flav-solo-carriere,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,DUPLICATE,0,Déjà dans batch-004.
+5Lan (Dols),5lan dols,5lan-dols,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Membre du groupe 5Lan. Sources limitées.
+Tonymix (ref 2),tonymix ref 2,tonymix-ref-2,solo,male,verified_haitian,HT,"DJ",active,,,,,DUPLICATE,0,Tony Mix déjà batch-001.
+Pouchon (ex-Zin),pouchon ex zin,pouchon-ex-zin,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Pouchon Duverger déjà batch-006/012.
+Val King,val king,val-king,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,70,Artiste compas haïtien.
+Phatboi,phatboi,phatboi,solo,male,verified_haitian_diaspora,US,"Hip-Hop, R&B",active,,,,,PROBABLE,70,Artiste diaspora haïtienne. Sources limitées.
+Jimmy O,jimmy o,jimmy-o,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Steelz,steelz,steelz,solo,male,verified_haitian_diaspora,US,"Hip-Hop, EDM",active,,,,,PROBABLE,70,Artiste/producteur diaspora haïtienne.
+Bub Styles,bub styles,bub-styles,solo,male,verified_haitian_diaspora,US,"Hip-Hop",active,,,,,PROBABLE,68,Rappeur diaspora haïtienne. Sources limitées.
+Kenny (T-Vice),kenny t vice,kenny-t-vice,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/T-Vice,,VERIFIED,82,Membre fondateur T-Vice. Frère Martinez.
+Roberto (T-Vice),roberto t vice,roberto-t-vice,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/T-Vice,,VERIFIED,82,Membre fondateur T-Vice. Frère Martinez.
+Black Parents (lead vocal),black parents lead,black-parents-lead,solo,male,verified_haitian,HT,"Compas",inactive,,,,,PROBABLE,68,Vocaliste Black Parents.
+Jude Deslouches (confirmed),jude deslouches confirmed,jude-deslouches-confirmed,solo,male,verified_haitian_diaspora,US,"Jazz",active,,,,,DUPLICATE,0,Déjà dans batch-007.
+Shabazz PBG (ref),shabazz pbg ref,shabazz-pbg-ref,solo,male,verified_haitian_diaspora,US,"Hip-Hop",active,,,,,DUPLICATE,0,Déjà dans batch-007.
+Wondagurl,wondagurl,wondagurl,solo,female,verified_haitian_diaspora,CA,"Hip-Hop, Production",active,https://open.spotify.com/artist/6T0MhpnZnPcdLQzlfJY8fm,,https://en.wikipedia.org/wiki/WondaGurl,https://en.wikipedia.org/wiki/WondaGurl,VERIFIED,90,Ebony Oshunrinde. Toronto. D'origine haïtienne/nigériane. Productrice Grammy.
+Maffio,maffio,maffio,solo,male,verified_haitian_diaspora,US,"Reggaeton, Latin, Production",active,https://open.spotify.com/artist/5c3GLXai8YOMid29ZEuR9y,,https://en.wikipedia.org/wiki/Maffio,,PROBABLE,65,Rafael De Jesus Vargas. Dominicain-Américain. PAS clairement haïtien. À vérifier.
+Allen Kass,allen kass,allen-kass,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,72,Artiste compas haïtien émergent.
+Roro Nelson,roro nelson,roro-nelson,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien.
+Samson (gospel/compas),samson gospel compas,samson-gospel-compas,solo,male,verified_haitian,HT,"Gospel, Compas",active,,,,,PROBABLE,68,Artiste haïtien gospel/compas.
+Team Cash (Haiti),team cash haiti,team-cash-haiti,group,group,verified_haitian_group,HT,"Rap Kreyòl",active,,,,,PROBABLE,68,Collectif rap haïtien.
+Top Kompa,top kompa,top-kompa,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas haïtien.
+Flex (Haiti),flex haiti,flex-haiti,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,70,Artiste compas haïtien émergent.
+Steeve Brunache,steeve brunache,steeve-brunache,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Musicien compas haïtien.
+Enposib (lead singer - Jean-Marc),enposib jean marc,enposib-jean-marc,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Chanteur principal Enposib.
+Mikado (rap),mikado rap,mikado-rap,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,PROBABLE,68,Rappeur haïtien. Sources limitées.
+P Jay,p jay,p-jay,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,PROBABLE,70,Rappeur haïtien.
+Lil Kev,lil kev,lil-kev-ht,solo,male,verified_haitian,HT,"Rap Kreyòl, Trap",active,,,,,PROBABLE,68,Rappeur haïtien. Sources limitées.
+Mass Konpa (Gracia lead),mass konpa gracia,mass-konpa-gracia,group,group,verified_haitian_group,HT,"Compas",active,,,,,DUPLICATE,0,Mass Konpa déjà dans batch-002.
+Bel Plezi,bel plezi,bel-plezi,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,70,Groupe compas haïtien.
+K-Zino,k zino,k-zino,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien. K-Zino Babylon.
+K-Lib,k lib,k-lib,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien.
+Etzer Vilaire (compas),etzer vilaire compas,etzer-vilaire-compas,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Musicien compas haïtien.
+Mass Attack,mass attack,mass-attack-ht,group,group,verified_haitian_group,HT,"Rap Kreyòl",active,,,,,PROBABLE,70,Groupe rap haïtien.
+Jean Winer,jean winer,jean-winer,solo,male,verified_haitian,HT,"Compas, Production",active,,,,,PROBABLE,72,Producteur/musicien compas haïtien.
+Mystik 703,mystik 703,mystik-703,group,group,verified_haitian_group,HT,"Rap Kreyòl",active,,,,,PROBABLE,70,Groupe rap haïtien.
+TurbulanceHT,turbulanceht,turbulance-ht,solo,male,verified_haitian,HT,"Rap Kreyòl, Dancehall",active,,,,,PROBABLE,70,Artiste rap/dancehall haïtien.
+Cassha,cassha,cassha,solo,male,verified_haitian,HT,"Rap Kreyòl, Trap",active,,,,,PROBABLE,68,Rappeur haïtien émergent. Sources limitées.
+Sam-E-L,sam e l,sam-e-l,solo,male,verified_haitian,HT,"R&B, Pop",active,,,,,PROBABLE,70,Artiste R&B haïtien.
+Ti Manno (twoubadou),ti manno twoubadou,ti-manno-twoubadou,solo,male,verified_haitian,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà batch-003 comme Ti Manno.
+Belo (racine ref),belo racine,belo-racine-ref,solo,male,verified_haitian,HT,"Reggae, Racine",active,,,,,DUPLICATE,0,BelO déjà batch-001.
+Djakout (Steeve Khé ref),djakout steeve khe,djakout-steeve-khe,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Shabba Djakout/Steeve Khé déjà batch-002/009.
+Izolan (rappeur ref),izolan rappeur,izolan-rappeur-ref,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,DUPLICATE,0,Déjà batch-002.
+Makila,makila,makila,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,PROBABLE,70,Rappeur haïtien émergent.

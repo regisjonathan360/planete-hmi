@@ -1,0 +1,51 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Cless,cless,cless,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Chanteur compas haïtien. Nouvelle génération compas.
+MC Pierre,mc pierre,mc-pierre,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,72,Artiste compas haïtien émergent. Sources limitées.
+Roody Petuel,roody petuel,roody-petuel,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien. Sources limitées.
+RaBoukans,raboukans,raboukans,solo,male,verified_haitian,HT,"Rap Kreyòl, Racine",active,,,,,PROBABLE,72,Rappeur haïtien à influences racine. Sources limitées.
+Dutty,dutty,dutty-rapper,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,PROBABLE,70,Rappeur haïtien. Ne pas confondre avec Dutty Boukman Eksperyans (batch-005).
+Ti Harold,ti harold,ti-harold,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Chanteur compas haïtien. Harold Faustin.
+Rèv,rev,rev-ht,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,70,Groupe compas haïtien. Sources limitées.
+Bélé Bélé,bele bele,bele-bele,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,68,Artiste compas haïtien émergent. Sources limitées.
+Myzik Jazz,myzik jazz,myzik-jazz,group,group,verified_haitian_group,HT,"Jazz, Compas",active,,,,,PROBABLE,70,Formation jazz/compas haïtienne. Sources limitées.
+Dread Jimi,dread jimi,dread-jimi,solo,male,verified_haitian,HT,"Reggae",active,,,,,PROBABLE,70,Artiste reggae haïtien. Sources limitées.
+Ti Ansyto,ti ansyto,ti-ansyto,solo,male,verified_haitian,HT,"Compas, Twoubadou",active,,,,,PROBABLE,72,Chanteur haïtien. Fils spirituel compas twoubadou.
+Claudette Pierre,claudette pierre,claudette-pierre,solo,female,verified_haitian,HT,"Chanson, Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Chanteuse haïtienne classique. Voix historique du compas féminin.
+Gérald Merceron,gerald merceron,gerald-merceron,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Musicien compas haïtien. Orchestre historique.
+Rodrigue Milien,rodrigue milien,rodrigue-milien,solo,male,verified_haitian,HT,"Twoubadou",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Troubadour haïtien classique. Contemporain de Ti Paris.
+Coupé Cloué II,coupe cloue ii,coupe-cloue-ii,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Fils de Coupé Cloué. Artiste compas continuant l'héritage paternel.
+Ernst Louis,ernst louis,ernst-louis,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Musicien compas haïtien.
+Skah Shah 2,skah shah 2,skah-shah-2,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,PROBABLE,72,Deuxième formation du groupe Skah Shah.
+Jude (Djakout),jude djakout,jude-djakout,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Djakout_Mizik,,VERIFIED,82,Chanteur compas. Membre Djakout #1.
+Pipo (Septentrional),pipo septentrional,pipo-septentrional,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,80,Vocaliste Orchestre Septentrional du Cap.
+Pépé (Septentrional),pepe septentrional,pepe-septentrional,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,80,Vocaliste historique Orchestre Septentrional.
+Buteau (Septentrional),buteau septentrional,buteau-septentrional,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,80,Musicien Orchestre Septentrional du Cap.
+Cubain (Septentrional),cubain septentrional,cubain-septentrional,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,80,Chanteur historique Orchestre Septentrional.
+Black Parents,black parents,black-parents,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe compas haïtien historique. Années 80.
+Missile 727,missile 727,missile-727,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe compas haïtien populaire années 80.
+Les Pachas du Canapé Vert,les pachas du canape vert,les-pachas-canape-vert,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,84,Groupe mini-jazz haïtien historique.
+Bossa Nova (Haiti),bossa nova haiti,bossa-nova-haiti,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,84,Groupe mini-jazz haïtien historique. Ne pas confondre avec le genre brésilien.
+Les Colombiens,les colombiens,les-colombiens,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,82,Groupe mini-jazz haïtien historique.
+Les Corvington,les corvington,les-corvington,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,82,Groupe mini-jazz haïtien historique.
+Superstars (Haiti),superstars haiti,superstars-haiti,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,80,Groupe compas haïtien historique.
+Djet-X,djet x,djet-x-2,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà dans batch-012.
+Astros (Haiti),astros haiti,astros-haiti,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,80,Groupe compas haïtien.
+Les Frères Parent,les freres parent,les-freres-parent,group,group,verified_haitian_group,HT,"Twoubadou",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Duo twoubadou haïtien classique.
+Chabba,chabba,chabba,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,70,Artiste compas haïtien nouvelle génération.
+Nickenson Prudhomme (2),nickenson prudhomme 2,nickenson-prudhomme-2,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Déjà dans batch-004.
+Beethoven (compas),beethoven compas,beethoven-compas,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,70,Artiste compas haïtien. Ne pas confondre avec Beethova Obas.
+Roody (Disip),roody disip,roody-disip,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Musicien du groupe Disip. Sources limitées.
+Jeff (5Lan),jeff 5lan,jeff-5lan,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Membre du groupe 5Lan. Sources limitées.
+Tonymix (DJ ref),tonymix dj,tonymix-dj,solo,male,verified_haitian,HT,"DJ",active,,,,,DUPLICATE,0,Déjà batch-001 comme Tony Mix.
+Belo Passe Passe,belo passe passe,belo-passe-passe,solo,male,verified_haitian,HT,"Reggae, Racine",active,,,,,DUPLICATE,0,Même que BelO batch-001.
+Polo (compas),polo compas,polo-compas,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Radio Panic Band,radio panic band,radio-panic-band,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Formation compas haïtienne. Sources limitées.
+Klèb (Klass),kleb klass,kleb-klass,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Musicien du groupe Klass.
+Jean-Michel St. Preux,jean michel st preux,jean-michel-st-preux,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Musicien compas haïtien.
+Enold Armand,enold armand,enold-armand,solo,male,verified_haitian,HT,"Compas",inactive,,,,,PROBABLE,70,Musicien compas haïtien historique.
+Les Frères Guignard,les freres guignard,les-freres-guignard,group,group,verified_haitian_group,HT,"Guitare, Folklore",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Guitaristes haïtiens historiques. Guitare traditionnelle.
+Les Shupa Shupa,les shupa shupa,les-shupa-shupa,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,80,Groupe mini-jazz haïtien historique.
+Gérard Daniel,gerard daniel,gerard-daniel,solo,male,verified_haitian,HT,"Compas",inactive,,,,,PROBABLE,70,Musicien compas haïtien historique.
+Émile Desamours (Ensemble),emile desamours ensemble,emile-desamours-ensemble,group,group,verified_haitian_group,HT,"Compas, Big Band",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Orchestre haïtien historique dirigé par Emile Desamours.
+Wanga Négès,wanga neges,wanga-neges,group,group,verified_haitian_group,HT,"Racine",active,,,,,PROBABLE,70,Groupe racine haïtien. Sources limitées.
+Les Beaux Gosses,les beaux gosses,les-beaux-gosses,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,80,Groupe mini-jazz haïtien historique.
