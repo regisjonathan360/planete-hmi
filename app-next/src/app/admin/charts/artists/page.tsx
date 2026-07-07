@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ArtistStatusButtons } from "@/components/admin/ArtistStatusButtons";
 import type { HaitianStatus } from "@/lib/charts/types";
 
@@ -24,7 +25,8 @@ export default async function ArtistsAdminPage({
 }: {
   searchParams: Promise<{ status?: string; q?: string }>;
 }) {
-  const { supabase } = await requireAdmin();
+  const { } = await requireAdmin(); // vérifie que l'utilisateur est admin
+  const supabase = createAdminClient(); // utilise service-role pour bypasser RLS
   const params = await searchParams;
   const filterStatus = params.status || "";
   const searchQuery = params.q || "";
