@@ -1,35 +1,31 @@
 # Recherche Artistes Haïtiens — État d'avancement
 
-## Statut : EN COURS
+## Statut : PHASE 1B EN COURS
 
-## Progression
-- Dernier lot terminé : 1 (batch-001.csv)
-- Candidats découverts : 50
-- Artistes vérifiés (VERIFIED) : 47
-- Artistes probables (PROBABLE) : 1
-- Artistes ambigus (AMBIGUOUS) : 0
-- Doublons (DUPLICATE) : 0
-- Preuves insuffisantes (INSUFFICIENT_EVIDENCE) : 0
-- Rejetés (REJECTED) : 0
-- Non classés encore : 2
+## Phase 1 (terminée)
+- 10 lots produits (batch-001 à batch-010)
+- 483 candidats au total
+- 257 VERIFIED | 176 PROBABLE | 44 DUPLICATE | 3 REJECTED | 2 AMBIGUOUS
 
-## Lot 1 — Contenu
-Compas classique/contemporain + rap kreyòl populaire + artistes les plus visibles.
-Sources principales : Viberate Top Artists Haiti, Wikipedia, Spotify, Revolt.tv.
-47 VERIFIED avec score ≥ 80, 1 PROBABLE (Tonymix, possible doublon Tony Mix).
+## Phase 1B (en cours)
+- Objectif : examiner les 176 PROBABLE + découvrir ~150 nouveaux candidats
+- Progression : 5/176 PROBABLE examinés
+  - Garcia Delva → VERIFIED (sources Haitian Times, Last.fm, Le Nouvelliste, Wikidata)
+  - Tonymix → DUPLICATE (même personne que Tony Mix)
+  - Coupé Cloué Jr → INSUFFICIENT_EVIDENCE
+  - Roach → INSUFFICIENT_EVIDENCE
+  - (2 nouveaux candidats découverts : D-Magic Rappeur Haiti, Tha Rapper Haiti)
 
-## Prochaine tâche
-Lot 2 : Rap Kreyòl approfondi (Izolan, Original Rap Stuff, Barikad Crew, G-Unit Haiti, etc.) + compas supplémentaires (Djakout #1, Harmonik, Nu Look, etc.)
+## Statistiques actuelles
+- Total VERIFIED : 259 (257 + Garcia Delva + ... en attente fusion)
+- Prochaine tâche : examiner PROBABLE #5-25 (Djo Lissaint, G-Unit Haiti, Fatima, Kompa direct, Kadans, Oswald, Jocelyne Béroard, Tonton Bicha, Tjooze, Nu Vice, Dòf...)
 
-## Fichiers produits
-- `raw-batches/batch-001.csv`
+## Nouveaux candidats découverts pendant Phase 1B
+- D-Magic Rappeur Haiti (Djerousny Germain, Lestere, Wikipedia) → VERIFIED
+- Tha Rapper Haiti (James Prospere, Port-au-Prince, Wikipedia) → VERIFIED
 
-## Erreurs en attente
-- Tonymix : possible doublon de Tony Mix (à vérifier dans le lot 2)
-
-## Catégories à couvrir dans les prochains lots
-- Lot 2 : Rap Kreyòl avancé + grands groupes compas (Djakout, Harmonik, Nu Look, Zenglen)
-- Lot 3 : Gospel, Racine, Twoubadou, Jazz
-- Lot 4 : Diaspora (NYC, Miami, Montréal, Paris)
-- Lot 5 : Artistes émergents + Rabòday
-- Lot 6+ : Complétion vers 500 avec recherches approfondies
+## Prochaines actions
+1. Continuer l'examen des 171 PROBABLE restants (par lots de 25)
+2. Rechercher ~100-150 nouveaux candidats
+3. Fusionner et produire les fichiers finaux mis à jour
+4. Générer les rapports (sources, YouTube coverage, summary)
