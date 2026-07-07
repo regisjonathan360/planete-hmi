@@ -1,0 +1,47 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Régine Chassagne,regine chassagne,regine-chassagne,solo,female,verified_haitian_diaspora,HT,"Indie Rock, Art Rock",active,https://open.spotify.com/artist/3JsMj0DEzyKO0pMnCbBnvH,,https://en.wikipedia.org/wiki/R%C3%A9gine_Chassagne,https://daily.redbullmusicacademy.com/2016/10/haitian-roots-montreal-beatmakers,VERIFIED,95,Née à Montréal de parents haïtiens. Arcade Fire cofondatrice.
+Jowee Omicil,jowee omicil,jowee-omicil,solo,male,verified_haitian_diaspora,HT,"Jazz",active,https://open.spotify.com/artist/1B1L6VJIEiPc9pjCmIegjL,,https://en.wikipedia.org/wiki/Jowee_Omicil,https://en.wikipedia.org/wiki/Jowee_Omicil,VERIFIED,92,Musicien jazz haïtien-canadien. Montréal.
+Kaytranada,kaytranada,kaytranada,solo,male,verified_haitian_diaspora,HT,"Electronic, House, R&B",active,https://open.spotify.com/artist/6qgnBH6iDM91ipVXv28OMu,,https://daily.redbullmusicacademy.com/2016/10/haitian-roots-montreal-beatmakers,https://en.wikipedia.org/wiki/Kaytranada,VERIFIED,96,Louis Kevin Celestin. Né à Port-au-Prince. Grammy. Montréal.
+Jimmy Jean-Louis,jimmy jean louis,jimmy-jean-louis,solo,male,verified_haitian,HT,"Acting, Music",active,,,https://en.wikipedia.org/wiki/Jimmy_Jean-Louis,,REJECTED,30,Acteur haïtien. Pas d'activité musicale documentée suffisante.
+Garcia Delva,garcia delva,garcia-delva,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Politicien/musicien haïtien. Sources musicales limitées.
+Joel Widmaier,joel widmaier,joel-widmaier,solo,male,verified_haitian,HT,"Pop, Compas",active,,,,,VERIFIED,82,Musicien haïtien. Famille Widmaier.
+Micky (Tabou Combo),micky tabou combo,micky-tabou-combo,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Tabou_Combo,,VERIFIED,84,Roger Eugène. Leader vocal de Tabou Combo.
+Shabba (rappeur diaspora),shabba rappeur diaspora,shabba-rappeur-diaspora,solo,male,verified_haitian_diaspora,US,"Hip-Hop",active,,,,,AMBIGUOUS,55,Homonyme possible avec Shabba du batch-001. À clarifier.
+David Dupont Bongarde,david dupont bongarde,david-dupont-bongarde,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas. Sources limitées.
+Freemannn,freemannn,freemannn,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien.
+Sheldon Senior,sheldon senior,sheldon-senior,solo,male,verified_haitian,HT,"R&B, Pop",active,,,,,PROBABLE,70,Artiste haïtien. Sources limitées.
+Ti-Vice,ti vice,ti-vice-2,group,group,verified_haitian_group,HT,"Compas",active,,,,,DUPLICATE,0,Déjà enregistré comme T-Vice.
+Kompa Magazine Band,kompa magazine band,kompa-magazine-band,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas. Sources limitées.
+Karaoké Band,karaoke band,karaoke-band-ht,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,65,Groupe compas haïtien. Sources limitées.
+Zin,zin,zin-ht,group,group,verified_haitian_group,HT,"Compas",active,,,https://haitiantimes.com/2024/01/16/haiti-music-albums-releases/,,VERIFIED,82,Groupe compas haïtien. Slug distinctif.
+Lakol,lakol,lakol,group,group,verified_haitian_group,HT,"Compas",active,,,https://haitiantimes.com/2024/01/16/haiti-music-albums-releases/,,VERIFIED,82,Groupe compas haïtien.
+Phantoms,phantoms,phantoms-ht,group,group,verified_haitian_group,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe compas haïtien historique. Slug distinctif.
+Les Loups Noirs,les loups noirs,les-loups-noirs,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,https://en.wikipedia.org/wiki/Mini-jazz,VERIFIED,88,Groupe mini-jazz haïtien historique.
+Les Difficiles de Pétion-Ville,les difficiles de petion ville,les-difficiles,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,86,Groupe mini-jazz historique.
+Les Fantaisistes de Carrefour,les fantaisistes de carrefour,les-fantaisistes,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,86,Groupe mini-jazz historique.
+Shleu-Shleu,shleu shleu,shleu-shleu,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Groupe mini-jazz/compas haïtien historique.
+Gypsies de Pétion-Ville,gypsies de petion ville,gypsies-petion-ville,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe compas haïtien historique.
+Ibo Combo,ibo combo,ibo-combo,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,83,Groupe compas haïtien.
+Super Jazz des Jeunes,super jazz des jeunes,super-jazz-des-jeunes,group,group,verified_haitian_group,HT,"Compas, Jazz",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Orchestre haïtien historique.
+Jazz des Jeunes,jazz des jeunes,jazz-des-jeunes,group,group,verified_haitian_group,HT,"Jazz, Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Orchestre haïtien des années 40-60.
+Orchestre Tropicana,orchestre tropicana,orchestre-tropicana,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Même que Tropicana d'Haïti (batch-002).
+Shoubou,shoubou,shoubou,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Tabou_Combo,,VERIFIED,84,Membre de Tabou Combo. Voix emblématique.
+Gary French,gary french,gary-french,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,70,Artiste compas. Sources limitées.
+Nulook,nulook,nulook,group,group,verified_haitian_group,HT,"Compas",active,,,,,DUPLICATE,0,Même que Nu Look (batch-002).
+Jean Thomas (Ti-Jean),jean thomas ti jean,jean-thomas-ti-jean,solo,male,verified_haitian,HT,"Twoubadou",inactive,,,,,PROBABLE,68,Artiste twoubadou haïtien historique. Sources limitées.
+509,509,509-band,group,group,verified_haitian_group,HT,"Compas",active,,,https://haitiantimes.com/2024/01/16/haiti-music-albums-releases/,,VERIFIED,80,Groupe compas haïtien.
+Nickenson Prud'homme,nickenson prudhomme,nickenson-prudhomme,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Musicien compas haïtien.
+Gracia Delva,gracia delva,gracia-delva,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Même que Garcia Delva plus haut (erreur d'orthographe).
+Roach Killa,roach killa,roach-killa,solo,male,verified_haitian_diaspora,US,"Rap",active,,,,,AMBIGUOUS,50,Rappeur. Origine haïtienne non confirmée de manière indépendante.
+Sarodj Bertin,sarodj bertin,sarodj-bertin,solo,female,verified_haitian,HT,"Pop",active,,,https://www.viberate.com/music-charts/top-artists-from-haiti/,,PROBABLE,72,Miss Haïti 2012. Activité musicale secondaire.
+James The Prophet,james the prophet,james-the-prophet,solo,male,verified_haitian_diaspora,US,"Gospel, Worship",active,,,,,PROBABLE,70,Artiste gospel diaspora. Sources limitées.
+Gaëlle,gaelle,gaelle-ht,solo,female,verified_haitian_diaspora,US,"R&B, Pop",active,,,,,VERIFIED,80,Chanteuse R&B d'origine haïtienne.
+Gio K,gio k,gio-k,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Artiste compas haïtien.
+TonyMix,tonymix,tonymix-2,solo,male,verified_haitian,HT,"DJ, Rabòday",active,,,,,DUPLICATE,0,Même que Tony Mix (batch-001).
+DJ Flo,dj flo,dj-flo-ht,solo,male,verified_haitian,HT,"DJ, Rabòday",active,,,,,VERIFIED,80,DJ haïtien. Rabòday.
+Maestro,maestro,maestro-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas. Homonyme possible. Sources limitées.
+Val,val,val-ht,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,68,Artiste haïtien. Sources limitées.
+Flav,flav,flav-ht,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien.
+Brav,brav,brav-ht,solo,male,verified_haitian_diaspora,FR,"Hip-Hop",active,https://open.spotify.com/artist/6K0FYXiMGrKXjDFD7jLH6F,,https://en.wikipedia.org/wiki/Brav,https://en.wikipedia.org/wiki/Brav,VERIFIED,85,Rappeur français d'origine haïtienne. Paris.
+Princess Lover,princess lover,princess-lover,solo,female,verified_haitian_diaspora,FR,"Zouk, R&B",active,https://open.spotify.com/artist/5XLSEC8XE9oKt8sifwcH1A,,,,VERIFIED,82,Chanteuse zouk/R&B française d'origine haïtienne.
+Ayo,ayo,ayo-ht,solo,female,verified_haitian_diaspora,DE,"Folk, Soul",active,https://open.spotify.com/artist/3zXDmQnGKoiL7oUWo7RAVe,,https://en.wikipedia.org/wiki/Ayo_(singer),https://en.wikipedia.org/wiki/Ayo_(singer),VERIFIED,88,Joy Olasunmila. Père nigérian mère rom/haïtienne. Slug distinctif.
