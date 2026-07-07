@@ -1,0 +1,47 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Moonlight Benjamin,moonlight benjamin,moonlight-benjamin,solo,female,verified_haitian,HT,"Voodoo blues, Rock, World",active,https://open.spotify.com/artist/6KUqNFIZ1HVYTRkVmGlYZA,,https://www.greenbelt.org.uk/artists/moonlight-benjamin/,https://xpn.org/moonlight-benjamin/,VERIFIED,94,Née à Port-au-Prince 1971. Prêtresse vodou. Voodoo blues rock. France.
+Blondedy Ferdinand,blondedy ferdinand,blondedy-ferdinand,solo,female,verified_haitian,HT,"Hip-Hop, Rap, Pop",active,,,https://famouspeopletoday.com/blondedy-ferdinand/,https://www.haitiwonderland.com/haiti/en/music/rutshelle-guillaume-and-blondedy-ferdinand-team-up-to-launch-rgglow/248,VERIFIED,85,Chanteuse/actrice/rappeuse haïtienne.
+Jobina Bien-Aime,jobina bien aime,jobina-bien-aime,solo,female,verified_haitian,HT,"Gospel",active,,,https://www.wlrn.org/light/arts-culture/2026-04-27/tiny-desk-jobi-haitian-gospel-artist,,VERIFIED,84,Artiste gospel haïtienne. Tiny Desk feature.
+Jude Jean,jude jean,jude-jean,solo,male,verified_haitian,HT,"Afrobeats, Pop",active,,,https://www.viberate.com/artist/jude-jean/,https://www.viberate.com/artist/jude-jean/,VERIFIED,83,Chanteur haïtien. Afro/pop.
+Emma Achille,emma achille,emma-achille,solo,female,verified_haitian,HT,"Gospel",active,,,https://believersportal.com/list-gospel-artists-haiti/,,VERIFIED,80,Artiste gospel haïtienne.
+Yves et Yvan,yves et yvan,yves-et-yvan,group,group,verified_haitian_group,HT,"Gospel",active,,,https://believersportal.com/list-gospel-artists-haiti/,,VERIFIED,80,Duo gospel haïtien.
+Marco Dabel,marco dabel,marco-dabel,solo,male,verified_haitian,HT,"Gospel",active,,,https://believersportal.com/list-gospel-artists-haiti/,,VERIFIED,80,Artiste gospel haïtien.
+Jacques Schwarz-Bart,jacques schwarz bart,jacques-schwarz-bart,solo,male,verified_haitian_diaspora,HT,"Jazz, World",active,https://open.spotify.com/artist/50rZyQK8K2CJlnVsFHBQ4l,,https://en.wikipedia.org/wiki/Jacques_Schwarz-Bart,https://en.wikipedia.org/wiki/Jacques_Schwarz-Bart,VERIFIED,92,Saxophoniste jazz. Père haïtien. Guadeloupe/NYC.
+Cécile McLorin Salvant,cecile mclorin salvant,cecile-mclorin-salvant,solo,female,verified_haitian_diaspora,US,"Jazz, Vocal",active,https://open.spotify.com/artist/0nJROvAIMGhiMeQCVaeSk9,,https://en.wikipedia.org/wiki/C%C3%A9cile_McLorin_Salvant,https://en.wikipedia.org/wiki/C%C3%A9cile_McLorin_Salvant,VERIFIED,93,Née à Miami. Mère haïtienne. Grammy Award jazz vocal.
+Riva Nyri Précil,riva nyri precil,riva-nyri-precil,solo,female,verified_haitian_diaspora,US,"Pop, R&B",active,,,https://www.lunionsuite.com/haitian-female-artist-playlist/,,VERIFIED,80,Artiste américaine d'origine haïtienne.
+Phyllisia Ross,phyllisia ross,phyllisia-ross,solo,female,verified_haitian_diaspora,HT,"Compas, R&B",active,https://open.spotify.com/artist/4nqMwh5M9z8n6iiSYVf8uF,,,,VERIFIED,84,Chanteuse compas/R&B haïtienne.
+Anie Alèrte,anie alerte,anie-alerte,solo,female,verified_haitian,HT,"Twoubadou, Chanson",active,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Chanteuse twoubadou haïtienne.
+Emel,emel,emel-ht,solo,female,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,80,Chanteuse compas haïtienne. Slug distinctif.
+Lakou Mizik,lakou mizik,lakou-mizik,group,group,verified_haitian_group,HT,"Racine, World",active,https://open.spotify.com/artist/0FN8A4USNVwwJ8gFKQDHFx,,https://en.wikipedia.org/wiki/Lakou_Mizik,https://en.wikipedia.org/wiki/Lakou_Mizik,VERIFIED,92,Collectif racine haïtien. Albums primés.
+Chouk Bwa,chouk bwa,chouk-bwa,group,group,verified_haitian_group,HT,"Racine, Électronique",active,https://open.spotify.com/artist/2e7hVCnv7KVAP5Ws8hwZEH,,,,VERIFIED,85,Groupe racine/électronique haïtien.
+Ti Coca,ti coca,ti-coca,solo,male,verified_haitian,HT,"Twoubadou",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Légende twoubadou haïtien.
+Althiery Dorival,althiery dorival,althiery-dorival,solo,male,verified_haitian,HT,"Twoubadou",inactive,,,https://en.wikipedia.org/wiki/Ti_Paris,,DUPLICATE,0,C'est Ti Paris (batch-001).
+Toto Bissainthe,toto bissainthe,toto-bissainthe,solo,female,verified_haitian,HT,"Chanson, Théâtre",inactive,,,https://en.wikipedia.org/wiki/Toto_Bissainthe,https://en.wikipedia.org/wiki/Toto_Bissainthe,VERIFIED,93,Marie-Clotilde Bissainthe. 1934-1994. Chanteuse/actrice engagée.
+Martha Jean-Claude,martha jean claude,martha-jean-claude,solo,female,verified_haitian,HT,"Chanson, Protest",inactive,,,https://en.wikipedia.org/wiki/Martha_Jean-Claude,https://en.wikipedia.org/wiki/Martha_Jean-Claude,VERIFIED,93,1919-2001. Chanteuse engagée haïtienne. Exilée à Cuba.
+Coupé Cloué,coupe cloue,coupe-cloue-batch3,solo,male,verified_haitian,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà dans batch-001.
+Jocelyne Béroard,jocelyne beroard,jocelyne-beroard,solo,female,verified_haitian_diaspora,HT,"Zouk, Compas",active,https://open.spotify.com/artist/2HnEaRdXtUebNDEHUJpgKg,,https://en.wikipedia.org/wiki/Jocelyne_B%C3%A9roard,https://en.wikipedia.org/wiki/Jocelyne_B%C3%A9roard,PROBABLE,72,Kassav'. Martiniquaise. Origine haïtienne partielle non confirmée.
+Dellys,dellys,dellys,solo,male,verified_haitian,HT,"Compas",active,,,https://haitiantimes.com/2024/01/16/haiti-music-albums-releases/,,VERIFIED,80,Musicien compas haïtien. Collaborations multiples.
+Réginald Policard,reginald policard,reginald-policard,solo,male,verified_haitian,HT,"Jazz, Pop",active,https://open.spotify.com/artist/5Z3GiYQMRlsVWEt3Sj6R5x,,,,VERIFIED,83,Pianiste/chanteur jazz haïtien.
+Paulette Poujol Oriol,paulette poujol oriol,paulette-poujol-oriol,solo,female,verified_haitian,HT,"Chanson",inactive,,,,,INSUFFICIENT_EVIDENCE,40,Écrivaine haïtienne. Pas d'activité musicale documentée.
+James Germain,james germain,james-germain,solo,male,verified_haitian,HT,"World, Folk",active,https://open.spotify.com/artist/3mNYLHt2OqXzFz5T3uFI7k,,,,VERIFIED,82,Chanteur folk haïtien.
+Eddy François,eddy francois,eddy-francois,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Musicien compas haïtien.
+Tonton Bicha,tonton bicha,tonton-bicha,solo,male,verified_haitian,HT,"Compas, Humor",active,,,,,PROBABLE,72,Artiste/humoriste haïtien. Frontière musique/comédie.
+Atis Independan,atis independan,atis-independan,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien.
+Misty Jean,misty jean,misty-jean,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,81,Chanteur compas haïtien.
+Tantan,tantan,tantan-ht,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien. Slug distinctif.
+Tjooze,tjooze,tjooze,solo,male,verified_haitian,HT,"Rap, Trap",active,,,,,PROBABLE,70,Artiste trap haïtien. Sources limitées.
+Wooly St Louis Jean,wooly st louis jean,wooly-st-louis-jean,solo,male,verified_haitian,HT,"Compas, Pop",active,https://open.spotify.com/artist/3j2UOmNNPBpUbJ4CJdqYdv,,,,VERIFIED,83,Chanteur compas haïtien.
+Widelene Isma,widelene isma,widelene-isma,solo,female,verified_haitian,HT,"Pop, R&B",active,,,,,VERIFIED,80,Chanteuse pop haïtienne.
+Gabel,gabel,gabel,group,group,verified_haitian_group,HT,"Compas",active,https://open.spotify.com/artist/1t6MdDJHYuA0WxIvSXTJkP,,,,VERIFIED,84,Groupe compas haïtien.
+Nu Vice,nu vice,nu-vice,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas. Confusion possible avec T-Vice/Nu Look.
+Djakout Mizik,djakout mizik,djakout-mizik,group,group,verified_haitian_group,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Djakout_Mizik,,DUPLICATE,0,Même que Djakout #1 (batch-002).
+Strings,strings,strings-ht,group,group,verified_haitian_group,HT,"Compas",active,,,,,VERIFIED,80,Groupe compas haïtien. Slug distinctif.
+Jean Jean Roosevelt,jean jean roosevelt,jean-jean-roosevelt,solo,male,verified_haitian,HT,"Chanson, Pop",active,https://open.spotify.com/artist/4ZxL9bOvJv4RNfpHTVLHiH,,,,VERIFIED,83,Chanteur/compositeur haïtien.
+Tamara Suffren,tamara suffren,tamara-suffren,solo,female,verified_haitian,HT,"Pop, Neo-soul",active,,,,,VERIFIED,80,Chanteuse pop haïtienne.
+Hervé Deschamps,herve deschamps,herve-deschamps,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Musicien compas haïtien.
+Paul Beaubrun,paul beaubrun,paul-beaubrun,solo,male,verified_haitian,HT,"Racine, Rock",active,https://open.spotify.com/artist/3D3HJJ3LgKPMJBlQ6XRXxU,,https://en.wikipedia.org/wiki/Boukman_Eksperyans,,VERIFIED,86,Fils de Boukman Eksperyans. Artiste racine/rock.
+Mélissa Laveaux,melissa laveaux,melissa-laveaux,solo,female,verified_haitian_diaspora,CA,"Folk, Indie",active,https://open.spotify.com/artist/0ybVQwfMTCaZvFNQoFRmeh,,https://en.wikipedia.org/wiki/M%C3%A9lissa_Laveaux,https://en.wikipedia.org/wiki/M%C3%A9lissa_Laveaux,VERIFIED,90,Née à Montréal de parents haïtiens. Chanteuse folk/indie.
+Ti Manno,ti manno,ti-manno,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,88,Antoine Rossini Jean-Baptiste. 1953-1985. Légende compas.
+Dòf,dof,dof-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas. Sources limitées.
+Beken,beken,beken,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien.
+Kafou,kafou,kafou,group,group,verified_haitian_group,HT,"Racine",active,,,,,VERIFIED,80,Groupe racine haïtien.
