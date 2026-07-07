@@ -68,8 +68,8 @@
   }
 
   HMI.fetchJSON = fetchJSON;
-  HMI.rankings = function () { return fetchJSON("data/rankings.json"); };
-  HMI.artists = function () { return fetchJSON("data/artists.json"); };
+  HMI.rankings = function () { return fetchJSON("/data/rankings.json"); };
+  HMI.artists = function () { return fetchJSON("/data/artists.json"); };
   HMI.format = { compact: compact, score: score, dateFr: dateFr };
   HMI.noteSource = noteSource;
 })();
