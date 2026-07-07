@@ -177,16 +177,17 @@
     if (favPanelOpen()) renderFavPanel();
   });
 
-  /* Bouton favoris dans l'en-tête + compteur */
+  /* Bouton favoris dans l'en-tête + compteur (UN SEUL) */
   var favOpenBtn = null;
-  document.querySelectorAll(".topbar__actions").forEach(function (actions) {
+  var firstActions = document.querySelector(".topbar__actions");
+  if (firstActions && !firstActions.querySelector(".fav-open")) {
     var b = document.createElement("button");
     b.type = "button"; b.className = "icon-btn fav-open"; b.setAttribute("aria-label", "Mes favoris");
     b.innerHTML = '<span aria-hidden="true">♥</span><span class="fav-open__count">0</span>';
-    actions.insertBefore(b, actions.firstChild);
+    firstActions.insertBefore(b, firstActions.firstChild);
     favOpenBtn = b;
     b.addEventListener("click", openFavPanel);
-  });
+  }
   function majCompteur() {
     document.querySelectorAll(".fav-open__count").forEach(function (c) { c.textContent = favSet.size; });
     document.querySelectorAll(".fav-open").forEach(function (b) { b.classList.toggle("has-fav", favSet.size > 0); });
