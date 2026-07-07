@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Événements — Planète HMI</title>
+  <meta name="description" content="Concerts, showcases et événements de la musique haïtienne, en Haïti et dans la diaspora." />
+  <meta name="theme-color" content="#08070d" />
+  <link rel="icon" type="image/svg+xml" href="brand/planet-hmi-icon-dark.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cosmos" aria-hidden="true">
+    <div class="cosmos__layer cosmos__stars-distant" data-depth="0.06"></div>
+    <div class="cosmos__layer cosmos__stars-near" data-depth="0.14"></div>
+    <div class="cosmos__layer cosmos__nebula-left" data-depth="0.10"></div>
+    <div class="cosmos__layer cosmos__nebula-right" data-depth="0.10"></div>
+    <div class="cosmos__glow"></div>
+  </div>
+
+  <a class="skip-link" href="#contenu">Aller au contenu principal</a>
+
+  <header class="topbar" id="haut">
+    <div class="wrap topbar__inner">
+      <a class="brand" href="/" aria-label="Planète HMI, accueil">
+        <img src="/brand/logo1.png" alt="Planète HMI — Haitian Music Index" class="brand__logo" width="46" height="46" />
+      </a>
+      <nav class="nav" aria-label="Navigation principale">
+        <a href="/">Accueil</a>
+        <a href="/artistes">Artistes</a>
+        <a href="/charts">Classements</a>
+        <a href="/actualites">Actualités</a>
+        <a href="/evenements" class="is-active">Événements</a>
+        <a href="/boutique">Boutique</a>
+      </nav>
+      <div class="topbar__actions">
+        <button class="icon-btn" type="button" aria-label="Rechercher">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <a class="btn btn-ghost" href="index.html#connexion">Connexion</a>
+        <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-mobile">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="menu-mobile" id="menu-mobile" aria-label="Navigation mobile" hidden>
+      <a href="/">Accueil</a>
+      <a href="/artistes">Artistes</a>
+      <a href="/charts">Classements</a>
+      <a href="/actualites">Actualités</a>
+      <a href="/evenements">Événements</a>
+      <a href="/boutique">Boutique</a>
+      <a class="btn btn-primary" href="index.html#connexion">Connexion</a>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <section class="page-hero">
+      <div class="wrap reveal">
+        <p class="breadcrumb"><a href="/">Accueil</a> / Événements</p>
+        <h1 class="page-title">Les <span class="fx-fire">événements</span></h1>
+        <p class="page-lead">Concerts, showcases et soirées HMI — en Haïti et dans la diaspora.</p>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="pill-row reveal" role="list" aria-label="Filtrer par lieu">
+        <span class="pill" role="listitem">Tous</span>
+        <span class="pill" role="listitem">Haïti</span>
+        <span class="pill" role="listitem">États-Unis</span>
+        <span class="pill" role="listitem">Canada</span>
+        <span class="pill" role="listitem">France</span>
+        <span class="pill" role="listitem">En ligne</span>
+      </div>
+
+      <section class="section section--tight" aria-label="Prochains événements">
+        <div class="event-list reveal">
+          <article class="event-row">
+            <div class="event-date"><div class="d">18</div><div class="m">Juil</div></div>
+            <div class="event-info"><div class="event-info__name">HMI Live — Nuit du Konpa</div><div class="event-info__meta">Port-au-Prince <span class="sep">·</span> Karibe Convention Center <span class="sep">·</span> 20h00</div></div>
+            <a class="btn btn-primary" href="#">Billets</a>
+          </article>
+          <article class="event-row">
+            <div class="event-date"><div class="d">02</div><div class="m">Août</div></div>
+            <div class="event-info"><div class="event-info__name">Rap Kreyòl Cypher</div><div class="event-info__meta">Miami, FL <span class="sep">·</span> The Fillmore <span class="sep">·</span> 21h00</div></div>
+            <a class="btn btn-primary" href="#">Billets</a>
+          </article>
+          <article class="event-row">
+            <div class="event-date"><div class="d">16</div><div class="m">Août</div></div>
+            <div class="event-info"><div class="event-info__name">Festival Rasin &amp; Racines</div><div class="event-info__meta">Montréal, QC <span class="sep">·</span> Place des Arts <span class="sep">·</span> 19h30</div></div>
+            <a class="btn btn-primary" href="#">Billets</a>
+          </article>
+          <article class="event-row">
+            <div class="event-date"><div class="d">05</div><div class="m">Sept</div></div>
+            <div class="event-info"><div class="event-info__name">Zouk &amp; Chill — Soirée diaspora</div><div class="event-info__meta">Paris, FR <span class="sep">·</span> La Bellevilloise <span class="sep">·</span> 22h00</div></div>
+            <a class="btn btn-primary" href="#">Billets</a>
+          </article>
+          <article class="event-row">
+            <div class="event-date"><div class="d">21</div><div class="m">Sept</div></div>
+            <div class="event-info"><div class="event-info__name">HMI Awards — Cérémonie annuelle</div><div class="event-info__meta">En ligne <span class="sep">·</span> Diffusion mondiale <span class="sep">·</span> 20h00 EST</div></div>
+            <a class="btn btn-outline" href="#">Rappel</a>
+          </article>
+        </div>
+        <p class="section-note">Programmation de démonstration — dates et lieux illustratifs.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="/" aria-label="Planète HMI, accueil">
+            <img src="/brand/logo1.png" alt="Planète HMI — Haitian Music Index" class="brand__logo" width="42" height="42" />
+          </a>
+          <p>Là où les étoiles de la musique haïtienne deviennent des légendes.</p>
+          <div class="socials" aria-label="Réseaux sociaux">
+            <a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">◉</a><a href="#" aria-label="YouTube">▶</a><a href="#" aria-label="TikTok">♪</a><a href="#" aria-label="X">✕</a>
+          </div>
+        </div>
+        <nav class="footer-col" aria-label="Découvrir"><h4>Découvrir</h4><a href="/charts">Classements</a><a href="/artistes">Artistes</a><a href="/actualites">Actualités</a><a href="/evenements">Événements</a><a href="/boutique">Boutique</a></nav>
+        <nav class="footer-col" aria-label="À propos"><h4>À propos</h4><a href="#">Méthodologie</a><a href="#">À propos</a><a href="#">Contact</a></nav>
+        <nav class="footer-col" aria-label="Légal"><h4>Légal</h4><a href="#">Confidentialité</a><a href="#">Conditions</a><a href="#">Droits d'auteur</a></nav>
+      </div>
+      <div class="footer-bottom"><p>Planète HMI © 2026 — Tous droits réservés</p><p>Version de démonstration — contenu illustratif</p></div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/ui.js" defer></script>
+  <script src="/assets/js/features.js" defer></script>
+</body>
+</html>

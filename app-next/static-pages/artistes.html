@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artistes — Planète HMI</title>
+  <meta name="description" content="La galaxie des artistes de Planète HMI : découvrez les créateurs de la musique haïtienne, par genre et par popularité." />
+  <meta name="theme-color" content="#08070d" />
+  <link rel="icon" type="image/svg+xml" href="brand/planet-hmi-icon-dark.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cosmos" aria-hidden="true">
+    <div class="cosmos__layer cosmos__stars-distant" data-depth="0.06"></div>
+    <div class="cosmos__layer cosmos__stars-near" data-depth="0.14"></div>
+    <div class="cosmos__layer cosmos__nebula-left" data-depth="0.10"></div>
+    <div class="cosmos__layer cosmos__nebula-right" data-depth="0.10"></div>
+    <div class="cosmos__glow"></div>
+  </div>
+
+  <a class="skip-link" href="#contenu">Aller au contenu principal</a>
+
+  <header class="topbar" id="haut">
+    <div class="wrap topbar__inner">
+      <a class="brand" href="/" aria-label="Planète HMI, accueil">
+        <img src="/brand/logo1.png" alt="Planète HMI — Haitian Music Index" class="brand__logo" width="46" height="46" />
+      </a>
+      <nav class="nav" aria-label="Navigation principale">
+        <a href="/">Accueil</a>
+        <a href="/artistes" class="is-active">Artistes</a>
+        <a href="/charts">Classements</a>
+        <a href="/actualites">Actualités</a>
+        <a href="/evenements">Événements</a>
+        <a href="/boutique">Boutique</a>
+      </nav>
+      <div class="topbar__actions">
+        <button class="icon-btn" type="button" aria-label="Rechercher">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <a class="btn btn-ghost" href="index.html#connexion">Connexion</a>
+        <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-mobile">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="menu-mobile" id="menu-mobile" aria-label="Navigation mobile" hidden>
+      <a href="/">Accueil</a>
+      <a href="/artistes">Artistes</a>
+      <a href="/charts">Classements</a>
+      <a href="/actualites">Actualités</a>
+      <a href="/evenements">Événements</a>
+      <a href="/boutique">Boutique</a>
+      <a class="btn btn-primary" href="index.html#connexion">Connexion</a>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <section class="page-hero">
+      <div class="wrap reveal">
+        <p class="breadcrumb"><a href="/">Accueil</a> / Artistes</p>
+        <h1 class="page-title">La galaxie des <span class="fx-o">artistes</span></h1>
+        <p class="page-lead">Tous les talents qui illuminent Planète HMI. Survolez une carte pour écouter un extrait.</p>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="toolbar reveal">
+        <label class="field field--grow">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="search" placeholder="Rechercher un artiste…" aria-label="Rechercher un artiste" />
+        </label>
+        <select class="select" aria-label="Trier par">
+          <option>Popularité</option>
+          <option>Nom (A→Z)</option>
+          <option>Nouveautés</option>
+        </select>
+      </div>
+
+      <div class="pill-row reveal" role="list" aria-label="Filtrer par genre">
+        <span class="pill" role="listitem">Tous</span>
+        <span class="pill" role="listitem">Konpa / Compas</span>
+        <span class="pill" role="listitem">Rap kreyòl / Hip-hop</span>
+        <span class="pill" role="listitem">Afrobeats / Afro-pop</span>
+        <span class="pill" role="listitem">Rabòday</span>
+        <span class="pill" role="listitem">Reggae / Dancehall</span>
+        <span class="pill" role="listitem">Pop / R&amp;B créole</span>
+        <span class="pill" role="listitem">Gospel</span>
+      </div>
+
+      <section class="section section--tight" aria-label="Liste des artistes">
+        <div class="artist-grid reveal" id="artistGrid"></div>
+        <nav class="pagination" aria-label="Pagination">
+          <span class="is-active">1</span><a href="#">2</a><a href="#">3</a><a href="#">→</a>
+        </nav>
+        <p class="section-note">Visuels de démonstration. Extraits audio (30 s) via l'API publique Deezer ; à remplacer par une intégration serveur licenciée en production.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="/" aria-label="Planète HMI, accueil">
+            <img src="/brand/logo1.png" alt="Planète HMI — Haitian Music Index" class="brand__logo" width="42" height="42" />
+          </a>
+          <p>Là où les étoiles de la musique haïtienne deviennent des légendes.</p>
+          <div class="socials" aria-label="Réseaux sociaux">
+            <a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Instagram">◉</a><a href="#" aria-label="YouTube">▶</a><a href="#" aria-label="TikTok">♪</a><a href="#" aria-label="X">✕</a>
+          </div>
+        </div>
+        <nav class="footer-col" aria-label="Découvrir"><h4>Découvrir</h4><a href="/charts">Classements</a><a href="/artistes">Artistes</a><a href="/actualites">Actualités</a><a href="/evenements">Événements</a><a href="/boutique">Boutique</a></nav>
+        <nav class="footer-col" aria-label="À propos"><h4>À propos</h4><a href="#">Méthodologie</a><a href="#">À propos</a><a href="#">Contact</a></nav>
+        <nav class="footer-col" aria-label="Légal"><h4>Légal</h4><a href="#">Confidentialité</a><a href="#">Conditions</a><a href="#">Droits d'auteur</a></nav>
+      </div>
+      <div class="footer-bottom"><p>Planète HMI © 2026 — Tous droits réservés</p><p>Version de démonstration — contenu illustratif</p></div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/ui.js" defer></script>
+  <script src="/assets/js/features.js" defer></script>
+  <script src="/assets/js/preview.js" defer></script>
+  <script src="/assets/js/data-source.js" defer></script>
+  <script src="/assets/js/artists-data.js" defer></script>
+</body>
+</html>
