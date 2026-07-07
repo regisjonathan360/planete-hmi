@@ -1,13 +1,13 @@
 {
-  "lastCompletedBatch": 1,
-  "totalCandidates": 50,
-  "verified": 47,
-  "probable": 1,
+  "lastCompletedBatch": 2,
+  "totalCandidates": 100,
+  "verified": 83,
+  "probable": 10,
   "ambiguous": 0,
-  "duplicate": 0,
+  "duplicate": 1,
   "insufficientEvidence": 0,
   "rejected": 0,
-  "nextTask": "batch-002: Rap Kreyòl, Trap, Rabòday + artistes compas supplémentaires",
-  "filesProduced": ["raw-batches/batch-001.csv"],
-  "errors": ["Tonymix possible doublon de Tony Mix (PROBABLE)"]
+  "nextTask": "batch-003: Gospel, Racine, Twoubadou, Jazz + artistes féminines",
+  "filesProduced": ["raw-batches/batch-001.csv", "raw-batches/batch-002.csv"],
+  "errors": ["Tonymix possible doublon Tony Mix", "Ti Vice = T-Vice (duplicate confirmé)"]
 }
