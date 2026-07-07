@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  var PLACEHOLDER = "image/artists/planet-hmi-artist-placeholder-square.webp.webp";
+  var PLACEHOLDER = "/image/artists/planet-hmi-artist-placeholder-square.webp.webp";
 
   // Repli (démonstration) — utilisé uniquement si data/artists.json absent.
   var DEMO = [

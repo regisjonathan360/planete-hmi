@@ -16,15 +16,15 @@ export default function ChartsLayout({ children }: { children: React.ReactNode }
         <div className="topbar__inner">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="topbar__logo" src="/images/logo1.png" alt="" width={38} height={38} />
-          <Link className="topbar__brand" href="https://regisjonathan360.github.io/planete-hmi/">
+          <Link className="topbar__brand" href="/">
             Planète HMI
           </Link>
           <div className="topbar__nav">
-            <Link href="https://regisjonathan360.github.io/planete-hmi/">Accueil</Link>
-            <Link href="https://regisjonathan360.github.io/planete-hmi/artistes.html">Artistes</Link>
+            <Link href="/">Accueil</Link>
+            <Link href="/artistes">Artistes</Link>
             <Link href="/charts" className="is-active">Classements</Link>
-            <Link href="https://regisjonathan360.github.io/planete-hmi/actualites.html">Actualités</Link>
-            <Link href="https://regisjonathan360.github.io/planete-hmi/evenements.html">Événements</Link>
+            <Link href="/actualites">Actualités</Link>
+            <Link href="/evenements">Événements</Link>
           </div>
         </div>
       </nav>
