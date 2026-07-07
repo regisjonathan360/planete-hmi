@@ -1,24 +1,23 @@
 {
+  "phase": "1B",
   "lastCompletedBatch": 10,
-  "totalCandidates": 500,
-  "verified": 0,
-  "probable": 0,
-  "ambiguous": 0,
-  "duplicate": 0,
-  "insufficientEvidence": 0,
-  "rejected": 0,
-  "nextTask": "Fusion des lots + déduplication + comptage final + production des fichiers finaux",
+  "phase1bProgress": {
+    "probableExamined": 3,
+    "probableTotal": 176,
+    "convertedToVerified": 1,
+    "remainingProbable": 174,
+    "reclassifiedDuplicate": 1,
+    "reclassifiedInsufficient": 1,
+    "newCandidatesDiscovered": 0
+  },
+  "totalVerified": 258,
+  "nextTask": "Continue examining PROBABLE artists #4-25 (Roach, Djo Lissaint, G-Unit Haiti, Fatima, Kompa direct, Kadans, Oswald, Jocelyne Béroard...)",
   "filesProduced": [
-    "raw-batches/batch-001.csv",
-    "raw-batches/batch-002.csv",
-    "raw-batches/batch-003.csv",
-    "raw-batches/batch-004.csv",
-    "raw-batches/batch-005.csv",
-    "raw-batches/batch-006.csv",
-    "raw-batches/batch-007.csv",
-    "raw-batches/batch-008.csv",
-    "raw-batches/batch-009.csv",
-    "raw-batches/batch-010.csv"
+    "raw-batches/batch-001.csv through batch-010.csv",
+    "final/haitian_artists_verified.csv",
+    "final/haitian_artists_verified.json",
+    "final/haitian_artists_probable.csv",
+    "probable_research_audit.csv"
   ],
   "errors": []
 }
