@@ -4,11 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { previsualiserImport, type ResultatPreview } from "./actions";
 import { commitImport } from "../workflow-actions";
+import { AUDIOMACK_HAITI_CHART_SOURCES } from "@/lib/charts/audiomack-sources";
 
 const SOURCES = [
   { key: "youtube_haiti_official", label: "YouTube Music — Haïti" },
   { key: "spotify_haiti_popular", label: "Spotify — Populaire en Haïti" },
-  { key: "audiomack_haiti_weekly100", label: "Audiomack — Weekly 100 Haiti" },
+  ...AUDIOMACK_HAITI_CHART_SOURCES.map((source) => ({
+    key: source.sourceKey,
+    label: source.genreId === "all" ? "Audiomack — Weekly 100 Haiti" : `Audiomack — Haiti ${source.genreLabel}`,
+  })),
   { key: "apple_hmi_worldwide", label: "Apple Music — HMI Worldwide" },
   { key: "tiktok_haiti_sounds", label: "TikTok — Sons populaires en Haïti" },
 ];
@@ -16,10 +20,25 @@ const SOURCES = [
 const COLONNES: Record<string, string[]> = {
   youtube_haiti_official: ["source_position", "track_title", "artist_names", "youtube_video_id", "youtube_music_url", "haiti_views", "global_views", "source_period_start", "source_period_end", "source_updated_at"],
   spotify_haiti_popular: ["source_position", "track_title", "artist_names", "spotify_track_id", "spotify_url", "album_title", "artwork_url", "source_period_start", "source_period_end", "source_updated_at"],
-  audiomack_haiti_weekly100: ["source_position", "track_title", "artist_names", "audiomack_music_id", "audiomack_url", "artwork_url", "source_period_start", "source_period_end", "source_updated_at"],
   apple_hmi_worldwide: ["source_position", "track_title", "artist_names", "source_identifier", "source_url", "source_period_start", "source_period_end", "source_updated_at"],
   tiktok_haiti_sounds: ["source_position", "sound_title", "linked_track_title", "linked_artist_names", "tiktok_music_id", "tiktok_sound_url", "posts_count", "source_period_start", "source_period_end", "source_updated_at"],
 };
+
+for (const source of AUDIOMACK_HAITI_CHART_SOURCES) {
+  COLONNES[source.sourceKey] = [
+    "source_position",
+    "track_title",
+    "artist_names",
+    "source_identifier",
+    "source_url",
+    "artwork_url",
+    "metric_value",
+    "metric_unit",
+    "source_period_start",
+    "source_period_end",
+    "source_updated_at",
+  ];
+}
 
 const EXEMPLE = `1. Joé Dwèt Filé - 4 Kampé
 2. Rutshelle Guillaume - Tolere w
@@ -29,10 +48,12 @@ const EXEMPLE = `1. Joé Dwèt Filé - 4 Kampé
 
 /** Parse du texte ligne par ligne : "N. Artiste - Titre" ou "N. Titre - Artiste" */
 function parseTexteSimple(texte: string, periodStart: string, periodEnd: string): unknown[] {
-  return texte
+  const lignes = texte
     .split("\n")
     .map((l) => l.trim())
-    .filter((l) => l.length > 0)
+    .filter((l) => l.length > 0);
+
+  const lignesAvecTiret = lignes
     .map((l) => {
       // Format : "3. Artiste - Titre" ou "3) Artiste - Titre" ou "3 Artiste - Titre"
       const match = l.match(/^(\d+)[.):\s-]+\s*(.+?)\s*[-–—]\s*(.+)$/);
@@ -42,12 +63,36 @@ function parseTexteSimple(texte: string, periodStart: string, periodEnd: string)
         source_position: parseInt(pos, 10),
         artist_names: part1.trim(),
         track_title: part2.trim(),
+        source_identifier: `manual-${periodStart}-${pos}`,
         source_url: "https://import-manuel-verifie",
         source_period_start: periodStart,
         source_period_end: periodEnd,
       };
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
+
+  if (lignesAvecTiret.length > 0) return lignesAvecTiret;
+
+  const lignesAudiomack: unknown[] = [];
+  for (let i = 0; i < lignes.length; i += 1) {
+    const rang = lignes[i].match(/^(\d+)[.)]?$/);
+    if (!rang) continue;
+    const titre = lignes[i + 1];
+    const artiste = lignes[i + 2];
+    if (!titre || !artiste) continue;
+    lignesAudiomack.push({
+      source_position: parseInt(rang[1], 10),
+      track_title: titre,
+      artist_names: artiste,
+      source_identifier: `manual-${periodStart}-${rang[1]}`,
+      source_url: "https://audiomack.com/geo-charts/playlist/haiti",
+      source_period_start: periodStart,
+      source_period_end: periodEnd,
+    });
+    i += 2;
+  }
+
+  return lignesAudiomack;
 }
 
 function pill(res: string) {

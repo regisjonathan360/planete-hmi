@@ -16,11 +16,27 @@ npm run dev          # http://localhost:3000
 - **Classements publics** : http://localhost:3000/charts
 - **Admin** : http://localhost:3000/admin/login
   - Email : `admin@hmi.test` / Mot de passe : `hmiadmin123` (compte dev local)
+- **Import classements** : http://localhost:3000/admin/charts/import
+- **Filtre artistes Audiomack** : http://localhost:3000/admin/charts/artists
 - **Studio Supabase** : http://127.0.0.1:54323
 
 ## Architecture
 
 Voir `.kiro/specs/classements-hmi/design.md` pour le diagramme d'architecture complet.
+
+## Audiomack Haiti
+
+Audiomack est suivi par source separee pour chaque genre public Audiomack :
+All, Afrosounds, Hip-Hop/Rap, Latin, Jazz/Blues, Caribbean, Pop, R&B,
+Gospel, Electronic, Rock, Punjabi, Country, Instrumental et Podcast.
+
+Workflow attendu :
+
+1. Importer la chart Audiomack Haiti officielle telle quelle dans la source du genre.
+2. Garder `source_position` comme position Audiomack originale.
+3. Dans `/admin/charts/artists`, marquer les artistes a garder comme haitiens, diaspora ou groupe.
+4. Marquer les artistes non haitiens comme retires.
+5. Le recalcul produit `filtered_position` pour Planete HMI sans modifier la position Audiomack source.
 
 ```
 app-next/

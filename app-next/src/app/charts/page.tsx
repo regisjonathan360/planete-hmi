@@ -2,7 +2,7 @@ import { getChartOverview } from "@/lib/charts/queries/get-chart-overview";
 import { ChartsPageHeader } from "@/components/charts/ChartsPageHeader";
 import { PlatformChartRow } from "@/components/charts/PlatformChartRow";
 import { ChartEmptyState } from "@/components/charts/ChartEmptyState";
-import { dateHaiti } from "@/lib/charts/format";
+import { SOURCE_KEY_PAR_SLUG, dateHaiti } from "@/lib/charts/format";
 import type { ChartOverviewRow } from "@/lib/charts/queries/types";
 
 export const dynamic = "force-dynamic";
@@ -13,8 +13,13 @@ const ORDRE = ["youtube", "spotify", "audiomack", "apple_music", "tiktok"];
 /** Garde une rangée par plateforme (la première rencontrée = source principale). */
 function cinqRangees(rows: ChartOverviewRow[]): ChartOverviewRow[] {
   const parPlateforme = new Map<string, ChartOverviewRow>();
-  for (const r of rows) {
-    if (!parPlateforme.has(r.platform)) parPlateforme.set(r.platform, r);
+  const sourcesPrincipales = new Set(Object.values(SOURCE_KEY_PAR_SLUG));
+  for (const platform of ORDRE) {
+    const principale = rows.find((row) => row.platform === platform && sourcesPrincipales.has(row.source_key));
+    const fallback = rows.find((row) => row.platform === platform);
+    if (principale ?? fallback) {
+      parPlateforme.set(platform, (principale ?? fallback)!);
+    }
   }
   return ORDRE.map((p) => parPlateforme.get(p)).filter((r): r is ChartOverviewRow => !!r);
 }

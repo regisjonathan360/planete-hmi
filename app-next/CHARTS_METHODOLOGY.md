@@ -19,6 +19,8 @@
 - **Territoire** : Haïti.
 - **Métrique** : position.
 - **Méthode** : import administratif vérifié. Le classement hebdomadaire global n'est jamais présenté comme Haïti.
+- **Genres suivis** : les mêmes onglets publics Audiomack sont disponibles comme sources séparées : All, Afrosounds, Hip-Hop/Rap, Latin, Jazz/Blues, Caribbean, Pop, R&B, Gospel, Electronic, Rock, Punjabi, Country, Instrumental et Podcast.
+- **Filtre Planète HMI** : la position source Audiomack est conservée. Les artistes non haïtiens peuvent être retirés manuellement dans l'administration; le site recalcule alors uniquement la position filtrée HMI.
 
 ## Apple Music — Haïti / HMI Worldwide
 - **Mesure** : chart Apple Music du storefront Haïti si disponible, sinon présence internationale (Worldwide).

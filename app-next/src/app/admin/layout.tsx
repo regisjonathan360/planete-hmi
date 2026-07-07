@@ -10,6 +10,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/charts">Tableau de bord</Link>
           <Link href="/admin/charts/import">Import</Link>
           <Link href="/admin/charts/review">Correspondances</Link>
+          <Link href="/admin/charts/artists">Artistes</Link>
           <Link href="/admin/charts/sources">Sources</Link>
           <Link href="/admin/charts/history">Historique</Link>
           <span className="admin__spacer" />
