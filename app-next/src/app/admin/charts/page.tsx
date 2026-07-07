@@ -31,6 +31,15 @@ export default async function AdminDashboard() {
     .select("id", { count: "exact", head: true })
     .eq("resolution_status", "pending");
 
+  const { count: nbArtistes } = await supabase
+    .from("artists")
+    .select("id", { count: "exact", head: true });
+
+  const { count: nbArtistesVerifies } = await supabase
+    .from("artists")
+    .select("id", { count: "exact", head: true })
+    .in("haitian_status", ["verified_haitian", "verified_haitian_diaspora", "verified_haitian_group"]);
+
   type Edition = NonNullable<typeof editions>[number];
   const derniereParSource = new Map<string, Edition>();
   (editions ?? []).forEach((e) => {
@@ -52,6 +61,11 @@ export default async function AdminDashboard() {
         <div className="admin__card">
           <p>Sources configurées</p>
           <p style={{ fontSize: "2rem", color: "var(--cream)" }}>{sources?.length ?? 0}</p>
+        </div>
+        <div className="admin__card">
+          <p>Artistes vérifiés</p>
+          <p style={{ fontSize: "2rem", color: "var(--cream)" }}>{nbArtistesVerifies ?? 0} / {nbArtistes ?? 0}</p>
+          <Link className="hmi__link" href="/admin/charts/artists">Gérer →</Link>
         </div>
         <div className="admin__card">
           <p>Correspondances en attente</p>
