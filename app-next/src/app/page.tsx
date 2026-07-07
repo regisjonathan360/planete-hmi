@@ -1,66 +1,72 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
 
-export default function Home() {
+/**
+ * Page d'accueil Planète HMI — route "/".
+ * Présente le projet et oriente vers les classements.
+ */
+export default function HomePage() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div style={{
+      minHeight: "100vh",
+      background: "radial-gradient(ellipse at 60% -20%, #191325 0%, #08070d 60%)",
+      color: "#f4efe4",
+      fontFamily: "Inter, system-ui, sans-serif",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "2rem 1.25rem",
+      textAlign: "center",
+    }}>
+      <h1 style={{
+        fontFamily: "Anton, Impact, sans-serif",
+        fontSize: "clamp(2.5rem, 7vw, 4.5rem)",
+        background: "linear-gradient(92deg, #f3121a, #ff6a00 45%, #ffb200)",
+        WebkitBackgroundClip: "text",
+        backgroundClip: "text",
+        color: "transparent",
+        margin: "0 0 0.5rem",
+        textTransform: "uppercase",
+      }}>
+        Planète HMI
+      </h1>
+      <p style={{ color: "#b9b3a6", fontSize: "1.15rem", maxWidth: "50ch", margin: "0 0 2rem" }}>
+        Haitian Music Index — La plateforme de référence pour la musique haïtienne.
+        Classements hebdomadaires, artistes vérifiés, données réelles.
+      </p>
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
+        <Link
+          href="/charts"
+          style={{
+            background: "linear-gradient(92deg, #f3121a, #ff6a00)",
+            color: "#fff",
+            padding: "0.75rem 1.8rem",
+            borderRadius: "999px",
+            fontWeight: 700,
+            textDecoration: "none",
+            fontSize: "1rem",
+          }}
+        >
+          Voir les classements →
+        </Link>
+        <Link
+          href="/charts/methodology"
+          style={{
+            border: "1px solid rgba(244,239,228,0.25)",
+            color: "#f4efe4",
+            padding: "0.75rem 1.8rem",
+            borderRadius: "999px",
+            fontWeight: 600,
+            textDecoration: "none",
+            fontSize: "1rem",
+          }}
+        >
+          Méthodologie
+        </Link>
+      </div>
+      <p style={{ marginTop: "3rem", color: "#b9b3a6", fontSize: "0.8rem" }}>
+        © 2026 Planète HMI · <Link href="/admin/login" style={{ color: "#46b7ff", textDecoration: "none" }}>Admin</Link>
+      </p>
     </div>
   );
 }
