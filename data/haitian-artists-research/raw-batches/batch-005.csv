@@ -1,0 +1,50 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Fresh La,fresh la,fresh-la,solo,male,verified_haitian,HT,"Rabòday",active,,,,,VERIFIED,80,Artiste rabòday haïtien émergent.
+Pedro Mista,pedro mista,pedro-mista,solo,male,verified_haitian,HT,"Rabòday, Rap Kreyòl",active,,,,,PROBABLE,72,Artiste rabòday haïtien. Sources limitées.
+Bòs TV,bos tv,bos-tv,solo,male,verified_haitian,HT,"Rabòday",active,,,,,PROBABLE,70,Artiste rabòday haïtien. Sources limitées.
+Top Vice,top vice,top-vice,group,group,verified_haitian_group,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe compas haïtien. Orchestre de compas classique.
+Dadou Pasket,dadou pasket,dadou-pasket,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Sweet_Micky,,VERIFIED,85,Chanteur compas haïtien. Sweet Micky band puis solo.
+Dola,dola,dola-ht,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,80,Artiste compas haïtien.
+Vag Lavi,vag lavi,vag-lavi,solo,male,verified_haitian,HT,"Rap Kreyòl, Rabòday",active,,,,,VERIFIED,80,Artiste rap/rabòday haïtien.
+Black Alex,black alex,black-alex,solo,male,verified_haitian,HT,"Rap Kreyòl",inactive,,,https://en.wikipedia.org/wiki/Haitian_hip-hop,,VERIFIED,88,Rappeur kreyòl haïtien pionnier. Décédé 2010.
+Rockfam,rockfam,rockfam,group,group,verified_haitian_group,HT,"Rap Kreyòl",active,,,https://en.wikipedia.org/wiki/Haitian_hip-hop,,VERIFIED,85,Groupe rap kreyòl haïtien majeur.
+King Posse,king posse,king-posse,group,group,verified_haitian_group,HT,"Rap Kreyòl",inactive,,,https://en.wikipedia.org/wiki/Haitian_hip-hop,,VERIFIED,84,Groupe rap kreyòl haïtien historique.
+Brothers Posse,brothers posse,brothers-posse,group,group,verified_haitian_group,HT,"Rap Kreyòl",inactive,,,https://en.wikipedia.org/wiki/Haitian_hip-hop,,VERIFIED,83,Groupe rap kreyòl haïtien historique.
+Izolan (solo),izolan solo,izolan-solo,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,DUPLICATE,0,Déjà dans batch-002 comme Izolan.
+Dutty (Boukman Eksperyans),dutty boukman eksperyans,dutty-boukman,solo,male,verified_haitian,HT,"Racine, Vodou Rock",active,,,https://en.wikipedia.org/wiki/Boukman_Eksperyans,,VERIFIED,84,Théodore Beaubrun Jr. Co-fondateur Boukman Eksperyans.
+Lòlò (Boukman Eksperyans),lolo boukman eksperyans,lolo-boukman,solo,female,verified_haitian,HT,"Racine, Vodou Rock",active,,,https://en.wikipedia.org/wiki/Boukman_Eksperyans,,VERIFIED,84,Mimerose Beaubrun. Co-fondatrice Boukman Eksperyans.
+Richard Morse,richard morse,richard-morse,solo,male,verified_haitian_diaspora,US,"Racine, Rock",active,,,https://en.wikipedia.org/wiki/RAM_(band),https://en.wikipedia.org/wiki/RAM_(band),VERIFIED,90,Leader de RAM. Américain-Haïtien. Hôtel Oloffson.
+Eddy Francois,eddy francois,eddy-francois-2,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+DJ Swetty Tet,dj swetty tet,dj-swetty-tet,solo,male,verified_haitian,HT,"DJ, Rabòday",active,,,,,PROBABLE,70,DJ rabòday haïtien. Sources limitées.
+Pè Fèt,pe fet,pe-fet,solo,male,verified_haitian,HT,"Rabòday",active,,,,,PROBABLE,68,Artiste rabòday haïtien. Sources limitées.
+Bato,bato,bato-ht,solo,male,verified_haitian,HT,"Rabòday, Rap Kreyòl",active,,,,,PROBABLE,70,Artiste rabòday haïtien. Sources limitées.
+Tafia,tafia,tafia,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien.
+Blaze One,blaze one,blaze-one,solo,male,verified_haitian,HT,"Rap Kreyòl, Trap",active,,,,,VERIFIED,80,Rappeur haïtien émergent.
+Pòtoprens,potoprens,potoprens,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,70,Groupe compas haïtien. Sources limitées.
+G La,g la,g-la,solo,male,verified_haitian,HT,"Rabòday",active,,,,,PROBABLE,68,Artiste rabòday haïtien. Sources limitées.
+Manzè Mètdam,manze metdam,manze-metdam,solo,female,verified_haitian,HT,"Rabòday",active,,,,,PROBABLE,68,Artiste rabòday féminine haïtienne. Sources limitées.
+Dread Pyè,dread pye,dread-pye,solo,male,verified_haitian,HT,"Reggae, Racine",active,,,,,PROBABLE,70,Artiste reggae haïtien. Sources limitées.
+Don Kato,don kato,don-kato,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien.
+Gardy Girault,gardy girault,gardy-girault,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,80,Guitariste compas haïtien.
+Ded Kra-Z,ded kra z,ded-kra-z,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien.
+Kenny Desmangles,kenny desmangles,kenny-desmangles,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,82,Chanteur/guitariste compas haïtien. Ex-Zenglen.
+Richie (Klass),richie klass,richie-klass,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,83,Richie. Leader du groupe Klass.
+Shedly Abraham,shedly abraham,shedly-abraham,solo,male,verified_haitian,HT,"Compas, Pop",active,https://open.spotify.com/artist/3b1vWBJdB6bDhSdl3o5Gbb,,,,VERIFIED,83,Chanteur compas haïtien. Ex-Nu Look.
+Roby Rob,roby rob,roby-rob,solo,male,verified_haitian_diaspora,HT,"Hip-Hop, Dance",active,,,,,VERIFIED,80,Producteur haïtien. Ying Yang Twins collab.
+Beken (MechansT),beken mechanst,beken-mechanst,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+Bandi Legal,bandi legal,bandi-legal,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,PROBABLE,72,Rappeur haïtien. Sources limitées.
+Liliking,liliking,liliking,solo,male,verified_haitian,HT,"Rap Kreyòl, Trap",active,,,,,PROBABLE,72,Rappeur haïtien. Sources limitées.
+Whimzikk,whimzikk,whimzikk,solo,male,verified_haitian_diaspora,US,"Pop, R&B",active,,,,,PROBABLE,70,Artiste pop diaspora haïtienne. Sources limitées.
+Gazzman (solo),gazzman solo,gazzman-solo,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Déjà dans batch-002 comme Gazzman Couleur.
+Frap La,frap la,frap-la,solo,male,verified_haitian,HT,"Rabòday, Rap Kreyòl",active,,,,,PROBABLE,70,Artiste rabòday/rap haïtien. Sources limitées.
+Mass (compositeur),mass compositeur,mass-compositeur,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Compositeur compas haïtien. Sources limitées.
+Pipo,pipo,pipo-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Gabel (lead singer),gabel lead,gabel-lead,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Groupe Gabel déjà dans batch-003.
+Stanley Georges,stanley georges,stanley-georges,solo,male,verified_haitian,HT,"Gospel, Worship",active,,,,,VERIFIED,80,Chanteur gospel haïtien.
+Harold and The Hit Makers,harold and the hit makers,harold-hit-makers,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,70,Groupe compas haïtien.
+Le Konpa,le konpa,le-konpa,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,68,Groupe compas haïtien. Sources limitées.
+Yole Dérose,yole derose,yole-derose,solo,female,verified_haitian,HT,"Chanson, Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,85,Chanteuse haïtienne classique. Voix emblématique.
+Toto Laraque,toto laraque,toto-laraque,solo,male,verified_haitian,HT,"Twoubadou, Guitare",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Guitariste twoubadou haïtien historique.
+Chal,chal,chal-ht,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,PROBABLE,70,Rappeur haïtien. Sources limitées.
+Nou Pap Dòmi,nou pap domi,nou-pap-domi,group,group,verified_haitian_group,HT,"Rap Kreyòl, Protest",active,,,,,PROBABLE,72,Collectif rap haïtien engagé.
+Rara Machine,rara machine,rara-machine,group,group,verified_haitian_group,HT,"Rara, Racine",active,,,https://en.wikipedia.org/wiki/Rara,,VERIFIED,84,Groupe rara haïtien.

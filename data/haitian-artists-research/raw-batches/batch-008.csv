@@ -1,0 +1,48 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Nemours Jean-Baptiste (Ensemble),nemours jean baptiste ensemble,nemours-ensemble,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Compas,https://en.wikipedia.org/wiki/Compas,DUPLICATE,0,Nemours déjà dans batch-001.
+Issa El Saieh,issa el saieh,issa-el-saieh,solo,male,verified_haitian,HT,"Jazz, Big Band, Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,88,Orchestre Issa El Saieh. Pionnier jazz haïtien 1940-50s. Haïtien d'origine palestinienne.
+Althéa Jean,althea jean,althea-jean,solo,female,verified_haitian_diaspora,HT,"Pop, World",active,,,,,PROBABLE,72,Chanteuse haïtienne diaspora. Sources limitées.
+Ti Simone,ti simone,ti-simone,solo,female,verified_haitian,HT,"Chanson, Folklore",inactive,,,,,PROBABLE,70,Chanteuse haïtienne historique. Sources limitées.
+Ansy Dérose,ansy derose,ansy-derose,solo,male,verified_haitian,HT,"Chanson, Twoubadou",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,88,Chanteur/compositeur haïtien. Figure majeure chanson haïtienne.
+Frantz Casséus,frantz casseus,frantz-casseus,solo,male,verified_haitian,HT,"Guitare classique, Folklore",inactive,,,https://en.wikipedia.org/wiki/Frantz_Cass%C3%A9us,https://en.wikipedia.org/wiki/Frantz_Cass%C3%A9us,VERIFIED,93,Guitariste classique haïtien. 1915-1993. Pionnier musique haïtienne classique.
+Ludovic Lamothe,ludovic lamothe,ludovic-lamothe,solo,male,verified_haitian,HT,"Classique, Piano",inactive,,,https://en.wikipedia.org/wiki/Ludovic_Lamothe,https://en.wikipedia.org/wiki/Ludovic_Lamothe,VERIFIED,93,Pianiste/compositeur haïtien. 1882-1953. Le Chopin noir.
+Justin Élie,justin elie,justin-elie,solo,male,verified_haitian,HT,"Classique, Orchestre",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Compositeur haïtien classique. 1883-1931.
+Werner A. Jaegerhuber,werner jaegerhuber,werner-jaegerhuber,solo,male,verified_haitian,HT,"Classique, Musique sacrée",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Compositeur haïtien 1900-1953. Messe sur les Airs Vaudou.
+Occide Jeanty,occide jeanty,occide-jeanty,solo,male,verified_haitian,HT,"Marche militaire, Classique",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Compositeur haïtien. 1860-1936. Directeur musique militaire.
+Ti Roro,ti roro,ti-roro,solo,male,verified_haitian,HT,"Twoubadou",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Troubadour haïtien classique. Début 20ème siècle.
+Althiery Dorival (Ti Paris),althiery dorival ti paris,althiery-dorival-ti-paris,solo,male,verified_haitian,HT,"Twoubadou",inactive,,,,,DUPLICATE,0,Déjà comme Ti Paris dans batch-002.
+Titi (Pascal),titi pascal,titi-pascal,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,PROBABLE,72,Chanteur compas historique. Sources limitées.
+Guy Durosier,guy durosier,guy-durosier,solo,male,verified_haitian,HT,"Chanson, Compas, Jazz",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Chanteur haïtien emblématique années 60-70. Polyglotte musical.
+Raoul Guillaume,raoul guillaume,raoul-guillaume,solo,male,verified_haitian,HT,"Compas, Big Band",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Chef d'orchestre haïtien historique.
+Orchestre d'Haïti,orchestre dhaiti,orchestre-dhaiti,group,group,verified_haitian_group,HT,"Big Band, Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Formation orchestrale haïtienne historique.
+Ensemble Webert Sicot,ensemble webert sicot,ensemble-webert-sicot,group,group,verified_haitian_group,HT,"Compas, Cadence Rampa",inactive,,,https://en.wikipedia.org/wiki/Compas,,VERIFIED,86,Orchestre de Weber Sicot. Cadence Rampa.
+Les Shleu-Shleu,les shleu shleu,les-shleu-shleu,group,group,verified_haitian_group,HT,"Mini-Jazz, Compas",inactive,,,,,DUPLICATE,0,Même que Shleu-Shleu batch-004.
+Super Ensemble de Webert Sicot,super ensemble webert sicot,super-ensemble-sicot,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Même que Ensemble Webert Sicot.
+Les Gypsies,les gypsies,les-gypsies,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,,,DUPLICATE,0,Même que Gypsies de Pétion-Ville (batch-004).
+Jean Léon Destiné,jean leon destine,jean-leon-destine,solo,male,verified_haitian,HT,"Danse, Folklore",inactive,,,https://en.wikipedia.org/wiki/Jean-L%C3%A9on_Destin%C3%A9,https://en.wikipedia.org/wiki/Jean-L%C3%A9on_Destin%C3%A9,VERIFIED,90,Danseur/chorégraphe haïtien. 1918-2013. Ambassadeur culturel. Folklore musical.
+Emerante de Pradines,emerante de pradines,emerante-de-pradines,solo,female,verified_haitian,HT,"Folklore, Chanson",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Chanteuse folklore haïtienne. Pionnière musique traditionnelle enregistrée.
+Lumane Casimir,lumane casimir,lumane-casimir,solo,female,verified_haitian,HT,"Chanson, Patrimoine",inactive,,,,,VERIFIED,84,Chanteuse haïtienne historique. Compositrice de la Dessalinienne (hymne).
+Choucoune (Oswald Durand/song legacy),choucoune legacy,choucoune-legacy,solo,male,verified_haitian,HT,"Chanson, Folklore",inactive,,,https://en.wikipedia.org/wiki/Choucoune,,REJECTED,30,C'est un poème/chanson pas un artiste. Oswald Durand était poète non musicien.
+Dodof Legros,dodof legros,dodof-legros,solo,male,verified_haitian,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Chanteur compas haïtien historique.
+Gérard Dupervil,gerard dupervil,gerard-dupervil,solo,male,verified_haitian,HT,"Compas, Big Band",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Artiste haïtien historique. Orchestre.
+Jean-Claude Martineau,jean claude martineau,jean-claude-martineau,solo,male,verified_haitian,HT,"Chanson, Poésie musicale",inactive,,,,,PROBABLE,72,Poète/chanteur haïtien. Frontière chanson/poésie.
+Ayizan,ayizan,ayizan,group,group,verified_haitian_group,HT,"Racine",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe racine haïtien historique. Années 80-90.
+Foula,foula,foula,group,group,verified_haitian_group,HT,"Racine",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Groupe racine haïtien.
+Koudjay,koudjay,koudjay,group,group,verified_haitian_group,HT,"Racine",active,,,,,VERIFIED,80,Groupe racine haïtien.
+Rara Soley,rara soley,rara-soley,group,group,verified_haitian_group,HT,"Rara, Racine",active,,,https://en.wikipedia.org/wiki/Rara,,VERIFIED,80,Groupe rara haïtien.
+Yole Dérose (batch ref),yole derose batch,yole-derose-2,solo,female,verified_haitian,HT,"Chanson",inactive,,,,,DUPLICATE,0,Déjà dans batch-005.
+Castera Bazile,castera bazile,castera-bazile,solo,male,verified_haitian,HT,"Chanson",inactive,,,,,PROBABLE,68,Artiste haïtien historique. Sources limitées.
+Raoul Denis Sr,raoul denis sr,raoul-denis-sr,solo,male,verified_haitian,HT,"Compas, Guitare",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Guitariste haïtien historique. Père de Raoul Denis Jr.
+Raoul Denis Jr,raoul denis jr,raoul-denis-jr,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,82,Guitariste/producteur haïtien. Fils de Raoul Denis Sr.
+Nikol Lévy,nikol levy,nikol-levy,solo,female,verified_haitian,HT,"Jazz, World",active,https://open.spotify.com/artist/1SQfYAVfwNIlYcXE7LGbbR,,,,VERIFIED,82,Chanteuse jazz haïtienne.
+Emmelie Prophète,emmelie prophete,emmelie-prophete,solo,female,verified_haitian,HT,"Chanson",active,,,,,PROBABLE,65,Écrivaine/chanteuse haïtienne. Activité musicale secondaire.
+Djazz La,djazz la,djazz-la,group,group,verified_haitian_group,HT,"Compas, Jazz",inactive,,,,,PROBABLE,68,Formation compas/jazz haïtienne. Sources limitées.
+Ensemble Aux Calebasses,ensemble aux calebasses,ensemble-aux-calebasses,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Orchestre compas haïtien historique.
+Super Choucoune,super choucoune,super-choucoune,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,82,Groupe mini-jazz haïtien historique.
+Caribbean Sextet,caribbean sextet,caribbean-sextet,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe compas haïtien basé à NYC. Années 70-80.
+Scorpio Universel,scorpio universel,scorpio-universel,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,84,Groupe compas haïtien.
+D.P. Express,dp express,dp-express,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,86,Dixie Plus Express. Groupe compas populaire années 70-80.
+Accolade de New York,accolade de new york,accolade-new-york,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,VERIFIED,80,Groupe compas haïtien diaspora NYC.
+Les Difficiles,les difficiles,les-difficiles-2,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà dans batch-004.
+Gemini All Stars,gemini all stars,gemini-all-stars,group,group,verified_haitian_group,HT,"Compas",inactive,,,https://en.wikipedia.org/wiki/Music_of_Haiti,,VERIFIED,82,Groupe compas haïtien.
+Les Vikings d'Haïti,les vikings dhaiti,les-vikings-dhaiti,group,group,verified_haitian_group,HT,"Compas, Mini-Jazz",inactive,,,https://en.wikipedia.org/wiki/Mini-jazz,,VERIFIED,84,Groupe mini-jazz haïtien historique.

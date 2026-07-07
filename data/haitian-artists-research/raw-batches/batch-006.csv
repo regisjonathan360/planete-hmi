@@ -1,0 +1,50 @@
+artist_name,normalized_name,slug,artist_type,gender_or_group,haitian_status,birth_country,genres,active_status,spotify_url,youtube_channel_url,haitian_evidence_url,music_evidence_url,verification_status,confidence_score,notes
+Kai,kai,kai-ht,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,80,Artiste compas haïtien génération 2010. Slug distinctif.
+Ti Lunet,ti lunet,ti-lunet,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,80,Chanteur compas haïtien émergent.
+Sanders Jean,sanders jean,sanders-jean,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,72,Artiste compas haïtien. Sources limitées.
+Roro (compas),roro,roro-compas,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien. Sources limitées.
+Tjaze,tjaze,tjaze,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,72,Artiste compas haïtien émergent. Sources limitées.
+Gabel Tony,gabel tony,gabel-tony,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien associé à Gabel. Sources limitées.
+Pouchon Duverger,pouchon duverger,pouchon-duverger,solo,male,verified_haitian,HT,"Compas",active,,,,,VERIFIED,82,Chanteur compas haïtien. Ex-Skandal.
+Reginald Cangé,reginald cange,reginald-cange,solo,male,verified_haitian,HT,"Compas",active,https://open.spotify.com/artist/4fQIHCKjdTNqNSwJ4QGK1a,,,,VERIFIED,82,Chanteur compas haïtien.
+Amos Coulanges,amos coulanges,amos-coulanges,solo,male,verified_haitian,HT,"Compas, Zouk",active,,,,,VERIFIED,80,Chanteur compas/zouk haïtien.
+Belo (jeune génération),belo jeune,belo-jeune,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,65,Homonyme potentiel avec BelO (batch-001). À clarifier.
+Daan Junior,daan junior,daan-junior,solo,male,verified_haitian_diaspora,HT,"Zouk, Compas",active,https://open.spotify.com/artist/4XwGqRH0xaGHxXkDQxmCx9,,,,VERIFIED,84,Chanteur zouk/compas haïtien. Diaspora.
+Bic Tizon Dife,bic tizon dife,bic-tizon-dife,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,VERIFIED,80,Rappeur haïtien. Groupe Barikad Crew.
+Klass (Richie solo),klass richie solo,klass-richie-solo,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Richie déjà dans batch-005.
+Sak Pase Ayiti,sak pase ayiti,sak-pase-ayiti,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,65,Groupe compas haïtien. Sources limitées.
+Team Lòbèy,team lobey,team-lobey,group,group,verified_haitian_group,HT,"Rabòday",active,,,,,VERIFIED,80,Collectif rabòday haïtien.
+Fréro,frero,frero-ht,solo,male,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,70,Artiste compas haïtien. Sources limitées.
+Reynaldo,reynaldo,reynaldo-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien émergent. Sources limitées.
+Tonton David,tonton david,tonton-david,solo,male,verified_haitian_diaspora,FR,"Reggae, Ragga",inactive,,,https://en.wikipedia.org/wiki/Tonton_David,https://en.wikipedia.org/wiki/Tonton_David,VERIFIED,88,David Grammont. Né à Paris de parents haïtiens. Décédé 2021.
+Wyclef (Carnival Compas),wyclef carnival,wyclef-carnival,solo,male,verified_haitian_diaspora,HT,"Compas",active,,,,,DUPLICATE,0,Wyclef Jean déjà dans batch-001.
+Élisabeth Préval,elisabeth preval,elisabeth-preval,solo,female,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,68,Artiste haïtienne. Sources limitées.
+Tifane,tifane,tifane,solo,female,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,80,Chanteuse compas haïtienne.
+Alan Cavé (solo),alan cave solo,alan-cave-solo,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Déjà dans batch-002.
+Rayne,rayne,rayne-ht,solo,female,verified_haitian,HT,"Pop, R&B",active,,,,,PROBABLE,70,Artiste pop haïtienne. Sources limitées.
+Flav (Rockfam),flav rockfam,flav-rockfam,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,DUPLICATE,0,Flav déjà dans batch-004.
+Val Seri,val seri,val-seri,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Nu-Look (Jbeatz solo),nulook jbeatz,nulook-jbeatz,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Jbeatz déjà dans batch-002.
+Mikado,mikado,mikado-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien. Sources limitées.
+Jako (Ti-Jako),jako,jako-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Larose,larose,larose-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,70,Artiste compas haïtien. Sources limitées.
+Michael Guirand,michael guirand,michael-guirand,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Carimi,,VERIFIED,85,Ex-membre de Carimi. Chanteur compas.
+Fabe,fabe,fabe-ht,solo,male,verified_haitian_diaspora,FR,"Hip-Hop",inactive,https://open.spotify.com/artist/2swhccQxVq11XJ7TjByIVY,,https://en.wikipedia.org/wiki/Fabe,https://en.wikipedia.org/wiki/Fabe,VERIFIED,85,Rappeur français d'origine haïtienne. Paris.
+Milca,milca,milca,solo,female,verified_haitian,HT,"Compas, Pop",active,,,,,VERIFIED,80,Chanteuse compas haïtienne.
+Skah Shah #1,skah shah 1,skah-shah-1,group,group,verified_haitian_group,HT,"Compas",inactive,,,,,DUPLICATE,0,Déjà dans batch-004 comme Skah Shah.
+Kado,kado,kado-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Réginald (Djakout),reginald djakout,reginald-djakout,solo,male,verified_haitian,HT,"Compas",active,,,https://en.wikipedia.org/wiki/Djakout_Mizik,,VERIFIED,82,Chanteur compas. Membre Djakout #1.
+Dener,dener,dener-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Même que Dener Ceide (batch-002).
+Krezi Mizik,krezi mizik,krezi-mizik,group,group,verified_haitian_group,HT,"Gospel, Worship",active,,,,,VERIFIED,82,Groupe gospel haïtien populaire.
+Kite-M La,kite m la,kite-m-la,group,group,verified_haitian_group,HT,"Compas",active,,,,,PROBABLE,65,Groupe compas haïtien. Sources limitées.
+Gazzman Pierre,gazzman pierre,gazzman-pierre,solo,male,verified_haitian,HT,"Compas",active,,,,,DUPLICATE,0,Même que Gazzman Couleur (batch-002).
+Johnny Francois,johnny francois,johnny-francois,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
+Orlane,orlane,orlane,solo,female,verified_haitian_diaspora,FR,"Zouk, Pop",active,https://open.spotify.com/artist/7wBJh4f1TAhPn3s1WlCLTD,,,,VERIFIED,82,Chanteuse zouk française d'origine haïtienne.
+Fabrice Rouzier,fabrice rouzier,fabrice-rouzier,solo,male,verified_haitian,HT,"Jazz, Compas",active,,,,,VERIFIED,82,Bassiste/compositeur jazz haïtien.
+Zèklè,zekle,zekle,group,group,verified_haitian_group,HT,"Compas, Jazz",active,,,,,PROBABLE,70,Groupe compas/jazz haïtien. Sources limitées.
+Marc Antoine,marc antoine,marc-antoine-ht,solo,male,verified_haitian_diaspora,HT,"Pop, R&B",active,https://open.spotify.com/artist/3bCnXLBEGE2rFC6yqm3OEH,,https://en.wikipedia.org/wiki/Marc_Antoine_(musician),,PROBABLE,72,Guitariste pop. Origine haïtienne partielle. À confirmer.
+Bel Jazz,bel jazz,bel-jazz,group,group,verified_haitian_group,HT,"Compas, Jazz",active,,,,,PROBABLE,68,Groupe compas/jazz haïtien. Sources limitées.
+Tèt Dwat,tet dwat,tet-dwat,solo,male,verified_haitian,HT,"Rap Kreyòl",active,,,,,PROBABLE,70,Rappeur haïtien. Sources limitées.
+Manouchka,manouchka,manouchka-ht,solo,female,verified_haitian,HT,"Compas, Pop",active,,,,,PROBABLE,72,Chanteuse haïtienne. Sources limitées.
+Tamara Suffren,tamara suffren,tamara-suffren-2,solo,female,verified_haitian,HT,"Pop",active,,,,,DUPLICATE,0,Déjà dans batch-003.
+Daly,daly,daly-ht,solo,male,verified_haitian,HT,"Compas",active,,,,,PROBABLE,68,Artiste compas haïtien. Sources limitées.
