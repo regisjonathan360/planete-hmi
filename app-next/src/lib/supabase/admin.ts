@@ -1,10 +1,7 @@
 /**
- * Client Supabase administrateur (service role) — SERVEUR UNIQUEMENT.
- *
- * ⚠️ La clé secrète contourne les politiques RLS. Elle ne doit JAMAIS
- * être importée dans du code exécuté côté navigateur, ni exposée via
- * une variable NEXT_PUBLIC_*. Réservée aux Route Handlers / actions
- * serveur / Edge Functions de confiance.
+ * Client Supabase service-role — SERVEUR UNIQUEMENT.
+ * Contourne les RLS. Utilisé par les routes API internes et les crons.
+ * Ne jamais exposer côté navigateur.
  */
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
@@ -14,7 +11,7 @@ export function createAdminClient() {
   const secret = process.env.SUPABASE_SECRET_KEY;
   if (!url || !secret) {
     throw new Error(
-      "Configuration Supabase admin manquante (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SECRET_KEY)."
+      "NEXT_PUBLIC_SUPABASE_URL ou SUPABASE_SECRET_KEY manquant."
     );
   }
   return createClient(url, secret, {
