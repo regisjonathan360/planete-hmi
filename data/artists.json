@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-07T08:29:45.540Z",
+    "genereLe": "2026-07-08T07:35:53.850Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg",
       "topTitre": "Apiye (feat. Zile)",
       "metriques": {
-        "deezerFans": 8894,
+        "deezerFans": 8895,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 483849,
+        "deezerFans": 484009,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Safe",
       "metriques": {
-        "deezerFans": 10273,
+        "deezerFans": 10274,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -90,7 +90,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
       "topTitre": "ONE TRACK MIND (PART II)",
       "metriques": {
-        "deezerFans": 30793,
+        "deezerFans": 30880,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -101,7 +101,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 40.2
+      "scoreHMI": 40.3
     },
     {
       "nom": "Wanito",
@@ -164,9 +164,9 @@
       "nom": "Belo",
       "genre": "Reggae",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
-      "topTitre": "Procura-se Um Amor (Ao Vivo)",
+      "topTitre": "Ainda Gosto de Você / Já Era",
       "metriques": {
-        "deezerFans": 527452,
+        "deezerFans": 527562,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg",
       "topTitre": "100,000",
       "metriques": {
-        "deezerFans": 37486,
+        "deezerFans": 37501,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -253,7 +253,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 42.5
+      "scoreHMI": 42.6
     }
   ]
 }
