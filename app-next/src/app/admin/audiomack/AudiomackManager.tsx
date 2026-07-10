@@ -75,44 +75,25 @@ export function AudiomackManager({
     setIsCollecting(true);
     setCollectResult(null);
     try {
-      // Étape 1 : scraper la page Audiomack (peut prendre 5-15s)
-      notify("Scraping Audiomack en cours…");
-      const scrapeRes = await fetch("/api/admin/charts/scrape", {
+      notify("Lancement de la collecte…");
+      const res = await fetch("/api/admin/charts/collect-via-github", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sourceKey }),
       });
-      const scrapeJson = await scrapeRes.json();
+      const json = await res.json();
 
-      if (!scrapeRes.ok || !scrapeJson.ok) {
-        setCollectResult({ status: "error", error: scrapeJson.error ?? "Échec du scraping Audiomack." });
-        notify(scrapeJson.error ?? "Échec du scraping Audiomack.", true);
-        return;
-      }
-
-      // Étape 2 : enregistrer les entrées en base (inserts Supabase)
-      notify("Enregistrement en base…");
-      const collectRes = await fetch("/api/admin/charts/collect", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sourceKey,
-          entries: scrapeJson.entries,
-          sourceUpdatedAt: scrapeJson.sourceUpdatedAt,
-        }),
-      });
-      const collectJson = await collectRes.json();
-
-      if (!collectRes.ok || collectJson.status === "error") {
-        setCollectResult({ status: "error", error: collectJson.error ?? "Erreur lors de l'enregistrement." });
-        notify(collectJson.error ?? "Erreur lors de l'enregistrement.", true);
+      if (!res.ok || json.status === "error") {
+        setCollectResult({ status: "error", error: json.error ?? "Erreur lors de la collecte." });
+        notify(json.error ?? "Erreur lors de la collecte.", true);
       } else {
-        setCollectResult(collectJson);
-        notify(collectJson.message ?? "Collecte réussie.");
-        startTransition(() => router.refresh());
+        setCollectResult(json);
+        notify(json.message ?? "Collecte lancée !");
+        // Rafraîchir automatiquement après 60s
+        setTimeout(() => startTransition(() => router.refresh()), 60000);
       }
     } catch {
-      setCollectResult({ status: "error", error: "Erreur de connexion au serveur. La requête a peut-être timeout." });
+      setCollectResult({ status: "error", error: "Erreur de connexion au serveur." });
       notify("Erreur de connexion au serveur.", true);
     } finally {
       setIsCollecting(false);

@@ -1,0 +1,208 @@
+-- =========================================================
+-- Planete HMI - Comptes artistes et connexions TikTok OAuth
+-- Les jetons sont chiffres par l'application avant insertion.
+-- Aucune table de cette migration n'est lisible depuis le navigateur.
+-- =========================================================
+
+create table public.artist_accounts (
+  user_id uuid primary key references auth.users (id) on delete cascade,
+  artist_id uuid references public.artists (id) on delete set null,
+  contact_email text,
+  display_name text not null,
+  claim_status text not null default 'unsubmitted'
+    check (claim_status in ('unsubmitted', 'pending', 'approved', 'rejected')),
+  claim_submitted_at timestamptz,
+  claim_reviewed_at timestamptz,
+  claim_reviewed_by uuid references auth.users (id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (char_length(display_name) between 1 and 120)
+);
+
+comment on table public.artist_accounts is
+  'Compte Planet HMI d un artiste et demande de rattachement a une fiche artiste.';
+
+create unique index artist_accounts_approved_artist_uidx
+  on public.artist_accounts (artist_id)
+  where artist_id is not null and claim_status = 'approved';
+
+create index artist_accounts_claim_status_idx
+  on public.artist_accounts (claim_status, claim_submitted_at desc);
+
+create table public.artist_tiktok_connections (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null unique
+    references public.artist_accounts (user_id) on delete cascade,
+  artist_id uuid references public.artists (id) on delete set null,
+  tiktok_open_id text not null unique,
+  tiktok_union_id text,
+  username text,
+  display_name text not null,
+  avatar_url text,
+  bio_description text,
+  profile_deep_link text,
+  is_verified boolean not null default false,
+  follower_count bigint not null default 0 check (follower_count >= 0),
+  following_count bigint not null default 0 check (following_count >= 0),
+  likes_count bigint not null default 0 check (likes_count >= 0),
+  video_count bigint not null default 0 check (video_count >= 0),
+  scopes text[] not null default '{}',
+  access_token_encrypted text not null,
+  refresh_token_encrypted text not null,
+  access_token_expires_at timestamptz not null,
+  refresh_token_expires_at timestamptz not null,
+  status text not null default 'active'
+    check (status in ('active', 'reauthorization_required', 'revoked', 'error')),
+  last_synced_at timestamptz,
+  last_sync_error text,
+  connected_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+comment on table public.artist_tiktok_connections is
+  'Autorisations TikTok accordees par les artistes. Les jetons sont chiffres cote serveur.';
+comment on column public.artist_tiktok_connections.access_token_encrypted is
+  'Enveloppe AES-256-GCM produite par le serveur. Ne contient jamais de jeton en clair.';
+
+create unique index artist_tiktok_connections_union_id_uidx
+  on public.artist_tiktok_connections (tiktok_union_id)
+  where tiktok_union_id is not null;
+
+create index artist_tiktok_connections_status_idx
+  on public.artist_tiktok_connections (status, last_synced_at);
+
+create index artist_tiktok_connections_artist_id_idx
+  on public.artist_tiktok_connections (artist_id)
+  where artist_id is not null;
+
+create table public.artist_tiktok_videos (
+  video_id text primary key,
+  connection_id uuid not null
+    references public.artist_tiktok_connections (id) on delete cascade,
+  artist_id uuid references public.artists (id) on delete set null,
+  title text,
+  video_description text,
+  create_time timestamptz not null,
+  cover_image_url text,
+  share_url text,
+  embed_link text,
+  duration_seconds integer check (duration_seconds is null or duration_seconds >= 0),
+  width integer check (width is null or width > 0),
+  height integer check (height is null or height > 0),
+  view_count bigint not null default 0 check (view_count >= 0),
+  like_count bigint not null default 0 check (like_count >= 0),
+  comment_count bigint not null default 0 check (comment_count >= 0),
+  share_count bigint not null default 0 check (share_count >= 0),
+  is_available boolean not null default true,
+  last_synced_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+comment on table public.artist_tiktok_videos is
+  'Videos publiques retournees par Display API pour un compte TikTok consentant.';
+
+create index artist_tiktok_videos_connection_idx
+  on public.artist_tiktok_videos (connection_id, create_time desc);
+
+create index artist_tiktok_videos_artist_idx
+  on public.artist_tiktok_videos (artist_id, create_time desc)
+  where artist_id is not null;
+
+create table public.artist_tiktok_video_snapshots (
+  id bigint generated by default as identity primary key,
+  video_id text not null
+    references public.artist_tiktok_videos (video_id) on delete cascade,
+  connection_id uuid not null
+    references public.artist_tiktok_connections (id) on delete cascade,
+  snapshot_date date not null default (timezone('utc', now())::date),
+  view_count bigint not null check (view_count >= 0),
+  like_count bigint not null check (like_count >= 0),
+  comment_count bigint not null check (comment_count >= 0),
+  share_count bigint not null check (share_count >= 0),
+  observed_at timestamptz not null default now(),
+  unique (video_id, snapshot_date)
+);
+
+comment on table public.artist_tiktok_video_snapshots is
+  'Un releve quotidien des metriques TikTok servant au calcul de croissance.';
+
+create index artist_tiktok_video_snapshots_connection_idx
+  on public.artist_tiktok_video_snapshots (connection_id, snapshot_date desc);
+
+create trigger trg_artist_accounts_updated
+  before update on public.artist_accounts
+  for each row execute function public.set_updated_at();
+
+create trigger trg_artist_tiktok_connections_updated
+  before update on public.artist_tiktok_connections
+  for each row execute function public.set_updated_at();
+
+create trigger trg_artist_tiktok_videos_updated
+  before update on public.artist_tiktok_videos
+  for each row execute function public.set_updated_at();
+
+-- Revue atomique d'une demande de rattachement, appelee uniquement avec
+-- la cle service_role depuis l'API d'administration.
+create or replace function public.review_artist_claim(
+  target_user_id uuid,
+  decision text,
+  reviewer_id uuid
+)
+returns void
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  requested_artist_id uuid;
+begin
+  if decision not in ('approved', 'rejected') then
+    raise exception 'Decision invalide';
+  end if;
+
+  select artist_id
+    into requested_artist_id
+    from public.artist_accounts
+    where user_id = target_user_id
+      and claim_status = 'pending'
+    for update;
+
+  if not found or requested_artist_id is null then
+    raise exception 'Demande artiste introuvable';
+  end if;
+
+  update public.artist_accounts
+     set claim_status = decision,
+         claim_reviewed_at = now(),
+         claim_reviewed_by = reviewer_id
+   where user_id = target_user_id;
+
+  update public.artist_tiktok_connections
+     set artist_id = case when decision = 'approved' then requested_artist_id else null end
+   where user_id = target_user_id;
+end;
+$$;
+
+-- Defense en profondeur : le navigateur n'accede jamais directement a ces
+-- tables. Toutes les lectures/ecritures passent par des routes serveur qui
+-- revalident l'utilisateur avec Supabase Auth.
+alter table public.artist_accounts enable row level security;
+alter table public.artist_tiktok_connections enable row level security;
+alter table public.artist_tiktok_videos enable row level security;
+alter table public.artist_tiktok_video_snapshots enable row level security;
+
+revoke all on table public.artist_accounts from anon, authenticated;
+revoke all on table public.artist_tiktok_connections from anon, authenticated;
+revoke all on table public.artist_tiktok_videos from anon, authenticated;
+revoke all on table public.artist_tiktok_video_snapshots from anon, authenticated;
+
+grant all on table public.artist_accounts to service_role;
+grant all on table public.artist_tiktok_connections to service_role;
+grant all on table public.artist_tiktok_videos to service_role;
+grant all on table public.artist_tiktok_video_snapshots to service_role;
+grant usage, select on sequence public.artist_tiktok_video_snapshots_id_seq to service_role;
+
+revoke all on function public.review_artist_claim(uuid, text, uuid) from public;
+grant execute on function public.review_artist_claim(uuid, text, uuid) to service_role;
