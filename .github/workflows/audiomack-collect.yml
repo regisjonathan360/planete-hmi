@@ -4,7 +4,7 @@ on:
   # Tous les lundis à 06:00 UTC (classement hebdomadaire)
   schedule:
     - cron: "0 6 * * 1"
-  # Déclenchement manuel depuis l'onglet Actions GitHub
+  # Déclenchement manuel depuis l'onglet Actions GitHub (ou via l'admin)
   workflow_dispatch:
 
 jobs:
@@ -19,8 +19,18 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Scraper Audiomack et envoyer à Vercel
+      - name: Installer les dépendances
+        working-directory: app-next
+        run: npm ci
+
+      - name: Installer Chromium (Playwright)
+        working-directory: app-next
+        run: npx playwright install --with-deps chromium
+
+      - name: Collecter 100 musiques via navigateur headless
+        working-directory: app-next
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           PROD_URL: https://planete-hmi.vercel.app
-        run: node app-next/scripts/collect-local.mjs
+          TARGET_COUNT: "100"
+        run: node scripts/collect-playwright.mjs
