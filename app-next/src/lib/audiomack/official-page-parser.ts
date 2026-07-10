@@ -155,9 +155,59 @@ function extractTrackArrays(text: string): AudiomackRawTrack[][] {
 }
 
 export function extractAudiomackTracksFromHtml(html: string): AudiomackRawTrack[] {
+  // Format 1 : page /charts?country=haiti (HTML classique avec ChartCard)
+  const chartCardTracks = extractFromChartsPage(html);
+  if (chartCardTracks.length > 0) return chartCardTracks;
+
+  // Format 2 : page /geo-charts/playlist/haiti (React Flight / self.__next_f.push)
   const flightText = extractFlightText(html);
   const candidates = extractTrackArrays(flightText).sort((a, b) => b.length - a.length);
   return candidates[0] ?? [];
+}
+
+/** Extraction depuis la page /charts (HTML avec ChartCard, MusicCard-artist, MusicCard-title) */
+function extractFromChartsPage(html: string): AudiomackRawTrack[] {
+  const tracks: AudiomackRawTrack[] = [];
+  // Pattern: <div class="ChartRank"...>N.</div>...<MusicCard-artist-link>ARTIST</a>...<MusicCard-title-link>TITLE</a>...<img src="ARTWORK"/>
+  const cardPattern = /<div[^>]*class="ChartCard"[^>]*>([\s\S]*?)<\/article>/gi;
+  let cardMatch;
+
+  while ((cardMatch = cardPattern.exec(html)) !== null) {
+    const card = cardMatch[1];
+
+    // Rang
+    const rankMatch = card.match(/<div[^>]*class="ChartRank"[^>]*>\s*(\d+)\./);
+    const rank = rankMatch ? parseInt(rankMatch[1], 10) : tracks.length + 1;
+
+    // Titre (aria-label="Listen to TITLE")
+    const titleMatch = card.match(/aria-label="Listen to ([^"]+)"/);
+    const title = titleMatch ? htmlDecode(titleMatch[1]) : null;
+
+    // Artiste (MusicCard-artist-link ou data-testid="MusicCard-artist")
+    const artistMatch = card.match(/data-testid="MusicCard-artist"[^>]*>([^<]+)</);
+    const artist = artistMatch ? htmlDecode(artistMatch[1].trim()) : null;
+
+    // Artwork (img src dans CardImage)
+    const artworkMatch = card.match(/class="Img CardImage"[^>]*src="([^"]+)"/);
+    const artwork = artworkMatch ? artworkMatch[1] : null;
+
+    // URL slug (href du lien titre)
+    const hrefMatch = card.match(/data-testid="MusicCard-title"[^>]*href="([^"]+)"/);
+    const urlSlug = hrefMatch ? hrefMatch[1] : null;
+
+    if (title && artist) {
+      tracks.push({
+        title,
+        artist,
+        id: urlSlug ?? `chart-${rank}`,
+        image: artwork ?? undefined,
+        url_slug: urlSlug ?? undefined,
+        type: "song",
+      });
+    }
+  }
+
+  return tracks;
 }
 
 export function extractAudiomackMetaSongTitles(html: string): string[] {

@@ -7,7 +7,7 @@ export interface AudiomackHaitiChartSource {
   sourceUrl: string;
 }
 
-export const AUDIOMACK_HAITI_SOURCE_URL = "https://audiomack.com/geo-charts/playlist/haiti";
+export const AUDIOMACK_HAITI_SOURCE_URL = "https://audiomack.com/top/songs?country=haiti";
 export const AUDIOMACK_CHARTS_URL = "https://audiomack.com/charts";
 
 export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
