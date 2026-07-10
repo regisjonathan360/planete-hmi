@@ -11,7 +11,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-const USER_AGENT = "PlaneteHMI/1.0 (+https://planete-hmi-4eqk.vercel.app)";
+const USER_AGENT = "PlaneteHMI/1.0 (+https://planete-hmi.vercel.app)";
 const MAX_BATCH = 20;
 const FETCH_DELAY_MS = 400;
 

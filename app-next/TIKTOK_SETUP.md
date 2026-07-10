@@ -53,7 +53,7 @@ variables Production, Preview et Development de Vercel :
 ```env
 TIKTOK_CLIENT_KEY=
 TIKTOK_CLIENT_SECRET=
-TIKTOK_REDIRECT_URI=https://ton-domaine.com/api/tiktok/callback
+TIKTOK_REDIRECT_URI=https://planete-hmi.vercel.app/api/tiktok/callback
 TIKTOK_TOKEN_ENCRYPTION_KEY=
 TIKTOK_SYNC_MAX_PAGES=10
 CRON_SECRET=
