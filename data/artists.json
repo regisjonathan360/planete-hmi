@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-09T08:34:13.100Z",
+    "genereLe": "2026-07-10T08:28:42.437Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -11,10 +11,10 @@
     {
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg",
-      "topTitre": "Apiye (feat. Zile)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg",
+      "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 8897,
+        "deezerFans": 8900,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 484175,
+        "deezerFans": 484343,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -52,7 +52,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
       "topTitre": "Ayo Girl (Haitian Konpa Remix)",
       "metriques": {
-        "deezerFans": 7863,
+        "deezerFans": 7866,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Sere'm",
       "metriques": {
-        "deezerFans": 10277,
+        "deezerFans": 10284,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -88,9 +88,9 @@
       "nom": "Naïka",
       "genre": "Pop / R&B",
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
-      "topTitre": "ONE TRACK MIND (PART II)",
+      "topTitre": "ONE TRACK MIND",
       "metriques": {
-        "deezerFans": 30975,
+        "deezerFans": 31095,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -101,7 +101,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 40.3
+      "scoreHMI": 40.4
     },
     {
       "nom": "Wanito",
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg",
       "topTitre": "Lotto",
       "metriques": {
-        "deezerFans": 4894,
+        "deezerFans": 4897,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -158,15 +158,15 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 18.6
+      "scoreHMI": 18.7
     },
     {
       "nom": "Belo",
       "genre": "Reggae",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
-      "topTitre": "Inconsequente / Aluga-se Um Coração (Ao Vivo)",
+      "topTitre": "Ainda Gosto de Você / Já Era",
       "metriques": {
-        "deezerFans": 527690,
+        "deezerFans": 527834,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -240,9 +240,9 @@
       "nom": "Kevinna",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg",
-      "topTitre": "100,000",
+      "topTitre": "Badlands",
       "metriques": {
-        "deezerFans": 37525,
+        "deezerFans": 37534,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
