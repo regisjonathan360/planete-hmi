@@ -31,7 +31,7 @@ export function AuthForm({ nextPath, initialMessage }: AuthFormProps) {
     const displayName = String(form.get("displayName") ?? "").trim();
 
     if (!email || password.length < 8 || (mode === "signup" && !displayName)) {
-      setMessage("Verifie les informations saisies.");
+      setMessage("Vérifie les informations saisies.");
       setIsError(true);
       setBusy(false);
       return;
@@ -46,7 +46,7 @@ export function AuthForm({ nextPath, initialMessage }: AuthFormProps) {
         return;
       }
 
-      router.push(nextPath);
+      router.push(nextPath, { scroll: true });
       router.refresh();
       return;
     }
@@ -62,19 +62,19 @@ export function AuthForm({ nextPath, initialMessage }: AuthFormProps) {
     });
 
     if (error) {
-      setMessage("Ce compte ne peut pas etre cree pour le moment.");
+      setMessage("Ce compte ne peut pas être créé pour le moment.");
       setIsError(true);
       setBusy(false);
       return;
     }
 
     if (data.session) {
-      router.push(nextPath);
+      router.push(nextPath, { scroll: true });
       router.refresh();
       return;
     }
 
-    setMessage("Consulte ton e-mail pour confirmer la creation du compte.");
+    setMessage("Consulte ton e-mail pour confirmer la création du compte.");
     setBusy(false);
   }
 
@@ -101,7 +101,7 @@ export function AuthForm({ nextPath, initialMessage }: AuthFormProps) {
           aria-pressed={mode === "signup"}
           onClick={() => switchMode("signup")}
         >
-          Creer un compte
+          Créer un compte
         </button>
       </div>
 
@@ -140,7 +140,7 @@ export function AuthForm({ nextPath, initialMessage }: AuthFormProps) {
             ? "Patiente..."
             : mode === "login"
               ? "Se connecter"
-              : "Creer mon compte"}
+              : "Créer mon compte"}
         </button>
 
         <p

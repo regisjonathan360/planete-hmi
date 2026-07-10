@@ -5,19 +5,19 @@ import { AuthForm } from "./AuthForm";
 
 export const metadata: Metadata = {
   title: "Connexion artiste",
-  description: "Acces securise a l'espace artiste Planet HMI.",
+  description: "Accès sécurisé à l'espace artiste Planet HMI.",
 };
 
 export const dynamic = "force-dynamic";
 
+const ALLOWED_NEXT_PATHS = new Set(["/espace-artiste"]);
+
 function safeNextPath(value: string | undefined): string {
-  return value?.startsWith("/") && !value.startsWith("//")
-    ? value
-    : "/espace-artiste";
+  return value && ALLOWED_NEXT_PATHS.has(value) ? value : "/espace-artiste";
 }
 
 const NOTICE_MESSAGES: Record<string, string> = {
-  "signed-out": "Tu es maintenant deconnecte.",
+  "signed-out": "Tu es maintenant déconnecté.",
   "confirmation-error": "Le lien de confirmation n'est plus valide.",
 };
 
@@ -39,7 +39,7 @@ export default async function ArtistLoginPage({
       <section className="artist-auth-heading">
         <p className="artist-kicker">Espace artiste</p>
         <h1>Connexion Planet HMI</h1>
-        <p>Gere ton identite et tes donnees TikTok depuis un seul espace.</p>
+        <p>Gère ton identité et tes données TikTok depuis un seul espace.</p>
       </section>
       <AuthForm
         nextPath={nextPath}

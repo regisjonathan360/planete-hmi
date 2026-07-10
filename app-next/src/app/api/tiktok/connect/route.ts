@@ -1,12 +1,13 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { buildTikTokAuthorizationUrl } from "@/lib/tiktok/user-api";
+import {
+  buildTikTokAuthorizationUrl,
+  TIKTOK_OAUTH_STATE_COOKIE,
+} from "@/lib/tiktok/user-api";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-export const TIKTOK_OAUTH_STATE_COOKIE = "phmi_tiktok_oauth_state";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();

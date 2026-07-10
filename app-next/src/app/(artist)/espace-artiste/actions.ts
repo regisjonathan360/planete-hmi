@@ -39,6 +39,17 @@ export async function submitArtistClaimAction(formData: FormData) {
   }
 
   const admin = createAdminClient();
+  const { data: connection, error: connectionError } = await admin
+    .from("artist_tiktok_connections")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (connectionError || !connection) {
+    redirect("/espace-artiste?notice=claim-requires-tiktok");
+  }
+
   const { data: artist, error: artistError } = await admin
     .from("artists")
     .select("id")

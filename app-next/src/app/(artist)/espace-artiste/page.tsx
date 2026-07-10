@@ -49,27 +49,35 @@ interface TikTokVideoView {
 }
 
 const NOTICES: Record<string, { text: string; error?: boolean }> = {
-  "tiktok-connected": { text: "Compte TikTok connecte et synchronise." },
+  "tiktok-connected": { text: "Compte TikTok connecté et synchronisé." },
   "tiktok-connected-sync-pending": {
-    text: "Compte TikTok connecte. La premiere synchronisation sera relancee.",
+    text: "Compte TikTok connecté. La première synchronisation sera relancée.",
   },
-  "tiktok-synced": { text: "Donnees TikTok actualisees." },
-  "tiktok-disconnected": { text: "Connexion TikTok retiree." },
-  "claim-submitted": { text: "Demande de validation envoyee." },
-  "claim-already-approved": { text: "Ta fiche artiste est deja validee." },
-  "tiktok-denied": { text: "L'autorisation TikTok n'a pas ete accordee.", error: true },
-  "tiktok-invalid-state": { text: "La tentative de connexion a expire.", error: true },
-  "tiktok-missing-code": { text: "TikTok n'a pas termine la connexion.", error: true },
-  "tiktok-connect-error": { text: "La connexion TikTok a echoue.", error: true },
+  "tiktok-synced": { text: "Données TikTok actualisées." },
+  "tiktok-disconnected": { text: "Connexion TikTok retirée." },
+  "claim-submitted": { text: "Demande de validation envoyée." },
+  "claim-already-approved": { text: "Ta fiche artiste est déjà validée." },
+  "tiktok-denied": { text: "L'autorisation TikTok n'a pas été accordée.", error: true },
+  "tiktok-invalid-state": { text: "La tentative de connexion a expiré.", error: true },
+  "tiktok-missing-code": { text: "TikTok n'a pas terminé la connexion.", error: true },
+  "tiktok-connect-error": { text: "La connexion TikTok a échoué.", error: true },
   "tiktok-already-linked": {
-    text: "Ce compte TikTok est deja lie a un autre compte Planet HMI.",
+    text: "Ce compte TikTok est déjà lié à un autre compte Planète HMI.",
     error: true,
   },
-  "tiktok-sync-error": { text: "Les donnees TikTok n'ont pas pu etre actualisees.", error: true },
+  "tiktok-disconnect-first": {
+    text: "Retire d'abord le compte TikTok actuel avant d'en connecter un autre.",
+    error: true,
+  },
+  "tiktok-sync-error": { text: "Les données TikTok n'ont pas pu être actualisées.", error: true },
   "tiktok-unavailable": { text: "La connexion TikTok n'est pas encore disponible.", error: true },
-  "session-expired": { text: "Ta session a expire. Reconnecte-toi.", error: true },
-  "claim-invalid": { text: "La fiche artiste selectionnee n'est pas valide.", error: true },
-  "claim-error": { text: "La demande de validation n'a pas pu etre envoyee.", error: true },
+  "session-expired": { text: "Ta session a expiré. Reconnecte-toi.", error: true },
+  "claim-invalid": { text: "La fiche artiste sélectionnée n'est pas valide.", error: true },
+  "claim-requires-tiktok": {
+    text: "Une connexion TikTok active est requise pour envoyer la demande.",
+    error: true,
+  },
+  "claim-error": { text: "La demande de validation n'a pas pu être envoyée.", error: true },
 };
 
 function formatCount(value: number): string {
@@ -87,10 +95,10 @@ function formatDate(value: string | null): string {
 }
 
 function claimLabel(status: string): string {
-  if (status === "approved") return "Fiche validee";
+  if (status === "approved") return "Fiche validée";
   if (status === "pending") return "Validation en cours";
-  if (status === "rejected") return "Demande a corriger";
-  return "Fiche non revendiquee";
+  if (status === "rejected") return "Demande à corriger";
+  return "Fiche non revendiquée";
 }
 
 export default async function ArtistDashboardPage({
@@ -154,7 +162,7 @@ export default async function ArtistDashboardPage({
         </div>
         <form action={signOutArtistAction}>
           <button className="btn btn-ghost" type="submit">
-            Se deconnecter
+            Se déconnecter
           </button>
         </form>
       </header>
@@ -168,7 +176,7 @@ export default async function ArtistDashboardPage({
       <section className="artist-section" aria-labelledby="identity-title">
         <div className="artist-section-heading">
           <div>
-            <p className="artist-kicker">Identite Planet HMI</p>
+            <p className="artist-kicker">Identité Planète HMI</p>
             <h2 id="identity-title">Validation de la fiche</h2>
           </div>
           <span className={`artist-status artist-status--${account.claim_status}`}>
@@ -178,18 +186,18 @@ export default async function ArtistDashboardPage({
 
         {account.claim_status === "approved" && selectedArtist ? (
           <p className="artist-section-copy">
-            Ce compte est rattache a la fiche <strong>{selectedArtist.name}</strong>.
+            Ce compte est rattaché à la fiche <strong>{selectedArtist.name}</strong>.
           </p>
         ) : account.claim_status === "pending" && selectedArtist ? (
           <p className="artist-section-copy">
-            La demande pour <strong>{selectedArtist.name}</strong> est en cours de verification.
+            La demande pour <strong>{selectedArtist.name}</strong> est en cours de vérification.
           </p>
-        ) : connection ? (
+        ) : connection?.status === "active" ? (
           <form className="artist-claim-form" action={submitArtistClaimAction}>
             <label htmlFor="artistId">Fiche artiste</label>
             <select id="artistId" name="artistId" defaultValue={account.artist_id ?? ""} required>
               <option value="" disabled>
-                Selectionner une fiche
+                Sélectionner une fiche
               </option>
               {(artistsData ?? []).map((artist) => (
                 <option key={artist.id} value={artist.id}>
@@ -202,7 +210,11 @@ export default async function ArtistDashboardPage({
             </button>
           </form>
         ) : (
-          <p className="artist-section-copy">Connecte d&apos;abord ton compte TikTok.</p>
+          <p className="artist-section-copy">
+            {connection
+              ? "Actualise ou reconnecte ton compte TikTok avant d'envoyer une demande."
+              : "Connecte d'abord ton compte TikTok."}
+          </p>
         )}
       </section>
 
@@ -214,7 +226,7 @@ export default async function ArtistDashboardPage({
           </div>
           {connection && (
             <span className={`artist-status artist-status--${connection.status}`}>
-              {connection.status === "active" ? "Connecte" : "A reconnecter"}
+              {connection.status === "active" ? "Connecté" : "À reconnecter"}
             </span>
           )}
         </div>
@@ -230,7 +242,7 @@ export default async function ArtistDashboardPage({
               </a>
             ) : (
               <button className="btn btn-primary" type="button" disabled>
-                TikTok bientot disponible
+                TikTok bientôt disponible
               </button>
             )}
           </div>
@@ -239,7 +251,10 @@ export default async function ArtistDashboardPage({
             <div className="artist-tiktok-profile">
               <div className="artist-avatar" aria-hidden={!connection.avatar_url}>
                 {connection.avatar_url ? (
-                  <img src={connection.avatar_url} alt="" width={76} height={76} />
+                  <span
+                    className="artist-avatar-image"
+                    style={{ backgroundImage: `url(${connection.avatar_url})` }}
+                  />
                 ) : (
                   <span>{connection.display_name.slice(0, 1).toUpperCase()}</span>
                 )}
@@ -273,15 +288,15 @@ export default async function ArtistDashboardPage({
             </div>
 
             <div className="artist-metrics" aria-label="Statistiques du compte TikTok">
-              <Metric label="Abonnes" value={connection.follower_count} />
+              <Metric label="Abonnés" value={connection.follower_count} />
               <Metric label="Abonnements" value={connection.following_count} />
-              <Metric label="Likes recus" value={connection.likes_count} />
-              <Metric label="Videos" value={connection.video_count} />
+              <Metric label="Likes reçus" value={connection.likes_count} />
+              <Metric label="Vidéos" value={connection.video_count} />
             </div>
 
             <div className="artist-sync-meta">
-              <span>Derniere actualisation : {formatDate(connection.last_synced_at)}</span>
-              <span>{videoPermission ? "Videos autorisees" : "Autorisation videos manquante"}</span>
+              <span>Dernière actualisation : {formatDate(connection.last_synced_at)}</span>
+              <span>{videoPermission ? "Vidéos autorisées" : "Autorisation vidéos manquante"}</span>
             </div>
           </>
         )}
@@ -291,8 +306,8 @@ export default async function ArtistDashboardPage({
         <section className="artist-section artist-videos-section" aria-labelledby="videos-title">
           <div className="artist-section-heading">
             <div>
-              <p className="artist-kicker">Releves TikTok</p>
-              <h2 id="videos-title">Videos recentes</h2>
+              <p className="artist-kicker">Relevés TikTok</p>
+              <h2 id="videos-title">Vidéos récentes</h2>
             </div>
             <span className="artist-video-count">{videos.length}</span>
           </div>
@@ -300,8 +315,8 @@ export default async function ArtistDashboardPage({
           {videos.length === 0 ? (
             <div className="artist-empty-state">
               {videoPermission
-                ? "Aucune video publique recue pour le moment."
-                : "Reconnecte TikTok pour autoriser la lecture des videos."}
+                ? "Aucune vidéo publique reçue pour le moment."
+                : "Reconnecte TikTok pour autoriser la lecture des vidéos."}
             </div>
           ) : (
             <div className="artist-video-grid">
@@ -310,7 +325,7 @@ export default async function ArtistDashboardPage({
                 return (
                   <article className="artist-video" key={video.video_id}>
                     <div className="artist-video-copy">
-                      <h3>{video.title || video.video_description || "Video TikTok"}</h3>
+                      <h3>{video.title || video.video_description || "Vidéo TikTok"}</h3>
                       <p>{formatDate(video.create_time)}</p>
                     </div>
                     <dl className="artist-video-metrics">

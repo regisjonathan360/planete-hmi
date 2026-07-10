@@ -4,10 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 import {
   connectTikTokAccount,
   TikTokConnectionConflictError,
+  TikTokConnectionReplacementError,
 } from "@/lib/tiktok/connections";
-import { exchangeTikTokAuthorizationCode } from "@/lib/tiktok/user-api";
+import {
+  exchangeTikTokAuthorizationCode,
+  TIKTOK_OAUTH_STATE_COOKIE,
+} from "@/lib/tiktok/user-api";
 import { syncTikTokConnection } from "@/lib/tiktok/user-sync";
-import { TIKTOK_OAUTH_STATE_COOKIE } from "../connect/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -73,11 +76,12 @@ export async function GET(request: NextRequest) {
       userId: user.id,
       error: error instanceof Error ? error.message : "erreur inconnue",
     });
-    return dashboardRedirect(
-      request,
+    const notice =
       error instanceof TikTokConnectionConflictError
         ? "tiktok-already-linked"
-        : "tiktok-connect-error"
-    );
+        : error instanceof TikTokConnectionReplacementError
+          ? "tiktok-disconnect-first"
+          : "tiktok-connect-error";
+    return dashboardRedirect(request, notice);
   }
 }

@@ -21,6 +21,13 @@ export class TikTokConnectionConflictError extends Error {
   }
 }
 
+export class TikTokConnectionReplacementError extends Error {
+  constructor() {
+    super("Retire d'abord le compte TikTok deja connecte.");
+    this.name = "TikTokConnectionReplacementError";
+  }
+}
+
 function expiresAt(seconds: number): string {
   return new Date(Date.now() + seconds * 1000).toISOString();
 }
@@ -47,6 +54,20 @@ export async function connectTikTokAccount(
   if (conflictReadError) throw new Error(conflictReadError.message);
   if (sameTikTok && sameTikTok.user_id !== user.id) {
     throw new TikTokConnectionConflictError();
+  }
+
+  const { data: existingConnection, error: existingReadError } = await supabase
+    .from("artist_tiktok_connections")
+    .select("tiktok_open_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existingReadError) throw new Error(existingReadError.message);
+  if (
+    existingConnection &&
+    existingConnection.tiktok_open_id !== profile.open_id
+  ) {
+    throw new TikTokConnectionReplacementError();
   }
 
   const { data, error } = await supabase
