@@ -9,7 +9,9 @@ export function getStaticPageBody(filename: string): string {
   const filePath = path.join(process.cwd(), "static-pages", filename);
   const html = fs.readFileSync(filePath, "utf-8");
   const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  return bodyMatch ? bodyMatch[1] : html;
+  const body = bodyMatch ? bodyMatch[1] : html;
+  // Retirer les <script> tags du body — ils sont chargés via next/script
+  return body.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
 }
 
 /** Extrait les scripts (src) référencés dans le body. */

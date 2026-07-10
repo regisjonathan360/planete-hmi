@@ -68,6 +68,7 @@ export const mockProvider: AudiomackProvider = {
       title: track.title,
       artistName: track.artist,
       artworkUrl: null,
+      artistImageUrl: null,
       sourceTrackUrl: `https://audiomack.com/demo/song/mock-${index + 1}`,
       artistSlug: "demo",
       trackSlug: `mock-${index + 1}`,

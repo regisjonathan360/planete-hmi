@@ -1,1 +1,72 @@
 /* Global CSS géré par /assets/css/style.css (site statique porté) */
+
+/* --- Pages légales (Privacy, Terms) --- */
+
+.legal-page {
+  min-height: 100vh;
+  padding: 4rem 1.5rem;
+  background: var(--void, #0a0a14);
+  color: var(--cream, #f0ece2);
+}
+
+.legal-page__wrap {
+  max-width: 740px;
+  margin: 0 auto;
+}
+
+.legal-page__title {
+  font-family: var(--font-display, inherit);
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
+  color: var(--cream, #f0ece2);
+}
+
+.legal-page__updated {
+  font-size: 0.85rem;
+  color: var(--cream-dim, #a09e96);
+  margin-bottom: 2.5rem;
+}
+
+.legal-page section {
+  margin-bottom: 2rem;
+}
+
+.legal-page h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.6rem;
+  color: var(--cream, #f0ece2);
+}
+
+.legal-page h3 {
+  font-size: 1rem;
+  margin: 1rem 0 0.4rem;
+  color: var(--cream, #f0ece2);
+}
+
+.legal-page p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--cream-dim, #ccc9c0);
+  margin-bottom: 0.8rem;
+}
+
+.legal-page ul {
+  padding-left: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.legal-page li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--cream-dim, #ccc9c0);
+  margin-bottom: 0.3rem;
+}
+
+.legal-page a {
+  color: var(--flame-orange, #e8732a);
+  text-decoration: underline;
+}
+
+.legal-page strong {
+  color: var(--cream, #f0ece2);
+}

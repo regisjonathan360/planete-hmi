@@ -12,7 +12,7 @@ export function StaticPage({ filename }: { filename: string }) {
 
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: body }} />
+      <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: body }} />
       {scripts.map((src) => (
         <Script key={src} src={src} strategy="afterInteractive" />
       ))}

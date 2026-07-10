@@ -60,7 +60,7 @@ export const SOURCE_KEY_PAR_SLUG: Record<string, string> = {
   spotify: "spotify_haiti_popular",
   audiomack: "audiomack_haiti_weekly100",
   "apple-music": "apple_hmi_worldwide",
-  tiktok: "tiktok_haiti_sounds",
+  tiktok: "tiktok_haiti_global",
 };
 
 /** Libellé + variante du badge de méthode (mode d'ingestion / péremption). */

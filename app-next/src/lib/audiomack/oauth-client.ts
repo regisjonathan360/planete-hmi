@@ -29,7 +29,7 @@ function generateSignature(
   params: Record<string, string>,
   consumerSecret: string
 ): string {
-  const sortedKeys = Object.keys(params).sort();
+  const sortedKeys = Object.keys(params).sort((a, b) => a.localeCompare(b));
   const paramString = sortedKeys.map((k) => `${percentEncode(k)}=${percentEncode(params[k])}`).join("&");
   const baseString = `${method.toUpperCase()}&${percentEncode(url)}&${percentEncode(paramString)}`;
   const signingKey = `${percentEncode(consumerSecret)}&`; // No token secret (2-legged)

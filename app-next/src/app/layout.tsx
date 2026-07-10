@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     template: "%s — Planète HMI",
   },
   description: "Planète HMI : classements, profils d'artistes et découverte de la musique haïtienne. Là où les étoiles de la musique haïtienne deviennent des légendes.",
-  metadataBase: new URL("https://planete-hmi-4eqk.vercel.app"),
+  metadataBase: new URL("https://planete-hmi.vercel.app"),
   openGraph: {
     title: "Planète HMI — Haitian Music Index",
     description: "Charts, artistes, districts et HMI Shorts. L'univers de référence de la musique haïtienne.",
@@ -21,8 +21,11 @@ export const metadata: Metadata = {
     images: ["/image/social/planet-hmi-social.png"],
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: "https://planete-hmi-4eqk.vercel.app" },
+  alternates: { canonical: "https://planete-hmi.vercel.app" },
 };
+
+import { StageLightsLoader } from "@/components/StageLightsLoader";
+import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -33,13 +36,18 @@ export default function RootLayout({
     <html lang="fr">
       <head>
         <meta name="theme-color" content="#08070d" />
+        <meta name="tiktok-developers-site-verification" content="doqYMyXAJOluVvI8j618siiivDgAHx0x" />
         <link rel="icon" type="image/svg+xml" href="/brand/planet-hmi-icon-dark.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="/assets/css/style.css" />
       </head>
-      <body>{children}</body>
+      <body>
+        <StageLightsLoader />
+        {children}
+        <Script src="/assets/js/main.js" strategy="afterInteractive" />
+      </body>
     </html>
   );
 }

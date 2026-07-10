@@ -8,6 +8,7 @@ export interface AudiomackNormalizedEntry {
   title: string;
   artistName: string;
   artworkUrl: string | null;
+  artistImageUrl: string | null;
   sourceTrackUrl: string;
   artistSlug: string | null;
   trackSlug: string | null;
@@ -52,6 +53,9 @@ export interface AudiomackRawTrack {
   };
   uploader?: {
     url_slug?: string;
+    image?: string | null;
+    image_base?: string | null;
+    thumbnail?: string | null;
     [key: string]: unknown;
   };
   images?: {
