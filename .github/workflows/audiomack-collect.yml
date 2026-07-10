@@ -4,8 +4,17 @@ on:
   # Tous les lundis à 06:00 UTC (classement hebdomadaire)
   schedule:
     - cron: "0 6 * * 1"
-  # Déclenchement manuel depuis l'onglet Actions GitHub (ou via l'admin)
+  # Déclenchement manuel (onglet Actions ou via l'admin)
   workflow_dispatch:
+    inputs:
+      source:
+        description: "Source de collecte : chart (Top Songs) ou playlist (Weekly)"
+        required: false
+        default: "chart"
+        type: choice
+        options:
+          - chart
+          - playlist
 
 jobs:
   collect:
@@ -33,4 +42,5 @@ jobs:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           PROD_URL: https://planete-hmi.vercel.app
           TARGET_COUNT: "100"
+          SOURCE: ${{ github.event.inputs.source || 'chart' }}
         run: node scripts/collect-playwright.mjs

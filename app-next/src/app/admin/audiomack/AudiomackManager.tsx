@@ -71,7 +71,7 @@ export function AudiomackManager({
     }
   }
 
-  const collect = async () => {
+  const collect = async (source: "chart" | "playlist" = "chart") => {
     setIsCollecting(true);
     setCollectResult(null);
     try {
@@ -79,7 +79,7 @@ export function AudiomackManager({
       const res = await fetch("/api/admin/charts/collect-via-github", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sourceKey }),
+        body: JSON.stringify({ sourceKey, source }),
       });
       const json = await res.json();
 
@@ -124,8 +124,21 @@ export function AudiomackManager({
       <div className="admin-card">
         <div className="admin-toolbar" style={{ justifyContent: "space-between" }}>
           <div className="admin-toolbar">
-            <button className="btn btn--primary" onClick={collect} disabled={busy || isCollecting}>
-              {isCollecting ? "⟳ Collecte en cours…" : "⟳ Collecter depuis Audiomack"}
+            <button
+              className="btn btn--primary"
+              onClick={() => collect("chart")}
+              disabled={busy || isCollecting}
+              title="Top Songs Chart officiel Haiti (audiomack.com/charts)"
+            >
+              {isCollecting ? "⟳ Collecte en cours…" : "⟳ Collecter la Chart (Top Songs)"}
+            </button>
+            <button
+              className="btn"
+              onClick={() => collect("playlist")}
+              disabled={busy || isCollecting}
+              title="Playlist Weekly 100 Haiti (audiomack.com/geo-charts/playlist/haiti)"
+            >
+              {isCollecting ? "⟳ …" : "⟳ Collecter la Playlist (Weekly 100)"}
             </button>
             {edition?.collectedAt && (
               <span style={{ color: "var(--admin-muted)", fontSize: "0.82rem" }}>
