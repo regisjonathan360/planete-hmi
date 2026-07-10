@@ -20,10 +20,21 @@ export const dynamic = "force-dynamic";
 const GITHUB_REPO = "regisjonathan360/planete-hmi";
 const WORKFLOW_FILE = "audiomack-collect.yml";
 
-export async function POST() {
+export async function POST(request: Request) {
   const auth = await requireAdmin();
   if (!auth.ok) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
+  // Source : "chart" (Top Songs) ou "playlist" (Weekly)
+  let source = "chart";
+  try {
+    const body = await request.json();
+    if (body?.source === "playlist" || body?.source === "chart") {
+      source = body.source;
+    }
+  } catch {
+    // corps vide accepté
   }
 
   const token = process.env.GITHUB_PAT;
@@ -43,14 +54,15 @@ export async function POST() {
         Authorization: `Bearer ${token}`,
         "X-GitHub-Api-Version": "2022-11-28",
       },
-      body: JSON.stringify({ ref: "main" }),
+      body: JSON.stringify({ ref: "main", inputs: { source } }),
     }
   );
 
   if (res.status === 204 || res.ok) {
+    const label = source === "playlist" ? "Playlist Weekly" : "Top Songs Chart";
     return NextResponse.json({
       status: "triggered",
-      message: "Collecte lancée ! Le classement se mettra à jour dans ~1 minute. Rafraîchissez la page ensuite.",
+      message: `Collecte lancée depuis « ${label} » ! Le classement se mettra à jour dans ~1 minute. Rafraîchissez ensuite.`,
     });
   }
 
