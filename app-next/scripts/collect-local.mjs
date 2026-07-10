@@ -16,26 +16,32 @@
  */
 
 const PROD_URL = process.env.PROD_URL || "https://planete-hmi.vercel.app";
-const AUDIOMACK_URL = "https://audiomack.com/top/songs?country=haiti";
+// On scrape les deux sources et on combine :
+// - /top/songs pour le Top 20 (classement officiel visible)
+// - /geo-charts/playlist/haiti pour compléter jusqu'à 100
+const TOP_SONGS_URL = "https://audiomack.com/top/songs?country=haiti";
+const PLAYLIST_URL = "https://audiomack.com/geo-charts/playlist/haiti";
 
-// --- Étape 1 : Scraper la page Audiomack ---
-console.log("⟳ Scraping Audiomack Haiti...");
+// --- Étape 1 : Scraper les deux pages Audiomack ---
+console.log("⟳ Scraping Audiomack Haiti (Top Songs + Playlist)...");
 
-const response = await fetch(AUDIOMACK_URL, {
-  headers: {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-  },
-});
+const fetchPage = async (url) => {
+  const response = await fetch(url, {
+    headers: {
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    },
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+  return response.text();
+};
 
-if (!response.ok) {
-  console.error(`❌ Audiomack a répondu HTTP ${response.status}`);
-  process.exit(1);
-}
-
-const html = await response.text();
-console.log(`✓ Page reçue (${(html.length / 1024).toFixed(0)} KB)`);
+const [topHtml, playlistHtml] = await Promise.all([
+  fetchPage(TOP_SONGS_URL),
+  fetchPage(PLAYLIST_URL),
+]);
+console.log(`✓ Top Songs: ${(topHtml.length / 1024).toFixed(0)} KB, Playlist: ${(playlistHtml.length / 1024).toFixed(0)} KB`);
 
 // --- Étape 2 : Parser les tracks ---
 // Format 1 : page /top/songs (HTML avec ChartsItem)
@@ -177,13 +183,31 @@ function extractTrackArrays(text) {
 }
 
 // Try top songs page format first, then charts page, then flight format
-let tracks = extractFromTopSongsPage(html);
-if (!tracks.length) tracks = extractFromChartsPage(html);
-if (!tracks.length) {
-  const flightText = extractFlightText(html);
-  const candidates = extractTrackArrays(flightText).sort((a, b) => b.length - a.length);
-  tracks = candidates[0] ?? [];
+let tracks = extractFromTopSongsPage(topHtml);
+if (!tracks.length) tracks = extractFromChartsPage(topHtml);
+console.log(`✓ Top Songs: ${tracks.length} tracks (classement officiel)`);
+
+// Compléter avec la playlist (format Flight) pour avoir 100 tracks
+const flightText = extractFlightText(playlistHtml);
+const candidates = extractTrackArrays(flightText).sort((a, b) => b.length - a.length);
+const playlistTracks = candidates[0] ?? [];
+console.log(`✓ Playlist: ${playlistTracks.length} tracks (complément)`);
+
+// Fusionner : garder l'ordre du Top Songs pour les 20 premiers,
+// puis ajouter les tracks de la playlist qui ne sont pas déjà présents
+if (playlistTracks.length > 0) {
+  const topTitles = new Set(tracks.map(t => t.title.toLowerCase()));
+  let nextRank = tracks.length + 1;
+  for (const pt of playlistTracks) {
+    if (!topTitles.has(pt.title.toLowerCase())) {
+      tracks.push({ ...pt, id: pt.id ?? `playlist-${nextRank}` });
+      topTitles.add(pt.title.toLowerCase());
+      nextRank++;
+    }
+    if (tracks.length >= 100) break;
+  }
 }
+console.log(`✓ Total combiné: ${tracks.length} tracks`);
 
 if (!tracks.length) {
   console.error("❌ Aucun track trouvé dans la page Audiomack.");
@@ -218,7 +242,7 @@ const entries = tracks.slice(0, 100).map((track, index) => ({
 }));
 
 // --- Étape 3 : Extraire la date source ---
-const dateMatch = html.match(/<span[^>]*>\s*Last updated:\s*<\/span>\s*<span[^>]*>\s*([^<]+?)\s*<\/span>/i);
+const dateMatch = playlistHtml.match(/<span[^>]*>\s*Last updated:\s*<\/span>\s*<span[^>]*>\s*([^<]+?)\s*<\/span>/i);
 let sourceUpdatedAt = null;
 if (dateMatch) {
   const parsed = Date.parse(`${dateMatch[1].trim()} 00:00:00 UTC`);
