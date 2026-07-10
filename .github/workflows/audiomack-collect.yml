@@ -1,0 +1,26 @@
+name: Collecte Audiomack Haiti
+
+on:
+  # Tous les lundis à 06:00 UTC (classement hebdomadaire)
+  schedule:
+    - cron: "0 6 * * 1"
+  # Déclenchement manuel depuis l'onglet Actions GitHub
+  workflow_dispatch:
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Scraper Audiomack et envoyer à Vercel
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          PROD_URL: https://planete-hmi.vercel.app
+        run: node app-next/scripts/collect-local.mjs
