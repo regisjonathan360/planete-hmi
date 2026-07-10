@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-09T08:34:13.100Z",
+    "genereLe": "2026-07-10T08:28:42.437Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,7 +12,7 @@
       "rang": 1,
       "nom": "Belo",
       "genre": "Reggae",
-      "titre": "Inconsequente / Aluga-se Um Coração (Ao Vivo)",
+      "titre": "Ainda Gosto de Você / Já Era",
       "score": 73.6,
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg"
     },
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Kevinna",
       "genre": "Pop",
-      "titre": "100,000",
+      "titre": "Badlands",
       "score": 42.6,
       "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg"
     },
@@ -36,8 +36,8 @@
       "rang": 4,
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "titre": "ONE TRACK MIND (PART II)",
-      "score": 40.3,
+      "titre": "ONE TRACK MIND",
+      "score": 40.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg"
     },
     {
@@ -52,9 +52,9 @@
       "rang": 6,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Apiye (feat. Zile)",
+      "titre": "Tranble",
       "score": 25.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 7,
@@ -85,7 +85,7 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "titre": "Lotto",
-      "score": 18.6,
+      "score": 18.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg"
     },
     {
