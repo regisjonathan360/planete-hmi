@@ -36,7 +36,7 @@ async function getWorkingEdition(
     )
     .eq("chart_source_id", sourceId)
     .neq("status", "archived")
-    .order("period_start", { ascending: false })
+    .order("collected_at", { ascending: false })
     .limit(1)
     .maybeSingle();
   return data ?? null;

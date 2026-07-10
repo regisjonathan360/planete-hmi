@@ -258,6 +258,16 @@ export async function syncAudiomackEntriesToChartsDraft(
     editionId = data.id;
   }
 
+  // Archiver toutes les AUTRES éditions brouillon de cette source :
+  // la nouvelle collecte remplace l'ancienne. Ainsi la section « À valider »
+  // et le classement ne montrent que les artistes de la collecte courante.
+  await supabase
+    .from("chart_editions")
+    .update({ status: "archived" })
+    .eq("chart_source_id", sourceId)
+    .eq("status", "draft")
+    .neq("id", editionId);
+
   // Insérer les entrées
   for (const entry of entries) {
     const trackId = await ensureTrack(supabase, entry);
