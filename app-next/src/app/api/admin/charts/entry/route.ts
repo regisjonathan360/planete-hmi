@@ -117,13 +117,45 @@ export async function POST(request: Request) {
     }
     case "move_up":
     case "move_down": {
-      const current = (entry.admin_position as number) ?? (entry.source_position as number);
-      // Décalage d'un demi-cran pour se glisser avant/après le voisin.
-      const delta = action === "move_up" ? -1.5 : 1.5;
-      await supabase
+      // Récupérer TOUTES les entrées visibles triées pour trouver le voisin
+      const { data: allEntries } = await supabase
         .from("chart_entries")
-        .update({ admin_position: current + delta })
-        .eq("id", entryId);
+        .select("id, admin_position, source_position, is_hidden, is_excluded")
+        .eq("chart_edition_id", editionId)
+        .eq("is_hidden", false)
+        .eq("is_excluded", false)
+        .order("admin_position", { ascending: true, nullsFirst: false })
+        .order("source_position", { ascending: true });
+
+      const visibles = (allEntries ?? []).sort((a, b) => {
+        const pa = (a.admin_position as number) ?? (a.source_position as number);
+        const pb = (b.admin_position as number) ?? (b.source_position as number);
+        return pa - pb;
+      });
+
+      const currentIndex = visibles.findIndex((e) => e.id === entryId);
+      if (currentIndex === -1) {
+        return NextResponse.json({ error: "Entrée introuvable dans les visibles." }, { status: 404 });
+      }
+
+      const neighborIndex = action === "move_up" ? currentIndex - 1 : currentIndex + 1;
+      if (neighborIndex < 0 || neighborIndex >= visibles.length) {
+        return NextResponse.json({
+          status: "ok",
+          action,
+          message: action === "move_up" ? "Déjà en première position." : "Déjà en dernière position.",
+          recompute: { visible: visibles.length, hidden: 0, excluded: 0, changed: 0 },
+        });
+      }
+
+      // Échanger les admin_position entre l'entrée et son voisin
+      const currentEntry = visibles[currentIndex];
+      const neighbor = visibles[neighborIndex];
+      const currentPos = (currentEntry.admin_position as number) ?? (currentEntry.source_position as number);
+      const neighborPos = (neighbor.admin_position as number) ?? (neighbor.source_position as number);
+
+      await supabase.from("chart_entries").update({ admin_position: neighborPos }).eq("id", entryId);
+      await supabase.from("chart_entries").update({ admin_position: currentPos }).eq("id", neighbor.id as string);
       break;
     }
     default:
