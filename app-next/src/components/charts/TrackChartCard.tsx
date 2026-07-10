@@ -1,15 +1,32 @@
 import { ChartEntryView } from "@/lib/charts/queries/types";
 import { libelleMetrique } from "@/lib/charts/format";
 import { ChartMovementBadge } from "./ChartMovementBadge";
+import { TrackHoverPreview } from "./TrackHoverPreview";
 
 /** Carte d'une chanson : position HMI à côté de la pochette (jamais dessus). */
 export function TrackChartCard({ entry }: { entry: ChartEntryView }) {
   const metric = libelleMetrique(entry.metric_value, entry.metric_unit);
+  const pos = entry.filtered_position;
+  const rankClass =
+    pos === 1 ? "card__rank card__rank--1" :
+    pos === 2 ? "card__rank card__rank--2" :
+    pos === 3 ? "card__rank card__rank--3" :
+    pos === 4 ? "card__rank card__rank--4" :
+    "card__rank card__rank--rest";
+
+  // Extraire artistSlug et trackSlug depuis platform_url.
+  const slugs = extractSlugs(entry.platform_url);
+
   return (
-    <article className="card">
-      <div className="card__rank" aria-hidden="true">
-        {entry.filtered_position}
-      </div>
+    <TrackHoverPreview
+      platformUrl={entry.platform_url}
+      artistSlug={slugs.artistSlug}
+      trackSlug={slugs.trackSlug}
+    >
+      <article className="card">
+        <div className={rankClass} aria-hidden="true">
+          {entry.filtered_position}
+        </div>
       <div className="card__body">
         {entry.artwork_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -35,6 +52,13 @@ export function TrackChartCard({ entry }: { entry: ChartEntryView }) {
           </div>
         </div>
       </div>
-    </article>
+      </article>
+    </TrackHoverPreview>
   );
+}
+
+function extractSlugs(url: string | null): { artistSlug: string | null; trackSlug: string | null } {
+  if (!url) return { artistSlug: null, trackSlug: null };
+  const match = url.match(/audiomack\.com\/([^/]+)\/song\/([^/?#]+)/i);
+  return { artistSlug: match?.[1] ?? null, trackSlug: match?.[2] ?? null };
 }

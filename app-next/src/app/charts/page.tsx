@@ -2,6 +2,8 @@ import { getChartOverview } from "@/lib/charts/queries/get-chart-overview";
 import { ChartsPageHeader } from "@/components/charts/ChartsPageHeader";
 import { PlatformChartRow } from "@/components/charts/PlatformChartRow";
 import { ChartEmptyState } from "@/components/charts/ChartEmptyState";
+import { HmiShorts } from "@/components/HmiShorts";
+import { SiteHeader } from "@/components/SiteHeader";
 import { SOURCE_KEY_PAR_SLUG, dateHaiti } from "@/lib/charts/format";
 import type { ChartOverviewRow } from "@/lib/charts/queries/types";
 
@@ -37,17 +39,19 @@ export default async function ChartsPage() {
   const derniereMaj = rows
     .map((r) => r.published_at)
     .filter(Boolean)
-    .sort()
+    .sort((a, b) => a!.localeCompare(b!))
     .at(-1);
 
   return (
     <>
+      <SiteHeader />
       <ChartsPageHeader publieLe={derniereMaj ? dateHaiti(derniereMaj) : undefined} />
       {erreur ? (
         <ChartEmptyState message="Impossible de charger les classements pour le moment. Réessayez plus tard." />
       ) : (
         rangees.map((row) => <PlatformChartRow key={row.source_key} row={row} />)
       )}
+      <HmiShorts />
     </>
   );
 }

@@ -1,15 +1,19 @@
 /**
- * POST /api/cron/audiomack - scheduled Audiomack Haiti collection.
- * Keeps the original Audiomack source order, then publishes the filtered HMI
- * edition according to the admin artist statuses.
+ * POST /api/cron/audiomack — collecte planifiée Audiomack Haiti.
+ *
+ * IMPORTANT : la collecte n'AUTO-PUBLIE PLUS. Elle enregistre en brouillon.
+ * La publication reste manuelle depuis l'administration (/admin/audiomack),
+ * conformément au principe « rien n'est public tant que l'admin ne publie pas ».
  */
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getProvider } from "@/lib/audiomack/provider";
 import { saveSnapshot } from "@/lib/audiomack/snapshot-service";
-import { syncAudiomackEntriesToCharts } from "@/lib/audiomack/chart-sync";
+import { syncAudiomackEntriesToChartsDraft } from "@/lib/audiomack/chart-sync-draft";
+import { recomputeAdminEdition } from "@/lib/charts/admin/recompute-admin-edition";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Vercel Pro: max 60s pour le scraping Audiomack
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -42,16 +46,33 @@ export async function POST(request: Request) {
   const { created, error } = await saveSnapshot(supabase, result.entries, {
     sourceUpdatedAt: result.sourceUpdatedAt ?? null,
   });
-  const synced = await syncAudiomackEntriesToCharts(supabase, result.entries, {
+
+  const draft = await syncAudiomackEntriesToChartsDraft(supabase, result.entries, {
     sourceUpdatedAt: result.sourceUpdatedAt ?? null,
   });
 
+  await recomputeAdminEdition(supabase, draft.editionId, {
+    action: "collect",
+    source: "audiomack",
+  });
+
+  await supabase.from("chart_entry_history").insert({
+    chart_edition_id: draft.editionId,
+    action: "collect",
+    source: "audiomack",
+    is_manual: false,
+    note: `Collecte cron : ${draft.imported} entrées (brouillon).`,
+  });
+
   return NextResponse.json({
-    status: created ? "success" : "no_change",
+    status: created ? "collected" : "no_change",
     provider: provider.name,
     entries: result.entries.length,
-    eligibleEntries: synced.eligible,
-    editionId: synced.editionId,
-    message: error ?? (created ? "Nouveau snapshot enregistre." : "Contenu identique."),
+    editionId: draft.editionId,
+    message:
+      error ??
+      (created
+        ? "Nouveau brouillon collecté. Publication manuelle requise dans l'admin."
+        : "Contenu identique au dernier snapshot."),
   });
 }

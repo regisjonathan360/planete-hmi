@@ -9,6 +9,7 @@ export const audiomackEntrySchema = z.object({
   title: z.string().min(1),
   artistName: z.string().min(1),
   artworkUrl: z.string().url().nullable(),
+  artistImageUrl: z.string().url().nullable(),
   sourceTrackUrl: z.string().min(1),
   artistSlug: z.string().nullable(),
   trackSlug: z.string().nullable(),

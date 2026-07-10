@@ -1,0 +1,17 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/tiktok",
+      "schedule": "0 6 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/tiktokdoqYMyXAJOluVvI8j618siiivDgAHx0x.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
+  ]
+}

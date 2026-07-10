@@ -39,6 +39,7 @@ export function normalizeAudiomackResponse(raw: AudiomackRawPlaylist): Audiomack
       title: String(t.title ?? "Sans titre").trim(),
       artistName: String(t.artist ?? "Artiste inconnu").trim(),
       artworkUrl: firstHttp(t.image, t.image_base, t.images?.original?.filename),
+      artistImageUrl: firstHttp(t.uploader?.image, t.uploader?.image_base, t.uploader?.thumbnail),
       sourceTrackUrl: buildTrackUrl(artistSlug, trackSlug, directUrl ?? undefined),
       artistSlug,
       trackSlug,
