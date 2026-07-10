@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -150,6 +151,12 @@ export function AuthForm({ nextPath, initialMessage }: AuthFormProps) {
           {message}
         </p>
       </form>
+
+      <p className="artist-auth-legal">
+        En continuant, tu acceptes les{" "}
+        <Link href="/terms">conditions d&apos;utilisation</Link> et la{" "}
+        <Link href="/privacy">politique de confidentialité</Link>.
+      </p>
     </div>
   );
 }

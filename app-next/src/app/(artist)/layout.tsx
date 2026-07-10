@@ -19,6 +19,11 @@ export default function ArtistAreaLayout({ children }: { children: ReactNode }) 
       <footer className="site-footer artist-footer">
         <div className="wrap">
           <div className="footer-bottom">
+            <p className="footer-legal-links">
+              <a href="/privacy">Confidentialité</a>
+              <span aria-hidden="true">/</span>
+              <a href="/terms">Conditions</a>
+            </p>
             <p>Planète HMI © 2026 - Tous droits réservés</p>
           </div>
         </div>

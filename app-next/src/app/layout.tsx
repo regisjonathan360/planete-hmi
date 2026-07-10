@@ -26,6 +26,7 @@ export const metadata: Metadata = {
 
 import { StageLightsLoader } from "@/components/StageLightsLoader";
 import Script from "next/script";
+import "./globals.css";
 
 export default function RootLayout({
   children,

@@ -138,6 +138,23 @@
   color: var(--down);
 }
 
+.artist-auth-legal {
+  margin: 1rem 0 0;
+  color: var(--cream-dim);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.artist-auth-legal a {
+  color: var(--electric-2);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.artist-auth-legal a:hover {
+  text-decoration: underline;
+}
+
 .artist-dashboard {
   max-width: 1120px;
 }
