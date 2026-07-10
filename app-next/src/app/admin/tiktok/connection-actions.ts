@@ -14,7 +14,7 @@ export async function reviewArtistClaimAction(input: unknown): Promise<{
   error?: string;
 }> {
   const adminUser = await getAdminUser();
-  if (!adminUser) return { ok: false, error: "Acces refuse." };
+  if (!adminUser) return { ok: false, error: "Accès refusé." };
 
   const parsed = reviewSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Demande invalide." };
@@ -31,8 +31,8 @@ export async function reviewArtistClaimAction(input: unknown): Promise<{
       ok: false,
       error:
         error.code === "23505"
-          ? "Cette fiche est deja rattachee a un autre compte valide."
-          : "La demande n'a pas pu etre traitee.",
+          ? "Cette fiche est déjà rattachée à un autre compte validé."
+          : "La demande n'a pas pu être traitée.",
     };
   }
 

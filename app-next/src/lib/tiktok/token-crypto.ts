@@ -26,6 +26,15 @@ function encryptionKey(): Buffer {
   return key;
 }
 
+export function isTikTokTokenEncryptionConfigured(): boolean {
+  try {
+    encryptionKey();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function encryptTikTokToken(token: string): string {
   if (!token) throw new Error("Impossible de chiffrer un jeton vide.");
 

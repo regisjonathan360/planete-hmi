@@ -3,10 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+const ALLOWED_NEXT_PATHS = new Set(["/espace-artiste"]);
+
 function safeNextPath(value: string | null): string {
-  return value?.startsWith("/") && !value.startsWith("//")
-    ? value
-    : "/espace-artiste";
+  return value && ALLOWED_NEXT_PATHS.has(value) ? value : "/espace-artiste";
 }
 
 export async function GET(request: NextRequest) {

@@ -35,13 +35,13 @@ export function ArtistConnectionsQueue({ claims }: { claims: PendingArtistClaim[
     }
 
     setMessage({
-      text: decision === "approved" ? "Rattachement approuve." : "Demande refusee.",
+      text: decision === "approved" ? "Rattachement approuvé." : "Demande refusée.",
     });
     startTransition(() => router.refresh());
   }
 
   if (claims.length === 0) {
-    return <div className="banner banner--ok">Aucune connexion artiste a verifier.</div>;
+    return <div className="banner banner--ok">Aucune connexion artiste à vérifier.</div>;
   }
 
   return (
@@ -60,7 +60,7 @@ export function ArtistConnectionsQueue({ claims }: { claims: PendingArtistClaim[
             </div>
             <div className="entry__artist">
               {claim.tiktokUsername ? `@${claim.tiktokUsername}` : "TikTok sans nom public"}
-              {claim.tiktokVerified ? " - compte verifie" : ""}
+              {claim.tiktokVerified ? " - compte vérifié" : ""}
               {claim.contactEmail ? ` - ${claim.contactEmail}` : ""}
             </div>
             {claim.tiktokProfileUrl && (

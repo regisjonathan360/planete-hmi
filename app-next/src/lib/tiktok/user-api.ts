@@ -1,6 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
+import { isTikTokTokenEncryptionConfigured } from "./token-crypto";
 
 const AUTHORIZATION_URL = "https://www.tiktok.com/v2/auth/authorize/";
 const DEFAULT_API_BASE_URL = "https://open.tiktokapis.com/v2";
@@ -11,6 +12,8 @@ const REQUESTED_SCOPES = [
   "video.list",
 ] as const;
 
+export const TIKTOK_OAUTH_STATE_COOKIE = "phmi_tiktok_oauth_state";
+
 const apiErrorSchema = z
   .object({
     code: z.union([z.string(), z.number()]),
@@ -18,6 +21,16 @@ const apiErrorSchema = z
     log_id: z.string().optional(),
   })
   .passthrough();
+
+const apiEnvelopeSchema = z
+  .object({ error: apiErrorSchema })
+  .passthrough();
+
+const oauthErrorSchema = z.object({
+  error: z.string().optional(),
+  error_description: z.string().optional(),
+  log_id: z.string().optional(),
+});
 
 const tokenSchema = z.object({
   access_token: z.string().min(1),
@@ -128,7 +141,7 @@ export function isTikTokOAuthConfigured(): boolean {
     process.env.TIKTOK_CLIENT_KEY?.trim() &&
       process.env.TIKTOK_CLIENT_SECRET?.trim() &&
       process.env.TIKTOK_REDIRECT_URI?.trim() &&
-      process.env.TIKTOK_TOKEN_ENCRYPTION_KEY?.trim()
+      isTikTokTokenEncryptionConfigured()
   );
 }
 
@@ -189,6 +202,35 @@ function assertApiSuccess(errorValue: z.infer<typeof apiErrorSchema>, status: nu
   );
 }
 
+async function parseApiResponse<T>(
+  response: Response,
+  schema: z.ZodType<T>
+): Promise<T> {
+  const payload = await readJson(response);
+  const envelope = apiEnvelopeSchema.safeParse(payload);
+
+  if (envelope.success) {
+    assertApiSuccess(envelope.data.error, response.status);
+  }
+  if (!response.ok) {
+    throw new TikTokUserApiError(
+      "TikTok a refuse la requete.",
+      "http_error",
+      response.status
+    );
+  }
+
+  const parsed = schema.safeParse(payload);
+  if (!parsed.success) {
+    throw new TikTokUserApiError(
+      "TikTok a retourne une reponse inattendue.",
+      "invalid_response",
+      response.status
+    );
+  }
+  return parsed.data;
+}
+
 async function tokenRequest(form: URLSearchParams): Promise<TikTokOAuthTokens> {
   const response = await requestWithRetry(`${apiBaseUrl()}/oauth/token/`, {
     method: "POST",
@@ -198,13 +240,7 @@ async function tokenRequest(form: URLSearchParams): Promise<TikTokOAuthTokens> {
   const payload = await readJson(response);
 
   if (!response.ok) {
-    const error = z
-      .object({
-        error: z.string().optional(),
-        error_description: z.string().optional(),
-        log_id: z.string().optional(),
-      })
-      .safeParse(payload);
+    const error = oauthErrorSchema.safeParse(payload);
     throw new TikTokUserApiError(
       error.success
         ? error.data.error_description || "TikTok a refuse le jeton."
@@ -260,10 +296,15 @@ export async function revokeTikTokAccessToken(accessToken: string): Promise<void
   });
 
   if (!response.ok) {
+    const payload = await readJson(response);
+    const error = oauthErrorSchema.safeParse(payload);
     throw new TikTokUserApiError(
-      "La revocation TikTok a echoue.",
-      "revoke_failed",
-      response.status
+      error.success
+        ? error.data.error_description || "La revocation TikTok a echoue."
+        : "La revocation TikTok a echoue.",
+      error.success ? error.data.error || "revoke_failed" : "revoke_failed",
+      response.status,
+      error.success ? error.data.log_id : undefined
     );
   }
 }
@@ -286,8 +327,7 @@ export async function fetchTikTokUserProfile(
     `${apiBaseUrl()}/user/info/?fields=${encodeURIComponent(fields.join(","))}`,
     { headers: { Authorization: `Bearer ${accessToken}` } }
   );
-  const parsed = userResponseSchema.parse(await readJson(response));
-  assertApiSuccess(parsed.error, response.status);
+  const parsed = await parseApiResponse(response, userResponseSchema);
   return parsed.data.user;
 }
 
@@ -332,11 +372,13 @@ export async function listTikTokVideos(
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ max_count: 20, ...(cursor ? { cursor } : {}) }),
+        body: JSON.stringify({
+          max_count: 20,
+          ...(cursor !== undefined ? { cursor } : {}),
+        }),
       }
     );
-    const parsed = videoListResponseSchema.parse(await readJson(response));
-    assertApiSuccess(parsed.error, response.status);
+    const parsed = await parseApiResponse(response, videoListResponseSchema);
     videos.push(...parsed.data.videos);
     cursor = parsed.data.cursor;
     hasMore = parsed.data.has_more;
@@ -364,7 +406,6 @@ export async function queryTikTokVideos(
       body: JSON.stringify({ filters: { video_ids: videoIds } }),
     }
   );
-  const parsed = videoQueryResponseSchema.parse(await readJson(response));
-  assertApiSuccess(parsed.error, response.status);
+  const parsed = await parseApiResponse(response, videoQueryResponseSchema);
   return parsed.data.videos;
 }
