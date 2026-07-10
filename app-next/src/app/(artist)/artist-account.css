@@ -1,0 +1,509 @@
+.artist-cosmos {
+  opacity: 0.72;
+}
+
+.artist-area {
+  min-height: calc(100vh - 148px);
+  padding-block: 3rem 5rem;
+}
+
+.artist-footer {
+  position: relative;
+}
+
+.artist-auth-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+  align-items: center;
+  gap: 4rem;
+  min-height: 620px;
+  max-width: 1040px;
+}
+
+.artist-auth-heading {
+  max-width: 560px;
+}
+
+.artist-auth-heading h1,
+.artist-dashboard-header h1 {
+  font-size: 3rem;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.artist-auth-heading > p:last-child {
+  color: var(--cream-dim);
+  max-width: 48ch;
+  margin: 1rem 0 0;
+}
+
+.artist-kicker {
+  margin: 0 0 0.45rem;
+  color: var(--flame-orange);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.artist-auth-panel {
+  background: rgba(21, 19, 31, 0.96);
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+.artist-segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 42px;
+  margin-bottom: 1.5rem;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--void-soft);
+}
+
+.artist-segmented button {
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--cream-dim);
+  cursor: pointer;
+  font: 600 0.82rem var(--font-body);
+}
+
+.artist-segmented button.is-active {
+  background: var(--panel-2);
+  color: var(--cream);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+
+.artist-auth-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.artist-auth-form label,
+.artist-claim-form label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--cream-dim);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.artist-auth-form input,
+.artist-claim-form select {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--void-soft);
+  color: var(--cream);
+  font: 500 0.94rem var(--font-body);
+  padding: 0.65rem 0.75rem;
+}
+
+.artist-auth-form input:focus,
+.artist-claim-form select:focus {
+  border-color: var(--electric-2);
+  outline: 2px solid rgba(70, 183, 255, 0.2);
+  outline-offset: 1px;
+}
+
+.artist-submit {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 0.25rem;
+}
+
+.artist-form-message {
+  min-height: 1.5rem;
+  margin: 0;
+  color: var(--up);
+  font-size: 0.82rem;
+}
+
+.artist-form-message.is-error {
+  color: var(--down);
+}
+
+.artist-dashboard {
+  max-width: 1120px;
+}
+
+.artist-dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line-2);
+}
+
+.artist-account-email {
+  margin: 0.55rem 0 0;
+  color: var(--cream-dim);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.artist-notice {
+  margin-top: 1.25rem;
+  border-left: 3px solid var(--up);
+  background: rgba(56, 224, 122, 0.08);
+  color: var(--cream);
+  padding: 0.8rem 1rem;
+  font-size: 0.88rem;
+}
+
+.artist-notice.is-error {
+  border-left-color: var(--down);
+  background: rgba(255, 77, 94, 0.08);
+}
+
+.artist-section {
+  padding-block: 2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.artist-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.artist-section-heading h2 {
+  font-size: 1.55rem;
+  letter-spacing: 0;
+}
+
+.artist-section-copy {
+  max-width: 62ch;
+  margin: 0;
+  color: var(--cream-dim);
+}
+
+.artist-status {
+  flex: none;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+  color: var(--cream-dim);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.artist-status--approved,
+.artist-status--active {
+  border-color: rgba(56, 224, 122, 0.45);
+  color: var(--up);
+}
+
+.artist-status--pending {
+  border-color: rgba(255, 178, 0, 0.5);
+  color: var(--flame-gold);
+}
+
+.artist-status--rejected,
+.artist-status--error,
+.artist-status--reauthorization_required {
+  border-color: rgba(255, 77, 94, 0.5);
+  color: var(--down);
+}
+
+.artist-claim-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  align-items: end;
+  gap: 0.75rem;
+  max-width: 680px;
+}
+
+.artist-claim-form label {
+  grid-column: 1;
+}
+
+.artist-claim-form .btn {
+  min-height: 46px;
+}
+
+.artist-connect-row,
+.artist-tiktok-profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.artist-tiktok-profile {
+  justify-content: flex-start;
+}
+
+.artist-avatar {
+  display: grid;
+  flex: 0 0 76px;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--panel-2);
+  color: var(--electric-2);
+  font: 400 2rem var(--font-display);
+}
+
+.artist-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artist-tiktok-name {
+  min-width: 0;
+}
+
+.artist-tiktok-name h3 {
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.artist-tiktok-name p {
+  margin: 0.2rem 0 0;
+  color: var(--cream-dim);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.artist-tiktok-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  margin-left: auto;
+}
+
+.artist-danger-button {
+  min-height: 42px;
+  border: 1px solid rgba(255, 77, 94, 0.5);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--down);
+  cursor: pointer;
+  font: 700 0.78rem var(--font-body);
+  padding: 0.55rem 0.9rem;
+}
+
+.artist-danger-button:hover {
+  background: rgba(255, 77, 94, 0.1);
+}
+
+.artist-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 1.5rem;
+  border-block: 1px solid var(--line);
+}
+
+.artist-metrics > div {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 1rem;
+  border-right: 1px solid var(--line);
+}
+
+.artist-metrics > div:last-child {
+  border-right: 0;
+}
+
+.artist-metrics span,
+.artist-video-metrics dt {
+  color: var(--cream-dim);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.artist-metrics strong {
+  overflow: hidden;
+  color: var(--cream);
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  text-overflow: ellipsis;
+}
+
+.artist-sync-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
+  color: var(--cream-dim);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.artist-video-count {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  color: var(--electric-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.artist-video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.artist-video {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(21, 19, 31, 0.88);
+  padding: 1rem;
+}
+
+.artist-video-copy h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 750;
+  line-height: 1.35;
+  text-transform: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.artist-video-copy p {
+  margin: 0.35rem 0 0;
+  color: var(--cream-dim);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+}
+
+.artist-video-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.artist-video-metrics div {
+  min-width: 0;
+}
+
+.artist-video-metrics dd {
+  overflow: hidden;
+  margin: 0.1rem 0 0;
+  color: var(--cream);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+}
+
+.artist-video > a {
+  color: var(--electric-2);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.artist-empty-state {
+  border: 1px dashed var(--line-2);
+  border-radius: 8px;
+  color: var(--cream-dim);
+  padding: 2rem;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  .artist-area {
+    padding-block: 2rem 4rem;
+  }
+
+  .artist-auth-page {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    min-height: auto;
+  }
+
+  .artist-auth-heading h1,
+  .artist-dashboard-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .artist-dashboard-header,
+  .artist-connect-row,
+  .artist-tiktok-profile {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .artist-tiktok-actions {
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  .artist-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .artist-metrics > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .artist-metrics > div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .artist-video-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .artist-auth-panel {
+    padding: 1rem;
+  }
+
+  .artist-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .artist-claim-form {
+    grid-template-columns: 1fr;
+  }
+
+  .artist-claim-form .btn {
+    width: 100%;
+  }
+
+  .artist-video-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 0.75rem;
+  }
+}

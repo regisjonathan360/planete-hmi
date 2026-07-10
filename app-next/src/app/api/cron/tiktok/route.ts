@@ -1,57 +1,50 @@
-/**
- * POST /api/cron/tiktok
- * Route cron protégée par CRON_SECRET pour la collecte planifiée TikTok.
- *
- * Enchaîne :
- * 1. Vérification du CRON_SECRET (header Authorization: Bearer <secret>)
- * 2. Collecte des vidéos (collector.runCollection)
- * 3. Recalcul des scores (score-engine.recalculate)
- * 4. Génération des classements (chart-builder.buildCharts)
- *
- * Requirements: 9.2, 9.3, 9.4, 11.1
- */
 import { NextResponse } from "next/server";
-import { runCollection } from "@/lib/tiktok/collector";
-import { recalculate } from "@/lib/tiktok/score-engine";
-import { buildCharts } from "@/lib/tiktok/chart-builder";
+import { syncAllTikTokConnections } from "@/lib/tiktok/user-sync";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
-  // 1. Vérifier le CRON_SECRET
-  const authHeader = request.headers.get("authorization");
+function isAuthorized(request: Request): boolean {
   const secret = process.env.CRON_SECRET;
+  return Boolean(
+    secret && request.headers.get("authorization") === `Bearer ${secret}`
+  );
+}
 
-  if (!secret || authHeader !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
+async function run(request: Request) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: "Non autorise." }, { status: 401 });
   }
 
   try {
-    // 2. Lancer la collecte
-    const collectionResult = await runCollection();
-
-    if (!collectionResult.ok) {
-      return NextResponse.json(
-        { error: "Collecte échouée", details: collectionResult },
-        { status: 500 }
-      );
-    }
-
-    // 3. Recalculer les scores
-    const scoreResult = await recalculate();
-
-    // 4. Générer les classements
-    await buildCharts();
+    const results = await syncAllTikTokConnections();
+    const successful = results.filter((result) => result.ok).length;
+    const videosUpdated = results.reduce(
+      (total, result) => total + result.videosUpdated,
+      0
+    );
 
     return NextResponse.json({
-      status: "success",
-      collection: collectionResult,
-      scoring: scoreResult,
+      status: results.every((result) => result.ok) ? "success" : "partial_error",
+      connectionsProcessed: results.length,
+      connectionsSuccessful: successful,
+      videosUpdated,
+      results,
     });
-  } catch (err) {
+  } catch (error) {
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Erreur interne." },
+      { error: error instanceof Error ? error.message : "Erreur interne." },
       { status: 500 }
     );
   }
+}
+
+// Vercel Cron appelle les routes planifiees avec GET.
+export async function GET(request: Request) {
+  return run(request);
+}
+
+// Conserve un declenchement manuel possible depuis les outils internes.
+export async function POST(request: Request) {
+  return run(request);
 }

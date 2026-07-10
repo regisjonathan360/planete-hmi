@@ -5,8 +5,18 @@ import { useRouter } from "next/navigation";
 import { ValidationQueue } from "./ValidationQueue";
 import { ChartEditor } from "./ChartEditor";
 import { HmiShortsSelector } from "./HmiShortsSelector";
+import {
+  ArtistConnectionsQueue,
+  type PendingArtistClaim,
+} from "./ArtistConnectionsQueue";
 
-type Tab = "global" | "en_montee" | "nouveautes" | "validation" | "shorts";
+type Tab =
+  | "global"
+  | "en_montee"
+  | "nouveautes"
+  | "validation"
+  | "connections"
+  | "shorts";
 
 interface Toast {
   message: string;
@@ -28,6 +38,8 @@ interface TikTokManagerProps {
         status: string;
         hasUnpublishedChanges: boolean;
       } | null;
+      connectedArtists: number;
+      pendingArtistClaims: PendingArtistClaim[];
     };
   };
 }
@@ -142,6 +154,7 @@ export function TikTokManager({ initialData }: TikTokManagerProps) {
         <div className="admin-stats">
           <Stat value={stats.totalSounds} label="Total sons" />
           <Stat value={stats.pendingSounds} label="En attente" warn />
+          <Stat value={stats.connectedArtists} label="Artistes connectes" accent />
           <Stat value={stats.validatedSounds} label="Validés" accent />
           <StatText value={editionStatusLabel(stats.latestEdition?.status)} label="Statut édition" />
           <StatText
@@ -189,6 +202,18 @@ export function TikTokManager({ initialData }: TikTokManagerProps) {
           </button>
           <button
             type="button"
+            className={tabCls(activeTab, "connections")}
+            onClick={() => setActiveTab("connections")}
+          >
+            Connexions artistes
+            {stats.pendingArtistClaims.length > 0 && (
+              <span className="badge badge--warn" style={{ marginLeft: "0.4rem" }}>
+                {stats.pendingArtistClaims.length}
+              </span>
+            )}
+          </button>
+          <button
+            type="button"
             className={tabCls(activeTab, "shorts")}
             onClick={() => setActiveTab("shorts")}
           >
@@ -207,6 +232,9 @@ export function TikTokManager({ initialData }: TikTokManagerProps) {
           <ChartEditor sourceKey="tiktok_haiti_nouveautes" chartLabel="Top TikTok Haiti — Nouveautés" />
         )}
         {activeTab === "validation" && <ValidationQueue />}
+        {activeTab === "connections" && (
+          <ArtistConnectionsQueue claims={stats.pendingArtistClaims} />
+        )}
         {activeTab === "shorts" && <HmiShortsSelector />}
       </div>
 
