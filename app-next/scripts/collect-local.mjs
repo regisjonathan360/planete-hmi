@@ -16,7 +16,7 @@
  */
 
 const PROD_URL = process.env.PROD_URL || "https://planete-hmi.vercel.app";
-const AUDIOMACK_URL = "https://audiomack.com/geo-charts/playlist/haiti";
+const AUDIOMACK_URL = "https://audiomack.com/top/songs?country=haiti";
 
 // --- Étape 1 : Scraper la page Audiomack ---
 console.log("⟳ Scraping Audiomack Haiti...");
@@ -38,6 +38,71 @@ const html = await response.text();
 console.log(`✓ Page reçue (${(html.length / 1024).toFixed(0)} KB)`);
 
 // --- Étape 2 : Parser les tracks ---
+// Format 1 : page /top/songs (HTML avec ChartsItem)
+function extractFromTopSongsPage(html) {
+  const tracks = [];
+  const cardPattern = /<article[^>]*class="ChartsItem"[^>]*>([\s\S]*?)<\/article>/gi;
+  let cardMatch;
+
+  while ((cardMatch = cardPattern.exec(html)) !== null) {
+    const card = cardMatch[1];
+    const rankMatch = card.match(/data-testid="ChartRank"[^>]*>\s*(\d+)\./);
+    const rank = rankMatch ? parseInt(rankMatch[1], 10) : tracks.length + 1;
+    
+    // Artiste
+    const artistMatch = card.match(/class="ChartsItem-artist"[^>]*><a[^>]*>([^<]+)<\/a>/);
+    const artist = artistMatch ? htmlDecode(artistMatch[1].trim()) : null;
+    
+    // Titre
+    const titleMatch = card.match(/class="ChartsItem-title"[^>]*><a[^>]*>([^<]+)/);
+    const title = titleMatch ? htmlDecode(titleMatch[1].trim()) : null;
+    
+    // Artwork
+    const artworkMatch = card.match(/data-testid="ChartImage"[^>]*src="([^"]+)"/);
+    const artwork = artworkMatch ? artworkMatch[1] : null;
+    
+    // URL slug
+    const hrefMatch = card.match(/class="ChartsItem-artist"[^>]*><a[^>]*href="([^"]+)"/);
+    const urlSlug = hrefMatch ? hrefMatch[1] : null;
+
+    if (title && artist) {
+      tracks.push({ title, artist, id: urlSlug ?? `chart-${rank}`, image: artwork, url_slug: urlSlug });
+    }
+  }
+  return tracks;
+}
+
+// Format 2 : page /charts (HTML avec ChartCard / MusicCard)
+function htmlDecode(str) {
+  return str.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+}
+
+function extractFromChartsPage(html) {
+  const tracks = [];
+  const cardPattern = /<div[^>]*class="ChartCard"[^>]*>([\s\S]*?)<\/article>/gi;
+  let cardMatch;
+
+  while ((cardMatch = cardPattern.exec(html)) !== null) {
+    const card = cardMatch[1];
+    const rankMatch = card.match(/<div[^>]*class="ChartRank"[^>]*>\s*(\d+)\./);
+    const rank = rankMatch ? parseInt(rankMatch[1], 10) : tracks.length + 1;
+    const titleMatch = card.match(/aria-label="Listen to ([^"]+)"/);
+    const title = titleMatch ? htmlDecode(titleMatch[1]) : null;
+    const artistMatch = card.match(/data-testid="MusicCard-artist"[^>]*>([^<]+)</);
+    const artist = artistMatch ? htmlDecode(artistMatch[1].trim()) : null;
+    const artworkMatch = card.match(/class="Img CardImage"[^>]*src="([^"]+)"/);
+    const artwork = artworkMatch ? artworkMatch[1] : null;
+    const hrefMatch = card.match(/data-testid="MusicCard-title"[^>]*href="([^"]+)"/);
+    const urlSlug = hrefMatch ? hrefMatch[1] : null;
+
+    if (title && artist) {
+      tracks.push({ title, artist, id: urlSlug ?? `chart-${rank}`, image: artwork, url_slug: urlSlug });
+    }
+  }
+  return tracks;
+}
+
+// Format 2 : page /geo-charts/playlist (React Flight)
 const PUSH_PREFIX = "self.__next_f.push(";
 
 function findClosingParen(text, start) {
@@ -111,9 +176,14 @@ function extractTrackArrays(text) {
   return arrays;
 }
 
-const flightText = extractFlightText(html);
-const candidates = extractTrackArrays(flightText).sort((a, b) => b.length - a.length);
-const tracks = candidates[0] ?? [];
+// Try top songs page format first, then charts page, then flight format
+let tracks = extractFromTopSongsPage(html);
+if (!tracks.length) tracks = extractFromChartsPage(html);
+if (!tracks.length) {
+  const flightText = extractFlightText(html);
+  const candidates = extractTrackArrays(flightText).sort((a, b) => b.length - a.length);
+  tracks = candidates[0] ?? [];
+}
 
 if (!tracks.length) {
   console.error("❌ Aucun track trouvé dans la page Audiomack.");
