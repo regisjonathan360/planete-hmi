@@ -12,7 +12,6 @@ import { createClient } from "@/lib/supabase/client";
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<{ email: string | null; initial: string } | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();
@@ -22,7 +21,6 @@ export function SiteHeader() {
         const initial = (email ?? "U").charAt(0).toUpperCase();
         setUser({ email, initial });
       }
-      setLoading(false);
     });
   }, []);
 
@@ -56,7 +54,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="topbar__actions">
-          {!loading && (
+          {(
             user ? (
               <UserBadge email={user.email} initial={user.initial} onLogout={handleLogout} />
             ) : (
@@ -92,7 +90,7 @@ export function SiteHeader() {
         <a href="/actualites" onClick={() => setMenuOpen(false)}>Actualités</a>
         <a href="/evenements" onClick={() => setMenuOpen(false)}>Événements</a>
         <a href="/boutique" onClick={() => setMenuOpen(false)}>Boutique</a>
-        {!loading && (
+        {(
           user ? (
             <>
               <Link href="/espace-artiste" onClick={() => setMenuOpen(false)}>Mon espace</Link>
