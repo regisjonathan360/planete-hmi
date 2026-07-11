@@ -197,6 +197,35 @@ img { display: block; max-width: 100%; }
 .menu-mobile a { color: var(--cream-dim); padding: 0.7rem 0; font-family: var(--font-display); text-transform: uppercase; }
 .menu-mobile .btn { margin-top: 0.6rem; }
 
+/* User badge (header connecté) */
+.user-badge__trigger { background: none; border: none; cursor: pointer; padding: 0; }
+.user-badge__avatar {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--grad-fire); color: #160500;
+  font-weight: 700; font-size: 0.9rem; font-family: var(--font-body);
+}
+.user-badge__dropdown {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 100;
+  min-width: 200px; padding: 0.75rem 0;
+  background: rgba(20, 18, 32, 0.97); border: 1px solid rgba(244,239,228,0.12);
+  border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+}
+.user-badge__email {
+  padding: 0.4rem 1rem 0.6rem; margin: 0;
+  font-size: 0.78rem; color: var(--cream-dim);
+  border-bottom: 1px solid rgba(244,239,228,0.08);
+}
+.user-badge__link {
+  display: block; padding: 0.55rem 1rem; color: var(--cream);
+  font-size: 0.85rem; text-decoration: none; transition: background 0.15s;
+  background: none; border: none; width: 100%; text-align: left; cursor: pointer;
+  font-family: var(--font-body);
+}
+.user-badge__link:hover { background: rgba(244,239,228,0.06); }
+.user-badge__logout { color: #ff5c7c; }
+
 /* ============ HERO ============ */
 /* Le hero conserve SES artistes (image hero-head), PAS le fond spatial (réservé à
    la scène cosmique de la planète). Textes/boutons restent au premier plan. */
