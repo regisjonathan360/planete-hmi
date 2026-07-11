@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-10T08:28:42.437Z",
+    "genereLe": "2026-07-11T07:16:11.755Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Kevinna",
       "genre": "Pop",
-      "titre": "Badlands",
+      "titre": "100,000",
       "score": 42.6,
       "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg"
     },
@@ -76,7 +76,7 @@
       "rang": 9,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "Timoun",
+      "titre": "Flanm",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
@@ -84,7 +84,7 @@
       "rang": 10,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Lotto",
+      "titre": "Legend",
       "score": 18.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg"
     },
@@ -92,7 +92,7 @@
       "rang": 11,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "Manyen m la (feat. Kenny Haiti)",
+      "titre": "2KAWO",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
     }
