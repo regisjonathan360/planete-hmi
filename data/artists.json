@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-10T08:28:42.437Z",
+    "genereLe": "2026-07-11T07:16:11.755Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg",
       "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 8900,
+        "deezerFans": 8901,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 484343,
+        "deezerFans": 484512,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Sere'm",
       "metriques": {
-        "deezerFans": 10284,
+        "deezerFans": 10287,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -90,7 +90,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
       "topTitre": "ONE TRACK MIND",
       "metriques": {
-        "deezerFans": 31095,
+        "deezerFans": 31204,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Timoun",
+      "topTitre": "Flanm",
       "metriques": {
         "deezerFans": 6710,
         "spotifyFollowers": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg",
-      "topTitre": "Lotto",
+      "topTitre": "Legend",
       "metriques": {
-        "deezerFans": 4897,
+        "deezerFans": 4898,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -166,7 +166,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
       "topTitre": "Ainda Gosto de Você / Já Era",
       "metriques": {
-        "deezerFans": 527834,
+        "deezerFans": 527943,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -221,7 +221,7 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "Manyen m la (feat. Kenny Haiti)",
+      "topTitre": "2KAWO",
       "metriques": {
         "deezerFans": 2200,
         "spotifyFollowers": null,
@@ -240,9 +240,9 @@
       "nom": "Kevinna",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg",
-      "topTitre": "Badlands",
+      "topTitre": "100,000",
       "metriques": {
-        "deezerFans": 37534,
+        "deezerFans": 37542,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
