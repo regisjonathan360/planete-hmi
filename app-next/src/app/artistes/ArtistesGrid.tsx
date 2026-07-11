@@ -138,7 +138,7 @@ export function ArtistesGrid({ artists }: { artists: PublicArtist[] }) {
             <p className="artistes-empty">Aucun artiste trouvé pour ces critères.</p>
           )}
           {filtered.map((artist) => (
-            <article key={artist.id} className="artist-card">
+            <a key={artist.id} href={`/artistes/${artist.slug}`} className="artist-card" style={{ textDecoration: "none" }}>
               <img
                 className="artist-card__img"
                 src={artist.imageUrl ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"}
@@ -176,7 +176,7 @@ export function ArtistesGrid({ artists }: { artists: PublicArtist[] }) {
                   </div>
                 )}
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </section>

@@ -1,0 +1,157 @@
+/* Planète HMI — Profil artiste public */
+.artist-profile {
+  min-height: 100vh;
+  background: var(--void, #08070d);
+  color: var(--cream, #f4efe4);
+  padding-bottom: 4rem;
+}
+
+.artist-profile__banner {
+  width: 100%;
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid rgba(244, 239, 228, 0.08);
+}
+@media (max-width: 640px) {
+  .artist-profile__banner { height: 140px; }
+}
+
+.artist-profile__header {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+  margin-top: -70px;
+  margin-bottom: 2rem;
+}
+@media (max-width: 640px) {
+  .artist-profile__header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: -50px;
+  }
+}
+
+.artist-profile__avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--void, #08070d);
+  background: #15131f;
+  flex-shrink: 0;
+}
+
+.artist-profile__info { min-width: 0; }
+
+.artist-profile__name {
+  font-family: var(--font-display, "Anton", sans-serif);
+  font-size: 2rem;
+  text-transform: uppercase;
+  margin: 0.5rem 0 0.3rem;
+}
+
+.artist-profile__tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.artist-profile__tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(70, 183, 255, 0.12);
+  color: #46b7ff;
+  border: 1px solid rgba(70, 183, 255, 0.3);
+}
+
+.artist-profile__city,
+.artist-profile__label {
+  font-size: 0.88rem;
+  color: rgba(244, 239, 228, 0.6);
+  margin: 0.2rem 0;
+}
+
+.artist-profile__bio {
+  margin-top: 0.75rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: rgba(244, 239, 228, 0.8);
+  max-width: 600px;
+}
+
+/* Sections */
+.artist-profile__section {
+  margin-top: 2.5rem;
+}
+.artist-profile__section-title {
+  font-family: var(--font-display, "Anton", sans-serif);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: rgba(244, 239, 228, 0.9);
+}
+
+/* Chart entries */
+.artist-profile__chart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.artist-profile__chart-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  background: rgba(18, 17, 27, 0.55);
+  border: 1px solid rgba(244, 239, 228, 0.08);
+  border-radius: 10px;
+}
+.artist-profile__chart-pos {
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  color: #46b7ff;
+  min-width: 2.5rem;
+}
+.artist-profile__chart-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.artist-profile__chart-genre {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(244, 239, 228, 0.6);
+}
+
+/* Links (platforms & socials) */
+.artist-profile__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.artist-profile__link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  background: rgba(18, 17, 27, 0.7);
+  border: 1px solid rgba(244, 239, 228, 0.1);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cream, #f4efe4);
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+.artist-profile__link:hover {
+  border-color: rgba(244, 239, 228, 0.35);
+}
+.artist-profile__link-icon {
+  font-size: 1.1rem;
+}
