@@ -173,6 +173,23 @@ export default async function ArtistDashboardPage({
         </div>
       )}
 
+      {/* Lien vers la personnalisation du profil */}
+      <section className="artist-section" aria-labelledby="profile-title">
+        <div className="artist-section-heading">
+          <div>
+            <p className="artist-kicker">Mon profil</p>
+            <h2 id="profile-title">Personnaliser ma page artiste</h2>
+          </div>
+          <a href="/espace-artiste/profil" className="btn btn-primary" style={{ textDecoration: "none" }}>
+            ✏️ Modifier mon profil
+          </a>
+        </div>
+        <p style={{ color: "rgba(244,239,228,0.6)", fontSize: "0.88rem" }}>
+          Ajoute ta bio, tes réseaux sociaux, tes plateformes musicales et ta photo.
+          Ces informations apparaîtront sur ta page artiste publique.
+        </p>
+      </section>
+
       <section className="artist-section" aria-labelledby="identity-title">
         <div className="artist-section-heading">
           <div>
