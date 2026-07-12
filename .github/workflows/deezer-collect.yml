@@ -1,0 +1,27 @@
+name: Collecte Deezer Haiti
+
+on:
+  # Tous les mercredis à 07:00 UTC
+  schedule:
+    - cron: "0 7 * * 3"
+  # Déclenchement manuel
+  workflow_dispatch:
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Collecter depuis Deezer (API publique)
+        working-directory: app-next
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          PROD_URL: https://planete-hmi.vercel.app
+        run: node scripts/collect-deezer.mjs

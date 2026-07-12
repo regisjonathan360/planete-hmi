@@ -61,7 +61,7 @@ export async function POST(request: Request) {
   // Brouillon éditable
   let draft;
   try {
-    draft = await syncAudiomackEntriesToChartsDraft(supabase, entries, { sourceUpdatedAt });
+    draft = await syncAudiomackEntriesToChartsDraft(supabase, entries, { sourceUpdatedAt, sourceKey });
   } catch (err) {
     return NextResponse.json({
       status: "error",

@@ -13,7 +13,7 @@ import { normalizeTitle } from "@/lib/charts/normalization/normalize-title";
 import { normalizeArtists } from "@/lib/charts/normalization/normalize-artists";
 import type { AudiomackNormalizedEntry } from "./types";
 
-const SOURCE_KEY = "audiomack_haiti_weekly100";
+const DEFAULT_SOURCE_KEY = "audiomack_haiti_weekly100";
 
 function slugify(value: string): string {
   const slug = value
@@ -50,18 +50,35 @@ function weekWindowFromSourceDate(sourceUpdatedAt: string | null | undefined): {
   };
 }
 
-async function ensureAudiomackSource(supabase: SupabaseClient): Promise<string> {
+const SOURCE_CONFIGS: Record<string, { platform: string; displayName: string; chartContext: string; sourceUrl: string }> = {
+  audiomack_haiti_weekly100: {
+    platform: "audiomack",
+    displayName: "Audiomack - Top Songs Haiti",
+    chartContext: "Top Songs Haiti officiel Audiomack",
+    sourceUrl: "https://audiomack.com/top/songs?country=haiti",
+  },
+  deezer_haiti_top100: {
+    platform: "deezer",
+    displayName: "Deezer - Top Haiti",
+    chartContext: "Top 100 Haiti (playlist communautaire Deezer)",
+    sourceUrl: "https://www.deezer.com/playlist/15034575123",
+  },
+};
+
+async function ensureSource(supabase: SupabaseClient, sourceKey: string): Promise<string> {
+  const config = SOURCE_CONFIGS[sourceKey] ?? SOURCE_CONFIGS.audiomack_haiti_weekly100;
+
   const { data, error } = await supabase
     .from("chart_sources")
     .upsert({
-      platform: "audiomack",
-      source_key: SOURCE_KEY,
-      display_name: "Audiomack - Weekly 100 Haiti",
-      chart_context: "Weekly 100: Haiti officiel Audiomack",
+      platform: config.platform,
+      source_key: sourceKey,
+      display_name: config.displayName,
+      chart_context: config.chartContext,
       market_code: "HT",
       genre_id: "all",
       ingestion_mode: "OFFICIAL_EXPORT",
-      source_url: AUDIOMACK_HAITI_SOURCE_URL,
+      source_url: config.sourceUrl,
       is_enabled: true,
       is_automatic: false,
       last_success_at: new Date().toISOString(),
@@ -70,7 +87,7 @@ async function ensureAudiomackSource(supabase: SupabaseClient): Promise<string> 
     .select("id")
     .single();
 
-  if (error || !data) throw new Error(`Source Audiomack introuvable: ${error?.message ?? "aucune donnée"}`);
+  if (error || !data) throw new Error(`Source introuvable: ${error?.message ?? "aucune donnée"}`);
   return data.id;
 }
 
@@ -201,11 +218,12 @@ async function ensurePlatformTrack(
 export async function syncAudiomackEntriesToChartsDraft(
   supabase: SupabaseClient,
   entries: AudiomackNormalizedEntry[],
-  options: { sourceUpdatedAt?: string | null } = {}
+  options: { sourceUpdatedAt?: string | null; sourceKey?: string } = {}
 ): Promise<{ editionId: string; imported: number }> {
-  if (!entries.length) throw new Error("Aucune entrée Audiomack à synchroniser.");
+  if (!entries.length) throw new Error("Aucune entrée à synchroniser.");
 
-  const sourceId = await ensureAudiomackSource(supabase);
+  const sourceKey = options.sourceKey ?? DEFAULT_SOURCE_KEY;
+  const sourceId = await ensureSource(supabase, sourceKey);
   const { periodStart, periodEnd, editionKey } = weekWindowFromSourceDate(options.sourceUpdatedAt);
 
   // Chercher une édition existante pour la même période (quel que soit le
