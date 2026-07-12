@@ -3,6 +3,7 @@
 
 import { useState, useMemo } from "react";
 import { ARTIST_TAGS, getTagMeta } from "@/lib/artists/tags";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import type { PublicArtist } from "./page";
 
 /** Genres disponibles pour le filtre (dérivés des chart_entries). */
@@ -139,6 +140,7 @@ export function ArtistesGrid({ artists }: { artists: PublicArtist[] }) {
           )}
           {filtered.map((artist) => (
             <a key={artist.id} href={`/artistes/${artist.slug}`} className="artist-card" style={{ textDecoration: "none" }}>
+              <FavoriteButton artistId={artist.id} />
               <img
                 className="artist-card__img"
                 src={artist.imageUrl ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"}
