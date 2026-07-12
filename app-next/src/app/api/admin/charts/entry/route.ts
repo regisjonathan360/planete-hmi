@@ -56,6 +56,13 @@ export async function POST(request: Request) {
 
   const supabase = createAdminClient();
 
+  // Traitement spécial : vider tout le classement
+  if (action === "delete_all") {
+    await supabase.from("chart_entries").delete().eq("chart_edition_id", editionId);
+    await supabase.from("chart_editions").update({ entry_count: 0 }).eq("id", editionId);
+    return NextResponse.json({ status: "ok", action: "delete_all", message: "Classement vidé." });
+  }
+
   // Charger l'entrée cible.
   const { data: entry, error: entryErr } = await supabase
     .from("chart_entries")
@@ -103,13 +110,6 @@ export async function POST(request: Request) {
       await logHistory(supabase, editionId, entryId, "delete", auth.user.id, "Entrée supprimée.");
       await supabase.from("chart_entries").delete().eq("id", entryId);
       break;
-    case "delete_all": {
-      // Vider toutes les entrées du classement
-      await supabase.from("chart_entries").delete().eq("chart_edition_id", editionId);
-      await supabase.from("chart_editions").update({ entry_count: 0 }).eq("id", editionId);
-      await logHistory(supabase, editionId, entryId, "delete_all", auth.user.id, "Classement vidé.");
-      return NextResponse.json({ status: "ok", action: "delete_all", message: "Classement vidé." });
-    }
     case "set_position": {
       const pos = Number(body.position);
       if (!Number.isFinite(pos) || pos < 1) {
