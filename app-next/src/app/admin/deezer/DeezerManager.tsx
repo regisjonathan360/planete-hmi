@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { AdminChartData, AdminChartEntry } from "@/lib/charts/admin/types";
 
@@ -70,8 +70,12 @@ export function DeezerManager({
 
   const publish = () => post("/api/admin/charts/publish", { sourceKey, mode: "publish" });
 
+  const entryAction = (entryId: string, action: string, extra: Record<string, unknown> = {}) =>
+    post("/api/admin/charts/entry", { editionId: edition?.editionId, entryId, action, ...extra });
+
   return (
     <>
+      {/* Barre de collecte + publication */}
       <div className="admin-card">
         <div className="admin-toolbar" style={{ justifyContent: "space-between" }}>
           <div className="admin-toolbar">
@@ -97,6 +101,18 @@ export function DeezerManager({
             {collectResult.status === "error" ? `❌ ${collectResult.error}` : `✅ ${collectResult.message}`}
           </div>
         )}
+
+        {edition && (
+          <div style={{ marginTop: "0.75rem" }}>
+            {edition.hasUnpublishedChanges ? (
+              <div className="banner">
+                Modifications non publiées. Cliquez « Publier » pour les rendre visibles sur le site.
+              </div>
+            ) : (
+              <div className="banner banner--ok">Classement à jour.</div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Résumé */}
@@ -107,26 +123,20 @@ export function DeezerManager({
             <Stat value={data.summary.totalEntries} label="Musiques" />
             <Stat value={data.summary.distinctArtists} label="Artistes" />
             <Stat value={data.summary.distinctAlbums} label="Albums" />
+            <Stat value={data.summary.visibleEntries} label="Visibles" />
             <Stat value={data.summary.eligibleEntries} label="Publiables" accent />
+            <Stat value={data.summary.hiddenEntries + data.summary.excludedEntries} label="Masqués / exclus" />
           </div>
         </div>
       )}
 
-      {/* Liste des musiques */}
+      {/* Liste des musiques avec gestion complète */}
       {data?.entries && data.entries.length > 0 && (
         <div className="admin-card">
-          <h2 className="admin-card__title">Top Musiques</h2>
+          <h2 className="admin-card__title">Top Musiques Deezer</h2>
           <div className="entry-list">
-            {data.entries.map((e: AdminChartEntry) => (
-              <div key={e.entryId} className="entry">
-                <div className="entry__pos">{e.filteredPosition ?? e.sourcePosition}</div>
-                <img className="entry__cover" src={e.artworkUrl ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"} alt="" />
-                <div className="entry__meta">
-                  <div className="entry__title">{e.title}</div>
-                  <div className="entry__artist">{e.artist}</div>
-                </div>
-                <div />
-              </div>
+            {data.entries.map((e) => (
+              <DeezerEntry key={e.entryId} entry={e} busy={busy} onAction={entryAction} />
             ))}
           </div>
         </div>
@@ -134,6 +144,95 @@ export function DeezerManager({
 
       {toast && <div className={toast.error ? "toast toast--error" : "toast"}>{toast.message}</div>}
     </>
+  );
+}
+
+/** Entrée avec preview audio au hover + boutons de gestion */
+function DeezerEntry({
+  entry,
+  busy,
+  onAction,
+}: {
+  entry: AdminChartEntry;
+  busy: boolean;
+  onAction: (entryId: string, action: string, extra?: Record<string, unknown>) => void;
+}) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playing, setPlaying] = useState(false);
+
+  // Deezer preview URL : on la reconstitue à partir du platformTrackId
+  const previewUrl = entry.platformTrackId
+    ? `https://cdns-preview-e.dzcdn.net/stream/c-${entry.platformTrackId}.mp3`
+    : null;
+
+  function handleMouseEnter() {
+    if (!previewUrl) return;
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.volume = 0.3;
+    }
+    audioRef.current.src = previewUrl;
+    audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
+  }
+
+  function handleMouseLeave() {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setPlaying(false);
+    }
+  }
+
+  const cls = `entry${entry.isHidden ? " is-hidden" : ""}${entry.isExcluded ? " is-excluded" : ""}`;
+
+  return (
+    <div
+      className={cls}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ position: "relative" }}
+    >
+      <div className="entry__pos">{entry.filteredPosition ?? entry.sourcePosition}</div>
+      <div className="entry__cover-wrap">
+        <img
+          className="entry__cover"
+          src={entry.artworkUrl ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"}
+          alt=""
+        />
+        {playing && (
+          <div className="entry__playing-indicator" title="Extrait en cours">
+            <span>♫</span>
+          </div>
+        )}
+        {entry.audiomackUrl && (
+          <a className="entry__play-btn" href={entry.audiomackUrl} target="_blank" rel="noreferrer" title="Ouvrir sur Deezer">▶</a>
+        )}
+      </div>
+      <div className="entry__meta">
+        <div className="entry__title">{entry.title}</div>
+        <div className="entry__artist">
+          {entry.artist}
+          {entry.isEligible && <span className="badge badge--ok" style={{ marginLeft: "0.4rem" }}>Publiable</span>}
+          {entry.isHidden && <span className="badge badge--muted" style={{ marginLeft: "0.4rem" }}>Masqué</span>}
+          {entry.isExcluded && <span className="badge badge--danger" style={{ marginLeft: "0.4rem" }}>Exclu</span>}
+          {entry.genre && <span className="badge badge--muted" style={{ marginLeft: "0.4rem" }}>{entry.genre}</span>}
+        </div>
+      </div>
+      <div className="entry__actions">
+        <button className="btn btn--sm" disabled={busy} onClick={() => onAction(entry.entryId, "move_up")} title="Monter">↑</button>
+        <button className="btn btn--sm" disabled={busy} onClick={() => onAction(entry.entryId, "move_down")} title="Descendre">↓</button>
+        {entry.isHidden ? (
+          <button className="btn btn--sm" disabled={busy} onClick={() => onAction(entry.entryId, "unhide")}>Afficher</button>
+        ) : (
+          <button className="btn btn--sm" disabled={busy} onClick={() => onAction(entry.entryId, "hide")}>Masquer</button>
+        )}
+        {entry.isExcluded ? (
+          <button className="btn btn--sm" disabled={busy} onClick={() => onAction(entry.entryId, "include")}>Réintégrer</button>
+        ) : (
+          <button className="btn btn--sm btn--danger" disabled={busy} onClick={() => onAction(entry.entryId, "exclude", { reason: "Non haïtien" })}>Exclure</button>
+        )}
+      </div>
+    </div>
   );
 }
 
