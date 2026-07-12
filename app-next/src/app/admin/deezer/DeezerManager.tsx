@@ -71,7 +71,7 @@ export function DeezerManager({
   const publish = () => post("/api/admin/charts/publish", { sourceKey, mode: "publish" });
   const clearEdition = () => {
     if (confirm("Êtes-vous sûr de vouloir vider tout le classement Deezer ? Cette action est irréversible."))
-      post("/api/admin/charts/publish", { sourceKey, mode: "cancel" });
+      post("/api/admin/charts/entry", { editionId: edition?.editionId, entryId: "__all__", action: "delete_all" });
   };
 
   const entryAction = (entryId: string, action: string, extra: Record<string, unknown> = {}) =>
