@@ -170,3 +170,12 @@
   backdrop-filter: blur(2px);
 }
 .entry__cover-wrap:hover .entry__play-btn { display: flex; }
+
+/* Indicateur audio en cours (preview hover) */
+.entry__playing-indicator {
+  position: absolute; inset: 0; border-radius: 6px;
+  background: rgba(124, 92, 255, 0.4); backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 1.1rem; animation: pulse-audio 1s ease-in-out infinite;
+}
+@keyframes pulse-audio { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
