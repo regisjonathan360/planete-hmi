@@ -1,15 +1,15 @@
 /** Types pour l'intégration Audiomack Weekly 100: Haiti */
 
 export interface AudiomackNormalizedEntry {
-  platform: "audiomack";
-  countryCode: "HT";
+  platform: string;
+  countryCode: string;
   rank: number;
   platformTrackId: string | null;
   title: string;
   artistName: string;
   artworkUrl: string | null;
   artistImageUrl: string | null;
-  sourceTrackUrl: string;
+  sourceTrackUrl: string | null;
   artistSlug: string | null;
   trackSlug: string | null;
   albumName: string | null;

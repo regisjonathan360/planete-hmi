@@ -50,6 +50,7 @@ export const SLUG_PAR_PLATEFORME: Record<string, string> = {
   youtube: "youtube",
   spotify: "spotify",
   audiomack: "audiomack",
+  deezer: "deezer",
   apple_music: "apple-music",
   tiktok: "tiktok",
 };
@@ -59,6 +60,7 @@ export const SOURCE_KEY_PAR_SLUG: Record<string, string> = {
   youtube: "youtube_haiti_official",
   spotify: "spotify_haiti_popular",
   audiomack: "audiomack_haiti_weekly100",
+  deezer: "deezer_haiti_top100",
   "apple-music": "apple_hmi_worldwide",
   tiktok: "tiktok_haiti_global",
 };
