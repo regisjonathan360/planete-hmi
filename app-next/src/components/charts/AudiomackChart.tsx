@@ -114,7 +114,7 @@ export function AudiomackChartSection() {
               <td>
                 <a
                   className="hmi__link"
-                  href={e.sourceTrackUrl}
+                  href={e.sourceTrackUrl ?? "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Écouter ${e.title} par ${e.artistName} sur Audiomack`}

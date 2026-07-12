@@ -9,7 +9,7 @@ import type { ChartOverviewRow } from "@/lib/charts/queries/types";
 export const dynamic = "force-dynamic";
 
 // Ordre officiel des 5 plateformes.
-const ORDRE = ["youtube", "spotify", "audiomack", "apple_music", "tiktok"];
+const ORDRE = ["youtube", "spotify", "audiomack", "deezer", "apple_music", "tiktok"];
 
 /** Garde une rangée par plateforme (la première rencontrée = source principale). */
 function cinqRangees(rows: ChartOverviewRow[]): ChartOverviewRow[] {
