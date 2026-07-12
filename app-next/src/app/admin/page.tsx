@@ -1,86 +1,102 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getAdminUser } from "@/lib/auth/admin-guard";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminHeader } from "./AdminHeader";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  let user;
-  let debugInfo = "";
-  try {
-    user = await getAdminUser();
-    debugInfo = user ? `Connecté: ${user.email}` : "getAdminUser retourne null";
-  } catch (e) {
-    debugInfo = `Erreur: ${e instanceof Error ? e.message : String(e)}`;
-  }
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
 
-  // Debug : voir les cookies reçus
-  const { cookies } = await import("next/headers");
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll();
-  const sbCookies = allCookies.filter(c => c.name.includes("supabase") || c.name.includes("sb-") || c.name.includes("sb_"));
-  console.log("[ADMIN] Supabase cookies:", sbCookies.map(c => `${c.name}=${c.value.slice(0,20)}...`));
-  console.log("[ADMIN] getAdminUser result:", user);
+  const supabase = createAdminClient();
 
-  if (!user) {
-    return (
-      <>
-        <AdminHeader email={null} active="home" />
-        <main className="admin__main">
-          <h1 className="admin__title">Accès refusé</h1>
-          <p className="admin__subtitle">{debugInfo}</p>
-          <p style={{color: "var(--admin-muted)", fontSize: "0.8rem"}}>
-            Cookies Supabase détectés : {sbCookies.length > 0 ? sbCookies.map(c => c.name).join(", ") : "aucun"}
-          </p>
-          <a href="/admin/login" className="btn btn--primary">Se connecter</a>
-        </main>
-      </>
-    );
-  }
+  // Stats rapides
+  const [
+    { count: totalArtists },
+    { count: activeArtists },
+    { count: pendingArtists },
+    { count: pendingDoublons },
+  ] = await Promise.all([
+    supabase.from("artists").select("*", { count: "exact", head: true }),
+    supabase.from("artists").select("*", { count: "exact", head: true }).eq("is_active", true),
+    supabase.from("artists").select("*", { count: "exact", head: true }).eq("haitian_status", "pending_review"),
+    supabase.from("artist_merge_candidates").select("*", { count: "exact", head: true }).eq("status", "pending"),
+  ]);
 
   return (
     <>
       <AdminHeader email={user.email} active="home" />
       <main className="admin__main">
         <h1 className="admin__title">Tableau de bord</h1>
-        <p className="admin__subtitle">
-          Gérez les classements musicaux haïtiens par plateforme. Collecte, validation, édition
-          manuelle et publication contrôlée.
-        </p>
+        <p className="admin__subtitle">Vue d&apos;ensemble de Planète HMI.</p>
 
+        {/* Stats globales */}
         <div className="admin-card">
-          <h2 className="admin-card__title">Plateformes</h2>
+          <h2 className="admin-card__title">Artistes</h2>
+          <div className="admin-stats">
+            <Link href="/admin/artistes" className="stat" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="stat__value">{totalArtists ?? 0}</div>
+              <div className="stat__label">Total artistes</div>
+            </Link>
+            <Link href="/admin/artistes?filter=active" className="stat" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="stat__value" style={{ color: "var(--admin-ok)" }}>{activeArtists ?? 0}</div>
+              <div className="stat__label">Actifs (visibles)</div>
+            </Link>
+            <Link href="/admin/artistes?filter=pending" className="stat" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="stat__value" style={{ color: "var(--admin-warn)" }}>{pendingArtists ?? 0}</div>
+              <div className="stat__label">À vérifier</div>
+            </Link>
+            <Link href="/admin/doublons" className="stat" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="stat__value" style={{ color: pendingDoublons ? "var(--admin-danger)" : "var(--admin-muted)" }}>
+                {pendingDoublons ?? 0}
+              </div>
+              <div className="stat__label">Doublons à traiter</div>
+            </Link>
+          </div>
+        </div>
+
+        {/* Plateformes */}
+        <div className="admin-card">
+          <h2 className="admin-card__title">Classements</h2>
           <div className="admin-stats">
             <Link href="/admin/audiomack" className="stat" style={{ textDecoration: "none", color: "inherit" }}>
-              <div className="stat__value" style={{ color: "var(--admin-accent-2)" }}>
-                Audiomack
-              </div>
-              <div className="stat__label">Weekly 100 Haiti — actif</div>
+              <div className="stat__value" style={{ color: "var(--admin-accent-2)" }}>Audiomack</div>
+              <div className="stat__label">Top Songs Haiti</div>
             </Link>
-            <div className="stat" style={{ opacity: 0.5 }}>
-              <div className="stat__value">YouTube</div>
-              <div className="stat__label">Bientôt</div>
-            </div>
-            <div className="stat" style={{ opacity: 0.5 }}>
+            <Link href="/admin/deezer" className="stat" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="stat__value" style={{ color: "var(--admin-accent)" }}>Deezer</div>
+              <div className="stat__label">Top Haiti</div>
+            </Link>
+            <Link href="/admin/tiktok" className="stat" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="stat__value">TikTok</div>
+              <div className="stat__label">HMI Trends</div>
+            </Link>
+            <div className="stat" style={{ opacity: 0.4 }}>
               <div className="stat__value">Apple Music</div>
-              <div className="stat__label">Bientôt</div>
-            </div>
-            <div className="stat" style={{ opacity: 0.5 }}>
-              <div className="stat__value">Spotify</div>
               <div className="stat__label">Bientôt</div>
             </div>
           </div>
         </div>
 
+        {/* Accès rapides */}
         <div className="admin-card">
-          <h2 className="admin-card__title">Comment ça marche</h2>
-          <ol style={{ color: "var(--admin-muted)", lineHeight: 1.8, margin: 0, paddingLeft: "1.2rem" }}>
-            <li>Collectez le classement depuis Audiomack.</li>
-            <li>Validez les artistes haïtiens (à vérifier → validé / refusé / masqué).</li>
-            <li>Éditez, réordonnez, masquez ou supprimez les entrées : les positions se recalculent.</li>
-            <li>Publiez. Le site public affiche uniquement la dernière version publiée.</li>
-          </ol>
+          <h2 className="admin-card__title">Accès rapides</h2>
+          <div className="admin-toolbar" style={{ flexWrap: "wrap" }}>
+            <Link href="/admin/artistes/nouveau" className="btn btn--primary" style={{ textDecoration: "none" }}>
+              + Créer un artiste
+            </Link>
+            <Link href="/admin/artistes" className="btn" style={{ textDecoration: "none" }}>
+              Gérer les artistes
+            </Link>
+            <Link href="/admin/doublons" className="btn" style={{ textDecoration: "none" }}>
+              Doublons possibles
+            </Link>
+            <Link href="/charts" className="btn btn--ghost" style={{ textDecoration: "none" }} target="_blank">
+              Voir le site public ↗
+            </Link>
+          </div>
         </div>
       </main>
     </>
