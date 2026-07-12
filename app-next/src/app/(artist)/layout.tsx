@@ -1,9 +1,16 @@
 import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ArtistScrollReset } from "./ArtistScrollReset";
+import { FEATURES } from "@/lib/features";
 import "./artist-account.css";
 
 export default function ArtistAreaLayout({ children }: { children: ReactNode }) {
+  // Si les comptes artistes sont désactivés, rediriger vers la connexion visiteur
+  if (!FEATURES.ARTIST_ACCOUNTS) {
+    redirect("/connexion");
+  }
+
   return (
     <>
       <ArtistScrollReset />
