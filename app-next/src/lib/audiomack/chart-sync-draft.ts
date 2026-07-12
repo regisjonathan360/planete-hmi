@@ -169,6 +169,24 @@ async function ensureTrack(
   const artists = normalizeArtists(entry.artistName);
   for (const artist of artists) {
     const artistId = await ensureArtist(supabase, artist.nom, 0, entry.artistImageUrl);
+
+    // Enregistrer l'identité plateforme de l'artiste (multi-plateforme)
+    if (entry.artistSlug || entry.sourceTrackUrl) {
+      await supabase
+        .from("artist_platform_identities")
+        .upsert({
+          artist_id: artistId,
+          platform: entry.platform,
+          external_id: entry.artistSlug ?? slugify(artist.nom),
+          external_url: entry.sourceTrackUrl ? entry.sourceTrackUrl.split("/song/")[0] : null,
+          platform_name: artist.nom,
+          platform_image_url: entry.artistImageUrl ?? null,
+          match_method: "auto_collect",
+          last_seen_at: new Date().toISOString(),
+        }, { onConflict: "platform,external_id", ignoreDuplicates: true })
+        .select("id");
+    }
+
     await supabase
       .from("track_artists")
       .upsert({
