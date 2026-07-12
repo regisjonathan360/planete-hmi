@@ -83,11 +83,18 @@ export async function POST() {
     changedBy: auth.user.id,
   });
 
+  // Détection automatique de doublons
+  let duplicatesFound = 0;
+  try {
+    const { detectDuplicates } = await import("@/lib/artists/detect-duplicates");
+    duplicatesFound = await detectDuplicates(supabase);
+  } catch { /* table peut ne pas exister encore */ }
+
   const data = await getAdminChartData(supabase, SOURCE_KEY);
 
   return NextResponse.json({
     status: "collected",
     snapshotCreated: created,
-    message: `Collecte Deezer réussie : ${draft.imported} musiques, ${data.summary.distinctArtists} artistes.`,
+    message: `Collecte Deezer réussie : ${draft.imported} musiques, ${data.summary.distinctArtists} artistes.${duplicatesFound ? ` ${duplicatesFound} doublon(s) détecté(s).` : ""}`,
   });
 }

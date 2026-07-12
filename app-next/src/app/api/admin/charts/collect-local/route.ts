@@ -85,6 +85,13 @@ export async function POST(request: Request) {
     note: `Collecte locale : ${draft.imported} entrées. ${enrichResult.enriched} photos.`,
   });
 
+  // Détection automatique de doublons après collecte
+  let duplicatesFound = 0;
+  try {
+    const { detectDuplicates } = await import("@/lib/artists/detect-duplicates");
+    duplicatesFound = await detectDuplicates(supabase);
+  } catch { /* table peut ne pas exister encore */ }
+
   const data = await getAdminChartData(supabase, sourceKey);
 
   return NextResponse.json({
@@ -98,6 +105,6 @@ export async function POST(request: Request) {
       aValider: data.summary.pendingArtists,
       photosArtistes: enrichResult.enriched,
     },
-    message: `Collecte locale réussie : ${draft.imported} musiques importées.`,
+    message: `Collecte locale réussie : ${draft.imported} musiques importées.${duplicatesFound ? ` ${duplicatesFound} doublon(s) détecté(s).` : ""}`,
   });
 }
