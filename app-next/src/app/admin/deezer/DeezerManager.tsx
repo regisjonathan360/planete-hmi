@@ -69,6 +69,10 @@ export function DeezerManager({
   };
 
   const publish = () => post("/api/admin/charts/publish", { sourceKey, mode: "publish" });
+  const clearEdition = () => {
+    if (confirm("Êtes-vous sûr de vouloir vider tout le classement Deezer ? Cette action est irréversible."))
+      post("/api/admin/charts/publish", { sourceKey, mode: "cancel" });
+  };
 
   const entryAction = (entryId: string, action: string, extra: Record<string, unknown> = {}) =>
     post("/api/admin/charts/entry", { editionId: edition?.editionId, entryId, action, ...extra });
@@ -90,6 +94,9 @@ export function DeezerManager({
           </div>
           <button className="btn btn--ok" onClick={publish} disabled={busy || !edition}>
             ✓ Publier le classement
+          </button>
+          <button className="btn btn--danger btn--sm" onClick={clearEdition} disabled={busy || !edition}>
+            🗑️ Vider le classement
           </button>
         </div>
 

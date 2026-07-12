@@ -108,6 +108,10 @@ export function AudiomackManager({
     if (confirm("Annuler toutes les modifications et revenir à l'ordre source Audiomack ?"))
       post("/api/admin/charts/publish", { sourceKey, mode: "cancel" });
   };
+  const clearAll = () => {
+    if (confirm("Vider TOUT le classement Audiomack ? Toutes les entrées seront supprimées. Cette action est irréversible."))
+      post("/api/admin/charts/entry", { editionId: edition?.editionId, entryId: "__all__", action: "delete_all" });
+  };
 
   const entryAction = (entryId: string, action: string, extra: Record<string, unknown> = {}) =>
     post("/api/admin/charts/entry", { editionId: edition?.editionId, entryId, action, ...extra });
@@ -152,6 +156,9 @@ export function AudiomackManager({
             </button>
             <button className="btn btn--ghost btn--sm" onClick={restore} disabled={busy || !edition}>
               Restaurer la version publiée
+            </button>
+            <button className="btn btn--danger btn--sm" onClick={clearAll} disabled={busy || !edition}>
+              🗑️ Vider le classement
             </button>
             <button className="btn btn--ok" onClick={publish} disabled={busy || !edition}>
               ✓ Publier le classement

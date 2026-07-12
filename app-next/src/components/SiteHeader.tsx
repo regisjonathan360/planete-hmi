@@ -93,7 +93,7 @@ export function SiteHeader() {
         {(
           user ? (
             <>
-              <Link href="/espace-artiste" onClick={() => setMenuOpen(false)}>Mon espace</Link>
+              <Link href="/compte" onClick={() => setMenuOpen(false)}>Mon espace</Link>
               <button
                 type="button"
                 className="btn btn-ghost"
@@ -140,12 +140,12 @@ function UserBadge({
 
       {open && (
         <div className="user-badge__dropdown">
-          <p className="user-badge__email">{email ?? "Artiste"}</p>
-          <Link href="/espace-artiste" className="user-badge__link" onClick={() => setOpen(false)}>
+          <p className="user-badge__email">{email ?? "Visiteur"}</p>
+          <Link href="/compte" className="user-badge__link" onClick={() => setOpen(false)}>
             Mon espace
           </Link>
-          <Link href="/espace-artiste/profil" className="user-badge__link" onClick={() => setOpen(false)}>
-            Personnaliser le profil
+          <Link href="/compte/favoris" className="user-badge__link" onClick={() => setOpen(false)}>
+            Mes favoris
           </Link>
           <button type="button" className="user-badge__link user-badge__logout" onClick={onLogout}>
             Déconnexion
