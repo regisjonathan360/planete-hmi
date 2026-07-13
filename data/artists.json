@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-12T07:32:39.717Z",
+    "genereLe": "2026-07-13T08:22:19.445Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg",
       "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 8903,
+        "deezerFans": 8905,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 484698,
+        "deezerFans": 484879,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -52,7 +52,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
       "topTitre": "Ayo Girl (Haitian Konpa Remix)",
       "metriques": {
-        "deezerFans": 7866,
+        "deezerFans": 7867,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Tolere w",
       "metriques": {
-        "deezerFans": 10292,
+        "deezerFans": 10297,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -90,7 +90,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
       "topTitre": "ONE TRACK MIND",
       "metriques": {
-        "deezerFans": 31293,
+        "deezerFans": 31407,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -101,7 +101,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 40.4
+      "scoreHMI": 40.5
     },
     {
       "nom": "Wanito",
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg",
       "topTitre": "24/7",
       "metriques": {
-        "deezerFans": 4898,
+        "deezerFans": 4899,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -166,7 +166,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
       "topTitre": "Me Bloqueia (Ao Vivo No Prainha)",
       "metriques": {
-        "deezerFans": 528057,
+        "deezerFans": 528181,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -185,7 +185,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/84240697bd32e502dc2cf878636c76c5/250x250-000000-80-0-0.jpg",
       "topTitre": "Let's get Scratchin'",
       "metriques": {
-        "deezerFans": 25,
+        "deezerFans": 26,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/287d5f44dd259db48d850533cd66d8f6/250x250-000000-80-0-0.jpg",
-      "topTitre": "100,000",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/a9f746f4eaa1bc8e41181ecec8bb9aed/250x250-000000-80-0-0.jpg",
+      "topTitre": "San Lucas",
       "metriques": {
-        "deezerFans": 37557,
+        "deezerFans": 353527,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5326126",
+        "deezer": "https://www.deezer.com/artist/53441822",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 42.6
+      "scoreHMI": 68.9
     }
   ]
 }
