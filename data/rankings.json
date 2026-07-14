@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-13T08:22:19.445Z",
+    "genereLe": "2026-07-14T07:15:39.436Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,6 +10,14 @@
   "classement": [
     {
       "rang": 1,
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Olha a Explosão",
+      "score": 96.7,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 2,
       "nom": "Belo",
       "genre": "Reggae",
       "titre": "Me Bloqueia (Ao Vivo No Prainha)",
@@ -17,20 +25,12 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 2,
+      "rang": 3,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "4 Kampé",
+      "titre": "CA$H",
       "score": 72.6,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 3,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "San Lucas",
-      "score": 68.9,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/a9f746f4eaa1bc8e41181ecec8bb9aed/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 4,
@@ -54,7 +54,7 @@
       "genre": "Konpa",
       "titre": "Tranble",
       "score": 25.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 7,
