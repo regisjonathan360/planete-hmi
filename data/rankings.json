@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-14T07:15:39.436Z",
+    "genereLe": "2026-07-15T07:19:37.828Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -18,14 +18,6 @@
     },
     {
       "rang": 2,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Me Bloqueia (Ao Vivo No Prainha)",
-      "score": 73.6,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 3,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "titre": "CA$H",
@@ -33,31 +25,23 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 4,
-      "nom": "Naïka",
-      "genre": "Pop / R&B",
-      "titre": "ONE TRACK MIND",
-      "score": 40.5,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 5,
+      "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Tolere w",
+      "titre": "Kè M Nan Men W (Extended Version)",
       "score": 27.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 6,
+      "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Tranble",
+      "titre": "Sorry To My Ex",
       "score": 25.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 7,
+      "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
       "titre": "Ayo Girl (Haitian Konpa Remix)",
@@ -65,7 +49,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 8,
+      "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
       "titre": "Gason Malen",
@@ -73,7 +57,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 9,
+      "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
       "titre": "Flanm",
@@ -81,20 +65,28 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 10,
+      "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "24/7",
+      "titre": "Lotto",
       "score": 18.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 11,
+      "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
       "titre": "2KAWO",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 10,
+      "nom": "Belo",
+      "genre": "Reggae",
+      "titre": "Mwen Bouke",
+      "score": 2.4,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
