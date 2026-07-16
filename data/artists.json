@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-15T07:19:37.828Z",
+    "genereLe": "2026-07-16T07:27:15.943Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "CA$H",
       "metriques": {
-        "deezerFans": 485228,
+        "deezerFans": 485388,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Kè M Nan Men W (Extended Version)",
       "metriques": {
-        "deezerFans": 10302,
+        "deezerFans": 10304,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -109,7 +109,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
       "topTitre": "Gason Malen",
       "metriques": {
-        "deezerFans": 6809,
+        "deezerFans": 6810,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,21 +163,21 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
-      "topTitre": "Mwen Bouke",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 1225,
+        "deezerFans": 13,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5858154",
+        "deezer": "https://www.deezer.com/artist/220083935",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 2.4
+      "scoreHMI": 0
     },
     {
       "nom": "BIC",
@@ -223,7 +223,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
       "topTitre": "2KAWO",
       "metriques": {
-        "deezerFans": 2202,
+        "deezerFans": 2203,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3782869,
+        "deezerFans": 3782896,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
