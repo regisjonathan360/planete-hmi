@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-16T07:27:15.943Z",
+    "genereLe": "2026-07-17T07:23:38.741Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "CA$H",
+      "titre": "4 Kampé",
       "score": 72.6,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Kè M Nan Men W (Extended Version)",
+      "titre": "Good God",
       "score": 27.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -36,7 +36,7 @@
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Sorry To My Ex",
+      "titre": "ou merite plis ke sa",
       "score": 25.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg"
     },
@@ -46,7 +46,7 @@
       "genre": "Konpa",
       "titre": "Ayo Girl (Haitian Konpa Remix)",
       "score": 24.2,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
@@ -76,9 +76,17 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "2KAWO",
+      "titre": "Manyen m la (feat. Kenny Haiti)",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 10,
+      "nom": "Belo",
+      "genre": "Reggae",
+      "titre": "Mwen Bouke",
+      "score": 2.4,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }

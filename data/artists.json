@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-16T07:27:15.943Z",
+    "genereLe": "2026-07-17T07:23:38.741Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg",
-      "topTitre": "Sorry To My Ex",
+      "topTitre": "ou merite plis ke sa",
       "metriques": {
-        "deezerFans": 8908,
+        "deezerFans": 8909,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "CA$H",
+      "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 485388,
+        "deezerFans": 485575,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,10 +49,10 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
       "topTitre": "Ayo Girl (Haitian Konpa Remix)",
       "metriques": {
-        "deezerFans": 7870,
+        "deezerFans": 7871,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Kè M Nan Men W (Extended Version)",
+      "topTitre": "Good God",
       "metriques": {
-        "deezerFans": 10304,
+        "deezerFans": 10306,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -87,17 +87,17 @@
     {
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/d41d8cd98f00b204e9800998ecf8427e/250x250-000000-80-0-0.jpg",
-      "topTitre": "Messi (Sunset Mix)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 13,
+        "deezerFans": 5,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/254822142",
+        "deezer": "https://www.deezer.com/artist/59634622",
         "spotify": null,
         "youtube": null
       },
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg",
       "topTitre": "Lotto",
       "metriques": {
-        "deezerFans": 4901,
+        "deezerFans": 4902,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,21 +163,21 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
+      "topTitre": "Mwen Bouke",
       "metriques": {
-        "deezerFans": 13,
+        "deezerFans": 1226,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/220083935",
+        "deezer": "https://www.deezer.com/artist/5858154",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 0
+      "scoreHMI": 2.4
     },
     {
       "nom": "BIC",
@@ -202,7 +202,7 @@
       "nom": "Vwadèzil",
       "genre": "Rabòday",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9ffa465479a45f27c8a8492c4fedcdec/250x250-000000-80-0-0.jpg",
-      "topTitre": "Tèt Tizo Zo",
+      "topTitre": "Yo Samble Moun",
       "metriques": {
         "deezerFans": 181,
         "spotifyFollowers": null,
@@ -221,7 +221,7 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "2KAWO",
+      "topTitre": "Manyen m la (feat. Kenny Haiti)",
       "metriques": {
         "deezerFans": 2203,
         "spotifyFollowers": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3782896,
+        "deezerFans": 3782919,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
