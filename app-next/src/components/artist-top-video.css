@@ -1,0 +1,73 @@
+/* Vidéo TikTok la plus populaire de la semaine */
+.artist-top-video {
+  max-width: 200px;
+}
+.artist-top-video__link {
+  position: relative;
+  display: block;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(244, 239, 228, 0.08);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.artist-top-video__link:hover {
+  border-color: rgba(244, 239, 228, 0.25);
+  transform: translateY(-2px);
+}
+.artist-top-video__cover {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 9/16;
+  background: #15131f;
+}
+.artist-top-video__placeholder {
+  width: 100%;
+  aspect-ratio: 9/16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #15131f;
+  font-size: 2.5rem;
+}
+.artist-top-video__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.artist-top-video__overlay.is-active {
+  opacity: 1;
+}
+.artist-top-video__play {
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+  background: rgba(255, 0, 80, 0.8);
+  border-radius: 999px;
+}
+.artist-top-video__stats {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.artist-top-video__title {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(244, 239, 228, 0.7);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
