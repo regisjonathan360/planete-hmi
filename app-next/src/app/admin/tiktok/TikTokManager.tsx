@@ -88,6 +88,28 @@ export function TikTokManager({ initialData }: TikTokManagerProps) {
     }
   }
 
+  async function handleSyncConnections() {
+    setIsCollecting(true);
+    setCollectResult(null);
+    try {
+      const res = await fetch("/api/admin/tiktok/sync-connections", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setCollectResult({ error: data.error ?? "Erreur lors de la synchronisation." });
+        notify(data.error ?? "Erreur.", true);
+      } else {
+        setCollectResult(data);
+        notify(data.message ?? "Synchronisation terminée.");
+        startTransition(() => router.refresh());
+      }
+    } catch {
+      setCollectResult({ error: "Erreur réseau." });
+      notify("Erreur réseau.", true);
+    } finally {
+      setIsCollecting(false);
+    }
+  }
+
   function formatDate(dateStr: string | null): string {
     if (!dateStr) return "—";
     return new Date(dateStr).toLocaleString("fr-FR");
@@ -119,6 +141,14 @@ export function TikTokManager({ initialData }: TikTokManagerProps) {
               disabled={isCollecting}
             >
               {isCollecting ? "⟳ Collecte en cours…" : "⟳ Lancer la collecte"}
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={handleSyncConnections}
+              disabled={isCollecting}
+            >
+              {isCollecting ? "⟳ …" : "🔄 Sync artistes connectés"}
             </button>
             {stats.lastSyncRun?.completedAt && (
               <span style={{ color: "var(--admin-muted)", fontSize: "0.82rem" }}>
