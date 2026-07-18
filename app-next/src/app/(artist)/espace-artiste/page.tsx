@@ -57,6 +57,7 @@ const NOTICES: Record<string, { text: string; error?: boolean }> = {
   "tiktok-disconnected": { text: "Connexion TikTok retirée." },
   "claim-submitted": { text: "Demande de validation envoyée." },
   "claim-already-approved": { text: "Ta fiche artiste est déjà validée." },
+  "claim-auto-approved": { text: "🎉 Fiche revendiquée automatiquement ! Ton TikTok correspond parfaitement." },
   "tiktok-denied": { text: "L'autorisation TikTok n'a pas été accordée.", error: true },
   "tiktok-invalid-state": { text: "La tentative de connexion a expiré.", error: true },
   "tiktok-missing-code": { text: "TikTok n'a pas terminé la connexion.", error: true },
