@@ -155,3 +155,39 @@
 .artist-profile__link-icon {
   font-size: 1.1rem;
 }
+
+
+/* Bouton revendication TikTok */
+.artist-profile__claim-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0.55rem 1.1rem;
+  background: linear-gradient(135deg, #ff0050 0%, #00f2ea 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.artist-profile__claim-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Badge vérifié */
+.artist-profile__verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.75rem;
+  padding: 0.35rem 0.8rem;
+  background: rgba(61, 220, 132, 0.12);
+  color: #3ddc84;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(61, 220, 132, 0.3);
+}

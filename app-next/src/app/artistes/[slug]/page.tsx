@@ -92,6 +92,10 @@ export default async function ArtistProfilePage({ params }: Props) {
 
   const tags: string[] = artist.tags ?? [];
 
+  // Vérifier si le profil est déjà revendiqué
+  const isClaimed = !!artist.user_id;
+  const hasTikTokUrl = !!artist.url_tiktok;
+
   return (
     <>
       <SiteHeader />
@@ -128,6 +132,18 @@ export default async function ArtistProfilePage({ params }: Props) {
               {artist.city && <p className="artist-profile__city">📍 {artist.city}</p>}
               {artist.label && <p className="artist-profile__label">🏷️ {artist.label}</p>}
               {artist.bio && <p className="artist-profile__bio">{artist.bio}</p>}
+              {/* Bouton revendication TikTok */}
+              {!isClaimed && hasTikTokUrl && (
+                <a
+                  href={`/api/tiktok/connect?claim=${artist.id}`}
+                  className="artist-profile__claim-btn"
+                >
+                  🎵 Revendiquer ce profil avec TikTok
+                </a>
+              )}
+              {isClaimed && (
+                <span className="artist-profile__verified-badge">✓ Profil vérifié</span>
+              )}
             </div>
           </div>
 
