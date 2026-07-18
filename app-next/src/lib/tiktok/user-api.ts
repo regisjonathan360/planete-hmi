@@ -59,20 +59,20 @@ const userSchema = z.object({
 
 const videoSchema = z.object({
   id: z.string().min(1),
-  create_time: z.coerce.number().int().positive(),
+  create_time: z.coerce.number().int().nonnegative(),
   cover_image_url: z.string().nullable().optional(),
   share_url: z.string().nullable().optional(),
   video_description: z.string().nullable().optional(),
-  duration: z.coerce.number().int().nonnegative().nullable().optional(),
-  height: z.coerce.number().int().positive().nullable().optional(),
-  width: z.coerce.number().int().positive().nullable().optional(),
+  duration: z.coerce.number().nonnegative().nullable().optional(),
+  height: z.coerce.number().nonnegative().nullable().optional(),
+  width: z.coerce.number().nonnegative().nullable().optional(),
   title: z.string().nullable().optional(),
   embed_link: z.string().nullable().optional(),
-  like_count: z.coerce.number().int().nonnegative().optional().default(0),
-  comment_count: z.coerce.number().int().nonnegative().optional().default(0),
-  share_count: z.coerce.number().int().nonnegative().optional().default(0),
-  view_count: z.coerce.number().int().nonnegative().optional().default(0),
-});
+  like_count: z.coerce.number().nonnegative().optional().default(0),
+  comment_count: z.coerce.number().nonnegative().optional().default(0),
+  share_count: z.coerce.number().nonnegative().optional().default(0),
+  view_count: z.coerce.number().nonnegative().optional().default(0),
+}).passthrough();
 
 const userResponseSchema = z.object({
   data: z.object({ user: userSchema }),
@@ -84,14 +84,14 @@ const videoListResponseSchema = z.object({
     videos: z.array(videoSchema).default([]),
     cursor: z.coerce.number().int().optional().default(0),
     has_more: z.boolean().optional().default(false),
-  }),
+  }).passthrough(),
   error: apiErrorSchema,
-});
+}).passthrough();
 
 const videoQueryResponseSchema = z.object({
-  data: z.object({ videos: z.array(videoSchema).default([]) }),
+  data: z.object({ videos: z.array(videoSchema).default([]) }).passthrough(),
   error: apiErrorSchema,
-});
+}).passthrough();
 
 export type TikTokOAuthTokens = z.infer<typeof tokenSchema>;
 export type TikTokUserProfile = z.infer<typeof userSchema>;
