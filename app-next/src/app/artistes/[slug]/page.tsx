@@ -1,8 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ArtistTopVideo } from "@/components/ArtistTopVideo";
 import type { Metadata } from "next";
 import "./artist-profile.css";
+import "@/components/artist-top-video.css";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -54,6 +57,65 @@ export default async function ArtistProfilePage({ params }: Props) {
     .maybeSingle();
 
   if (!artist) notFound();
+
+  // Vidéo TikTok la plus populaire de la semaine (si artiste connecté)
+  let topVideo: { title: string | null; description: string | null; coverUrl: string | null; embedLink: string | null; shareUrl: string | null; viewCount: number; likeCount: number } | null = null;
+  if (artist.user_id) {
+    const admin = createAdminClient();
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+    const { data: connection } = await admin
+      .from("artist_tiktok_connections")
+      .select("id")
+      .eq("user_id", artist.user_id)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (connection) {
+      const { data: video } = await admin
+        .from("artist_tiktok_videos")
+        .select("title, video_description, cover_image_url, embed_link, share_url, view_count, like_count, create_time")
+        .eq("connection_id", connection.id)
+        .eq("is_available", true)
+        .gte("create_time", oneWeekAgo)
+        .order("view_count", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (video) {
+        topVideo = {
+          title: (video.title as string) ?? null,
+          description: (video.video_description as string) ?? null,
+          coverUrl: (video.cover_image_url as string) ?? null,
+          embedLink: (video.embed_link as string) ?? null,
+          shareUrl: (video.share_url as string) ?? null,
+          viewCount: video.view_count as number,
+          likeCount: video.like_count as number,
+        };
+      } else {
+        // Fallback : vidéo la plus populaire toutes périodes
+        const { data: anyVideo } = await admin
+          .from("artist_tiktok_videos")
+          .select("title, video_description, cover_image_url, embed_link, share_url, view_count, like_count")
+          .eq("connection_id", connection.id)
+          .eq("is_available", true)
+          .order("view_count", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (anyVideo) {
+          topVideo = {
+            title: (anyVideo.title as string) ?? null,
+            description: (anyVideo.video_description as string) ?? null,
+            coverUrl: (anyVideo.cover_image_url as string) ?? null,
+            embedLink: (anyVideo.embed_link as string) ?? null,
+            shareUrl: (anyVideo.share_url as string) ?? null,
+            viewCount: anyVideo.view_count as number,
+            likeCount: anyVideo.like_count as number,
+          };
+        }
+      }
+    }
+  }
 
   // Classements de l'artiste
   const { data: credits } = await supabase
@@ -162,6 +224,14 @@ export default async function ArtistProfilePage({ params }: Props) {
                   </div>
                 ))}
               </div>
+            </section>
+          )}
+
+          {/* Vidéo TikTok de la semaine */}
+          {topVideo && (
+            <section className="artist-profile__section">
+              <h2 className="artist-profile__section-title">🔥 Vidéo de la semaine</h2>
+              <ArtistTopVideo video={{ ...topVideo, artistName: artist.name as string }} />
             </section>
           )}
 
