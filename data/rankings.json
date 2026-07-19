@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-18T07:03:22.534Z",
+    "genereLe": "2026-07-19T07:31:41.135Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -38,7 +38,7 @@
       "genre": "Konpa",
       "titre": "ou merite plis ke sa",
       "score": 25.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 5,
@@ -79,14 +79,6 @@
       "titre": "Manyen m la (feat. Kenny Haiti)",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Lakou trankil",
-      "score": 2.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
