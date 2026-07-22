@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-21T07:37:42.299Z",
+    "genereLe": "2026-07-22T07:38:24.997Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,6 +10,14 @@
   "classement": [
     {
       "rang": 1,
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Olha a Explosão",
+      "score": 96.7,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "titre": "4 Kampé",
@@ -17,15 +25,15 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 2,
+      "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Kè M Nan Men W (Extended Version)",
+      "titre": "Rete La",
       "score": 27.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 3,
+      "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "titre": "ou merite plis ke sa",
@@ -33,15 +41,15 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 4,
+      "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
       "titre": "Ayo Girl (Haitian Konpa Remix)",
       "score": 24.2,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/16a5a56c4ebdcfc9f89a55af82e22f05/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 5,
+      "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
       "titre": "Kisa'm Te Fèw Ki Mal",
@@ -49,7 +57,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 6,
+      "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
       "titre": "Flanm",
@@ -57,7 +65,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 7,
+      "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "titre": "Lotto",
@@ -65,28 +73,12 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 8,
+      "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
       "titre": "Manyen m la (feat. Kenny Haiti)",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 9,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Lakou trankil",
-      "score": 2.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "No Time",
-      "score": 0.3,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/20997bee3e31c46d391873bfb81e9194/250x250-000000-80-0-0.jpg"
     }
   ]
 }
