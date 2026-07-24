@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-07-23T07:38:46.250Z",
+    "genereLe": "2026-07-24T07:37:07.492Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -62,7 +62,7 @@
       "genre": "Rap kreyòl",
       "titre": "Lotto",
       "score": 18.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3dda4fa914ec56a6f70b4524c07ceb76/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 8,
@@ -74,14 +74,6 @@
     },
     {
       "rang": 9,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Lakou trankil",
-      "score": 2.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
       "nom": "Kevinna",
       "genre": "Pop",
       "titre": "No Time",
