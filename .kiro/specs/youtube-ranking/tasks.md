@@ -20,7 +20,7 @@ directement dans le projet. Kiro ne doit recevoir que les tâches marquées `K`.
   - Erreurs bloquantes et avertissements du cahier des charges.
 - [x] D7. Ajouter les tests unitaires des tâches D3 à D6.
 - [x] D8. Préparer les exigences et le design d'intégration pour Kiro.
-- [ ] D9. Créer les composants visuels simples après stabilisation de K1.
+- [x] D9. Créer les composants visuels simples après stabilisation de K1.
   - Badges, états vides, avertissements et affichage de progression.
 - [ ] D10. Créer les formulaires simples après stabilisation des routes K3/K4.
   - Configuration de collecte et édition des champs éditoriaux.
@@ -29,7 +29,7 @@ directement dans le projet. Kiro ne doit recevoir que les tâches marquées `K`.
 
 ## K — Tâches complexes réservées à Kiro
 
-- [ ] K1. Migration Supabase spécialisée et RLS.
+- [x] K1. Migration Supabase spécialisée et RLS.
   - Étendre le schéma existant sans dupliquer `chart_editions`,
     `chart_entries`, `sync_runs` et `chart_audit_logs`.
   - Tables chaînes, vidéos, associations et snapshots ; contraintes
@@ -73,3 +73,21 @@ directement dans le projet. Kiro ne doit recevoir que les tâches marquées `K`.
 > tables charts existantes, ne code aucun client API, aucune route et aucune UI.
 > Fournis la migration, les contraintes, les politiques RLS et les tests SQL
 > pertinents. Ne coche K1 qu'après vérification.
+
+## Prompt K2 minimal pour Kiro
+
+> Lis `.kiro/steering/*` puis
+> `.kiro/specs/youtube-ranking/{requirements,design,tasks}.md`. K1 est terminée
+> et vérifiée. Exécute uniquement K2 : le client serveur YouTube Data API v3.
+> Implémente la validation d'une chaîne, la récupération de sa playlist
+> d'uploads, la pagination de `playlistItems.list` et les appels `videos.list`
+> par lots de 50 maximum pour les métadonnées, disponibilités et statistiques.
+> Utilise exclusivement l'API officielle, garde la clé API côté serveur et
+> réutilise les constantes, types et schémas Zod présents dans
+> `src/lib/youtube`. Gère clairement les timeouts, quota épuisé, clé invalide,
+> chaîne ou vidéo introuvable, vidéo privée/supprimée et réponses partielles,
+> sans journaliser le secret. Ajoute des tests avec API simulée pour le succès,
+> la pagination, le découpage en lots, les erreurs 403/404 et les IDs manquants.
+> Ne modifie ni la migration K1, ni Supabase, ni les routes, ni l'orchestrateur,
+> ni l'interface. Ne commence pas K3. Arrête-toi après les tests de K2 et fournis
+> la liste exacte des fichiers modifiés et des contrôles exécutés.
