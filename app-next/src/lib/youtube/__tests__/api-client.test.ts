@@ -3,14 +3,20 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 vi.mock("server-only", () => ({}));
 
 beforeEach(() => { process.env.YOUTUBE_API_KEY = "fake-key-for-test"; });
-afterEach(() => { vi.restoreAllMocks(); delete process.env.YOUTUBE_API_KEY; });
+afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+  delete process.env.YOUTUBE_API_KEY;
+});
 
 const { validateChannel, listPlaylistItems, getVideoDetails, YouTubeApiError } =
   await import("../api-client");
 
 function mockFetch(responses: Array<{ status: number; body: unknown }>) {
   let callIndex = 0;
-  const fn = vi.fn(async () => {
+  const fn = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    void input;
+    void init;
     const resp = responses[callIndex] ?? responses[responses.length - 1];
     callIndex++;
     return { ok: resp.status >= 200 && resp.status < 300, status: resp.status, json: async () => resp.body } as Response;

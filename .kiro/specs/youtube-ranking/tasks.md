@@ -34,7 +34,7 @@ directement dans le projet. Kiro ne doit recevoir que les tâches marquées `K`.
     `chart_entries`, `sync_runs` et `chart_audit_logs`.
   - Tables chaînes, vidéos, associations et snapshots ; contraintes
     d'idempotence ; suppression contrôlée ; politiques RLS.
-- [ ] K2. Client serveur YouTube Data API v3.
+- [x] K2. Client serveur YouTube Data API v3.
   - Validation d'une chaîne, playlist d'uploads, pagination, lots de vidéos,
     métadonnées/statistiques, quota, timeouts, erreurs partielles et secrets.
 - [ ] K3. Orchestrateur de collecte.
@@ -91,3 +91,39 @@ directement dans le projet. Kiro ne doit recevoir que les tâches marquées `K`.
 > Ne modifie ni la migration K1, ni Supabase, ni les routes, ni l'orchestrateur,
 > ni l'interface. Ne commence pas K3. Arrête-toi après les tests de K2 et fournis
 > la liste exacte des fichiers modifiés et des contrôles exécutés.
+
+## Prompt K3 minimal pour Kiro
+
+> Lis `.kiro/steering/*` puis
+> `.kiro/specs/youtube-ranking/{requirements,design,tasks}.md`. K1 et K2 sont
+> terminées et vérifiées. Exécute uniquement K3 : l'orchestrateur serveur de
+> collecte YouTube. Réutilise `sync_runs`, la source
+> `youtube_hmi_weekly_delta`, les types existants et le client K2.
+>
+> Implémente un cycle idempotent avec création ou récupération d'une exécution,
+> verrou atomique par source et période, protection contre le double clic,
+> étapes explicites, progression persistée, compteurs, avertissements, erreurs,
+> demande d'annulation, heartbeat, reprise sûre après interruption et statuts
+> `PENDING`, `RUNNING`, `COMPLETED`, `COMPLETED_WITH_WARNINGS`, `FAILED` et
+> `CANCELLED`. Deux appels concurrents pour la même période ne doivent jamais
+> lancer deux collectes.
+>
+> K3 doit seulement coordonner des étapes injectables. Ne développe pas encore
+> la découverte métier K4, la persistance des snapshots ou le calcul du
+> brouillon K5, les routes K6, la publication K7 ou l'interface. N'appelle pas
+> réellement YouTube dans les tests.
+>
+> Inspecte d'abord le schéma réel de `sync_runs`. Privilégie sa colonne
+> `metadata`. Si une garantie atomique exige une modification SQL, crée une
+> migration idempotente minimale sans modifier K1 et explique pourquoi elle est
+> indispensable. Ne l'applique pas sur Supabase hosted sans demande explicite.
+>
+> Ajoute des tests avec dépendances simulées pour : démarrage normal, double
+> appel séquentiel, concurrence réelle, progression monotone, avertissements,
+> erreur fatale, annulation avant et pendant une étape, reprise d'une exécution
+> interrompue, verrou actif et verrou devenu obsolète. Vérifie que les secrets
+> et réponses brutes de l'API ne sont jamais écrits dans `sync_runs`.
+>
+> Exécute les tests, TypeScript, ESLint sans avertissement et le build. Ne coche
+> K3 qu'après réussite. Arrête-toi ensuite et fournis les fichiers modifiés,
+> l'éventuelle migration non appliquée et les résultats exacts des contrôles.
