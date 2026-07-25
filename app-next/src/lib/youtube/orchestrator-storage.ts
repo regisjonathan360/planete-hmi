@@ -1,12 +1,12 @@
 /**
- * Implémentation Supabase réelle de OrchestratorStorage (K3)
+ * Implémentation Supabase réelle de OrchestratorStorage (K3 v4)
  * Utilise le client administrateur (service_role, bypass RLS).
  * Toutes les écritures passent par fenced_update_sync_run (conditional write).
  */
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { OrchestratorStorage, LeaseAcquisitionResult } from "./orchestrator";
+import type { OrchestratorStorage, LeaseAcquisitionResult, SyncRunRecord } from "./orchestrator";
 
 export function createOrchestratorStorage(): OrchestratorStorage {
   const supabase = createAdminClient();
@@ -27,6 +27,7 @@ export function createOrchestratorStorage(): OrchestratorStorage {
         runId: row?.run_id ?? null,
         ownerToken: row?.owner_token ?? null,
         leaseExpiresAt: row?.lease_expires_at ?? null,
+        runStatus: row?.run_status ?? null,
       } as LeaseAcquisitionResult;
     },
 
@@ -66,6 +67,7 @@ export function createOrchestratorStorage(): OrchestratorStorage {
         p_records_matched: patch.records_matched ?? null,
         p_records_rejected: patch.records_rejected ?? null,
         p_metadata: patch.metadata ? JSON.parse(JSON.stringify(patch.metadata)) : null,
+        p_clear_error: patch.clear_error ?? false,
       });
       if (error) throw new Error(`fenced_update_sync_run: ${error.message}`);
       return !!data;
@@ -87,7 +89,8 @@ export function createOrchestratorStorage(): OrchestratorStorage {
         .eq("source_key", sourceKey)
         .eq("period_key", periodKey)
         .maybeSingle();
-      if (error || !data) return false;
+      if (error) throw new Error(`read youtube_sync_leases: ${error.message}`);
+      if (!data) return false;
       // Lease must still be valid and ours
       if (data.owner_token !== ownerToken) return false;
       if (data.released_at !== null) return false;
@@ -96,12 +99,24 @@ export function createOrchestratorStorage(): OrchestratorStorage {
     },
 
     async getChartSourceId(sourceKey) {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("chart_sources")
         .select("id")
         .eq("source_key", sourceKey)
         .maybeSingle();
+      if (error) throw new Error(`read chart_sources: ${error.message}`);
       return (data?.id as string) ?? null;
+    },
+
+    async getRun(runId) {
+      const { data, error } = await supabase
+        .from("sync_runs")
+        .select("id, status, started_at, finished_at, error_code, error_message, records_received, records_normalized, records_matched, records_rejected, metadata")
+        .eq("id", runId)
+        .maybeSingle();
+      if (error) throw new Error(`read sync_runs: ${error.message}`);
+      if (!data) return null;
+      return data as SyncRunRecord;
     },
   };
 }

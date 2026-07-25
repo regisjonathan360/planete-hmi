@@ -10,11 +10,11 @@
 -- ---------- Sources (les 6 source_key du module) ----------
 insert into chart_sources (id, platform, source_key, display_name, chart_context, market_code, ingestion_mode, is_enabled, is_automatic) values
   ('11111111-0000-0000-0000-000000000001','youtube','youtube_haiti_official','YouTube Music — Haïti','Chansons populaires en Haïti','HT','VERIFIED_ADMIN_IMPORT',true,false),
-  ('11111111-0000-0000-0000-000000000002','youtube','youtube_hmi_weekly_delta','YouTube HMI — Vues gagnées en 7 jours','Vues mondiales gagnées en 7 jours',null,'OFFICIAL_API',true,true),
   ('11111111-0000-0000-0000-000000000003','spotify','spotify_haiti_popular','Spotify — Populaire en Haïti','Populaire en Haïti','HT','VERIFIED_ADMIN_IMPORT',true,false),
   ('11111111-0000-0000-0000-000000000004','audiomack','audiomack_haiti_weekly100','Audiomack - Weekly 100 Haiti','Weekly 100: Haiti officiel Audiomack','HT','OFFICIAL_EXPORT',true,true),
   ('11111111-0000-0000-0000-000000000005','apple_music','apple_hmi_worldwide','Apple Music — HMI Worldwide','Présence internationale (Worldwide)',null,'OFFICIAL_API',true,true),
-  ('11111111-0000-0000-0000-000000000006','tiktok','tiktok_haiti_sounds','TikTok — Sons populaires en Haïti','Sons populaires en Haïti','HT','VERIFIED_ADMIN_IMPORT',true,false);
+  ('11111111-0000-0000-0000-000000000006','tiktok','tiktok_haiti_sounds','TikTok — Sons populaires en Haïti','Sons populaires en Haïti','HT','VERIFIED_ADMIN_IMPORT',true,false)
+on conflict (source_key) do nothing;
 
 -- ---------- Sources Audiomack Haiti par genre ----------
 insert into chart_sources (platform, source_key, display_name, chart_context, market_code, genre_id, ingestion_mode, source_url, is_enabled, is_automatic) values
@@ -70,8 +70,9 @@ insert into track_artists (track_id, artist_id, role, billing_order) values
 
 -- ---------- Éditions Spotify : précédente + courante (publiées) ----------
 insert into chart_editions (id, chart_source_id, edition_key, period_start, period_end, source_updated_at, collected_at, validated_at, published_at, status, entry_count, is_stale) values
-  ('44444444-0000-0000-0000-0000000000a1','11111111-0000-0000-0000-000000000003','spotify-2026-W26','2026-06-26T00:00:00Z','2026-07-02T23:59:59Z','2026-07-03T02:00:00Z','2026-07-03T05:00:00Z','2026-07-05T12:00:00Z','2026-07-06T12:00:00Z','published',3,false),
-  ('44444444-0000-0000-0000-0000000000a2','11111111-0000-0000-0000-000000000003','spotify-2026-W27','2026-07-03T00:00:00Z','2026-07-09T23:59:59Z','2026-07-10T02:00:00Z','2026-07-10T05:00:00Z','2026-07-12T12:00:00Z','2026-07-13T12:00:00Z','published',3,false);
+  ('44444444-0000-0000-0000-0000000000a1',(SELECT id FROM chart_sources WHERE source_key = 'spotify_haiti_popular'),'spotify-2026-W26','2026-06-26T00:00:00Z','2026-07-02T23:59:59Z','2026-07-03T02:00:00Z','2026-07-03T05:00:00Z','2026-07-05T12:00:00Z','2026-07-06T12:00:00Z','published',3,false),
+  ('44444444-0000-0000-0000-0000000000a2',(SELECT id FROM chart_sources WHERE source_key = 'spotify_haiti_popular'),'spotify-2026-W27','2026-07-03T00:00:00Z','2026-07-09T23:59:59Z','2026-07-10T02:00:00Z','2026-07-10T05:00:00Z','2026-07-12T12:00:00Z','2026-07-13T12:00:00Z','published',3,false)
+on conflict DO NOTHING;
 
 -- Entrées édition précédente (W26) : A#1, B#2, C#3 (positions source 2,3,5 : #1 et #4 étaient étrangers)
 insert into chart_entries (chart_edition_id, track_id, source_position, filtered_position, previous_filtered_position, peak_filtered_position, weeks_on_chart, consecutive_weeks, movement, entry_status, metric_value, metric_unit) values
@@ -87,13 +88,15 @@ insert into chart_entries (chart_edition_id, track_id, source_position, filtered
 
 -- ---------- Édition TikTok courante (publiée) — métrique posts_count ----------
 insert into chart_editions (id, chart_source_id, edition_key, period_start, period_end, source_updated_at, collected_at, validated_at, published_at, status, entry_count, is_stale) values
-  ('44444444-0000-0000-0000-0000000000b1','11111111-0000-0000-0000-000000000006','tiktok-2026-W27','2026-07-03T00:00:00Z','2026-07-09T23:59:59Z','2026-07-10T02:00:00Z','2026-07-10T05:00:00Z','2026-07-12T12:00:00Z','2026-07-13T12:00:00Z','published',2,false);
+  ('44444444-0000-0000-0000-0000000000b1',(SELECT id FROM chart_sources WHERE source_key = 'tiktok_haiti_sounds'),'tiktok-2026-W27','2026-07-03T00:00:00Z','2026-07-09T23:59:59Z','2026-07-10T02:00:00Z','2026-07-10T05:00:00Z','2026-07-12T12:00:00Z','2026-07-13T12:00:00Z','published',2,false)
+on conflict DO NOTHING;
 insert into chart_entries (chart_edition_id, track_id, source_position, filtered_position, peak_filtered_position, weeks_on_chart, consecutive_weeks, entry_status, metric_value, metric_unit) values
   ('44444444-0000-0000-0000-0000000000b1','33333333-0000-0000-0000-000000000001',1,1,1,1,1,'new',12400,'posts_count'),
   ('44444444-0000-0000-0000-0000000000b1','33333333-0000-0000-0000-000000000004',3,2,2,1,1,'new',8300,'posts_count');
 
 -- ---------- Édition Audiomack périmée (test badge « Mise à jour en attente ») ----------
 insert into chart_editions (id, chart_source_id, edition_key, period_start, period_end, source_updated_at, collected_at, validated_at, published_at, status, entry_count, is_stale) values
-  ('44444444-0000-0000-0000-0000000000c1','11111111-0000-0000-0000-000000000004','audiomack-2026-W26','2026-06-26T00:00:00Z','2026-07-02T23:59:59Z','2026-07-03T02:00:00Z','2026-07-03T05:00:00Z','2026-07-05T12:00:00Z','2026-07-06T12:00:00Z','published',1,true);
+  ('44444444-0000-0000-0000-0000000000c1',(SELECT id FROM chart_sources WHERE source_key = 'audiomack_haiti_weekly100'),'audiomack-2026-W26','2026-06-26T00:00:00Z','2026-07-02T23:59:59Z','2026-07-03T02:00:00Z','2026-07-03T05:00:00Z','2026-07-05T12:00:00Z','2026-07-06T12:00:00Z','published',1,true)
+on conflict DO NOTHING;
 insert into chart_entries (chart_edition_id, track_id, source_position, filtered_position, peak_filtered_position, weeks_on_chart, consecutive_weeks, entry_status) values
   ('44444444-0000-0000-0000-0000000000c1','33333333-0000-0000-0000-000000000003',1,1,1,1,1,'new');

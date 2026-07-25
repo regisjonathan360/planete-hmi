@@ -115,7 +115,8 @@ export interface YouTubeDraftValidationEntry {
   weeklyViews: number | null;
   hasDuplicate: boolean;
   artistIsLinked: boolean;
-  manualOverrideApplied: boolean;
+  /** `null` signifie que les overrides ne s'appliquent pas encore (K6). */
+  manualOverrideApplied: boolean | null;
   overrideReason: string | null;
   likesAvailable: boolean;
   commentsAvailable: boolean;
