@@ -73,10 +73,10 @@ export default async function AdminDashboard() {
               <div className="stat__value">TikTok</div>
               <div className="stat__label">HMI Trends</div>
             </Link>
-            <div className="stat" style={{ opacity: 0.4 }}>
-              <div className="stat__value">Apple Music</div>
-              <div className="stat__label">Bientôt</div>
-            </div>
+            <Link href="/admin/youtube" className="stat" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="stat__value" style={{ color: "var(--admin-danger)" }}>YouTube</div>
+              <div className="stat__label">Top 20 HMI</div>
+            </Link>
           </div>
         </div>
 
@@ -92,6 +92,9 @@ export default async function AdminDashboard() {
             </Link>
             <Link href="/admin/doublons" className="btn" style={{ textDecoration: "none" }}>
               Doublons possibles
+            </Link>
+            <Link href="/admin/youtube" className="btn" style={{ textDecoration: "none" }}>
+              Administrer YouTube
             </Link>
             <Link href="/charts" className="btn btn--ghost" style={{ textDecoration: "none" }} target="_blank">
               Voir le site public ↗

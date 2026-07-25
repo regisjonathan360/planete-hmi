@@ -17,6 +17,12 @@
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+/* La scène Three.js globale appartient au site public. Dans l'admin, son
+   canvas fixe recouvre les contrôles et le texte, surtout sur mobile. */
+body:has(.admin) > div[aria-hidden="true"][style*="z-index: 50"] {
+  display: none !important;
+}
+
 .admin__header {
   display: flex;
   align-items: center;
@@ -32,7 +38,7 @@
 }
 .admin__brand { font-weight: 700; letter-spacing: 0.02em; }
 .admin__brand span { color: var(--admin-accent); }
-.admin__nav { display: flex; gap: 0.75rem; align-items: center; }
+.admin__nav { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .admin__nav a { color: var(--admin-muted); text-decoration: none; font-size: 0.9rem; }
 .admin__nav a:hover, .admin__nav a.is-active { color: var(--admin-text); }
 
@@ -133,6 +139,30 @@
   color: var(--admin-text); padding: 0.55rem 0.7rem; border-radius: 8px; font-size: 0.9rem;
 }
 .field input:focus { outline: none; border-color: var(--admin-accent); }
+
+.youtube-admin-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .admin__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .admin__nav {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 620px) {
+  .admin__main { padding: 1rem; }
+  .youtube-admin-heading { flex-direction: column; }
+}
 
 /* Login */
 .login-wrap { min-height: 100vh; display: grid; place-items: center; background: var(--admin-bg); padding: 1.5rem; }

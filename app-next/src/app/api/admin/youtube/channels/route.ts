@@ -120,8 +120,9 @@ export async function POST(request: Request) {
         thumbnail_url: channelInfo.thumbnailUrl,
         subscriber_count: channelInfo.subscriberCount,
         video_count: channelInfo.videoCount,
-        // is_youtube_verified est déterminé par K2, pas par le client
-        is_youtube_verified: input.isVerified,
+        // Un retour valide de validateChannel prouve que l'identifiant est
+        // résolu par YouTube. La valeur envoyée par le client est ignorée.
+        is_youtube_verified: true,
         is_active: input.isActive,
         artist_id: effectiveArtistId,
         notes: input.notes,

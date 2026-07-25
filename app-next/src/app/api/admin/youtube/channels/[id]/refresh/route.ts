@@ -65,6 +65,7 @@ export async function POST(
         subscriber_count: info.subscriberCount,
         video_count: info.videoCount,
         uploads_playlist_id: info.uploadsPlaylistId,
+        is_youtube_verified: true,
         last_scanned_at: new Date().toISOString(),
         last_scan_error: null,
       })
