@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     // Trouver l'édition
     const { data: edition, error: editionError } = await supabase
       .from("chart_editions")
-      .select("id, status, period_label, validation_notes")
+      .select("id, status, period_label, validation_notes, scheduled_publish_at, publish_timezone")
       .eq("chart_source_id", chartSource.id)
       .eq("period_start", periodStart)
       .eq("period_end", periodEnd)
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     // Récupérer les entrées
     const { data: entries, error: entriesError } = await supabase
       .from("chart_entries")
-      .select("source_position, track_id, metric_value, delta_views, delta_likes, delta_comments, total_views, eligible_video_count, raw_artist_text, raw_track_title")
+      .select("id, source_position, admin_position, filtered_position, track_id, metric_value, delta_views, delta_likes, delta_comments, total_views, eligible_video_count, raw_artist_text, raw_track_title, display_title, display_artist, is_hidden, is_excluded, exclusion_reason")
       .eq("chart_edition_id", edition.id)
       .order("source_position", { ascending: true });
 
@@ -106,18 +106,31 @@ export async function POST(request: Request) {
       }
     }
 
-    const preview = (entries ?? []).map((entry) => {
+    const sortedEntries = [...(entries ?? [])].sort((a, b) => {
+      const aPosition = (a.admin_position as number | null) ?? (a.source_position as number);
+      const bPosition = (b.admin_position as number | null) ?? (b.source_position as number);
+      return aPosition - bPosition;
+    });
+
+    const preview = sortedEntries.map((entry, index) => {
       const meta = trackMeta.get(entry.track_id as string);
       return {
-        rank: entry.source_position,
+        entryId: entry.id,
+        rank: entry.filtered_position ?? index + 1,
+        sourcePosition: entry.source_position,
         trackId: entry.track_id,
-        title: meta?.title ?? entry.raw_track_title ?? "",
-        artists: meta?.artists ?? entry.raw_artist_text ?? "",
+        title: entry.display_title ?? meta?.title ?? entry.raw_track_title ?? "",
+        artists: entry.display_artist ?? meta?.artists ?? entry.raw_artist_text ?? "",
         weeklyViews: entry.delta_views ?? entry.metric_value,
         weeklyLikes: entry.delta_likes,
         weeklyComments: entry.delta_comments,
         totalViews: entry.total_views,
         eligibleVideoCount: entry.eligible_video_count,
+        isHidden: entry.is_hidden,
+        isExcluded: entry.is_excluded,
+        exclusionReason: entry.exclusion_reason,
+        displayTitle: entry.display_title,
+        displayArtist: entry.display_artist,
       };
     });
 
@@ -126,6 +139,8 @@ export async function POST(request: Request) {
       editionStatus: edition.status,
       periodLabel: edition.period_label,
       validationNotes: edition.validation_notes,
+      scheduledPublishAt: edition.scheduled_publish_at,
+      publishTimezone: edition.publish_timezone,
       entries: preview,
     });
   } catch (err) {

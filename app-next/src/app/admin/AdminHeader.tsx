@@ -38,6 +38,9 @@ export function AdminHeader({ email, active }: { email: string | null; active?: 
         <Link href="/admin/tiktok" className={active === "tiktok" ? "is-active" : ""}>
           TikTok
         </Link>
+        <Link href="/admin/youtube" className={active === "youtube" ? "is-active" : ""}>
+          YouTube
+        </Link>
         <Link href="/charts" target="_blank" style={{ color: "var(--admin-accent-2)" }}>
           Classements publics ↗
         </Link>

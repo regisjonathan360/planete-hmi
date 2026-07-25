@@ -31,7 +31,13 @@ export async function buildYouTubePublication(
     .order("filtered_position", { ascending: true });
   if (entriesError) throw entriesError;
 
-  const visible = (entries ?? []).filter((entry) => !entry.is_hidden && !entry.is_excluded);
+  const visible = (entries ?? [])
+    .filter((entry) => !entry.is_hidden && !entry.is_excluded)
+    .sort((a, b) => {
+      const aPosition = (a.admin_position as number | null) ?? (a.source_position as number);
+      const bPosition = (b.admin_position as number | null) ?? (b.source_position as number);
+      return aPosition - bPosition;
+    });
   const publicEntries = visible.map((entry, index) => {
     const track = entry.tracks as unknown as {
       title?: string;
@@ -103,4 +109,3 @@ export async function buildYouTubePublication(
     })),
   };
 }
-
