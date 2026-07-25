@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/tiktok",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-publish",
+      "schedule": "0 12 * * *"
     }
   ],
   "headers": [

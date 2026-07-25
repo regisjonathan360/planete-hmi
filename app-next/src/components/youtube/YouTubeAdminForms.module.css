@@ -1,0 +1,240 @@
+.form {
+  display: grid;
+  gap: 1.25rem;
+  color: var(--admin-text, #e8e8f5);
+}
+
+.section {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+  border: 1px solid var(--admin-border, #2a2a4a);
+  border-radius: 12px;
+  background: var(--admin-panel, #14142a);
+}
+
+.sectionHeader {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.sectionDescription,
+.hint,
+.sourceValue {
+  margin: 0;
+  color: var(--admin-muted, #9a9ac0);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.field {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+.label,
+.legend {
+  color: var(--admin-text, #e8e8f5);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border: 1px solid var(--admin-border, #2a2a4a);
+  border-radius: 8px;
+  background: var(--admin-bg, #0a0a14);
+  color: var(--admin-text, #e8e8f5);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.input,
+.select {
+  min-height: 2.6rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.textarea {
+  min-height: 6.5rem;
+  resize: vertical;
+  padding: 0.65rem 0.7rem;
+}
+
+.input:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible,
+.checkbox:focus-visible {
+  outline: 2px solid var(--admin-accent-2, #00d4b8);
+  outline-offset: 2px;
+}
+
+.input[aria-invalid="true"],
+.select[aria-invalid="true"],
+.textarea[aria-invalid="true"] {
+  border-color: var(--admin-danger, #ff5c7c);
+}
+
+.error {
+  margin: 0;
+  color: var(--admin-danger, #ff5c7c);
+  font-size: 0.78rem;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: start;
+  padding: 0.75rem;
+  border: 1px solid var(--admin-border, #2a2a4a);
+  border-radius: 9px;
+  background: var(--admin-panel-2, #1c1c38);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.15rem;
+  accent-color: var(--admin-accent, #7c5cff);
+}
+
+.optionText {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.optionTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.optionDescription {
+  color: var(--admin-muted, #9a9ac0);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.sourceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.sourceItem {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.75rem;
+  border-left: 3px solid var(--admin-accent, #7c5cff);
+  background: var(--admin-panel-2, #1c1c38);
+}
+
+.sourceLabel {
+  color: var(--admin-muted, #9a9ac0);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sourceValue {
+  overflow-wrap: anywhere;
+  color: var(--admin-text, #e8e8f5);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.submit {
+  min-height: 2.6rem;
+  border: 1px solid var(--admin-accent, #7c5cff);
+  border-radius: 8px;
+  background: var(--admin-accent, #7c5cff);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.submit:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.status {
+  margin: 0;
+  color: var(--admin-muted, #9a9ac0);
+  font-size: 0.8rem;
+}
+
+.statusError {
+  color: var(--admin-danger, #ff5c7c);
+}
+
+@media (max-width: 760px) {
+  .grid,
+  .options,
+  .sourceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .submit {
+    width: 100%;
+  }
+}
+
+@media (forced-colors: active) {
+  .section,
+  .input,
+  .select,
+  .textarea,
+  .option,
+  .submit {
+    border-color: CanvasText;
+  }
+}

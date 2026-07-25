@@ -1,21 +1,45 @@
 /**
- * Orchestrateur de collecte YouTube (K3 v3)
+ * Orchestrateur de collecte YouTube (K3 v4)
  *
  * Fencing token : chaque écriture passe par fencedUpdate qui valide
  * owner_token + lease non expiré + lease non libéré.
+ * Si fencedUpdate retourne false → LeaseLostError.
  *
- * Acquisition atomique : le SQL crée le sync_run ET acquiert le lease
- * en une seule transaction. Pas de fenêtre sync_run_id = NULL.
+ * Acquisition atomique : le SQL utilise pg_advisory_xact_lock pour sérialiser
+ * la première insertion. Pas de fenêtre de race condition.
  *
- * Lease-lost detection : si renewLease retourne false → arrêt immédiat.
- * Progression monotone bornée 0-100.
- * Annulation persistée via cancel_requested sur le lease.
+ * Idempotence : si le run est déjà COMPLETED/COMPLETED_WITH_WARNINGS, on
+ * retourne le résultat sans créer de nouveau run.
+ *
+ * Reprise : si le run est FAILED/PENDING/RUNNING avec lease expiré, on reprend
+ * le même sync_run_id. L'orchestrateur recharge progression, compteurs,
+ * stepsCompleted et warnings via getRun().
+ *
+ * assertActive() : permet aux étapes longues de vérifier l'ownership.
  */
 import "server-only";
 
 import { randomUUID } from "node:crypto";
 import { YOUTUBE_HMI_SOURCE_KEY } from "./constants";
 import type { YouTubeCollectionStatus } from "./types";
+
+// ============================================================
+// Errors
+// ============================================================
+
+export class LeaseLostError extends Error {
+  constructor(message = "Lease perdu — écriture refusée") {
+    super(message);
+    this.name = "LeaseLostError";
+  }
+}
+
+export class CancellationRequestedError extends Error {
+  constructor(message = "Annulation demandée") {
+    super(message);
+    this.name = "CancellationRequestedError";
+  }
+}
 
 // ============================================================
 // Types
@@ -29,10 +53,15 @@ export interface OrchestratorStep {
 export interface StepContext {
   runId: string;
   sourceKey: string;
+  periodKey: string;
   periodStart: string;
   periodEnd: string;
+  /** Le fencing token acquis par l'orchestrateur K3. Les étapes doivent l'utiliser tel quel. */
+  ownerToken: string;
   /** Vérifie l'annulation en relisant la base (async). */
   isCancellationRequested: () => Promise<boolean>;
+  /** Vérifie ownership + annulation ; lève une erreur typée selon le motif d'arrêt. */
+  assertActive: () => Promise<void>;
   addWarning: (msg: string) => void;
   updateProgress: (percent: number, step: string) => Promise<void>;
 }
@@ -85,6 +114,7 @@ export interface SyncRunPatch {
   records_matched?: number;
   records_rejected?: number;
   metadata?: OrchestratorMetadata;
+  clear_error?: boolean;
 }
 
 export interface LeaseAcquisitionResult {
@@ -92,6 +122,21 @@ export interface LeaseAcquisitionResult {
   runId: string | null;
   ownerToken: string | null;
   leaseExpiresAt: string | null;
+  runStatus: string | null;
+}
+
+export interface SyncRunRecord {
+  id: string;
+  status: string;
+  started_at: string | null;
+  finished_at: string | null;
+  error_code: string | null;
+  error_message: string | null;
+  records_received: number | null;
+  records_normalized: number | null;
+  records_matched: number | null;
+  records_rejected: number | null;
+  metadata: OrchestratorMetadata | null;
 }
 
 /** Abstraction du storage pour tester sans Supabase */
@@ -103,6 +148,7 @@ export interface OrchestratorStorage {
   requestCancellation(sourceKey: string, periodKey: string): Promise<boolean>;
   readCancellationFlag(sourceKey: string, periodKey: string, ownerToken: string): Promise<boolean>;
   getChartSourceId(sourceKey: string): Promise<string | null>;
+  getRun(runId: string): Promise<SyncRunRecord | null>;
 }
 
 // ============================================================
@@ -119,7 +165,6 @@ function validateConfig(config: OrchestratorConfig): void {
   if (!ISO_DATE_RE.test(config.periodStart)) throw new Error("periodStart invalide (YYYY-MM-DD).");
   if (!ISO_DATE_RE.test(config.periodEnd)) throw new Error("periodEnd invalide (YYYY-MM-DD).");
 
-  // Real calendar date validation (check roundtrip)
   const start = new Date(config.periodStart + "T00:00:00Z");
   const end = new Date(config.periodEnd + "T00:00:00Z");
   if (isNaN(start.getTime()) || start.toISOString().slice(0, 10) !== config.periodStart) {
@@ -184,12 +229,24 @@ export class YouTubeCollectionOrchestrator {
     // 1. Résoudre le chart_source_id
     const chartSourceId = await this.storage.getChartSourceId(this.sourceKey);
 
-    // 2. Acquisition atomique (crée le sync_run + lease)
+    // 2. Acquisition atomique (crée le sync_run + lease, ou reprend)
     const leaseResult = await this.storage.acquireLease(
       this.sourceKey, this.periodKey, this.ownerToken, this.leaseDuration, chartSourceId
     );
 
     if (!leaseResult.acquired) {
+      // Idempotence : run déjà terminé avec succès
+      if (leaseResult.runStatus === "COMPLETED" || leaseResult.runStatus === "COMPLETED_WITH_WARNINGS") {
+        return {
+          runId: leaseResult.runId ?? "",
+          status: leaseResult.runStatus as YouTubeCollectionStatus,
+          warnings: [],
+          error: null,
+          startedAt: new Date().toISOString(),
+          finishedAt: new Date().toISOString(),
+        };
+      }
+      // Verrou actif par un autre processus
       return {
         runId: leaseResult.runId ?? "",
         status: "RUNNING" as YouTubeCollectionStatus,
@@ -202,12 +259,26 @@ export class YouTubeCollectionOrchestrator {
 
     // Acquisition réussie → le runId est garanti
     const runId = leaseResult.runId!;
+
+    // 3. Charger l'état du run pour reprise éventuelle
+    await this.restoreFromRun(runId);
+
     const startedAt = new Date().toISOString();
 
     // try/finally : en cas d'erreur inattendue, libérer le lease
     try {
       return await this.executeRun(runId, startedAt);
     } catch (err) {
+      if (err instanceof LeaseLostError) {
+        return {
+          runId,
+          status: "FAILED" as YouTubeCollectionStatus,
+          warnings: [...this.warnings],
+          error: "lease_lost",
+          startedAt,
+          finishedAt: new Date().toISOString(),
+        };
+      }
       // Erreur inattendue avant/pendant l'exécution
       const errMsg = err instanceof Error ? err.message : "Erreur interne inattendue";
       // Tenter une écriture fencée pour marquer FAILED
@@ -232,9 +303,23 @@ export class YouTubeCollectionOrchestrator {
     }
   }
 
+  /** Restaure l'état depuis un run existant (reprise). */
+  private async restoreFromRun(runId: string): Promise<void> {
+    const run = await this.storage.getRun(runId);
+    if (!run || !run.metadata) return;
+
+    const meta = run.metadata;
+    this.progressPercent = meta.progressPercent ?? 0;
+    this.currentStep = meta.currentStep ?? null;
+    this.stepsCompleted = meta.stepsCompleted ?? [];
+    this.warnings = meta.warnings ?? [];
+    this.cancelled = meta.cancelRequested ?? false;
+    this.counters = meta.counters ?? { received: 0, normalized: 0, matched: 0, rejected: 0 };
+  }
+
   private async executeRun(runId: string, startedAt: string): Promise<OrchestratorResult> {
-    // Marquer RUNNING via fenced update
-    await this.fencedWrite(runId, { status: "RUNNING", metadata: this.buildMetadata() });
+    // Marquer RUNNING via fenced update, effacer les anciennes erreurs
+    await this.fencedWrite(runId, { status: "RUNNING", metadata: this.buildMetadata(), clear_error: true });
 
     // Démarrer heartbeat
     this.startHeartbeat();
@@ -245,25 +330,18 @@ export class YouTubeCollectionOrchestrator {
     for (let i = 0; i < totalSteps; i++) {
       const step = this.config.steps[i];
 
+      // Skip étapes déjà complétées (reprise)
+      if (this.stepsCompleted.includes(step.name)) continue;
+
       // Vérifier lease_lost
       if (this.leaseLost) {
-        return {
-          runId,
-          status: "FAILED" as YouTubeCollectionStatus,
-          warnings: [...this.warnings],
-          error: "lease_lost",
-          startedAt,
-          finishedAt: new Date().toISOString(),
-        };
+        throw new LeaseLostError();
       }
 
       // Vérifier annulation (locale + persistée)
       if (await this.checkCancelled()) {
         return await this.finalize(runId, "CANCELLED", null, startedAt);
       }
-
-      // Skip étapes déjà complétées (reprise)
-      if (this.stepsCompleted.includes(step.name)) continue;
 
       // Progression monotone
       const targetPercent = Math.round((i / totalSteps) * 100);
@@ -280,15 +358,16 @@ export class YouTubeCollectionOrchestrator {
       const ctx: StepContext = {
         runId,
         sourceKey: this.sourceKey,
+        periodKey: this.periodKey,
         periodStart: this.config.periodStart,
         periodEnd: this.config.periodEnd,
-        isCancellationRequested: async () => {
-          return await this.checkCancelled();
-        },
+        ownerToken: this.ownerToken,
+        isCancellationRequested: () => this.checkCancelled(),
+        assertActive: () => this.assertActive(),
         addWarning: (msg) => { this.warnings.push(msg); },
         updateProgress: async (p, s) => {
           this.setProgress(p, s);
-          if (this.leaseLost) return;
+          if (this.leaseLost) throw new LeaseLostError();
           await this.fencedWrite(runId, {
             records_received: this.counters.received,
             records_normalized: this.counters.normalized,
@@ -302,14 +381,7 @@ export class YouTubeCollectionOrchestrator {
       try {
         const result = await step.execute(ctx);
         if (this.leaseLost) {
-          return {
-            runId,
-            status: "FAILED" as YouTubeCollectionStatus,
-            warnings: [...this.warnings],
-            error: "lease_lost",
-            startedAt,
-            finishedAt: new Date().toISOString(),
-          };
+          throw new LeaseLostError();
         }
         this.counters.received += result.recordsReceived ?? 0;
         this.counters.normalized += result.recordsNormalized ?? 0;
@@ -324,6 +396,10 @@ export class YouTubeCollectionOrchestrator {
           metadata: this.buildMetadata(),
         });
       } catch (err) {
+        if (err instanceof LeaseLostError) throw err;
+        if (err instanceof CancellationRequestedError) {
+          return await this.finalize(runId, "CANCELLED", null, startedAt);
+        }
         const errMsg = err instanceof Error ? err.message : "Erreur inconnue";
         return await this.finalize(runId, "FAILED", errMsg, startedAt);
       }
@@ -362,14 +438,32 @@ export class YouTubeCollectionOrchestrator {
     };
   }
 
-  /** Écriture fencée – lance une erreur si le lease est perdu */
+  /** Vérifie ownership + annulation et distingue les deux motifs d'arrêt. */
+  private async assertActive(): Promise<void> {
+    if (this.leaseLost) throw new LeaseLostError();
+    // Vérifier le lease via un heartbeat ponctuel
+    const renewed = await this.storage.renewLease(
+      this.sourceKey, this.periodKey, this.ownerToken, this.leaseDuration
+    );
+    if (!renewed) {
+      this.leaseLost = true;
+      throw new LeaseLostError();
+    }
+    // Vérifier annulation
+    if (await this.checkCancelled()) {
+      throw new CancellationRequestedError();
+    }
+  }
+
+  /** Écriture fencée – lève LeaseLostError si le lease est perdu */
   private async fencedWrite(runId: string, patch: SyncRunPatch): Promise<void> {
-    if (this.leaseLost) return; // Ne pas tenter d'écrire si on sait déjà
+    if (this.leaseLost) throw new LeaseLostError();
     const ok = await this.storage.fencedUpdate(
       this.sourceKey, this.periodKey, this.ownerToken, runId, patch
     );
     if (!ok) {
       this.leaseLost = true;
+      throw new LeaseLostError();
     }
   }
 
@@ -379,7 +473,9 @@ export class YouTubeCollectionOrchestrator {
       await this.storage.fencedUpdate(
         this.sourceKey, this.periodKey, this.ownerToken, runId, patch
       );
-    } catch { /* non-fatal */ }
+    } catch {
+      // non-fatal
+    }
   }
 
   private async checkCancelled(): Promise<boolean> {
@@ -390,7 +486,9 @@ export class YouTubeCollectionOrchestrator {
         this.sourceKey, this.periodKey, this.ownerToken
       );
       if (persisted) this.cancelled = true;
-    } catch { /* non-fatal */ }
+    } catch {
+      // non-fatal
+    }
     return this.cancelled;
   }
 
@@ -398,7 +496,7 @@ export class YouTubeCollectionOrchestrator {
     runId: string, status: string, error: string | null, startedAt: string
   ): Promise<OrchestratorResult> {
     if (this.leaseLost) {
-      // Ne pas finaliser si le lease est perdu
+      // Ne pas finaliser si le lease est perdu — retourner lease_lost
       return {
         runId,
         status: "FAILED" as YouTubeCollectionStatus,
@@ -410,7 +508,9 @@ export class YouTubeCollectionOrchestrator {
     }
     this.currentStep = null;
     if (status === "COMPLETED" || status === "COMPLETED_WITH_WARNINGS") this.progressPercent = 100;
-    await this.fencedWrite(runId, {
+
+    const isSuccess = status === "COMPLETED" || status === "COMPLETED_WITH_WARNINGS";
+    const patch: SyncRunPatch = {
       status,
       finished_at: new Date().toISOString(),
       error_message: error,
@@ -420,7 +520,25 @@ export class YouTubeCollectionOrchestrator {
       records_matched: this.counters.matched,
       records_rejected: this.counters.rejected,
       metadata: this.buildMetadata(),
-    });
+      clear_error: isSuccess,
+    };
+
+    try {
+      await this.fencedWrite(runId, patch);
+    } catch (err) {
+      if (err instanceof LeaseLostError) {
+        return {
+          runId,
+          status: "FAILED" as YouTubeCollectionStatus,
+          warnings: [...this.warnings],
+          error: "lease_lost",
+          startedAt,
+          finishedAt: new Date().toISOString(),
+        };
+      }
+      throw err;
+    }
+
     return {
       runId,
       status: status as YouTubeCollectionStatus,
@@ -441,7 +559,9 @@ export class YouTubeCollectionOrchestrator {
         if (!renewed) {
           this.leaseLost = true;
         }
-      } catch { /* non-fatal */ }
+      } catch {
+        // non-fatal
+      }
     }, ms);
   }
 
@@ -455,6 +575,8 @@ export class YouTubeCollectionOrchestrator {
   private async safeRelease(): Promise<void> {
     try {
       await this.storage.releaseLease(this.sourceKey, this.periodKey, this.ownerToken);
-    } catch { /* non-fatal, résultat déjà finalisé */ }
+    } catch {
+      // non-fatal, résultat déjà finalisé
+    }
   }
 }

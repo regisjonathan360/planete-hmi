@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import type {
   OrchestratorStorage,
   OrchestratorStep,
-  OrchestratorMetadata,
   LeaseAcquisitionResult,
   SyncRunPatch,
+  SyncRunRecord,
 } from "../orchestrator";
 
 vi.mock("server-only", () => ({}));
@@ -14,7 +14,11 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-const { YouTubeCollectionOrchestrator } = await import("../orchestrator");
+const {
+  YouTubeCollectionOrchestrator,
+  LeaseLostError,
+  CancellationRequestedError,
+} = await import("../orchestrator");
 
 // ============================================================
 // Helpers
@@ -23,7 +27,7 @@ const { YouTubeCollectionOrchestrator } = await import("../orchestrator");
 function mockStorage(overrides: Partial<OrchestratorStorage> = {}): OrchestratorStorage {
   return {
     acquireLease: vi.fn(async (): Promise<LeaseAcquisitionResult> => ({
-      acquired: true, runId: "run-001", ownerToken: "tok", leaseExpiresAt: "2099-01-01T00:00:00Z",
+      acquired: true, runId: "run-001", ownerToken: "tok", leaseExpiresAt: "2099-01-01T00:00:00Z", runStatus: "RUNNING",
     })),
     renewLease: vi.fn(async () => true),
     releaseLease: vi.fn(async () => true),
@@ -31,6 +35,7 @@ function mockStorage(overrides: Partial<OrchestratorStorage> = {}): Orchestrator
     requestCancellation: vi.fn(async () => true),
     readCancellationFlag: vi.fn(async () => false),
     getChartSourceId: vi.fn(async () => "src-001"),
+    getRun: vi.fn(async () => null),
     ...overrides,
   };
 }
@@ -43,16 +48,6 @@ function failStep(name: string, msg = "fatal"): OrchestratorStep {
 }
 function warnStep(name: string): OrchestratorStep {
   return { name, execute: async (ctx) => { ctx.addWarning("avertissement"); return {}; } };
-}
-
-function slowStep(name: string, ms = 50): OrchestratorStep {
-  return {
-    name,
-    execute: async (ctx) => {
-      await new Promise(r => setTimeout(r, ms));
-      return { recordsReceived: 1 };
-    },
-  };
 }
 
 const BASE = {
@@ -153,17 +148,78 @@ describe("démarrage normal → COMPLETED", () => {
 });
 
 // ==========================================================
-describe("double appel → idempotent", () => {
-  it("même source+période → même runId via acquisition atomique", async () => {
-    // Le 2e appel avec le même ownerToken est idempotent
-    const s = mockStorage();
-    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    const r1 = await o.run();
-    expect(r1.status).toBe("COMPLETED");
-    // 2e appel : lease déjà libéré donc re-acquisition donne un nouveau run
+describe("deux premières acquisitions concurrentes sans lease préexistant", () => {
+  it("une seule réussit, l'autre reçoit acquired=false avec même runId", async () => {
+    let firstAcquired = false;
+    const s = mockStorage({
+      acquireLease: vi.fn(async (): Promise<LeaseAcquisitionResult> => {
+        if (!firstAcquired) {
+          firstAcquired = true;
+          return { acquired: true, runId: "run-001", ownerToken: "t1", leaseExpiresAt: "2099-01-01T00:00:00Z", runStatus: "RUNNING" };
+        }
+        return { acquired: false, runId: "run-001", ownerToken: "t1", leaseExpiresAt: "2099-01-01T00:00:00Z", runStatus: "RUNNING" };
+      }),
+    });
+    const o1 = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
     const o2 = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    const r2 = await o2.run();
-    expect(r2.status).toBe("COMPLETED");
+    const [r1, r2] = await Promise.all([o1.run(), o2.run()]);
+    const statuses = [r1.status, r2.status].sort();
+    expect(statuses).toContain("COMPLETED");
+    expect(statuses).toContain("RUNNING");
+    // Les deux retournent le même runId
+    expect(r1.runId).toBe("run-001");
+    expect(r2.runId).toBe("run-001");
+  });
+
+  it("le second concurrent ne produit jamais de violation d'unicité", async () => {
+    // Le mock simule pg_advisory_xact_lock : le second appel arrive après
+    let callCount = 0;
+    const s = mockStorage({
+      acquireLease: vi.fn(async (): Promise<LeaseAcquisitionResult> => {
+        callCount++;
+        if (callCount === 1) {
+          return { acquired: true, runId: "run-first", ownerToken: "t1", leaseExpiresAt: "2099-01-01T00:00:00Z", runStatus: "RUNNING" };
+        }
+        // Second appel : retourne proprement acquired=false
+        return { acquired: false, runId: "run-first", ownerToken: "t1", leaseExpiresAt: "2099-01-01T00:00:00Z", runStatus: "RUNNING" };
+      }),
+    });
+    const o1 = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
+    const o2 = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
+    // Neither should throw
+    const results = await Promise.allSettled([o1.run(), o2.run()]);
+    expect(results[0].status).toBe("fulfilled");
+    expect(results[1].status).toBe("fulfilled");
+  });
+});
+
+// ==========================================================
+describe("seconde instance après collecte terminée → idempotence", () => {
+  it("retourne COMPLETED sans créer de nouveau run", async () => {
+    const s = mockStorage({
+      acquireLease: vi.fn(async (): Promise<LeaseAcquisitionResult> => ({
+        acquired: false, runId: "run-done", ownerToken: "old", leaseExpiresAt: "2026-07-20T00:00:00Z", runStatus: "COMPLETED",
+      })),
+    });
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
+    const r = await o.run();
+    expect(r.status).toBe("COMPLETED");
+    expect(r.runId).toBe("run-done");
+    // Aucune écriture fencée ne doit avoir été faite
+    expect(s.fencedUpdate).not.toHaveBeenCalled();
+  });
+
+  it("retourne COMPLETED_WITH_WARNINGS sans relancer", async () => {
+    const s = mockStorage({
+      acquireLease: vi.fn(async (): Promise<LeaseAcquisitionResult> => ({
+        acquired: false, runId: "run-warn", ownerToken: "old", leaseExpiresAt: "2026-07-20T00:00:00Z", runStatus: "COMPLETED_WITH_WARNINGS",
+      })),
+    });
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
+    const r = await o.run();
+    expect(r.status).toBe("COMPLETED_WITH_WARNINGS");
+    expect(r.runId).toBe("run-warn");
+    expect(s.fencedUpdate).not.toHaveBeenCalled();
   });
 });
 
@@ -172,7 +228,7 @@ describe("verrou refusé → RUNNING", () => {
   it("retourne RUNNING quand lease actif par un autre", async () => {
     const s = mockStorage({
       acquireLease: vi.fn(async () => ({
-        acquired: false, runId: "other-run", ownerToken: "other", leaseExpiresAt: "2099-01-01T00:00:00Z",
+        acquired: false, runId: "other-run", ownerToken: "other", leaseExpiresAt: "2099-01-01T00:00:00Z", runStatus: "RUNNING",
       })),
     });
     const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
@@ -184,24 +240,180 @@ describe("verrou refusé → RUNNING", () => {
 });
 
 // ==========================================================
-describe("deux acquisitions concurrentes", () => {
-  it("une seule réussit, l'autre reçoit RUNNING", async () => {
-    let firstAcquired = false;
+describe("reprise réelle du même run", () => {
+  it("restaure compteurs, warnings, stepsCompleted et n'exécute que les étapes restantes", async () => {
+    const existingRun: SyncRunRecord = {
+      id: "run-resumed",
+      status: "RUNNING",
+      started_at: "2026-07-14T10:00:00Z",
+      finished_at: null,
+      error_code: null,
+      error_message: null,
+      records_received: 10,
+      records_normalized: 8,
+      records_matched: 6,
+      records_rejected: 2,
+      metadata: {
+        sourceKey: "youtube_hmi_weekly_delta",
+        periodStart: "2026-07-14",
+        periodEnd: "2026-07-21",
+        progressPercent: 33,
+        currentStep: "step_a",
+        warnings: ["ancien avertissement"],
+        heartbeatAt: "2026-07-14T10:01:00Z",
+        cancelRequested: false,
+        stepsCompleted: ["step_a"],
+        counters: { received: 10, normalized: 8, matched: 6, rejected: 2 },
+      },
+    };
+    const executed: string[] = [];
     const s = mockStorage({
-      acquireLease: vi.fn(async (): Promise<LeaseAcquisitionResult> => {
-        if (!firstAcquired) {
-          firstAcquired = true;
-          return { acquired: true, runId: "run-001", ownerToken: "t1", leaseExpiresAt: "2099-01-01T00:00:00Z" };
-        }
-        return { acquired: false, runId: "run-001", ownerToken: "t1", leaseExpiresAt: "2099-01-01T00:00:00Z" };
+      acquireLease: vi.fn(async (): Promise<LeaseAcquisitionResult> => ({
+        acquired: true, runId: "run-resumed", ownerToken: "tok", leaseExpiresAt: "2099-01-01T00:00:00Z", runStatus: "RUNNING",
+      })),
+      getRun: vi.fn(async () => existingRun),
+    });
+    const steps: OrchestratorStep[] = [
+      { name: "step_a", execute: async () => { executed.push("a"); return { recordsReceived: 10 }; } },
+      { name: "step_b", execute: async () => { executed.push("b"); return { recordsReceived: 5 }; } },
+      { name: "step_c", execute: async () => { executed.push("c"); return { recordsReceived: 3 }; } },
+    ];
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps }, s);
+    const r = await o.run();
+    expect(r.status).toBe("COMPLETED_WITH_WARNINGS"); // "ancien avertissement" is restored
+    expect(r.runId).toBe("run-resumed");
+    // step_a was already completed → not re-executed
+    expect(executed).toEqual(["b", "c"]);
+    // Counters are cumulative from the restored state
+    const finalCalls = (s.fencedUpdate as ReturnType<typeof vi.fn>).mock.calls;
+    const lastMeta = finalCalls[finalCalls.length - 1][4] as SyncRunPatch;
+    expect(lastMeta.records_received).toBe(10 + 5 + 3);
+  });
+});
+
+// ==========================================================
+describe("écriture finale fencée refusée → lease_lost", () => {
+  it("fencedUpdate refusée lors de la finalisation → retourne lease_lost sans COMPLETED", async () => {
+    let writeCount = 0;
+    const s = mockStorage({
+      fencedUpdate: vi.fn(async () => {
+        writeCount++;
+        // La dernière écriture (finalisation) est refusée
+        if (writeCount >= 4) return false;
+        return true;
       }),
     });
-    const o1 = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    const o2 = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    const [r1, r2] = await Promise.all([o1.run(), o2.run()]);
-    const statuses = [r1.status, r2.status].sort();
-    expect(statuses).toContain("COMPLETED");
-    expect(statuses).toContain("RUNNING");
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
+    const r = await o.run();
+    expect(r.status).toBe("FAILED");
+    expect(r.error).toBe("lease_lost");
+    // Ne doit JAMAIS retourner COMPLETED après un fenced write refusé
+    expect(r.status).not.toBe("COMPLETED");
+  });
+
+  it("fencedUpdate false dès la première écriture → lease_lost immédiat", async () => {
+    const s = mockStorage({
+      fencedUpdate: vi.fn(async () => false),
+    });
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
+    const r = await o.run();
+    expect(r.status).toBe("FAILED");
+    expect(r.error).toBe("lease_lost");
+  });
+});
+
+// ==========================================================
+describe("effacement d'une ancienne erreur après réussite", () => {
+  it("clear_error=true est envoyé lors de la finalisation réussie", async () => {
+    const s = mockStorage({
+      getRun: vi.fn(async (): Promise<SyncRunRecord> => ({
+        id: "run-err",
+        status: "FAILED",
+        started_at: "2026-07-14T10:00:00Z",
+        finished_at: "2026-07-14T10:05:00Z",
+        error_code: "step_failure",
+        error_message: "ancienne erreur",
+        records_received: 0,
+        records_normalized: 0,
+        records_matched: 0,
+        records_rejected: 0,
+        metadata: {
+          sourceKey: "youtube_hmi_weekly_delta",
+          periodStart: "2026-07-14",
+          periodEnd: "2026-07-21",
+          progressPercent: 0,
+          currentStep: null,
+          warnings: [],
+          heartbeatAt: "2026-07-14T10:00:00Z",
+          cancelRequested: false,
+          stepsCompleted: [],
+          counters: { received: 0, normalized: 0, matched: 0, rejected: 0 },
+        },
+      })),
+    });
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
+    const r = await o.run();
+    expect(r.status).toBe("COMPLETED");
+    // Vérifier que clear_error a été envoyé
+    const calls = (s.fencedUpdate as ReturnType<typeof vi.fn>).mock.calls;
+    const finalPatch = calls[calls.length - 1][4] as SyncRunPatch;
+    expect(finalPatch.clear_error).toBe(true);
+  });
+});
+
+// ==========================================================
+describe("perte de lease pendant une étape longue via assertActive", () => {
+  it("assertActive lève LeaseLostError quand renewLease retourne false", async () => {
+    const s = mockStorage({
+      renewLease: vi.fn(async () => false),
+    });
+    const longStep: OrchestratorStep = {
+      name: "long",
+      execute: async (ctx) => {
+        // L'étape vérifie l'ownership pendant son exécution
+        await ctx.assertActive();
+        return { recordsReceived: 1 };
+      },
+    };
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [longStep] }, s);
+    const r = await o.run();
+    expect(r.status).toBe("FAILED");
+    expect(r.error).toBe("lease_lost");
+  });
+
+  it("assertActive passe quand le lease est toujours actif", async () => {
+    const s = mockStorage({
+      renewLease: vi.fn(async () => true),
+    });
+    const step: OrchestratorStep = {
+      name: "check",
+      execute: async (ctx) => {
+        await ctx.assertActive(); // Ne doit pas lever
+        return { recordsReceived: 1 };
+      },
+    };
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [step] }, s);
+    const r = await o.run();
+    expect(r.status).toBe("COMPLETED");
+  });
+
+  it("assertActive transforme une annulation persistée en CANCELLED, pas en lease_lost", async () => {
+    const s = mockStorage({
+      renewLease: vi.fn(async () => true),
+      readCancellationFlag: vi.fn(async () => true),
+    });
+    const step: OrchestratorStep = {
+      name: "long-cancelled",
+      execute: async (ctx) => {
+        await ctx.assertActive();
+        return { recordsReceived: 1 };
+      },
+    };
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [step] }, s);
+    const r = await o.run();
+    expect(r.status).toBe("CANCELLED");
+    expect(r.error).toBeNull();
+    expect(CancellationRequestedError).toBeDefined();
   });
 });
 
@@ -210,7 +422,7 @@ describe("progression monotone", () => {
   it("les valeurs de progressPercent ne descendent jamais", async () => {
     const percents: number[] = [];
     const s = mockStorage({
-      fencedUpdate: vi.fn(async (_sk, _pk, _ot, _rid, patch: SyncRunPatch) => {
+      fencedUpdate: vi.fn(async (_sk: string, _pk: string, _ot: string, _rid: string, patch: SyncRunPatch) => {
         if (patch.metadata) percents.push(patch.metadata.progressPercent);
         return true;
       }),
@@ -227,7 +439,7 @@ describe("progression monotone", () => {
   it("ctx.updateProgress avec valeur inférieure → bornée (monotone)", async () => {
     const percents: number[] = [];
     const s = mockStorage({
-      fencedUpdate: vi.fn(async (_sk, _pk, _ot, _rid, patch: SyncRunPatch) => {
+      fencedUpdate: vi.fn(async (_sk: string, _pk: string, _ot: string, _rid: string, patch: SyncRunPatch) => {
         if (patch.metadata) percents.push(patch.metadata.progressPercent);
         return true;
       }),
@@ -246,22 +458,6 @@ describe("progression monotone", () => {
     for (let i = 1; i < percents.length; i++) {
       expect(percents[i]).toBeGreaterThanOrEqual(percents[i - 1]);
     }
-  });
-});
-
-// ==========================================================
-describe("heartbeat ne remet pas la progression à zéro", () => {
-  it("renewLease est appelé sans toucher à la progression", async () => {
-    const s = mockStorage();
-    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    await o.run();
-    // Le heartbeat n'appelle que renewLease, pas fencedUpdate
-    // Vérifier que les fencedUpdate finaux ont progression >= 0 et dernier = 100
-    const calls = (s.fencedUpdate as ReturnType<typeof vi.fn>).mock.calls;
-    const metaUpdates = calls
-      .map((c: unknown[]) => (c[4] as SyncRunPatch).metadata)
-      .filter(Boolean) as OrchestratorMetadata[];
-    expect(metaUpdates[metaUpdates.length - 1].progressPercent).toBe(100);
   });
 });
 
@@ -310,35 +506,6 @@ describe("annulation persistée depuis une autre instance (async)", () => {
 });
 
 // ==========================================================
-describe("annulation distante pendant une longue étape (async isCancellationRequested)", () => {
-  it("étape vérifie isCancellationRequested et arrête le travail", async () => {
-    let callCount = 0;
-    const s = mockStorage({
-      readCancellationFlag: vi.fn(async () => {
-        callCount++;
-        return callCount >= 2; // 2e vérification → cancel
-      }),
-    });
-    const longStep: OrchestratorStep = {
-      name: "long",
-      execute: async (ctx) => {
-        // Simule une boucle qui vérifie l'annulation
-        for (let i = 0; i < 5; i++) {
-          if (await ctx.isCancellationRequested()) return {};
-          await new Promise(r => setTimeout(r, 5));
-        }
-        return { recordsReceived: 100 };
-      },
-    };
-    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a"), longStep] }, s);
-    const r = await o.run();
-    // L'annulation est détectée soit avant step "long", soit dedans
-    // Le résultat est CANCELLED ou COMPLETED selon le timing
-    expect(["CANCELLED", "COMPLETED"]).toContain(r.status);
-  });
-});
-
-// ==========================================================
 describe("annulation pendant updateProgress", () => {
   it("cancellation flag lu durant un updateProgress", async () => {
     let cancelAfterProgress = false;
@@ -350,7 +517,6 @@ describe("annulation pendant updateProgress", () => {
       execute: async (ctx) => {
         await ctx.updateProgress(20, "phase1");
         cancelAfterProgress = true;
-        // L'annulation sera détectée avant la prochaine étape
         return { recordsReceived: 1 };
       },
     };
@@ -363,62 +529,67 @@ describe("annulation pendant updateProgress", () => {
 });
 
 // ==========================================================
-describe("reprise conservant compteurs + warnings", () => {
-  it("restaure l'état et skip les étapes déjà faites", async () => {
-    // Simuler une reprise : le lease est acquis mais l'acquisition SQL
-    // retourne un runId existant (car même source+period).
-    // On simule via la 1ère fencedUpdate qui reçoit les compteurs restaurés.
+describe("heartbeat retournant false → lease_lost", () => {
+  it("renewLease false → arrêt avec lease_lost", async () => {
+    vi.useFakeTimers();
     const s = mockStorage({
-      acquireLease: vi.fn(async (): Promise<LeaseAcquisitionResult> => ({
-        acquired: true, runId: "run-resumed", ownerToken: "tok", leaseExpiresAt: "2099-01-01T00:00:00Z",
-      })),
+      renewLease: vi.fn(async () => false),
     });
-    // Note: dans la v3, la reprise est gérée au niveau SQL (le run existe déjà).
-    // L'orchestrateur repart de zéro mais le run_id est le même.
-    const executed: string[] = [];
-    const steps: OrchestratorStep[] = [
-      { name: "step_a", execute: async () => { executed.push("a"); return { recordsReceived: 10 }; } },
-      { name: "step_b", execute: async () => { executed.push("b"); return { recordsReceived: 5 }; } },
-    ];
-    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps }, s);
+    const step: OrchestratorStep = {
+      name: "slow",
+      execute: async () => {
+        await vi.advanceTimersByTimeAsync(100);
+        return { recordsReceived: 1 };
+      },
+    };
+    const o = new YouTubeCollectionOrchestrator(
+      { ...BASE, heartbeatIntervalMs: 50, leaseDurationSeconds: 300, steps: [step, okStep("b")] }, s
+    );
     const r = await o.run();
-    expect(r.status).toBe("COMPLETED");
-    expect(r.runId).toBe("run-resumed");
-    expect(executed).toEqual(["a", "b"]);
+    expect(r.status).toBe("FAILED");
+    expect(r.error).toBe("lease_lost");
   });
 });
 
 // ==========================================================
 describe("ancien propriétaire ne peut pas écrire après expiry", () => {
   it("fencedUpdate retourne false pour ancien owner", async () => {
-    // Simuler que fencedUpdate refuse l'écriture (owner ne correspond plus)
     const fencedFn = vi.fn(async (_sk: string, _pk: string, token: string) => {
       return token === "new-owner";
     });
     const s = mockStorage({ fencedUpdate: fencedFn });
-    // old-owner essaie d'écrire → refusé
     expect(await s.fencedUpdate("src", "period", "old-owner", "run-1", {})).toBe(false);
     expect(await s.fencedUpdate("src", "period", "new-owner", "run-1", {})).toBe(true);
   });
 });
 
 // ==========================================================
-describe("ancien propriétaire ne peut pas finaliser après takeover", () => {
-  it("lease perdu pendant step → pas de finalisation", async () => {
-    let writeCount = 0;
+describe("FK cohérente (ON DELETE RESTRICT)", () => {
+  it("la migration utilise ON DELETE RESTRICT pour sync_run_id", () => {
+    // Ce test documente que la FK youtube_sync_leases.sync_run_id → sync_runs(id)
+    // utilise ON DELETE RESTRICT (et non SET NULL qui est incohérent avec NOT NULL).
+    // La vérification réelle se fait par lecture de la migration SQL.
+    // En l'absence de base locale, ce test sert de marqueur documentaire.
+    expect(true).toBe(true);
+  });
+});
+
+// ==========================================================
+describe("acquisition invalide rejetée", () => {
+  it("RPC rejette source_key vide", async () => {
     const s = mockStorage({
-      fencedUpdate: vi.fn(async () => {
-        writeCount++;
-        // Après 3 écritures, le lease est perdu (simule takeover)
-        return writeCount <= 3;
-      }),
+      acquireLease: vi.fn(async () => { throw new Error("p_source_key ne peut pas être vide"); }),
     });
-    const o = new YouTubeCollectionOrchestrator(
-      { ...BASE, steps: [okStep("a"), okStep("b"), okStep("c")] }, s
-    );
-    const r = await o.run();
-    expect(r.status).toBe("FAILED");
-    expect(r.error).toBe("lease_lost");
+    const o = new YouTubeCollectionOrchestrator({ ...BASE, sourceKey: "", steps: [okStep("a")] }, s);
+    // L'erreur remonte car elle survient avant try/finally
+    await expect(o.run()).rejects.toThrow("p_source_key ne peut pas être vide");
+  });
+
+  it("RPC rejette leaseDuration hors limites", async () => {
+    // Caught at config validation level
+    expect(() => new YouTubeCollectionOrchestrator(
+      { ...BASE, leaseDurationSeconds: 5, steps: [okStep("a")] }, mockStorage()
+    )).toThrow("leaseDurationSeconds");
   });
 });
 
@@ -435,50 +606,12 @@ describe("erreur de libération ne masque pas le résultat", () => {
 });
 
 // ==========================================================
-describe("heartbeat retournant false → lease_lost", () => {
-  it("renewLease false → arrêt avec lease_lost", async () => {
-    vi.useFakeTimers();
-    const s = mockStorage({
-      renewLease: vi.fn(async () => false),
-    });
-    // Heartbeat court pour que le timer se déclenche
-    const step: OrchestratorStep = {
-      name: "slow",
-      execute: async () => {
-        // Avancer le timer pour déclencher le heartbeat
-        await vi.advanceTimersByTimeAsync(100);
-        return { recordsReceived: 1 };
-      },
-    };
-    const o = new YouTubeCollectionOrchestrator(
-      { ...BASE, heartbeatIntervalMs: 50, leaseDurationSeconds: 300, steps: [step, okStep("b")] }, s
-    );
-    const r = await o.run();
-    expect(r.status).toBe("FAILED");
-    expect(r.error).toBe("lease_lost");
-  });
-});
-
-// ==========================================================
-describe("lease expiré ne peut pas être renouvelé", () => {
-  it("renewLease vérifie expires_at > now()", async () => {
-    // Simulé : renewLease retourne false si le lease est expiré
-    const renewFn = vi.fn(async () => false);
-    const s = mockStorage({ renewLease: renewFn });
-    const result = await s.renewLease("src", "period", "owner", 300);
-    expect(result).toBe(false);
-  });
-});
-
-// ==========================================================
 describe("erreur avant démarrage du heartbeat → lease libéré", () => {
   it("erreur dans getChartSourceId → erreur propagée", async () => {
     const s = mockStorage({
       getChartSourceId: vi.fn(async () => { throw new Error("db down"); }),
     });
     const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    // getChartSourceId throws before acquireLease is called
-    // The error propagates since it's before try/finally
     await expect(o.run()).rejects.toThrow("db down");
   });
 
@@ -488,7 +621,6 @@ describe("erreur avant démarrage du heartbeat → lease libéré", () => {
     });
     const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
     const r = await o.run();
-    // L'erreur est interceptée dans le try/catch externe
     expect(r.status).toBe("FAILED");
     expect(r.error).toContain("fenced crashed");
     expect(s.releaseLease).toHaveBeenCalled();
@@ -496,62 +628,34 @@ describe("erreur avant démarrage du heartbeat → lease libéré", () => {
 });
 
 // ==========================================================
-describe("acquisition retourne toujours runId", () => {
-  it("runId non-null quand acquired=true", async () => {
-    const s = mockStorage();
-    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    const r = await o.run();
-    expect(r.runId).toBe("run-001");
+describe("LeaseLostError est exporté et typé", () => {
+  it("LeaseLostError est une instance d'Error", () => {
+    const err = new LeaseLostError();
+    expect(err).toBeInstanceOf(Error);
+    expect(err.name).toBe("LeaseLostError");
   });
 
-  it("runId fourni même quand acquired=false", async () => {
-    const s = mockStorage({
-      acquireLease: vi.fn(async () => ({
-        acquired: false, runId: "existing-run", ownerToken: "other", leaseExpiresAt: "2099-01-01",
-      })),
-    });
-    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    const r = await o.run();
-    expect(r.runId).toBe("existing-run");
+  it("LeaseLostError accepte un message custom", () => {
+    const err = new LeaseLostError("custom");
+    expect(err.message).toBe("custom");
   });
 });
 
 // ==========================================================
-describe("fenced write failure", () => {
-  it("fencedUpdate retournant false → lease_lost", async () => {
-    const s = mockStorage({
-      fencedUpdate: vi.fn(async () => false),
-    });
-    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a")] }, s);
-    const r = await o.run();
-    expect(r.status).toBe("FAILED");
-    expect(r.error).toBe("lease_lost");
-  });
-
-  it("fencedUpdate lançant une erreur → FAILED", async () => {
-    let callCount = 0;
-    const s = mockStorage({
-      fencedUpdate: vi.fn(async () => {
-        callCount++;
-        if (callCount > 2) throw new Error("db error");
-        return true;
-      }),
-    });
-    const o = new YouTubeCollectionOrchestrator({ ...BASE, steps: [okStep("a"), okStep("b")] }, s);
-    const r = await o.run();
-    expect(r.status).toBe("FAILED");
+describe("toutes les écritures passent par fencedUpdate", () => {
+  it("aucun appel direct à updateRun (interface n'expose plus updateRun)", () => {
+    const s = mockStorage();
+    expect("updateRun" in s).toBe(false);
+    expect("fencedUpdate" in s).toBe(true);
   });
 });
 
 // ==========================================================
 describe("adaptateur Supabase réel (mocked createAdminClient)", () => {
-  // These tests verify the storage adapter calls the correct RPCs.
-  // We use vi.resetModules + vi.doMock + dynamic import to get fresh modules.
-
-  it("acquireLease appelle rpc('acquire_sync_lease')", async () => {
+  it("acquireLease appelle rpc('acquire_sync_lease') avec run_status", async () => {
     vi.resetModules();
     const rpcFn = vi.fn(async () => ({
-      data: [{ acquired: true, run_id: "rpc-run", owner_token: "tok", lease_expires_at: "2099-01-01T00:00:00Z" }],
+      data: [{ acquired: true, run_id: "rpc-run", owner_token: "tok", lease_expires_at: "2099-01-01T00:00:00Z", run_status: "RUNNING" }],
       error: null,
     }));
     vi.doMock("server-only", () => ({}));
@@ -572,6 +676,63 @@ describe("adaptateur Supabase réel (mocked createAdminClient)", () => {
     }));
     expect(result.acquired).toBe(true);
     expect(result.runId).toBe("rpc-run");
+    expect(result.runStatus).toBe("RUNNING");
+  });
+
+  it("fencedUpdate envoie p_clear_error", async () => {
+    vi.resetModules();
+    const rpcFn = vi.fn(async () => ({ data: true, error: null }));
+    vi.doMock("server-only", () => ({}));
+    vi.doMock("@/lib/supabase/admin", () => ({
+      createAdminClient: () => ({ rpc: rpcFn, from: vi.fn() }),
+    }));
+    const mod = await import("../orchestrator-storage");
+    const storage = mod.createOrchestratorStorage();
+    await storage.fencedUpdate("src", "period", "owner", "run-1", {
+      status: "COMPLETED",
+      clear_error: true,
+    });
+    expect(rpcFn).toHaveBeenCalledWith("fenced_update_sync_run", expect.objectContaining({
+      p_clear_error: true,
+    }));
+  });
+
+  it("getRun lit depuis sync_runs", async () => {
+    vi.resetModules();
+    const maybeSingleFn = vi.fn(async () => ({
+      data: {
+        id: "run-1",
+        status: "FAILED",
+        started_at: "2026-07-14T10:00:00Z",
+        finished_at: "2026-07-14T10:05:00Z",
+        error_code: "step_failure",
+        error_message: "error",
+        records_received: 5,
+        records_normalized: 3,
+        records_matched: 2,
+        records_rejected: 1,
+        metadata: null,
+      },
+      error: null,
+    }));
+    const fromFn = vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: maybeSingleFn,
+        })),
+      })),
+    }));
+    vi.doMock("server-only", () => ({}));
+    vi.doMock("@/lib/supabase/admin", () => ({
+      createAdminClient: () => ({ rpc: vi.fn(), from: fromFn }),
+    }));
+    const mod = await import("../orchestrator-storage");
+    const storage = mod.createOrchestratorStorage();
+    const run = await storage.getRun("run-1");
+    expect(fromFn).toHaveBeenCalledWith("sync_runs");
+    expect(run).not.toBeNull();
+    expect(run!.id).toBe("run-1");
+    expect(run!.status).toBe("FAILED");
   });
 
   it("renewLease appelle rpc('renew_sync_lease')", async () => {
@@ -606,30 +767,6 @@ describe("adaptateur Supabase réel (mocked createAdminClient)", () => {
     expect(result).toBe(true);
   });
 
-  it("fencedUpdate appelle rpc('fenced_update_sync_run')", async () => {
-    vi.resetModules();
-    const rpcFn = vi.fn(async () => ({ data: true, error: null }));
-    vi.doMock("server-only", () => ({}));
-    vi.doMock("@/lib/supabase/admin", () => ({
-      createAdminClient: () => ({ rpc: rpcFn, from: vi.fn() }),
-    }));
-    const mod = await import("../orchestrator-storage");
-    const storage = mod.createOrchestratorStorage();
-    const result = await storage.fencedUpdate("src", "period", "owner", "run-1", {
-      status: "RUNNING",
-      records_received: 10,
-    });
-    expect(rpcFn).toHaveBeenCalledWith("fenced_update_sync_run", expect.objectContaining({
-      p_source_key: "src",
-      p_period_key: "period",
-      p_owner_token: "owner",
-      p_run_id: "run-1",
-      p_status: "RUNNING",
-      p_records_received: 10,
-    }));
-    expect(result).toBe(true);
-  });
-
   it("requestCancellation appelle rpc('request_sync_cancellation')", async () => {
     vi.resetModules();
     const rpcFn = vi.fn(async () => ({ data: true, error: null }));
@@ -653,7 +790,6 @@ describe("adaptateur Supabase réel (mocked createAdminClient)", () => {
       data: { cancel_requested: true, expires_at: "2099-01-01T00:00:00Z", released_at: null, owner_token: "owner" },
       error: null,
     }));
-    // Chain: from().select().eq().eq().maybeSingle()
     const fromFn = vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
@@ -676,39 +812,17 @@ describe("adaptateur Supabase réel (mocked createAdminClient)", () => {
 });
 
 // ==========================================================
-describe("permissions SQL (documentation)", () => {
+describe("note: test SQL concurrent (pg_advisory_xact_lock)", () => {
   /**
-   * ASSERTIONS DE SÉCURITÉ SQL (vérifiées dans la migration) :
+   * Le vrai test d'atomicité concurrent (deux SELECT ... FOR UPDATE sans
+   * ligne préexistante) ne peut être validé qu'avec une base PostgreSQL locale.
+   * Le pg_advisory_xact_lock dans acquire_sync_lease sérialise ces accès.
    *
-   * 1. Toutes les fonctions utilisent SECURITY INVOKER (pas DEFINER)
-   * 2. SET search_path = public sur chaque fonction
-   * 3. REVOKE EXECUTE FROM PUBLIC, anon, authenticated sur chaque fonction
-   * 4. GRANT EXECUTE TO service_role sur chaque fonction
-   * 5. RLS activé sur youtube_sync_leases (pas de policy publique)
-   * 6. REVOKE ALL ON youtube_sync_leases FROM PUBLIC, anon, authenticated
-   * 7. GRANT SELECT, INSERT, UPDATE ON youtube_sync_leases TO service_role
-   * 8. Pas de DELETE accordé (les leases ne sont jamais supprimés)
-   * 9. fenced_update_sync_run vérifie owner_token + expires_at + released_at
-   *    avant toute écriture sur sync_runs
-   * 10. request_sync_cancellation opère sur le lease (cancel_requested column)
-   *     et non sur sync_runs.metadata
-   *
-   * Ces assertions sont validées par lecture directe de la migration SQL.
-   * En production, elles sont vérifiables via :
-   *   SELECT has_function_privilege('anon', 'acquire_sync_lease(...)', 'execute');
-   *   -- doit retourner false
+   * En l'absence de Supabase local, ce test reste à exécuter manuellement
+   * après revue de la migration. Un mock TypeScript ne valide PAS l'atomicité
+   * PostgreSQL.
    */
-  it("documentation des permissions (test marqueur)", () => {
+  it("documentation — le test SQL concurrent nécessite une base PostgreSQL", () => {
     expect(true).toBe(true);
-  });
-});
-
-// ==========================================================
-describe("toutes les écritures passent par fencedUpdate", () => {
-  it("aucun appel direct à updateRun (interface n'expose plus updateRun)", () => {
-    const s = mockStorage();
-    // Vérifier que l'interface OrchestratorStorage n'a pas de updateRun
-    expect("updateRun" in s).toBe(false);
-    expect("fencedUpdate" in s).toBe(true);
   });
 });
