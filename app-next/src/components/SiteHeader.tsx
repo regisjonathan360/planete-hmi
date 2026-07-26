@@ -65,16 +65,16 @@ export function SiteHeader() {
             )
           )}
           <button
-            className="nav-toggle"
+            className={`nav-toggle${menuOpen ? " is-open" : ""}`}
             type="button"
             aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-            aria-expanded={menuOpen ? "true" : "false"}
+            aria-expanded={menuOpen}
             aria-controls="menu-mobile-next"
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => setMenuOpen((isOpen) => !isOpen)}
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
           </button>
         </div>
       </div>
