@@ -20,6 +20,7 @@ import { YOUTUBE_VIDEO_BATCH_SIZE } from "./constants";
 import {
   youtubeChannelIdSchema,
   youtubePlaylistIdSchema,
+  youtubeUrlSchema,
   youtubeVideoIdSchema,
   youtubeVideoListResponseSchema,
 } from "./schemas";
@@ -90,6 +91,7 @@ const channelStatisticsSchema = z.object({
 
 const channelsListResponseSchema = z.object({
   items: z.array(z.object({
+    id: youtubeChannelIdSchema.optional(),
     snippet: channelSnippetSchema,
     contentDetails: channelContentDetailsSchema,
     statistics: channelStatisticsSchema.optional(),
@@ -128,6 +130,12 @@ export interface YouTubeChannelInfo {
   videoCount: number | null;
   uploadsPlaylistId: string | null;
 }
+
+export type YouTubeChannelReference =
+  | { kind: "id"; value: string }
+  | { kind: "handle"; value: string }
+  | { kind: "username"; value: string }
+  | { kind: "legacy_custom"; value: string };
 
 export interface YouTubePlaylistItem {
   videoId: string;
@@ -266,6 +274,77 @@ function chunks<T>(arr: T[], size: number): T[][] {
   return result;
 }
 
+function channelInfoFromItem(
+  item: z.infer<typeof channelsListResponseSchema>["items"][number],
+  channelId: string
+): YouTubeChannelInfo {
+  return {
+    channelId,
+    title: item.snippet.title,
+    handle: item.snippet.customUrl ?? null,
+    thumbnailUrl: bestThumbnail(item.snippet.thumbnails as Record<string, { url: string }> | undefined),
+    subscriberCount: item.statistics?.subscriberCount ? parseInt(item.statistics.subscriberCount, 10) : null,
+    videoCount: item.statistics?.videoCount ? parseInt(item.statistics.videoCount, 10) : null,
+    uploadsPlaylistId: item.contentDetails.relatedPlaylists.uploads ?? null,
+  };
+}
+
+/**
+ * Extrait une référence de chaîne depuis les formats enregistrés dans les
+ * fiches artistes : /channel/UC..., /@handle et /user/ancien-identifiant.
+ */
+export function parseYouTubeChannelReference(channelUrl: string): YouTubeChannelReference {
+  youtubeUrlSchema.parse(channelUrl);
+  const url = new URL(channelUrl);
+  if (url.hostname.toLowerCase() === "youtu.be") {
+    throw new YouTubeApiError(
+      "Ce lien pointe vers une vidéo et non vers une chaîne YouTube.",
+      "unsupported_channel_url",
+      400
+    );
+  }
+  const segments = url.pathname
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => decodeURIComponent(segment));
+
+  if (segments[0] === "channel" && segments[1]) {
+    const parsed = youtubeChannelIdSchema.safeParse(segments[1]);
+    if (parsed.success) return { kind: "id", value: parsed.data };
+  }
+
+  if (segments[0]?.startsWith("@") && segments[0].length > 1) {
+    return { kind: "handle", value: segments[0] };
+  }
+
+  if (segments[0] === "user" && segments[1]) {
+    return { kind: "username", value: segments[1] };
+  }
+
+  const reservedPaths = new Set([
+    "channel",
+    "feed",
+    "playlist",
+    "results",
+    "shorts",
+    "user",
+    "watch",
+  ]);
+  if (
+    segments.length === 1 &&
+    segments[0] &&
+    !reservedPaths.has(segments[0].toLowerCase())
+  ) {
+    return { kind: "legacy_custom", value: segments[0] };
+  }
+
+  throw new YouTubeApiError(
+    "Lien de chaîne YouTube non reconnu. Utilisez une URL /channel/UC..., /@handle ou /user/identifiant.",
+    "unsupported_channel_url",
+    400
+  );
+}
+
 // ============================================================
 // API publique
 // ============================================================
@@ -291,15 +370,44 @@ export async function validateChannel(channelId: string): Promise<YouTubeChannel
   }
 
   const item = parsed.data.items[0];
-  return {
-    channelId,
-    title: item.snippet.title,
-    handle: item.snippet.customUrl ?? null,
-    thumbnailUrl: bestThumbnail(item.snippet.thumbnails as Record<string, { url: string }> | undefined),
-    subscriberCount: item.statistics?.subscriberCount ? parseInt(item.statistics.subscriberCount, 10) : null,
-    videoCount: item.statistics?.videoCount ? parseInt(item.statistics.videoCount, 10) : null,
-    uploadsPlaylistId: item.contentDetails.relatedPlaylists.uploads ?? null,
-  };
+  return channelInfoFromItem(item, channelId);
+}
+
+/**
+ * Résout une URL de profil en identifiant officiel de chaîne YouTube.
+ * `channels.list` avec `forHandle` ou `forUsername` coûte 1 unité de quota.
+ */
+export async function resolveChannelUrl(channelUrl: string): Promise<YouTubeChannelInfo> {
+  const reference = parseYouTubeChannelReference(channelUrl);
+  if (reference.kind === "id") return validateChannel(reference.value);
+
+  const filters: Array<Record<string, string>> =
+    reference.kind === "legacy_custom"
+      ? [{ forHandle: `@${reference.value}` }, { forUsername: reference.value }]
+      : [{
+          [reference.kind === "handle" ? "forHandle" : "forUsername"]:
+            reference.value,
+        }];
+
+  for (const filter of filters) {
+    const raw = await fetchYouTube("channels", {
+      part: "snippet,contentDetails,statistics",
+      ...filter,
+    });
+    const parsed = channelsListResponseSchema.safeParse(raw);
+    if (!parsed.success) {
+      throw new YouTubeApiError("Réponse channels.list invalide.", "invalid_response", 200);
+    }
+    if (parsed.data.items.length === 0) continue;
+
+    const item = parsed.data.items[0];
+    if (!item.id) {
+      throw new YouTubeApiError("Réponse channels.list sans identifiant.", "invalid_response", 200);
+    }
+    return channelInfoFromItem(item, item.id);
+  }
+
+  throw new YouTubeApiError("Chaîne YouTube introuvable pour ce lien.", "not_found", 404);
 }
 
 /**

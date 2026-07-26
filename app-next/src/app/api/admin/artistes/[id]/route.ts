@@ -5,6 +5,10 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin-guard";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { resolveChannelUrl } from "@/lib/youtube/api-client";
+import { sanitizeErrorMessage } from "@/lib/youtube/api-error";
+import { synchronizeArtistProfiles } from "@/lib/youtube/artist-channel-sync";
+import { createArtistChannelSyncStorage } from "@/lib/youtube/artist-channel-sync-storage";
 
 export const dynamic = "force-dynamic";
 
@@ -54,5 +58,49 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { error } = await supabase.from("artists").update(patch).eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({ status: "ok", message: "Artiste mis à jour." });
+  let youtubeSync: { created: number; linkedExisting: number; errors: number } | null = null;
+  let youtubeSyncWarning: string | null = null;
+
+  if ("url_youtube" in patch || "url_youtube_music" in patch) {
+    try {
+      const { data: artist, error: artistError } = await supabase
+        .from("artists")
+        .select("id, name, url_youtube, url_youtube_music")
+        .eq("id", id)
+        .single();
+      if (artistError) throw artistError;
+
+      const result = await synchronizeArtistProfiles(
+        createArtistChannelSyncStorage(supabase),
+        [{
+          id: artist.id as string,
+          name: artist.name as string,
+          urlYoutube: (artist.url_youtube as string | null) ?? null,
+          urlYouTubeMusic: (artist.url_youtube_music as string | null) ?? null,
+        }],
+        resolveChannelUrl
+      );
+      youtubeSync = {
+        created: result.created,
+        linkedExisting: result.linkedExisting,
+        errors: result.errors,
+      };
+      if (result.errors > 0) {
+        youtubeSyncWarning = "La fiche est enregistrée, mais au moins un lien YouTube doit être vérifié manuellement.";
+      }
+    } catch (syncError) {
+      youtubeSyncWarning = sanitizeErrorMessage(
+        syncError instanceof Error
+          ? syncError.message
+          : "La synchronisation YouTube automatique a échoué."
+      );
+    }
+  }
+
+  return NextResponse.json({
+    status: "ok",
+    message: "Artiste mis à jour.",
+    youtubeSync,
+    youtubeSyncWarning,
+  });
 }
