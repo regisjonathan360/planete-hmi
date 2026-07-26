@@ -46,9 +46,9 @@ describe("sanitizeErrorMessage", () => {
   });
 
   it("supprime les secrets Supabase", () => {
-    const msg = "Using sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz for auth";
+    const msg = "Using sb_secret_FAKE_TEST_VALUE_NOT_REAL_12345 for auth";
     const safe = sanitizeErrorMessage(msg);
-    expect(safe).not.toContain("sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz");
+    expect(safe).not.toContain("sb_secret_FAKE_TEST_VALUE_NOT_REAL_12345");
   });
 
   it("supprime les détails SQL", () => {
