@@ -1,5 +1,11 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
+import "./actualites.css";
 
 interface Article {
   id: string;
@@ -17,112 +23,206 @@ interface Article {
   published_at: string | null;
 }
 
-export function NewsList({ articles }: { articles: Article[] }) {
-  if (articles.length === 0) {
-    return (
-      <main style={{ padding: "4rem 1.5rem", textAlign: "center", minHeight: "60vh" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>Actualités HMI</h1>
-        <p style={{ color: "#9a9ac0" }}>Aucune actualité disponible pour le moment.</p>
-      </main>
-    );
-  }
+const ALL_CATEGORIES = "Toutes";
 
-  const featured = articles.find((a) => a.is_featured) ?? articles[0];
-  const rest = articles.filter((a) => a.id !== featured.id);
+function articleTitle(article: Article) {
+  return article.display_title || article.source_title;
+}
+
+function articleImage(article: Article, featured = false) {
+  return (
+    article.display_image_url ||
+    article.source_image_url ||
+    (featured
+      ? "/image/covers/planet-hmi-cover-placeholder-banner.webp.webp"
+      : "/image/covers/planet-hmi-cover-placeholder-square.webp.webp")
+  );
+}
+
+function articleExcerpt(article: Article) {
+  return article.display_excerpt || article.source_excerpt;
+}
+
+function formatDate(article: Article) {
+  const rawDate = article.published_at || article.source_date;
+  if (!rawDate) return null;
+
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) return article.source_date;
+
+  return new Intl.DateTimeFormat("fr-HT", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
+function ArticleCard({
+  article,
+  featured = false,
+}: {
+  article: Article;
+  featured?: boolean;
+}) {
+  const title = articleTitle(article);
+  const excerpt = articleExcerpt(article);
+  const date = formatDate(article);
 
   return (
-    <main style={{ padding: "2rem 1.5rem", maxWidth: 1100, margin: "0 auto" }}>
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Actualités <span style={{ color: "var(--accent, #7c5cff)" }}>HMI</span></h1>
-        <p style={{ color: "#9a9ac0" }}>Sorties, interviews, records et coulisses.</p>
+    <a
+      href={article.source_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`news-card${featured ? " news-card--feature" : ""}`}
+      aria-label={`Lire « ${title} »`}
+    >
+      <div className="news-card__media">
+        <Image
+          unoptimized
+          src={articleImage(article, featured)}
+          alt={title}
+          width={featured ? 800 : 480}
+          height={featured ? 400 : 300}
+          sizes={featured ? "(max-width: 720px) 100vw, 66vw" : "(max-width: 720px) 100vw, 33vw"}
+        />
+        {featured && <span className="news-card__feature-badge">À la une</span>}
       </div>
-
-      {/* Article à la une */}
-      <a
-        href={featured.source_url}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          display: "block",
-          marginBottom: "2rem",
-          borderRadius: 12,
-          overflow: "hidden",
-          background: "#14142a",
-          textDecoration: "none",
-          color: "inherit",
-          border: "1px solid #2a2a4a",
-        }}
-      >
-        {(featured.display_image_url || featured.source_image_url) && (
-          <img
-            src={featured.display_image_url || featured.source_image_url!}
-            alt=""
-            style={{ width: "100%", height: 300, objectFit: "cover" }}
-          />
-        )}
-        <div style={{ padding: "1.25rem" }}>
-          <span style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "#7c5cff", letterSpacing: "0.05em" }}>
-            À la une · {featured.category}
-          </span>
-          <h2 style={{ fontSize: "1.35rem", margin: "0.5rem 0 0.4rem", lineHeight: 1.3 }}>
-            {featured.display_title || featured.source_title}
-          </h2>
-          {(featured.display_excerpt || featured.source_excerpt) && (
-            <p style={{ color: "#9a9ac0", fontSize: "0.9rem", margin: 0 }}>
-              {featured.display_excerpt || featured.source_excerpt}
-            </p>
+      <div className="news-card__body">
+        <span className="news-card__tag">{article.category}</span>
+        <h2 className="news-card__title">{title}</h2>
+        {excerpt && <p className="news-card__excerpt">{excerpt}</p>}
+        <div className="news-card__meta">
+          {date && <time className="news-card__date">{date}</time>}
+          {article.source_author && (
+            <span className="news-card__source">{article.source_author}</span>
           )}
-          <span style={{ fontSize: "0.8rem", color: "#666", marginTop: "0.5rem", display: "inline-block" }}>
-            {featured.source_date} {featured.source_author && `· ${featured.source_author}`}
-          </span>
         </div>
-      </a>
-
-      {/* Grille des autres articles */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-        gap: "1.25rem",
-      }}>
-        {rest.map((article) => (
-          <a
-            key={article.id}
-            href={article.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "block",
-              borderRadius: 10,
-              overflow: "hidden",
-              background: "#14142a",
-              border: "1px solid #2a2a4a",
-              textDecoration: "none",
-              color: "inherit",
-              transition: "border-color 0.2s",
-            }}
-          >
-            {(article.display_image_url || article.source_image_url) && (
-              <img
-                src={article.display_image_url || article.source_image_url!}
-                alt=""
-                style={{ width: "100%", height: 160, objectFit: "cover" }}
-                loading="lazy"
-              />
-            )}
-            <div style={{ padding: "1rem" }}>
-              <span style={{ fontSize: "0.7rem", textTransform: "uppercase", color: "#7c5cff" }}>
-                {article.category}
-              </span>
-              <h3 style={{ fontSize: "1rem", margin: "0.35rem 0", lineHeight: 1.3 }}>
-                {article.display_title || article.source_title}
-              </h3>
-              <span style={{ fontSize: "0.75rem", color: "#666" }}>
-                {article.source_date}
-              </span>
-            </div>
-          </a>
-        ))}
       </div>
-    </main>
+    </a>
+  );
+}
+
+export function NewsList({ articles }: { articles: Article[] }) {
+  const categories = useMemo(
+    () => [
+      ALL_CATEGORIES,
+      ...Array.from(
+        new Set(articles.map((article) => article.category).filter(Boolean))
+      ).sort((a, b) => a.localeCompare(b, "fr")),
+    ],
+    [articles]
+  );
+  const [activeCategory, setActiveCategory] = useState(ALL_CATEGORIES);
+
+  const visibleArticles = useMemo(
+    () =>
+      activeCategory === ALL_CATEGORIES
+        ? articles
+        : articles.filter((article) => article.category === activeCategory),
+    [activeCategory, articles]
+  );
+
+  const featured =
+    visibleArticles.find((article) => article.is_featured) ?? visibleArticles[0] ?? null;
+  const rest = featured
+    ? visibleArticles.filter((article) => article.id !== featured.id)
+    : [];
+
+  return (
+    <>
+      <div className="grain" aria-hidden="true" />
+      <div className="cosmos news-cosmos" aria-hidden="true">
+        <div className="cosmos__layer cosmos__stars-distant" data-depth="0.06" />
+        <div className="cosmos__layer cosmos__stars-near" data-depth="0.14" />
+        <div className="cosmos__glow" />
+      </div>
+
+      <a className="skip-link" href="#contenu">Aller au contenu principal</a>
+      <SiteHeader />
+
+      <main id="contenu" className="news-page">
+        <section className="page-hero news-page__hero">
+          <div className="wrap">
+            <p className="breadcrumb">
+              <Link href="/">Accueil</Link> / Actualités
+            </p>
+            <p className="section-tag">{"// La musique haïtienne en mouvement"}</p>
+            <h1 className="page-title">
+              Actualités <span className="fx-o">HMI</span>
+            </h1>
+            <p className="page-lead">
+              Sorties, interviews, records et coulisses. Tout ce qui fait vibrer la planète.
+            </p>
+          </div>
+        </section>
+
+        <div className="wrap news-page__content">
+          {categories.length > 1 && (
+            <div
+              className="pill-row news-page__filters"
+              role="group"
+              aria-label="Filtrer les actualités par rubrique"
+            >
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  className={`pill${activeCategory === category ? " is-active" : ""}`}
+                  aria-pressed={activeCategory === category}
+                  onClick={() => setActiveCategory(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <section className="section section--tight" aria-live="polite">
+            {featured ? (
+              <>
+                <div className="news-page__section-heading">
+                  <div>
+                    <span className="section-tag">
+                      {`// ${activeCategory === ALL_CATEGORIES ? "Dernières publications" : activeCategory}`}
+                    </span>
+                    <h2>À lire maintenant</h2>
+                  </div>
+                  <span className="news-page__count">
+                    {visibleArticles.length} article{visibleArticles.length > 1 ? "s" : ""}
+                  </span>
+                </div>
+
+                <div className="news-grid">
+                  <ArticleCard article={featured} featured />
+                  {rest.map((article) => (
+                    <ArticleCard key={article.id} article={article} />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="news-page__empty">
+                <span className="section-tag">{"// Actualités HMI"}</span>
+                <h2>Aucune publication disponible</h2>
+                <p>
+                  Les prochaines nouvelles de la musique haïtienne apparaîtront ici dès leur
+                  publication.
+                </p>
+                {activeCategory !== ALL_CATEGORIES && (
+                  <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={() => setActiveCategory(ALL_CATEGORIES)}
+                  >
+                    Voir toutes les actualités
+                  </button>
+                )}
+              </div>
+            )}
+          </section>
+        </div>
+      </main>
+
+      <SiteFooter />
+    </>
   );
 }

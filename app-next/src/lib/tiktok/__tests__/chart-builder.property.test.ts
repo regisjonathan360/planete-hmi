@@ -14,7 +14,7 @@ import {
   filterAndSortNouveautes,
   buildChartEntries,
 } from "../chart-builder";
-import type { TikTokSound } from "../types";
+import type { TikTokSound, ValidationStatus } from "../types";
 
 // ---------------------------------------------------------------------------
 // Arbitrary — TikTokSound generator
@@ -22,7 +22,7 @@ import type { TikTokSound } from "../types";
 
 const soundArb = (
   overrides?: Partial<{
-    validation_status: string;
+    validation_status: ValidationStatus;
     first_seen_at: string;
     score: number;
     growth_7d: number;
@@ -55,9 +55,9 @@ const soundArb = (
     previous_snapshot_at: fc.option(fc.constant("2025-01-01T00:00:00Z"), {
       nil: null,
     }),
-    validation_status: fc.constant(
+    validation_status: fc.constant<ValidationStatus>(
       overrides?.validation_status ?? "valide"
-    ) as any,
+    ),
     first_seen_at: fc.constant(
       overrides?.first_seen_at ?? new Date().toISOString()
     ),

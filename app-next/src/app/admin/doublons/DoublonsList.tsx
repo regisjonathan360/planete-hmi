@@ -13,16 +13,6 @@ interface ArtistPreview {
   tags: string[] | null;
 }
 
-interface Candidate {
-  id: string;
-  confidence: number;
-  reason: string;
-  status: string;
-  created_at: string;
-  artist_a: ArtistPreview | null;
-  artist_b: ArtistPreview | null;
-}
-
 export function DoublonsList({ candidates }: { candidates: unknown[] }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);

@@ -1,4 +1,22 @@
 import type { Metadata } from "next";
+import { Anton, Inter, Space_Mono } from "next/font/google";
+
+const anton = Anton({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-display",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -27,6 +45,7 @@ export const metadata: Metadata = {
 import { StageLightsLoader } from "@/components/StageLightsLoader";
 import Script from "next/script";
 import "./globals.css";
+import "../../public/assets/css/style.css";
 
 export default function RootLayout({
   children,
@@ -34,15 +53,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={`${anton.variable} ${inter.variable} ${spaceMono.variable}`}>
       <head>
         <meta name="theme-color" content="#08070d" />
         <meta name="tiktok-developers-site-verification" content="doqYMyXAJOluVvI8j618siiivDgAHx0x" />
         <link rel="icon" type="image/svg+xml" href="/brand/planet-hmi-icon-dark.svg" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="/assets/css/style.css" />
       </head>
       <body>
         <StageLightsLoader />

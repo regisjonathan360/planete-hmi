@@ -1,9 +1,27 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ArtistTopVideo } from "@/components/ArtistTopVideo";
 import type { Metadata } from "next";
+import type { IconType } from "react-icons";
+import {
+  SiApplemusic,
+  SiAudiomack,
+  SiDeezer,
+  SiFacebook,
+  SiGoogleearth,
+  SiInstagram,
+  SiSoundcloud,
+  SiSpotify,
+  SiThreads,
+  SiTidal,
+  SiTiktok,
+  SiX,
+  SiYoutube,
+  SiYoutubemusic,
+} from "react-icons/si";
 import "./artist-profile.css";
 import "@/components/artist-top-video.css";
 
@@ -25,25 +43,58 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const PLATFORM_ICONS: Record<string, { label: string; icon: string }> = {
-  url_spotify: { label: "Spotify", icon: "🟢" },
-  url_apple_music: { label: "Apple Music", icon: "🍎" },
-  url_youtube_music: { label: "YouTube Music", icon: "🔴" },
-  url_audiomack: { label: "Audiomack", icon: "🟠" },
-  url_deezer: { label: "Deezer", icon: "🟣" },
-  url_soundcloud: { label: "SoundCloud", icon: "🟧" },
-  url_tidal: { label: "Tidal", icon: "⬛" },
+interface BrandLinkMeta {
+  label: string;
+  brand: string;
+  icon: IconType;
+}
+
+const PLATFORM_ICONS: Record<string, BrandLinkMeta> = {
+  url_spotify: { label: "Spotify", brand: "spotify", icon: SiSpotify },
+  url_apple_music: { label: "Apple Music", brand: "apple-music", icon: SiApplemusic },
+  url_youtube_music: { label: "YouTube Music", brand: "youtube", icon: SiYoutubemusic },
+  url_audiomack: { label: "Audiomack", brand: "audiomack", icon: SiAudiomack },
+  url_deezer: { label: "Deezer", brand: "deezer", icon: SiDeezer },
+  url_soundcloud: { label: "SoundCloud", brand: "soundcloud", icon: SiSoundcloud },
+  url_tidal: { label: "Tidal", brand: "tidal", icon: SiTidal },
 };
 
-const SOCIAL_ICONS: Record<string, { label: string; icon: string }> = {
-  url_instagram: { label: "Instagram", icon: "📸" },
-  url_tiktok: { label: "TikTok", icon: "🎵" },
-  url_twitter: { label: "X / Twitter", icon: "𝕏" },
-  url_facebook: { label: "Facebook", icon: "📘" },
-  url_youtube: { label: "YouTube", icon: "▶️" },
-  url_threads: { label: "Threads", icon: "🔗" },
-  url_website: { label: "Site web", icon: "🌐" },
+const SOCIAL_ICONS: Record<string, BrandLinkMeta> = {
+  url_instagram: { label: "Instagram", brand: "instagram", icon: SiInstagram },
+  url_tiktok: { label: "TikTok", brand: "tiktok", icon: SiTiktok },
+  url_twitter: { label: "X", brand: "x", icon: SiX },
+  url_facebook: { label: "Facebook", brand: "facebook", icon: SiFacebook },
+  url_youtube: { label: "YouTube", brand: "youtube", icon: SiYoutube },
+  url_threads: { label: "Threads", brand: "threads", icon: SiThreads },
+  url_website: { label: "Site web", brand: "website", icon: SiGoogleearth },
 };
+
+const CHART_PLATFORM_LABELS: Record<string, string> = {
+  spotify: "Spotify",
+  audiomack: "Audiomack",
+  deezer: "Deezer",
+  apple_music: "Apple Music",
+  youtube: "YouTube",
+  youtube_music: "YouTube Music",
+  tiktok: "TikTok",
+};
+
+function chartPlatformLabel(platform: unknown, sourceKey: unknown) {
+  const normalizedPlatform = String(platform ?? "").trim().toLowerCase();
+  if (CHART_PLATFORM_LABELS[normalizedPlatform]) {
+    return CHART_PLATFORM_LABELS[normalizedPlatform];
+  }
+
+  const normalizedSourceKey = String(sourceKey ?? "").trim().toLowerCase();
+  const matchingKey = Object.keys(CHART_PLATFORM_LABELS).find((key) =>
+    normalizedSourceKey.startsWith(key)
+  );
+  return matchingKey ? CHART_PLATFORM_LABELS[matchingKey] : "Planète HMI";
+}
+
+function firstRelation<T>(value: T | T[] | null | undefined): T | null {
+  return Array.isArray(value) ? value[0] ?? null : value ?? null;
+}
 
 export default async function ArtistProfilePage({ params }: Props) {
   const { slug } = await params;
@@ -62,6 +113,8 @@ export default async function ArtistProfilePage({ params }: Props) {
   let topVideo: { title: string | null; description: string | null; coverUrl: string | null; embedLink: string | null; shareUrl: string | null; viewCount: number; likeCount: number } | null = null;
   if (artist.user_id) {
     const admin = createAdminClient();
+    // This dynamic server page intentionally computes a rolling seven-day window.
+    // eslint-disable-next-line react-hooks/purity
     const oneWeekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
     const { data: connection } = await admin
       .from("artist_tiktok_connections")
@@ -125,22 +178,45 @@ export default async function ArtistProfilePage({ params }: Props) {
     .in("role", ["primary", "co_primary"]);
 
   const trackIds = (credits ?? []).map((c) => c.track_id as string);
-  let chartEntries: { title: string; position: number; genre: string | null }[] = [];
+  let chartEntries: {
+    title: string;
+    position: number;
+    genre: string | null;
+    platform: string;
+    chartName: string | null;
+  }[] = [];
 
   if (trackIds.length) {
     const { data: entries } = await supabase
       .from("chart_entries")
-      .select("raw_track_title, filtered_position, genre, track_id")
+      .select(`
+        raw_track_title,
+        filtered_position,
+        genre,
+        track_id,
+        tracks(title),
+        chart_editions!inner(
+          chart_sources!inner(platform, display_name, source_key)
+        )
+      `)
       .in("track_id", trackIds)
       .not("filtered_position", "is", null)
       .order("filtered_position", { ascending: true })
       .limit(10);
 
-    chartEntries = (entries ?? []).map((e) => ({
-      title: (e.raw_track_title as string) ?? "Sans titre",
-      position: e.filtered_position as number,
-      genre: (e.genre as string) ?? null,
-    }));
+    chartEntries = (entries ?? []).map((entry) => {
+      const edition = firstRelation(entry.chart_editions);
+      const source = firstRelation(edition?.chart_sources);
+      const track = firstRelation(entry.tracks);
+
+      return {
+        title: (entry.raw_track_title as string) || (track?.title as string) || "Sans titre",
+        position: entry.filtered_position as number,
+        genre: (entry.genre as string) ?? null,
+        platform: chartPlatformLabel(source?.platform, source?.source_key),
+        chartName: (source?.display_name as string) ?? null,
+      };
+    });
   }
 
   // Plateformes & réseaux
@@ -175,7 +251,8 @@ export default async function ArtistProfilePage({ params }: Props) {
         {/* Header */}
         <div className="wrap">
           <div className="artist-profile__header">
-            <img
+            <Image
+              unoptimized
               className="artist-profile__avatar"
               src={artist.image_url ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"}
               alt={artist.name}
@@ -209,15 +286,79 @@ export default async function ArtistProfilePage({ params }: Props) {
             </div>
           </div>
 
+          {/* Plateformes musicales */}
+          {platforms.length > 0 && (
+            <section className="artist-profile__section artist-profile__section--links">
+              <h2 className="artist-profile__section-title">Écouter l&apos;artiste</h2>
+              <div className="artist-profile__links" aria-label="Plateformes musicales">
+                {platforms.map((platform) => {
+                  const Icon = platform.icon;
+                  return (
+                    <a
+                      key={platform.label}
+                      href={platform.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`artist-profile__brand-link artist-profile__brand-link--${platform.brand}`}
+                      aria-label={`Écouter ${artist.name} sur ${platform.label}`}
+                      title={platform.label}
+                    >
+                      <span className="artist-profile__brand-icon">
+                        <Icon aria-hidden="true" />
+                      </span>
+                      <span className="artist-profile__brand-label">{platform.label}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Réseaux sociaux */}
+          {socials.length > 0 && (
+            <section className="artist-profile__section artist-profile__section--links">
+              <h2 className="artist-profile__section-title">Suivre l&apos;artiste</h2>
+              <div className="artist-profile__links" aria-label="Réseaux sociaux">
+                {socials.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.label}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`artist-profile__brand-link artist-profile__brand-link--${social.brand}`}
+                      aria-label={`Suivre ${artist.name} sur ${social.label}`}
+                      title={social.label}
+                    >
+                      <span className="artist-profile__brand-icon">
+                        <Icon aria-hidden="true" />
+                      </span>
+                      <span className="artist-profile__brand-label">{social.label}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
           {/* Classements */}
           {chartEntries.length > 0 && (
             <section className="artist-profile__section">
-              <h2 className="artist-profile__section-title">Classements</h2>
+              <h2 className="artist-profile__section-title">Titres classés</h2>
               <div className="artist-profile__chart-list">
                 {chartEntries.map((entry, i) => (
                   <div key={i} className="artist-profile__chart-entry">
                     <span className="artist-profile__chart-pos">#{entry.position}</span>
-                    <span className="artist-profile__chart-title">{entry.title}</span>
+                    <span className="artist-profile__chart-main">
+                      <span className="artist-profile__chart-title">{entry.title}</span>
+                      <span
+                        className={`artist-profile__chart-source artist-profile__chart-source--${entry.platform.toLowerCase().replaceAll(" ", "-")}`}
+                        title={entry.chartName ?? `Classement ${entry.platform}`}
+                      >
+                        Classement {entry.platform}
+                      </span>
+                    </span>
                     {entry.genre && (
                       <span className="artist-profile__chart-genre">{entry.genre}</span>
                     )}
@@ -235,47 +376,6 @@ export default async function ArtistProfilePage({ params }: Props) {
             </section>
           )}
 
-          {/* Plateformes musicales */}
-          {platforms.length > 0 && (
-            <section className="artist-profile__section">
-              <h2 className="artist-profile__section-title">Plateformes</h2>
-              <div className="artist-profile__links">
-                {platforms.map((p) => (
-                  <a
-                    key={p.label}
-                    href={p.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="artist-profile__link"
-                  >
-                    <span className="artist-profile__link-icon">{p.icon}</span>
-                    {p.label}
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Réseaux sociaux */}
-          {socials.length > 0 && (
-            <section className="artist-profile__section">
-              <h2 className="artist-profile__section-title">Réseaux</h2>
-              <div className="artist-profile__links">
-                {socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="artist-profile__link"
-                  >
-                    <span className="artist-profile__link-icon">{s.icon}</span>
-                    {s.label}
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
         </div>
       </main>
     </>

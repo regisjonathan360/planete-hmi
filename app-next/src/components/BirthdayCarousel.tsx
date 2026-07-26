@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 interface BirthdayArtist {
   id: string;
@@ -37,12 +39,13 @@ export function BirthdayCarousel() {
         <div className="birthday-carousel__track">
           {/* Double les items pour l'animation infinie */}
           {[...artists, ...artists].map((a, i) => (
-            <a
+            <Link
               key={`${a.id}-${i}`}
               href={`/artistes/${a.slug}`}
               className={`birthday-card${a.isToday ? " birthday-card--today" : ""}`}
             >
-              <img
+              <Image
+                unoptimized
                 className="birthday-card__img"
                 src={a.imageUrl ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"}
                 alt={a.name}
@@ -55,7 +58,7 @@ export function BirthdayCarousel() {
                   {a.isToday ? "🎉 Aujourd'hui !" : `Dans ${a.daysUntil} jour${a.daysUntil > 1 ? "s" : ""}`}
                 </span>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

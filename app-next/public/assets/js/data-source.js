@@ -47,7 +47,7 @@
       return new Date(iso).toLocaleDateString("fr-FR", {
         day: "numeric", month: "short", year: "numeric"
       });
-    } catch (e) { return null; }
+    } catch { return null; }
   }
 
   // Insère une légende de source au-dessus d'un conteneur.

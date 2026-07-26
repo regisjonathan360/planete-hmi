@@ -37,7 +37,7 @@ export async function attemptAutoClaim(
     grantedScopes: string[];
   }
 ): Promise<AutoClaimResult> {
-  const { userId, artistId, tiktokOpenId, tiktokUnionId, tiktokUsername, grantedScopes } = params;
+  const { userId, artistId, tiktokOpenId, tiktokUsername, grantedScopes } = params;
 
   // Vérifier que le scope user.info.profile est accordé (nécessaire pour username)
   if (!grantedScopes.includes("user.info.profile")) {

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { ArtistesGrid } from "./ArtistesGrid";
 import { SiteHeader } from "@/components/SiteHeader";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -112,7 +113,7 @@ export default async function ArtistesPage() {
 
       <main id="contenu">
         <div className="wrap" style={{ paddingTop: "2rem" }}>
-          <p className="breadcrumb"><a href="/">Accueil</a> / Artistes</p>
+          <p className="breadcrumb"><Link href="/">Accueil</Link> / Artistes</p>
           <h1 className="page-title">La galaxie des <span className="fx-o">artistes</span></h1>
           <p className="page-lead">
             {artists.length} artiste{artists.length > 1 ? "s" : ""} vérifié{artists.length > 1 ? "s" : ""} illuminent Planète HMI.
@@ -125,9 +126,9 @@ export default async function ArtistesPage() {
         <div className="wrap">
           <div className="footer-bottom">
             <p className="footer-legal-links">
-              <a href="/privacy">Confidentialité</a>
+              <Link href="/privacy">Confidentialité</Link>
               <span aria-hidden="true">/</span>
-              <a href="/terms">Conditions</a>
+              <Link href="/terms">Conditions</Link>
             </p>
             <p>Planète HMI © 2026 — Tous droits réservés</p>
           </div>

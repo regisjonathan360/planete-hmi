@@ -9,7 +9,7 @@ import type {
   AdminArtistToValidate,
   AdminValidationStatus,
 } from "@/lib/charts/admin/types";
-import { ARTIST_TAGS, getTagMeta } from "@/lib/artists/tags";
+import { ARTIST_TAGS } from "@/lib/artists/tags";
 
 type Tab = "musiques" | "albums" | "artistes";
 
