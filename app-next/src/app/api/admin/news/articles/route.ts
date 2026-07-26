@@ -19,6 +19,7 @@ export async function GET(request: Request) {
   let query = supabase
     .from("news_articles")
     .select("*, news_sources(name, slug)")
+    .eq("source_section", "musique")
     .order("collected_at", { ascending: false })
     .limit(100);
 
@@ -70,6 +71,7 @@ export async function PATCH(request: Request) {
       .from("news_articles")
       .update(allowed)
       .eq("id", id)
+      .eq("source_section", "musique")
       .select("id, source_title, display_title, status")
       .single();
 

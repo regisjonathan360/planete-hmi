@@ -45,14 +45,18 @@ export async function POST(request: Request) {
     }
 
     // Scrape
-    const articles = await scrapeChokarella(source.scrape_url as string);
+    const scrapedArticles = await scrapeChokarella(source.scrape_url as string);
+    const articles = scrapedArticles.filter((article) => article.categorySlug === "musique");
 
     if (articles.length === 0) {
       return NextResponse.json({ message: "Aucun article trouvé.", collected: 0 });
     }
 
-    // Insert avec ON CONFLICT sur source_url (idempotent)
-    let inserted = 0;
+    // Synchroniser uniquement les articles confirmés par l'API WordPress Musique.
+    // Les champs éditoriaux sont absents du payload afin de préserver la relecture
+    // et la publication d'un article déjà enregistré.
+    let synchronized = 0;
+    const verifiedAt = new Date().toISOString();
     for (const article of articles) {
       const { error } = await supabase
         .from("news_articles")
@@ -64,10 +68,11 @@ export async function POST(request: Request) {
           source_excerpt: article.excerpt,
           source_author: article.author,
           source_date: article.date,
-          status: "draft",
-        }, { onConflict: "source_url", ignoreDuplicates: true });
+          source_section: "musique",
+          source_section_verified_at: verifiedAt,
+        }, { onConflict: "source_url" });
 
-      if (!error) inserted++;
+      if (!error) synchronized++;
     }
 
     // Mettre à jour last_scraped_at
@@ -80,7 +85,8 @@ export async function POST(request: Request) {
       message: `Collecte terminée.`,
       source: source.name,
       found: articles.length,
-      inserted,
+      inserted: synchronized,
+      synchronized,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur de collecte.";
