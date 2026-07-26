@@ -63,7 +63,9 @@ export function DonationPrompt() {
       </button>
 
       <span className={styles.icon} aria-hidden="true">
-        <RiHeart3Line />
+        <span className={styles.heart}>
+          <RiHeart3Line />
+        </span>
       </span>
 
       <div className={styles.content}>

@@ -80,6 +80,8 @@ export interface OrchestratorConfig {
   steps: OrchestratorStep[];
   heartbeatIntervalMs?: number;
   leaseDurationSeconds?: number;
+  /** Une action admin explicite doit créer un nouveau run pour honorer ses options. */
+  forceNewRun?: boolean;
 }
 
 export interface OrchestratorResult {
@@ -141,7 +143,7 @@ export interface SyncRunRecord {
 
 /** Abstraction du storage pour tester sans Supabase */
 export interface OrchestratorStorage {
-  acquireLease(sourceKey: string, periodKey: string, ownerToken: string, leaseDurationSeconds: number, chartSourceId: string | null): Promise<LeaseAcquisitionResult>;
+  acquireLease(sourceKey: string, periodKey: string, ownerToken: string, leaseDurationSeconds: number, chartSourceId: string | null, forceNewRun?: boolean): Promise<LeaseAcquisitionResult>;
   renewLease(sourceKey: string, periodKey: string, ownerToken: string, leaseDurationSeconds: number): Promise<boolean>;
   releaseLease(sourceKey: string, periodKey: string, ownerToken: string): Promise<boolean>;
   fencedUpdate(sourceKey: string, periodKey: string, ownerToken: string, runId: string, patch: SyncRunPatch): Promise<boolean>;
@@ -231,7 +233,12 @@ export class YouTubeCollectionOrchestrator {
 
     // 2. Acquisition atomique (crée le sync_run + lease, ou reprend)
     const leaseResult = await this.storage.acquireLease(
-      this.sourceKey, this.periodKey, this.ownerToken, this.leaseDuration, chartSourceId
+      this.sourceKey,
+      this.periodKey,
+      this.ownerToken,
+      this.leaseDuration,
+      chartSourceId,
+      this.config.forceNewRun ?? false
     );
 
     if (!leaseResult.acquired) {

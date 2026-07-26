@@ -62,6 +62,17 @@ export const channelListQuerySchema = paginationSchema.extend({
     .enum(YOUTUBE_CHANNEL_TYPES)
     .optional(),
   search: z.string().max(200).optional(),
+  sort: z
+    .enum([
+      "subscribers_desc",
+      "subscribers_asc",
+      "title_asc",
+      "title_desc",
+      "videos_desc",
+      "recently_scanned",
+      "recently_added",
+    ])
+    .default("subscribers_desc"),
 });
 
 export type VideoListQuery = z.infer<typeof videoListQuerySchema>;

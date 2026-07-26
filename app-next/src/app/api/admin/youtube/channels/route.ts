@@ -41,6 +41,7 @@ export async function GET(request: Request) {
       status: url.searchParams.get("status") ?? undefined,
       channelType: url.searchParams.get("channelType") ?? undefined,
       search: url.searchParams.get("search") ?? undefined,
+      sort: url.searchParams.get("sort") ?? undefined,
     };
 
     const parsed = channelListQuerySchema.safeParse(queryInput);
@@ -51,18 +52,46 @@ export async function GET(request: Request) {
       );
     }
 
-    const { limit, offset, status, channelType, search } = parsed.data;
+    const { limit, offset, status, channelType, search, sort } = parsed.data;
     const supabase = createAdminClient();
 
     let query = supabase
       .from("youtube_channels")
-      .select(CHANNEL_COLUMNS, { count: "exact" })
-      .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1);
+      .select(CHANNEL_COLUMNS, { count: "exact" });
 
     if (status) query = query.eq("status", status);
     if (channelType) query = query.eq("channel_type", channelType);
     if (search) query = query.ilike("channel_title", `%${search}%`);
+
+    switch (sort) {
+      case "subscribers_asc":
+        query = query.order("subscriber_count", { ascending: true, nullsFirst: false });
+        break;
+      case "title_asc":
+        query = query.order("channel_title", { ascending: true });
+        break;
+      case "title_desc":
+        query = query.order("channel_title", { ascending: false });
+        break;
+      case "videos_desc":
+        query = query.order("video_count", { ascending: false, nullsFirst: false });
+        break;
+      case "recently_scanned":
+        query = query.order("last_scanned_at", { ascending: false, nullsFirst: false });
+        break;
+      case "recently_added":
+        query = query.order("created_at", { ascending: false });
+        break;
+      case "subscribers_desc":
+      default:
+        query = query.order("subscriber_count", { ascending: false, nullsFirst: false });
+        break;
+    }
+
+    if (sort !== "title_asc" && sort !== "title_desc") {
+      query = query.order("channel_title", { ascending: true });
+    }
+    query = query.range(offset, offset + limit - 1);
 
     const { data, error, count } = await query;
 

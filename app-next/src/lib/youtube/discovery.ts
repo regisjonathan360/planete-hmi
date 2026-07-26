@@ -49,6 +49,7 @@ export interface DiscoveryStepResult extends StepResult {
   channelsErrored: number;
   videosDiscovered: number;
   videosAlreadyKnown: number;
+  videosOutsidePeriod: number;
 }
 
 // ============================================================
@@ -84,6 +85,21 @@ function chunks<T>(arr: T[], size: number): T[][] {
     result.push(arr.slice(i, i + size));
   }
   return result;
+}
+
+export function isPublishedWithinPeriod(
+  publishedAt: string,
+  periodStart: string,
+  periodEnd: string
+): boolean {
+  const publishedMs = Date.parse(publishedAt);
+  const startMs = Date.parse(`${periodStart}T00:00:00.000Z`);
+  const endExclusiveMs =
+    Date.parse(`${periodEnd}T00:00:00.000Z`) + 24 * 60 * 60 * 1000;
+
+  return Number.isFinite(publishedMs)
+    && publishedMs >= startMs
+    && publishedMs < endExclusiveMs;
 }
 
 // ============================================================
@@ -134,6 +150,7 @@ export class YouTubeDiscoveryService {
     let channelsErrored = 0;
     let videosDiscovered = 0;
     let videosAlreadyKnown = 0;
+    let videosOutsidePeriod = 0;
     let totalReceived = 0;
 
     for (let i = 0; i < channels.length; i++) {
@@ -167,6 +184,7 @@ export class YouTubeDiscoveryService {
         const result = await this.scanChannel(channel, ctx);
         videosDiscovered += result.discovered;
         videosAlreadyKnown += result.alreadyKnown;
+        videosOutsidePeriod += result.outsidePeriod;
         totalReceived += result.discovered + result.alreadyKnown;
         channelsScanned++;
 
@@ -202,6 +220,7 @@ export class YouTubeDiscoveryService {
       channelsErrored,
       videosDiscovered,
       videosAlreadyKnown,
+      videosOutsidePeriod,
     };
   }
 
@@ -212,7 +231,7 @@ export class YouTubeDiscoveryService {
   private async scanChannel(
     channel: CollectableChannel,
     ctx: StepContext
-  ): Promise<{ discovered: number; alreadyKnown: number }> {
+  ): Promise<{ discovered: number; alreadyKnown: number; outsidePeriod: number }> {
     // 1. Lister les vidéos de la playlist d'uploads
     const playlistItems = await this.apiClient.listPlaylistItems(
       channel.uploadsPlaylistId!,
@@ -220,11 +239,20 @@ export class YouTubeDiscoveryService {
     );
 
     if (playlistItems.length === 0) {
-      return { discovered: 0, alreadyKnown: 0 };
+      return { discovered: 0, alreadyKnown: 0, outsidePeriod: 0 };
     }
 
     // 2. Dédoublonner dans le lot (la même vidéo peut apparaître sur plusieurs pages)
-    const uniqueIds = [...new Set(playlistItems.map(item => item.videoId))];
+    const periodItems = playlistItems.filter((item) =>
+      isPublishedWithinPeriod(item.publishedAt, ctx.periodStart, ctx.periodEnd)
+    );
+    let outsidePeriod = playlistItems.length - periodItems.length;
+
+    const uniqueIds = [...new Set(periodItems.map(item => item.videoId))];
+
+    if (uniqueIds.length === 0) {
+      return { discovered: 0, alreadyKnown: 0, outsidePeriod };
+    }
 
     // 3. Comparer avec la base — ne demander les détails que des inconnus
     const existingIds = await this.storage.getExistingVideoIds(uniqueIds);
@@ -232,7 +260,7 @@ export class YouTubeDiscoveryService {
     const alreadyKnown = uniqueIds.length - newIds.length;
 
     if (newIds.length === 0) {
-      return { discovered: 0, alreadyKnown };
+      return { discovered: 0, alreadyKnown, outsidePeriod };
     }
 
     // 4. Récupérer les détails par lots
@@ -252,13 +280,18 @@ export class YouTubeDiscoveryService {
 
       // 5. Créer les candidats
       for (const video of found) {
+        if (!isPublishedWithinPeriod(video.publishedAt, ctx.periodStart, ctx.periodEnd)) {
+          outsidePeriod++;
+          ctx.addWarning(`Vidéo ${video.videoId} : date source hors période, ignorée.`);
+          continue;
+        }
         const candidate = this.buildCandidate(video);
         const inserted = await this.storage.insertVideoCandidate(candidate);
         if (inserted) discovered++;
       }
     }
 
-    return { discovered, alreadyKnown };
+    return { discovered, alreadyKnown, outsidePeriod };
   }
 
   /**

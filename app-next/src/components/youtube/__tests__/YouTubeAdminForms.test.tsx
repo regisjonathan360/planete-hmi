@@ -33,7 +33,11 @@ describe("YouTubeCollectionForm", () => {
 
     expect(markup).toContain("Période et mode");
     expect(markup).toContain("Collecte hebdomadaire complète");
-    expect(markup).toContain("La publication reste toujours une action séparée.");
+    expect(markup).toContain("Le mode applique un réglage conseillé.");
+    expect(markup).toContain("La période filtre les nouvelles vidéos découvertes.");
+    expect(markup).toContain(
+      "Bientôt disponible. Cette opération ne peut pas encore être sélectionnée."
+    );
     expect(markup).toContain('type="date"');
     expect(markup).toContain("Lancer la collecte");
   });

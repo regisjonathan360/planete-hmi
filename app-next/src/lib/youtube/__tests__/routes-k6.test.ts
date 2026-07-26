@@ -243,6 +243,20 @@ describe("channelListQuerySchema", () => {
   it("refuse channelType inconnu", () => {
     expect(channelListQuerySchema.safeParse({ channelType: "FAKE" }).success).toBe(false);
   });
+
+  it("accepte les tris de chaînes connus et applique le tri abonnés par défaut", () => {
+    const defaultResult = channelListQuerySchema.safeParse({});
+    expect(defaultResult.success).toBe(true);
+    if (defaultResult.success) {
+      expect(defaultResult.data.sort).toBe("subscribers_desc");
+    }
+    expect(channelListQuerySchema.safeParse({ sort: "title_asc" }).success).toBe(true);
+    expect(channelListQuerySchema.safeParse({ sort: "videos_desc" }).success).toBe(true);
+  });
+
+  it("refuse un tri de chaînes inconnu", () => {
+    expect(channelListQuerySchema.safeParse({ sort: "random" }).success).toBe(false);
+  });
 });
 
 // ============================================================

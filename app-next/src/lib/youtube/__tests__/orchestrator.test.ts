@@ -147,6 +147,27 @@ describe("démarrage normal → COMPLETED", () => {
   });
 });
 
+describe("relance manuelle explicite", () => {
+  it("transmet forceNewRun au stockage sans modifier la clé de période", async () => {
+    const storage = mockStorage();
+    const orchestrator = new YouTubeCollectionOrchestrator(
+      { ...BASE, forceNewRun: true, steps: [okStep("manual")] },
+      storage
+    );
+
+    await orchestrator.run();
+
+    expect(storage.acquireLease).toHaveBeenCalledWith(
+      "youtube_hmi_weekly_delta",
+      "2026-07-14::2026-07-21",
+      expect.any(String),
+      300,
+      "src-001",
+      true
+    );
+  });
+});
+
 // ==========================================================
 describe("deux premières acquisitions concurrentes sans lease préexistant", () => {
   it("une seule réussit, l'autre reçoit acquired=false avec même runId", async () => {
@@ -677,6 +698,38 @@ describe("adaptateur Supabase réel (mocked createAdminClient)", () => {
     expect(result.acquired).toBe(true);
     expect(result.runId).toBe("rpc-run");
     expect(result.runStatus).toBe("RUNNING");
+  });
+
+  it("utilise le lease manuel pour une relance admin explicite", async () => {
+    vi.resetModules();
+    const rpcFn = vi.fn(async () => ({
+      data: [{ acquired: true, run_id: "manual-run", owner_token: "tok", lease_expires_at: "2099-01-01T00:00:00Z", run_status: "RUNNING" }],
+      error: null,
+    }));
+    vi.doMock("server-only", () => ({}));
+    vi.doMock("@/lib/supabase/admin", () => ({
+      createAdminClient: () => ({ rpc: rpcFn, from: vi.fn() }),
+    }));
+
+    const mod = await import("../orchestrator-storage");
+    const storage = mod.createOrchestratorStorage();
+    const result = await storage.acquireLease(
+      "youtube_hmi",
+      "2026-07-14::2026-07-21",
+      "token-manual",
+      300,
+      "cs-1",
+      true
+    );
+
+    expect(rpcFn).toHaveBeenCalledWith(
+      "acquire_manual_sync_lease",
+      expect.objectContaining({
+        p_period_key: "2026-07-14::2026-07-21",
+        p_owner_token: "token-manual",
+      })
+    );
+    expect(result.runId).toBe("manual-run");
   });
 
   it("fencedUpdate envoie p_clear_error", async () => {

@@ -12,15 +12,18 @@ export function createOrchestratorStorage(): OrchestratorStorage {
   const supabase = createAdminClient();
 
   return {
-    async acquireLease(sourceKey, periodKey, ownerToken, leaseDurationSeconds, chartSourceId) {
-      const { data, error } = await supabase.rpc("acquire_sync_lease", {
+    async acquireLease(sourceKey, periodKey, ownerToken, leaseDurationSeconds, chartSourceId, forceNewRun = false) {
+      const rpcName = forceNewRun
+        ? "acquire_manual_sync_lease"
+        : "acquire_sync_lease";
+      const { data, error } = await supabase.rpc(rpcName, {
         p_source_key: sourceKey,
         p_period_key: periodKey,
         p_owner_token: ownerToken,
         p_lease_duration_seconds: leaseDurationSeconds,
         p_chart_source_id: chartSourceId,
       });
-      if (error) throw new Error(`acquire_sync_lease: ${error.message}`);
+      if (error) throw new Error(`${rpcName}: ${error.message}`);
       const row = Array.isArray(data) ? data[0] : data;
       return {
         acquired: !!row?.acquired,

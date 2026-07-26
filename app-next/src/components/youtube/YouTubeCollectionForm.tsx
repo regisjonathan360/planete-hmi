@@ -5,6 +5,7 @@ import {
   YOUTUBE_COLLECTION_MODES,
 } from "../../lib/youtube/constants";
 import type { YouTubeCollectionParams } from "../../lib/youtube/schemas";
+import { getCollectionModePreset } from "../../lib/youtube/collection-mode";
 import {
   getZodFieldErrors,
   joinUuidList,
@@ -102,6 +103,21 @@ export function YouTubeCollectionForm({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const isCustom = values.mode === "CUSTOM";
 
+  function setMode(mode: YouTubeCollectionParams["mode"]) {
+    const preset = getCollectionModePreset(mode);
+    setValues((current) => ({
+      ...current,
+      mode,
+      ...(preset ?? {}),
+    }));
+    setErrors((current) => {
+      if (current.mode === undefined) return current;
+      const next = { ...current };
+      delete next.mode;
+      return next;
+    });
+  }
+
   function setField<Field extends keyof EditableCollectionForm>(
     field: Field,
     value: EditableCollectionForm[Field]
@@ -197,10 +213,7 @@ export function YouTubeCollectionForm({
               value={values.mode}
               aria-invalid={Boolean(errors.mode)}
               onChange={(event) =>
-                setField(
-                  "mode",
-                  event.target.value as YouTubeCollectionParams["mode"]
-                )
+                setMode(event.target.value as YouTubeCollectionParams["mode"])
               }
             >
               {YOUTUBE_COLLECTION_MODES.map((mode) => (
@@ -217,7 +230,8 @@ export function YouTubeCollectionForm({
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>Opérations</h2>
           <p className={styles.sectionDescription}>
-            La publication reste toujours une action séparée.
+            Le mode applique un réglage conseillé. Vous pouvez ensuite ajuster
+            les opérations. La publication reste toujours séparée.
           </p>
         </div>
 
@@ -229,6 +243,7 @@ export function YouTubeCollectionForm({
                 className={styles.checkbox}
                 type="checkbox"
                 checked={values[option.field]}
+                disabled={option.field === "refreshMetadata"}
                 onChange={(event) =>
                   setField(option.field, event.target.checked)
                 }
@@ -236,13 +251,21 @@ export function YouTubeCollectionForm({
               <span className={styles.optionText}>
                 <span className={styles.optionTitle}>{option.title}</span>
                 <span className={styles.optionDescription}>
-                  {option.description}
+                  {option.field === "refreshMetadata"
+                    ? "Bientôt disponible. Cette opération ne peut pas encore être sélectionnée."
+                    : option.description}
                 </span>
               </span>
             </label>
           ))}
         </fieldset>
       </section>
+
+      <p className={styles.periodNotice}>
+        La période filtre les nouvelles vidéos découvertes. L’actualisation des
+        statistiques peut inclure d’anciennes vidéos déjà approuvées afin de
+        mesurer les vues gagnées pendant cette période.
+      </p>
 
       {isCustom && (
         <section className={styles.section}>
