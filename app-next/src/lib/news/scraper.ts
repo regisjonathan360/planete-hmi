@@ -1,6 +1,8 @@
 /**
- * Collecteur d'actualités depuis des sources externes.
- * Scrape les pages de catégorie et extrait titre, image, URL, auteur, date.
+ * Collecteur d'actualités depuis Chokarella.
+ * Utilise une approche RSS/API si disponible, sinon parse le HTML statique.
+ *
+ * Chokarella est un site WordPress — on peut utiliser son API REST WP.
  */
 import "server-only";
 
@@ -14,13 +16,141 @@ export interface ScrapedArticle {
 }
 
 /**
- * Scrape la page musique de Chokarella et retourne les articles trouvés.
+ * Collecte les articles depuis l'API WordPress de Chokarella.
+ * WordPress expose /wp-json/wp/v2/posts par défaut.
  */
-export async function scrapeChokarella(url: string): Promise<ScrapedArticle[]> {
+export async function scrapeChokarella(baseUrl: string): Promise<ScrapedArticle[]> {
+  // Déterminer l'URL de l'API WP à partir de l'URL de catégorie
+  // baseUrl = https://www.chokarella.com/category/musique/
+  // API WP = https://www.chokarella.com/wp-json/wp/v2/posts?categories=XX&per_page=20
+
+  // D'abord, récupérer l'ID de la catégorie "musique"
+  const wpBase = "https://www.chokarella.com/wp-json/wp/v2";
+
+  try {
+    // Essayer l'API WP directement avec le slug de catégorie
+    const catRes = await fetch(`${wpBase}/categories?slug=musique`, {
+      headers: { "User-Agent": "PlaneteHMI-NewsBot/1.0" },
+      cache: "no-store",
+    });
+
+    let categoryId: number | null = null;
+    if (catRes.ok) {
+      const cats = await catRes.json();
+      if (Array.isArray(cats) && cats.length > 0) {
+        categoryId = cats[0].id;
+      }
+    }
+
+    // Récupérer les posts
+    let postsUrl = `${wpBase}/posts?per_page=20&_embed`;
+    if (categoryId) {
+      postsUrl += `&categories=${categoryId}`;
+    }
+
+    const postsRes = await fetch(postsUrl, {
+      headers: { "User-Agent": "PlaneteHMI-NewsBot/1.0" },
+      cache: "no-store",
+    });
+
+    if (!postsRes.ok) {
+      throw new Error(`API WordPress non disponible (HTTP ${postsRes.status})`);
+    }
+
+    const posts = await postsRes.json();
+
+    if (!Array.isArray(posts)) {
+      throw new Error("Réponse inattendue de l'API WordPress");
+    }
+
+    return posts.map((post: WPPost) => ({
+      sourceUrl: post.link,
+      title: decodeHtmlEntities(post.title?.rendered ?? ""),
+      imageUrl: extractFeaturedImage(post),
+      excerpt: decodeHtmlEntities(stripHtml(post.excerpt?.rendered ?? "")),
+      author: extractAuthorName(post),
+      date: formatWpDate(post.date),
+    })).filter((a: ScrapedArticle) => a.title.length > 3);
+  } catch (err) {
+    // Fallback : tenter un parse HTML simple
+    return fallbackHtmlScrape(baseUrl);
+  }
+}
+
+// ============================================================
+// Types WordPress
+// ============================================================
+
+interface WPPost {
+  link: string;
+  title?: { rendered: string };
+  excerpt?: { rendered: string };
+  date: string;
+  _embedded?: {
+    author?: Array<{ name: string }>;
+    "wp:featuredmedia"?: Array<{ source_url: string }>;
+  };
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+
+function extractFeaturedImage(post: WPPost): string | null {
+  const media = post._embedded?.["wp:featuredmedia"];
+  if (Array.isArray(media) && media.length > 0) {
+    return media[0].source_url ?? null;
+  }
+  return null;
+}
+
+function extractAuthorName(post: WPPost): string | null {
+  const authors = post._embedded?.author;
+  if (Array.isArray(authors) && authors.length > 0) {
+    return authors[0].name ?? null;
+  }
+  return null;
+}
+
+function formatWpDate(dateStr: string): string | null {
+  if (!dateStr) return null;
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  } catch {
+    return dateStr;
+  }
+}
+
+function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8216;/g, "'")
+    .replace(/&#8220;/g, "\u00ab")
+    .replace(/&#8221;/g, "\u00bb")
+    .replace(/&#8211;/g, "–")
+    .replace(/&#8212;/g, "—")
+    .replace(/&#038;/g, "&")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/\u00a0/g, " ")
+    .trim();
+}
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+}
+
+// ============================================================
+// Fallback HTML scraping
+// ============================================================
+
+async function fallbackHtmlScrape(url: string): Promise<ScrapedArticle[]> {
   const response = await fetch(url, {
-    headers: {
-      "User-Agent": "PlaneteHMI-NewsBot/1.0 (+https://planete-hmi.com)",
-    },
+    headers: { "User-Agent": "PlaneteHMI-NewsBot/1.0" },
     cache: "no-store",
   });
 
@@ -29,94 +159,42 @@ export async function scrapeChokarella(url: string): Promise<ScrapedArticle[]> {
   }
 
   const html = await response.text();
-  return parseChokarellaHtml(html);
-}
-
-/**
- * Parse le HTML de Chokarella pour extraire les articles.
- * Utilise des regex simples (pas de dépendance DOM côté serveur).
- */
-export function parseChokarellaHtml(html: string): ScrapedArticle[] {
   const articles: ScrapedArticle[] = [];
   const seen = new Set<string>();
 
   // Pattern: articles with links to chokarella.com/YYYY/MM/DD/slug/
   const linkPattern = /href="(https:\/\/www\.chokarella\.com\/\d{4}\/\d{2}\/\d{2}\/[^"]+)"/g;
-  const links: string[] = [];
 
   let match;
   while ((match = linkPattern.exec(html)) !== null) {
-    const url = match[1];
-    if (!seen.has(url)) {
-      seen.add(url);
-      links.push(url);
-    }
-  }
+    const articleUrl = match[1];
+    if (seen.has(articleUrl)) continue;
+    seen.add(articleUrl);
 
-  for (const url of links) {
-    // Find the title associated with this URL
-    // Pattern: title text is usually inside a heading near the link
+    // Find title near this link
     const titlePattern = new RegExp(
-      `href="${escapeRegex(url)}"[^>]*>([^<]+)<`,
+      `href="${articleUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"[^>]*>([^<]{5,})<`,
       "i"
     );
     const titleMatch = titlePattern.exec(html);
     const title = titleMatch?.[1]?.trim();
+    if (!title) continue;
 
-    if (!title || title.length < 5) continue; // Skip navigation links
-
-    // Find image near this article (image src in the same article block)
-    // Look for img with src before the link
-    const urlPos = html.indexOf(url);
-    const contextStart = Math.max(0, urlPos - 2000);
-    const context = html.slice(contextStart, urlPos + 500);
-
-    const imgPattern = /(?:src|data-src)="(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/gi;
-    let imgMatch;
-    let imageUrl: string | null = null;
-    while ((imgMatch = imgPattern.exec(context)) !== null) {
-      const imgUrl = imgMatch[1];
-      // Skip tiny icons/avatars
-      if (!imgUrl.includes("gravatar") && !imgUrl.includes("icon") && !imgUrl.includes("logo")) {
-        imageUrl = imgUrl;
-      }
-    }
-
-    // Extract date
-    const datePattern = /(\w+ \d{1,2}, \d{4})/;
-    const dateContext = html.slice(urlPos, urlPos + 500);
-    const dateMatch = datePattern.exec(dateContext);
-
-    // Extract author
-    const authorPattern = /author\/[^"]+">([^<]+)</;
-    const authorMatch = authorPattern.exec(dateContext);
+    // Find image
+    const pos = html.indexOf(articleUrl);
+    const context = html.slice(Math.max(0, pos - 2000), pos + 500);
+    const imgMatch = /(?:src|data-src)="(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i.exec(context);
+    const imageUrl = imgMatch?.[1] ?? null;
 
     articles.push({
-      sourceUrl: url,
-      title: cleanTitle(title),
-      imageUrl,
-      excerpt: null, // Could be extracted but not always present in listing
-      author: authorMatch?.[1]?.trim() ?? null,
-      date: dateMatch?.[1] ?? null,
+      sourceUrl: articleUrl,
+      title: decodeHtmlEntities(title),
+      imageUrl: imageUrl && !imageUrl.includes("gravatar") ? imageUrl : null,
+      excerpt: null,
+      author: null,
+      date: null,
     });
   }
 
-  // Deduplicate by URL and limit to reasonable count
-  return articles.slice(0, 30);
-}
-
-function cleanTitle(raw: string): string {
-  return raw
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/\u00ab/g, "«")
-    .replace(/\u00bb/g, "»")
-    .trim();
-}
-
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return articles.slice(0, 20);
 }
