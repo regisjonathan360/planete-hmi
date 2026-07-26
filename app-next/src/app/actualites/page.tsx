@@ -1,7 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
+import type { Metadata } from "next";
 import { NewsList } from "./NewsList";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Actualités",
+  description:
+    "Actualités de la musique haïtienne : sorties, interviews, tendances et coulisses de Planète HMI.",
+};
 
 export default async function ActualitesPage() {
   const supabase = await createClient();
@@ -9,6 +16,7 @@ export default async function ActualitesPage() {
     .from("news_articles")
     .select("id, source_url, source_title, source_image_url, source_excerpt, source_author, source_date, display_title, display_image_url, display_excerpt, category, is_featured, published_at")
     .eq("status", "published")
+    .eq("source_section", "musique")
     .order("published_at", { ascending: false })
     .limit(30);
 

@@ -54,7 +54,9 @@ export function NewsManager({
       });
       const data = await res.json();
       if (res.ok) {
-        setToast(`✓ ${data.found} articles trouvés, ${data.inserted} nouveaux.`);
+        setToast(
+          `✓ ${data.found} articles Musique trouvés et ${data.synchronized ?? data.inserted} synchronisés.`
+        );
         // Refresh articles
         const refreshRes = await fetch("/api/admin/news/articles");
         if (refreshRes.ok) {

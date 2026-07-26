@@ -1,10 +1,11 @@
 /**
  * Collecteur d'actualités depuis Chokarella.
- * Utilise une approche RSS/API si disponible, sinon parse le HTML statique.
- *
- * Chokarella est un site WordPress — on peut utiliser son API REST WP.
+ * Utilise l'API REST WordPress avec un filtrage strict sur la catégorie Musique.
  */
 import "server-only";
+
+const MUSIC_CATEGORY_SLUG = "musique";
+const ALLOWED_HOSTS = new Set(["chokarella.com", "www.chokarella.com"]);
 
 export interface ScrapedArticle {
   sourceUrl: string;
@@ -13,76 +14,12 @@ export interface ScrapedArticle {
   excerpt: string | null;
   author: string | null;
   date: string | null;
+  categorySlug: typeof MUSIC_CATEGORY_SLUG;
 }
-
-/**
- * Collecte les articles depuis l'API WordPress de Chokarella.
- * WordPress expose /wp-json/wp/v2/posts par défaut.
- */
-export async function scrapeChokarella(baseUrl: string): Promise<ScrapedArticle[]> {
-  // Déterminer l'URL de l'API WP à partir de l'URL de catégorie
-  // baseUrl = https://www.chokarella.com/category/musique/
-  // API WP = https://www.chokarella.com/wp-json/wp/v2/posts?categories=XX&per_page=20
-
-  // D'abord, récupérer l'ID de la catégorie "musique"
-  const wpBase = "https://www.chokarella.com/wp-json/wp/v2";
-
-  try {
-    // Essayer l'API WP directement avec le slug de catégorie
-    const catRes = await fetch(`${wpBase}/categories?slug=musique`, {
-      headers: { "User-Agent": "PlaneteHMI-NewsBot/1.0" },
-      cache: "no-store",
-    });
-
-    let categoryId: number | null = null;
-    if (catRes.ok) {
-      const cats = await catRes.json();
-      if (Array.isArray(cats) && cats.length > 0) {
-        categoryId = cats[0].id;
-      }
-    }
-
-    // Récupérer les posts
-    let postsUrl = `${wpBase}/posts?per_page=20&_embed`;
-    if (categoryId) {
-      postsUrl += `&categories=${categoryId}`;
-    }
-
-    const postsRes = await fetch(postsUrl, {
-      headers: { "User-Agent": "PlaneteHMI-NewsBot/1.0" },
-      cache: "no-store",
-    });
-
-    if (!postsRes.ok) {
-      throw new Error(`API WordPress non disponible (HTTP ${postsRes.status})`);
-    }
-
-    const posts = await postsRes.json();
-
-    if (!Array.isArray(posts)) {
-      throw new Error("Réponse inattendue de l'API WordPress");
-    }
-
-    return posts.map((post: WPPost) => ({
-      sourceUrl: post.link,
-      title: decodeHtmlEntities(post.title?.rendered ?? ""),
-      imageUrl: extractFeaturedImage(post),
-      excerpt: decodeHtmlEntities(stripHtml(post.excerpt?.rendered ?? "")),
-      author: extractAuthorName(post),
-      date: formatWpDate(post.date),
-    })).filter((a: ScrapedArticle) => a.title.length > 3);
-  } catch (err) {
-    // Fallback : tenter un parse HTML simple
-    return fallbackHtmlScrape(baseUrl);
-  }
-}
-
-// ============================================================
-// Types WordPress
-// ============================================================
 
 interface WPPost {
   link: string;
+  categories: number[];
   title?: { rendered: string };
   excerpt?: { rendered: string };
   date: string;
@@ -92,9 +29,123 @@ interface WPPost {
   };
 }
 
-// ============================================================
-// Helpers
-// ============================================================
+interface WPCategory {
+  id: number;
+  slug: string;
+}
+
+/**
+ * Collecte uniquement les articles rattachés à la catégorie WordPress Musique.
+ * Si cette catégorie ne peut pas être confirmée, la collecte échoue sans
+ * demander les derniers articles globaux du site.
+ */
+export async function scrapeChokarella(baseUrl: string): Promise<ScrapedArticle[]> {
+  const sourceUrl = new URL(baseUrl);
+
+  if (!ALLOWED_HOSTS.has(sourceUrl.hostname.toLowerCase())) {
+    throw new Error("Source Chokarella non autorisée.");
+  }
+
+  const sourceCategory = sourceUrl.pathname
+    .split("/")
+    .filter(Boolean)
+    .at(-1)
+    ?.toLowerCase();
+
+  if (sourceCategory !== MUSIC_CATEGORY_SLUG) {
+    throw new Error("La source doit cibler exclusivement la catégorie Musique.");
+  }
+
+  const wpBase = new URL("/wp-json/wp/v2/", sourceUrl.origin);
+  const categoryUrl = new URL("categories", wpBase);
+  categoryUrl.searchParams.set("slug", MUSIC_CATEGORY_SLUG);
+
+  const categoryResponse = await fetch(categoryUrl, {
+    headers: { "User-Agent": "PlaneteHMI-NewsBot/1.0" },
+    cache: "no-store",
+  });
+
+  if (!categoryResponse.ok) {
+    throw new Error(`Catégorie Musique indisponible (HTTP ${categoryResponse.status}).`);
+  }
+
+  const categories: unknown = await categoryResponse.json();
+  if (!Array.isArray(categories)) {
+    throw new Error("Réponse de catégorie Chokarella invalide.");
+  }
+
+  const musicCategory = categories.find(isMusicCategory);
+  if (!musicCategory) {
+    throw new Error("La catégorie Musique n'a pas pu être confirmée.");
+  }
+
+  const postsUrl = new URL("posts", wpBase);
+  postsUrl.searchParams.set("per_page", "20");
+  postsUrl.searchParams.set("_embed", "1");
+  postsUrl.searchParams.set("categories", String(musicCategory.id));
+
+  const postsResponse = await fetch(postsUrl, {
+    headers: { "User-Agent": "PlaneteHMI-NewsBot/1.0" },
+    cache: "no-store",
+  });
+
+  if (!postsResponse.ok) {
+    throw new Error(`Articles Musique indisponibles (HTTP ${postsResponse.status}).`);
+  }
+
+  const posts: unknown = await postsResponse.json();
+  if (!Array.isArray(posts)) {
+    throw new Error("Réponse des articles Chokarella invalide.");
+  }
+
+  return posts
+    .filter(
+      (post): post is WPPost =>
+        isWpPost(post) && post.categories.includes(musicCategory.id)
+    )
+    .map((post) => ({
+      sourceUrl: post.link,
+      title: decodeHtmlEntities(post.title?.rendered ?? ""),
+      imageUrl: extractFeaturedImage(post),
+      excerpt: decodeHtmlEntities(stripHtml(post.excerpt?.rendered ?? "")),
+      author: extractAuthorName(post),
+      date: formatWpDate(post.date),
+      categorySlug: MUSIC_CATEGORY_SLUG as typeof MUSIC_CATEGORY_SLUG,
+    }))
+    .filter((article) => article.title.length > 3);
+}
+
+function isMusicCategory(value: unknown): value is WPCategory {
+  if (!value || typeof value !== "object") return false;
+  const category = value as Partial<WPCategory>;
+
+  return (
+    Number.isInteger(category.id) &&
+    Number(category.id) > 0 &&
+    category.slug?.toLowerCase() === MUSIC_CATEGORY_SLUG
+  );
+}
+
+function isWpPost(value: unknown): value is WPPost {
+  if (!value || typeof value !== "object") return false;
+  const post = value as Partial<WPPost>;
+
+  return (
+    typeof post.link === "string" &&
+    ALLOWED_HOSTS.has(safeHostname(post.link)) &&
+    typeof post.date === "string" &&
+    Array.isArray(post.categories) &&
+    post.categories.every((categoryId) => Number.isInteger(categoryId))
+  );
+}
+
+function safeHostname(value: string): string {
+  try {
+    return new URL(value).hostname.toLowerCase();
+  } catch {
+    return "";
+  }
+}
 
 function extractFeaturedImage(post: WPPost): string | null {
   const media = post._embedded?.["wp:featuredmedia"];
@@ -114,20 +165,22 @@ function extractAuthorName(post: WPPost): string | null {
 
 function formatWpDate(dateStr: string): string | null {
   if (!dateStr) return null;
-  try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
-  } catch {
-    return dateStr;
-  }
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return date.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
-function decodeHtmlEntities(str: string): string {
-  return str
+function decodeHtmlEntities(value: string): string {
+  return value
     .replace(/&#8217;/g, "'")
     .replace(/&#8216;/g, "'")
-    .replace(/&#8220;/g, "\u00ab")
-    .replace(/&#8221;/g, "\u00bb")
+    .replace(/&#8220;/g, "«")
+    .replace(/&#8221;/g, "»")
     .replace(/&#8211;/g, "–")
     .replace(/&#8212;/g, "—")
     .replace(/&#038;/g, "&")
@@ -142,59 +195,4 @@ function decodeHtmlEntities(str: string): string {
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
-}
-
-// ============================================================
-// Fallback HTML scraping
-// ============================================================
-
-async function fallbackHtmlScrape(url: string): Promise<ScrapedArticle[]> {
-  const response = await fetch(url, {
-    headers: { "User-Agent": "PlaneteHMI-NewsBot/1.0" },
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error(`Échec du scraping : HTTP ${response.status}`);
-  }
-
-  const html = await response.text();
-  const articles: ScrapedArticle[] = [];
-  const seen = new Set<string>();
-
-  // Pattern: articles with links to chokarella.com/YYYY/MM/DD/slug/
-  const linkPattern = /href="(https:\/\/www\.chokarella\.com\/\d{4}\/\d{2}\/\d{2}\/[^"]+)"/g;
-
-  let match;
-  while ((match = linkPattern.exec(html)) !== null) {
-    const articleUrl = match[1];
-    if (seen.has(articleUrl)) continue;
-    seen.add(articleUrl);
-
-    // Find title near this link
-    const titlePattern = new RegExp(
-      `href="${articleUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"[^>]*>([^<]{5,})<`,
-      "i"
-    );
-    const titleMatch = titlePattern.exec(html);
-    const title = titleMatch?.[1]?.trim();
-    if (!title) continue;
-
-    // Find image
-    const pos = html.indexOf(articleUrl);
-    const context = html.slice(Math.max(0, pos - 2000), pos + 500);
-    const imgMatch = /(?:src|data-src)="(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i.exec(context);
-    const imageUrl = imgMatch?.[1] ?? null;
-
-    articles.push({
-      sourceUrl: articleUrl,
-      title: decodeHtmlEntities(title),
-      imageUrl: imageUrl && !imageUrl.includes("gravatar") ? imageUrl : null,
-      excerpt: null,
-      author: null,
-      date: null,
-    });
-  }
-
-  return articles.slice(0, 20);
 }
