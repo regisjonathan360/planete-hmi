@@ -18,10 +18,36 @@ const CHANNEL_TYPE_LABELS: Record<string, string> = {
   OTHER_APPROVED_CHANNEL: "Autre chaîne approuvée",
 };
 
+interface ArtistProfileSyncDetail {
+  artistId: string;
+  artistName: string;
+  sourceUrl: string;
+  channelId: string | null;
+  channelTitle: string | null;
+  status: string;
+  message: string;
+}
+
+interface ArtistProfileSyncSummary {
+  profilesScanned: number;
+  urlsDetected: number;
+  created: number;
+  alreadyLinked: number;
+  linkedExisting: number;
+  duplicateProfileUrls: number;
+  conflicts: number;
+  errors: number;
+  details: ArtistProfileSyncDetail[];
+}
+
+interface ArtistProfileSyncPage extends ArtistProfileSyncSummary {
+  nextCursor: string | null;
+}
+
 export function ChannelsPanel({
   onChannelCreated,
 }: {
-  onChannelCreated: () => void;
+  onChannelCreated: (amount?: number) => void;
 }) {
   const [channels, setChannels] = useState<YouTubeChannel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +57,8 @@ export function ChannelsPanel({
   const [busyId, setBusyId] = useState<string | null>(null);
   const [approvalId, setApprovalId] = useState<string | null>(null);
   const [approvalReason, setApprovalReason] = useState("");
+  const [syncingProfiles, setSyncingProfiles] = useState(false);
+  const [syncSummary, setSyncSummary] = useState<ArtistProfileSyncSummary | null>(null);
   const [notice, setNotice] = useState<{ tone: "success" | "error" | "warning"; text: string } | null>(null);
 
   const loadChannels = useCallback(async () => {
@@ -103,6 +131,50 @@ export function ChannelsPanel({
     );
   }
 
+  async function importArtistProfiles() {
+    setSyncingProfiles(true);
+    setSyncSummary(null);
+    setNotice(null);
+
+    const total = emptyArtistProfileSyncSummary();
+    let cursor: string | null = null;
+    let pages = 0;
+
+    try {
+      do {
+        const response: Response = await fetch("/api/admin/youtube/channels/import-artists", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cursor }),
+        });
+        const payload: ArtistProfileSyncPage = await response.json();
+        if (!response.ok) {
+          throw new Error(readApiError(payload, "Import des profils artistes impossible."));
+        }
+
+        mergeArtistProfileSyncSummary(total, payload as ArtistProfileSyncPage);
+        cursor = typeof payload.nextCursor === "string" ? payload.nextCursor : null;
+        pages++;
+        if (pages > 100) throw new Error("Import interrompu : trop de pages à traiter.");
+      } while (cursor);
+
+      setSyncSummary(total);
+      if (total.created > 0) onChannelCreated(total.created);
+      setNotice({
+        tone: total.errors > 0 || total.conflicts > 0 ? "warning" : "success",
+        text: `${total.created} nouvelle(s) chaîne(s), ${total.linkedExisting} liaison(s) récupérée(s), ${total.errors} erreur(s).`,
+      });
+      await loadChannels();
+    } catch (error) {
+      setNotice({
+        tone: "error",
+        text: error instanceof Error ? error.message : "Import des profils artistes impossible.",
+      });
+    } finally {
+      setSyncingProfiles(false);
+    }
+  }
+
   return (
     <div className={styles.stack}>
       {notice ? (
@@ -117,10 +189,22 @@ export function ChannelsPanel({
             <h2>Sources approuvées</h2>
             <p>Seules les chaînes actives alimentent la découverte automatique.</p>
           </div>
-          <button className="btn btn--primary" type="button" onClick={() => setShowCreate((value) => !value)}>
-            {showCreate ? "Fermer" : "Ajouter une chaîne"}
-          </button>
+          <div className={styles.headerActions}>
+            <button
+              className="btn btn--ghost"
+              type="button"
+              disabled={syncingProfiles}
+              onClick={importArtistProfiles}
+            >
+              {syncingProfiles ? "Synchronisation en cours…" : "Importer depuis les profils"}
+            </button>
+            <button className="btn btn--primary" type="button" onClick={() => setShowCreate((value) => !value)}>
+              {showCreate ? "Fermer" : "Ajouter une chaîne"}
+            </button>
+          </div>
         </div>
+
+        {syncSummary ? <ArtistProfileSyncReport summary={syncSummary} /> : null}
 
         {showCreate ? (
           <ChannelCreateForm
@@ -368,6 +452,69 @@ function ChannelCreateForm({ onCreated }: { onCreated: () => Promise<void> }) {
         {submitting ? "Validation YouTube en cours..." : "Valider et ajouter"}
       </button>
     </form>
+  );
+}
+
+function emptyArtistProfileSyncSummary(): ArtistProfileSyncSummary {
+  return {
+    profilesScanned: 0,
+    urlsDetected: 0,
+    created: 0,
+    alreadyLinked: 0,
+    linkedExisting: 0,
+    duplicateProfileUrls: 0,
+    conflicts: 0,
+    errors: 0,
+    details: [],
+  };
+}
+
+function mergeArtistProfileSyncSummary(
+  total: ArtistProfileSyncSummary,
+  page: ArtistProfileSyncPage
+) {
+  total.profilesScanned += page.profilesScanned;
+  total.urlsDetected += page.urlsDetected;
+  total.created += page.created;
+  total.alreadyLinked += page.alreadyLinked;
+  total.linkedExisting += page.linkedExisting;
+  total.duplicateProfileUrls += page.duplicateProfileUrls;
+  total.conflicts += page.conflicts;
+  total.errors += page.errors;
+  total.details.push(...page.details);
+}
+
+function ArtistProfileSyncReport({ summary }: { summary: ArtistProfileSyncSummary }) {
+  const issues = summary.details
+    .filter((detail) => detail.status === "error" || detail.status === "conflict")
+    .slice(0, 12);
+
+  return (
+    <section className={styles.syncReport} aria-live="polite">
+      <div className={styles.syncMetrics}>
+        <span><strong>{summary.profilesScanned}</strong> profils analysés</span>
+        <span><strong>{summary.urlsDetected}</strong> liens détectés</span>
+        <span><strong>{summary.created}</strong> chaînes à vérifier</span>
+        <span><strong>{summary.alreadyLinked + summary.linkedExisting}</strong> déjà reliées</span>
+        <span><strong>{summary.conflicts + summary.errors}</strong> à corriger</span>
+      </div>
+      {issues.length > 0 ? (
+        <div className={styles.syncIssues}>
+          <strong>Points nécessitant une vérification manuelle</strong>
+          <ul>
+            {issues.map((detail) => (
+              <li key={`${detail.artistId}-${detail.sourceUrl}`}>
+                <span>{detail.artistName}</span>
+                <small>{detail.message}</small>
+              </li>
+            ))}
+          </ul>
+          {summary.conflicts + summary.errors > issues.length ? (
+            <p>{summary.conflicts + summary.errors - issues.length} autre(s) point(s) non affiché(s).</p>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
   );
 }
 

@@ -138,6 +138,87 @@
   margin-top: 0.75rem;
 }
 
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.syncReport {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid color-mix(in srgb, var(--admin-accent) 35%, var(--admin-border));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--admin-accent) 5%, var(--admin-panel-2));
+  padding: 0.8rem;
+}
+
+.syncMetrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.syncMetrics span {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  border-left: 2px solid var(--admin-accent);
+  color: var(--admin-muted);
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+}
+
+.syncMetrics strong {
+  color: var(--admin-text);
+  font-family: ui-monospace, "Cascadia Code", monospace;
+  font-size: 1rem;
+}
+
+.syncIssues {
+  border-top: 1px solid var(--admin-border);
+  padding-top: 0.65rem;
+}
+
+.syncIssues > strong {
+  font-size: 0.8rem;
+}
+
+.syncIssues ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.syncIssues li {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.35fr) minmax(0, 1fr);
+  gap: 0.65rem;
+  border-top: 1px solid color-mix(in srgb, var(--admin-border) 65%, transparent);
+  padding-top: 0.35rem;
+}
+
+.syncIssues li span {
+  overflow: hidden;
+  color: var(--admin-text);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.syncIssues small,
+.syncIssues p {
+  margin: 0;
+  color: var(--admin-warn);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
 .workflow {
   display: grid;
   gap: 0;
@@ -596,6 +677,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .syncMetrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .stat:nth-child(2) {
     border-right: 0;
   }
@@ -654,6 +739,19 @@
   .workflowItem {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .headerActions {
+    justify-content: stretch;
+  }
+
+  .headerActions > * {
+    flex: 1 1 auto;
+  }
+
+  .syncMetrics,
+  .syncIssues li {
+    grid-template-columns: 1fr;
   }
 
   .channelRow,

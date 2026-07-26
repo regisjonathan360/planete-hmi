@@ -27,8 +27,11 @@ export function YouTubeAdminManager({
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [stats, setStats] = useState(initialStats);
 
-  function incrementStat(field: keyof Pick<YouTubeAdminStats, "channels" | "pendingVideos">) {
-    setStats((current) => ({ ...current, [field]: current[field] + 1 }));
+  function incrementStat(
+    field: keyof Pick<YouTubeAdminStats, "channels" | "pendingVideos">,
+    amount = 1
+  ) {
+    setStats((current) => ({ ...current, [field]: current[field] + amount }));
   }
 
   return (
@@ -59,7 +62,7 @@ export function YouTubeAdminManager({
       ) : null}
       {activeTab === "collection" ? <CollectionPanel /> : null}
       {activeTab === "channels" ? (
-        <ChannelsPanel onChannelCreated={() => incrementStat("channels")} />
+        <ChannelsPanel onChannelCreated={(amount) => incrementStat("channels", amount)} />
       ) : null}
       {activeTab === "videos" ? (
         <VideosPanel onVideoImported={() => incrementStat("pendingVideos")} />

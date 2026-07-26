@@ -9,7 +9,14 @@ afterEach(() => {
   delete process.env.YOUTUBE_API_KEY;
 });
 
-const { validateChannel, listPlaylistItems, getVideoDetails, YouTubeApiError } =
+const {
+  validateChannel,
+  resolveChannelUrl,
+  parseYouTubeChannelReference,
+  listPlaylistItems,
+  getVideoDetails,
+  YouTubeApiError,
+} =
   await import("../api-client");
 
 function mockFetch(responses: Array<{ status: number; body: unknown }>) {
@@ -76,6 +83,73 @@ describe("validateChannel", () => {
   it("erreur invalid_response si réponse malformée", async () => {
     mockFetch([{ status: 200, body: "not json object" }]);
     await expect(validateChannel(VALID_CHANNEL)).rejects.toMatchObject({ code: "invalid_response" });
+  });
+});
+
+describe("resolveChannelUrl", () => {
+  it("reconnaît les URLs /channel/UC...", () => {
+    expect(
+      parseYouTubeChannelReference(`https://www.youtube.com/channel/${VALID_CHANNEL}`)
+    ).toEqual({ kind: "id", value: VALID_CHANNEL });
+  });
+
+  it("résout une URL @handle avec channels.list forHandle", async () => {
+    const fetchFn = mockFetch([channelResponse([{
+      id: VALID_CHANNEL,
+      snippet: { title: "Artiste HMI", customUrl: "@artistehmi", thumbnails: {} },
+      contentDetails: { relatedPlaylists: { uploads: VALID_PLAYLIST } },
+      statistics: { subscriberCount: "250", videoCount: "12" },
+    }])]);
+
+    const result = await resolveChannelUrl("https://youtube.com/@artistehmi/videos");
+    expect(result.channelId).toBe(VALID_CHANNEL);
+    expect(result.title).toBe("Artiste HMI");
+    expect(new URL(fetchFn.mock.calls[0][0] as string).searchParams.get("forHandle"))
+      .toBe("@artistehmi");
+  });
+
+  it("résout une ancienne URL /user/ avec forUsername", async () => {
+    const fetchFn = mockFetch([channelResponse([{
+      id: VALID_CHANNEL,
+      snippet: { title: "Ancienne chaîne", thumbnails: {} },
+      contentDetails: { relatedPlaylists: {} },
+    }])]);
+
+    await resolveChannelUrl("https://www.youtube.com/user/anciennom");
+    expect(new URL(fetchFn.mock.calls[0][0] as string).searchParams.get("forUsername"))
+      .toBe("anciennom");
+  });
+
+  it("essaie handle puis username pour une ancienne URL personnalisée", async () => {
+    const fetchFn = mockFetch([
+      channelResponse([]),
+      channelResponse([{
+        id: VALID_CHANNEL,
+        snippet: { title: "Chaîne historique", thumbnails: {} },
+        contentDetails: { relatedPlaylists: {} },
+      }]),
+    ]);
+
+    const result = await resolveChannelUrl("https://www.youtube.com/anciennom");
+
+    expect(result.channelId).toBe(VALID_CHANNEL);
+    expect(new URL(fetchFn.mock.calls[0][0] as string).searchParams.get("forHandle"))
+      .toBe("@anciennom");
+    expect(new URL(fetchFn.mock.calls[1][0] as string).searchParams.get("forUsername"))
+      .toBe("anciennom");
+  });
+
+  it("refuse les URLs de vidéo et les anciennes URLs /c/ ambiguës", async () => {
+    await expect(resolveChannelUrl("https://youtu.be/dQw4w9WgXcQ"))
+      .rejects.toMatchObject({ code: "unsupported_channel_url" });
+    await expect(resolveChannelUrl("https://youtube.com/c/nompersonnalise"))
+      .rejects.toMatchObject({ code: "unsupported_channel_url" });
+  });
+
+  it("signale une réponse sans identifiant de chaîne", async () => {
+    mockFetch([channelResponse()]);
+    await expect(resolveChannelUrl("https://youtube.com/@artistehmi"))
+      .rejects.toMatchObject({ code: "invalid_response" });
   });
 });
 

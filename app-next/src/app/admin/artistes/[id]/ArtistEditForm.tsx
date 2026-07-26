@@ -22,7 +22,10 @@ const STATUSES = [
 export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    tone: "success" | "warning" | "error";
+  } | null>(null);
 
   const [form, setForm] = useState({
     name: (artist.name as string) ?? "",
@@ -76,9 +79,22 @@ export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) 
         body: JSON.stringify(form),
       });
       const json = await res.json();
-      if (!res.ok) setMessage(json.error ?? "Erreur.");
-      else { setMessage("✅ Artiste mis à jour."); router.refresh(); }
-    } catch { setMessage("Erreur réseau."); }
+      if (!res.ok) {
+        setMessage({ text: json.error ?? "Erreur.", tone: "error" });
+      } else {
+        setMessage({
+          text: json.youtubeSyncWarning
+            ? `Artiste mis à jour. ${json.youtubeSyncWarning}`
+            : json.youtubeSync?.created > 0
+              ? "Artiste mis à jour. Sa chaîne YouTube a été ajoutée à la file de vérification."
+              : "Artiste mis à jour.",
+          tone: json.youtubeSyncWarning ? "warning" : "success",
+        });
+        router.refresh();
+      }
+    } catch {
+      setMessage({ text: "Erreur réseau.", tone: "error" });
+    }
     finally { setSaving(false); }
   }
 
@@ -184,7 +200,22 @@ export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) 
         <Row><Field label="Site web" value={form.url_website} onChange={(v) => update("url_website", v)} /></Row>
       </Fieldset>
 
-      {message && <p style={{ marginTop: "1rem", color: message.startsWith("✅") ? "var(--admin-ok)" : "var(--admin-danger)" }}>{message}</p>}
+      {message ? (
+        <p
+          role="status"
+          style={{
+            marginTop: "1rem",
+            color:
+              message.tone === "success"
+                ? "var(--admin-ok)"
+                : message.tone === "warning"
+                  ? "var(--admin-warn)"
+                  : "var(--admin-danger)",
+          }}
+        >
+          {message.text}
+        </p>
+      ) : null}
 
       <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
         <button type="submit" className="btn btn--primary" disabled={saving}>
