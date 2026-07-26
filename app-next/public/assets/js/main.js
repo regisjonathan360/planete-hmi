@@ -15,16 +15,21 @@
   var menu = document.getElementById("menu-mobile");
 
   if (toggle && menu) {
+    function setMenuOpen(open) {
+      toggle.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
+      menu.hidden = !open;
+    }
+
     toggle.addEventListener("click", function () {
       var open = toggle.getAttribute("aria-expanded") === "true";
-      toggle.setAttribute("aria-expanded", String(!open));
-      menu.hidden = open;
+      setMenuOpen(!open);
     });
     // Ferme le menu après un clic sur un lien
     menu.querySelectorAll("a").forEach(function (link) {
       link.addEventListener("click", function () {
-        toggle.setAttribute("aria-expanded", "false");
-        menu.hidden = true;
+        setMenuOpen(false);
       });
     });
   }
