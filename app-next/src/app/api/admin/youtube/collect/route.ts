@@ -266,6 +266,7 @@ export async function POST(request: Request) {
         periodStart: params.periodStart,
         periodEnd: params.periodEnd,
         steps,
+        forceNewRun: true,
       },
       orchestratorStorage
     );

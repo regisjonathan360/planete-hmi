@@ -14,7 +14,12 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-const { YouTubeDiscoveryService, createDiscoveryStep, isMultiArtistChannel } =
+const {
+  YouTubeDiscoveryService,
+  createDiscoveryStep,
+  isMultiArtistChannel,
+  isPublishedWithinPeriod,
+} =
   await import("../discovery");
 const { LeaseLostError } = await import("../orchestrator");
 
@@ -172,6 +177,62 @@ describe("pagination", () => {
 
     expect(result.videosDiscovered).toBe(10);
     expect(storage.insertVideoCandidate).toHaveBeenCalledTimes(10);
+  });
+});
+
+describe("filtrage strict de la période", () => {
+  it("inclut les deux dates limites et exclut les vidéos plus anciennes ou futures", async () => {
+    const api = mockApi({
+      listPlaylistItems: vi.fn(async () => [
+        { ...makePlaylistItem("old01abcdef"), publishedAt: "2026-07-13T23:59:59Z" },
+        { ...makePlaylistItem("startabcdef"), publishedAt: "2026-07-14T00:00:00Z" },
+        { ...makePlaylistItem("end01abcdef"), publishedAt: "2026-07-21T23:59:59Z" },
+        { ...makePlaylistItem("next01abcdef"), publishedAt: "2026-07-22T00:00:00Z" },
+      ]),
+    });
+    const storage = mockStorage();
+    const result = await new YouTubeDiscoveryService(api, storage).execute(mockCtx());
+
+    expect(api.getVideoDetails).toHaveBeenCalledWith([
+      "startabcdef",
+      "end01abcdef",
+    ]);
+    expect(result.videosDiscovered).toBe(2);
+    expect(result.videosOutsidePeriod).toBe(2);
+  });
+
+  it("refuse la date canonique hors période même si la playlist était dans la période", async () => {
+    const api = mockApi({
+      getVideoDetails: vi.fn(async (ids: string[]) => ({
+        found: ids.map((id) =>
+          makeVideoDetails(id, { publishedAt: "2026-06-01T12:00:00Z" })
+        ),
+        missing: [],
+        invalid: [],
+      })),
+    });
+    const storage = mockStorage();
+    const result = await new YouTubeDiscoveryService(api, storage).execute(mockCtx());
+
+    expect(storage.insertVideoCandidate).not.toHaveBeenCalled();
+    expect(result.videosOutsidePeriod).toBe(1);
+  });
+
+  it("interprète la date de fin comme une journée incluse", () => {
+    expect(
+      isPublishedWithinPeriod(
+        "2026-07-21T23:59:59.999Z",
+        "2026-07-14",
+        "2026-07-21"
+      )
+    ).toBe(true);
+    expect(
+      isPublishedWithinPeriod(
+        "2026-07-22T00:00:00.000Z",
+        "2026-07-14",
+        "2026-07-21"
+      )
+    ).toBe(false);
   });
 });
 

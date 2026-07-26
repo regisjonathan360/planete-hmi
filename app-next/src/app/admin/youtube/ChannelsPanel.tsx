@@ -53,6 +53,7 @@ export function ChannelsPanel({
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  const [sort, setSort] = useState("subscribers_desc");
   const [showCreate, setShowCreate] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [approvalId, setApprovalId] = useState<string | null>(null);
@@ -67,6 +68,7 @@ export function ChannelsPanel({
       const params = new URLSearchParams({ limit: "100", offset: "0" });
       if (search.trim()) params.set("search", search.trim());
       if (status) params.set("status", status);
+      params.set("sort", sort);
       const response = await fetch(`/api/admin/youtube/channels?${params}`, {
         cache: "no-store",
       });
@@ -81,7 +83,7 @@ export function ChannelsPanel({
     } finally {
       setLoading(false);
     }
-  }, [search, status]);
+  }, [search, status, sort]);
 
   useEffect(() => {
     const timer = window.setTimeout(loadChannels, 250);
@@ -234,6 +236,18 @@ export function ChannelsPanel({
               <option value="active">Active</option>
               <option value="paused">En pause</option>
               <option value="rejected">Rejetée</option>
+            </select>
+          </label>
+          <label className={styles.field}>
+            <span>Trier par</span>
+            <select value={sort} onChange={(event) => setSort(event.target.value)}>
+              <option value="subscribers_desc">Plus d’abonnés</option>
+              <option value="subscribers_asc">Moins d’abonnés</option>
+              <option value="title_asc">Nom, de A à Z</option>
+              <option value="title_desc">Nom, de Z à A</option>
+              <option value="videos_desc">Plus de vidéos</option>
+              <option value="recently_scanned">Contrôle le plus récent</option>
+              <option value="recently_added">Ajout le plus récent</option>
             </select>
           </label>
         </div>
