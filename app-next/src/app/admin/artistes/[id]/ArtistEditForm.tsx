@@ -29,6 +29,7 @@ export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) 
     slug: (artist.slug as string) ?? "",
     bio: (artist.bio as string) ?? "",
     city: (artist.city as string) ?? "",
+    birth_place: (artist.birth_place as string) ?? "",
     label: (artist.label as string) ?? "",
     primary_genre: (artist.primary_genre as string) ?? "",
     real_name: (artist.real_name as string) ?? "",
@@ -102,17 +103,18 @@ export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) 
           <Field label="Biographie" value={form.bio} onChange={(v) => update("bio", v)} textarea />
         </Row>
         <Row>
-          <Field label="Ville" value={form.city} onChange={(v) => update("city", v)} />
-          <Field label="Label / Collectif" value={form.label} onChange={(v) => update("label", v)} />
+          <Field label="Lieu de naissance" value={form.birth_place} onChange={(v) => update("birth_place", v)} />
+          <Field label="Ville ou localisation actuelle" value={form.city} onChange={(v) => update("city", v)} />
         </Row>
         <Row>
+          <Field label="Label / Collectif" value={form.label} onChange={(v) => update("label", v)} />
           <Field label="Genre principal" value={form.primary_genre} onChange={(v) => update("primary_genre", v)} />
-          <Field label="Année de début" value={form.career_start_year} onChange={(v) => update("career_start_year", v)} />
         </Row>
         <Row>
           <Field label="Nom réel (privé)" value={form.real_name} onChange={(v) => update("real_name", v)} />
           <Field label="Date de naissance (privé)" value={form.birth_date} onChange={(v) => update("birth_date", v)} type="date" />
         </Row>
+        <Row><Field label="Année de début de carrière" value={form.career_start_year} onChange={(v) => update("career_start_year", v)} /></Row>
       </Fieldset>
 
       {/* Statut */}

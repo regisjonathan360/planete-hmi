@@ -9,7 +9,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export const dynamic = "force-dynamic";
 
 const TEXT_FIELDS = [
-  "name", "slug", "bio", "city", "label", "primary_genre", "real_name",
+  "name", "slug", "bio", "city", "birth_place", "label", "primary_genre", "real_name",
   "birth_date", "haitian_status", "image_url", "banner_url",
   "url_spotify", "url_apple_music", "url_youtube_music", "url_audiomack",
   "url_deezer", "url_soundcloud", "url_tidal",
