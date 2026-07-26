@@ -52,7 +52,7 @@ export const audiomackAdapter: ChartSourceAdapter = {
     return normaliserLignesImport(raw.rows);
   },
 
-  async validate(entries: NormalizedChartEntry[]): Promise<ValidationResult> {
+  async validate(): Promise<ValidationResult> {
     return { valid: true, errors: [] };
   },
 };

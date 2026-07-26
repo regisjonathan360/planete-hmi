@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, useRef } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { AdminChartData, AdminChartEntry } from "@/lib/charts/admin/types";
 
@@ -201,10 +202,13 @@ function DeezerEntry({
     >
       <div className="entry__pos">{entry.filteredPosition ?? entry.sourcePosition}</div>
       <div className="entry__cover-wrap">
-        <img
+        <Image
+          unoptimized
           className="entry__cover"
           src={entry.artworkUrl ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"}
           alt=""
+          width={64}
+          height={64}
         />
         {playing && (
           <div className="entry__playing-indicator" title="Extrait en cours">

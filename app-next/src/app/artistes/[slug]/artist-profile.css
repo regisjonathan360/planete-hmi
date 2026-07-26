@@ -117,9 +117,62 @@
   min-width: 2.5rem;
 }
 .artist-profile__chart-title {
-  flex: 1;
   font-weight: 600;
   font-size: 0.9rem;
+}
+.artist-profile__chart-main {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+.artist-profile__chart-source {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.55rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(70, 183, 255, 0.12);
+  border: 1px solid rgba(70, 183, 255, 0.28);
+  color: #8ed3ff;
+  font-family: "Space Mono", monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.artist-profile__chart-source--spotify {
+  background: rgba(29, 185, 84, 0.12);
+  border-color: rgba(29, 185, 84, 0.3);
+  color: #52df82;
+}
+.artist-profile__chart-source--audiomack {
+  background: rgba(255, 161, 0, 0.12);
+  border-color: rgba(255, 161, 0, 0.32);
+  color: #ffbd4a;
+}
+.artist-profile__chart-source--deezer {
+  background: rgba(162, 56, 255, 0.12);
+  border-color: rgba(162, 56, 255, 0.32);
+  color: #c27bff;
+}
+.artist-profile__chart-source--youtube,
+.artist-profile__chart-source--youtube-music {
+  background: rgba(255, 0, 51, 0.12);
+  border-color: rgba(255, 0, 51, 0.3);
+  color: #ff718d;
+}
+.artist-profile__chart-source--apple-music {
+  background: rgba(250, 36, 73, 0.12);
+  border-color: rgba(250, 36, 73, 0.3);
+  color: #ff728b;
+}
+.artist-profile__chart-source--tiktok {
+  background: rgba(37, 244, 238, 0.1);
+  border-color: rgba(37, 244, 238, 0.28);
+  color: #62fff9;
 }
 .artist-profile__chart-genre {
   font-size: 0.75rem;
@@ -129,31 +182,96 @@
   color: rgba(244, 239, 228, 0.6);
 }
 
-/* Links (platforms & socials) */
+/* Liens de plateformes et réseaux — boutons ronds alignés sur l'accueil */
+.artist-profile__section--links + .artist-profile__section--links {
+  margin-top: 1.75rem;
+}
 .artist-profile__links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  align-items: flex-start;
+  gap: 1rem;
 }
-.artist-profile__link {
+.artist-profile__brand-link {
   display: flex;
+  width: 64px;
+  flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.9rem;
-  background: rgba(18, 17, 27, 0.7);
-  border: 1px solid rgba(244, 239, 228, 0.1);
-  border-radius: 999px;
-  font-size: 0.82rem;
+  gap: 0.45rem;
+  color: rgba(244, 239, 228, 0.72);
+  font-size: 0.68rem;
   font-weight: 600;
-  color: var(--cream, #f4efe4);
+  line-height: 1.25;
+  text-align: center;
   text-decoration: none;
-  transition: border-color 0.2s;
+  transition: color 0.2s;
 }
-.artist-profile__link:hover {
-  border-color: rgba(244, 239, 228, 0.35);
+.artist-profile__brand-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #171717;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.artist-profile__link-icon {
-  font-size: 1.1rem;
+.artist-profile__brand-icon svg {
+  width: 22px;
+  height: 22px;
+}
+.artist-profile__brand-link:hover {
+  color: var(--cream, #f4efe4);
+}
+.artist-profile__brand-link:hover .artist-profile__brand-icon {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32), 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+.artist-profile__brand-link:active .artist-profile__brand-icon {
+  transform: translateY(0) scale(0.97);
+}
+.artist-profile__brand-label {
+  max-width: 68px;
+}
+.artist-profile__brand-link--spotify .artist-profile__brand-icon { background: #1db954; }
+.artist-profile__brand-link--apple-music .artist-profile__brand-icon {
+  background: linear-gradient(145deg, #fa57c1, #fa243c);
+}
+.artist-profile__brand-link--youtube .artist-profile__brand-icon { background: #ff0033; }
+.artist-profile__brand-link--audiomack .artist-profile__brand-icon { background: #ffa200; color: #111; }
+.artist-profile__brand-link--deezer .artist-profile__brand-icon {
+  background: linear-gradient(145deg, #ffed00, #ff0092 45%, #a238ff 72%, #00c7f2);
+}
+.artist-profile__brand-link--soundcloud .artist-profile__brand-icon {
+  background: linear-gradient(180deg, #ff8800, #ff3300);
+}
+.artist-profile__brand-link--tidal .artist-profile__brand-icon,
+.artist-profile__brand-link--x .artist-profile__brand-icon,
+.artist-profile__brand-link--threads .artist-profile__brand-icon {
+  background: #171717;
+}
+.artist-profile__brand-link--instagram .artist-profile__brand-icon {
+  background: linear-gradient(135deg, #833ab4, #fd1d1d 56%, #fcb045);
+}
+.artist-profile__brand-link--tiktok .artist-profile__brand-icon {
+  background: #15131f;
+  box-shadow: inset 2px 0 #25f4ee, inset -2px 0 #fe2c55;
+}
+.artist-profile__brand-link--facebook .artist-profile__brand-icon { background: #1877f2; }
+.artist-profile__brand-link--website .artist-profile__brand-icon { background: #2878ff; }
+
+@media (max-width: 640px) {
+  .artist-profile__links {
+    gap: 0.8rem;
+  }
+  .artist-profile__chart-entry {
+    align-items: flex-start;
+  }
+  .artist-profile__chart-genre {
+    margin-top: 0.2rem;
+  }
 }
 
 

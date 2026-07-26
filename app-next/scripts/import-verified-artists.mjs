@@ -52,14 +52,6 @@ function slugify(name) {
 
 function mapHaitianStatus(csvStatus) {
   if (csvStatus === "verified_haitian" || csvStatus === "verified_haitian_diaspora" || csvStatus === "verified_haitian_group") return csvStatus;
-  // Mapper les status du CSV vers ceux de la DB
-  const map = {
-    "HT": "verified_haitian",
-    "US": "verified_haitian_diaspora",
-    "CA": "verified_haitian_diaspora",
-    "FR": "verified_haitian_diaspora",
-    "DE": "verified_haitian_diaspora",
-  };
   return csvStatus || "verified_haitian";
 }
 

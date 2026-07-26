@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 interface TopVideoData {
   title: string | null;
@@ -22,18 +23,19 @@ interface TopVideoData {
 export function ArtistTopVideo({ video }: { video: TopVideoData }) {
   const [hovering, setHovering] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const loadingRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Chercher l'extrait Deezer quand on hover pour la première fois
-  useEffect(() => {
-    if (!hovering || previewUrl !== null || loading) return;
+  function handleMouseEnter() {
+    setHovering(true);
+    if (previewUrl !== null || loadingRef.current) return;
 
     const query = video.title
       ? `${video.artistName} ${video.title}`
       : video.artistName;
 
-    setLoading(true);
+    loadingRef.current = true;
     fetch(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=3`)
       .then((r) => r.json())
       .then((d) => {
@@ -41,8 +43,10 @@ export function ArtistTopVideo({ video }: { video: TopVideoData }) {
         setPreviewUrl(track?.preview ?? "");
       })
       .catch(() => setPreviewUrl(""))
-      .finally(() => setLoading(false));
-  }, [hovering, previewUrl, loading, video.title, video.artistName]);
+      .finally(() => {
+        loadingRef.current = false;
+      });
+  }
 
   // Jouer/arrêter l'audio au hover
   useEffect(() => {
@@ -72,7 +76,7 @@ export function ArtistTopVideo({ video }: { video: TopVideoData }) {
   return (
     <div
       className="artist-top-video"
-      onMouseEnter={() => setHovering(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setHovering(false)}
     >
       <a
@@ -82,7 +86,8 @@ export function ArtistTopVideo({ video }: { video: TopVideoData }) {
         className="artist-top-video__link"
       >
         {video.coverUrl ? (
-          <img
+          <Image
+            unoptimized
             className="artist-top-video__cover"
             src={video.coverUrl}
             alt={video.title ?? "Vidéo TikTok"}

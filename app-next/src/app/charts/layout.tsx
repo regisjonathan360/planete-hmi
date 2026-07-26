@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import "./charts.css";
 

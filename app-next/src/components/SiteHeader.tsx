@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -34,23 +35,23 @@ export function SiteHeader() {
   return (
     <header className="topbar" id="haut">
       <div className="wrap topbar__inner">
-        <a className="brand" href="/" aria-label="Planète HMI, accueil">
-          <img
+        <Link className="brand" href="/" aria-label="Planète HMI, accueil">
+          <Image
             src="/brand/logo1.png"
             alt="Planète HMI — Haitian Music Index"
             className="brand__logo"
             width={46}
             height={46}
           />
-        </a>
+        </Link>
 
         <nav className="nav" aria-label="Navigation principale">
-          <a href="/">Accueil</a>
+          <Link href="/">Accueil</Link>
           <Link href="/artistes">Artistes</Link>
           <Link href="/charts">Classements</Link>
-          <a href="/actualites">Actualités</a>
-          <a href="/evenements">Événements</a>
-          <a href="/boutique">Boutique</a>
+          <Link href="/actualites">Actualités</Link>
+          <Link href="/evenements">Événements</Link>
+          <Link href="/boutique">Boutique</Link>
         </nav>
 
         <div className="topbar__actions">
@@ -84,12 +85,12 @@ export function SiteHeader() {
         aria-label="Navigation mobile"
         hidden={!menuOpen}
       >
-        <a href="/" onClick={() => setMenuOpen(false)}>Accueil</a>
+        <Link href="/" onClick={() => setMenuOpen(false)}>Accueil</Link>
         <Link href="/artistes" onClick={() => setMenuOpen(false)}>Artistes</Link>
         <Link href="/charts" onClick={() => setMenuOpen(false)}>Classements</Link>
-        <a href="/actualites" onClick={() => setMenuOpen(false)}>Actualités</a>
-        <a href="/evenements" onClick={() => setMenuOpen(false)}>Événements</a>
-        <a href="/boutique" onClick={() => setMenuOpen(false)}>Boutique</a>
+        <Link href="/actualites" onClick={() => setMenuOpen(false)}>Actualités</Link>
+        <Link href="/evenements" onClick={() => setMenuOpen(false)}>Événements</Link>
+        <Link href="/boutique" onClick={() => setMenuOpen(false)}>Boutique</Link>
         {(
           user ? (
             <>

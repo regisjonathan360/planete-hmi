@@ -51,6 +51,7 @@ export async function enrichArtistImages(
   supabase: SupabaseClient,
   editionId: string
 ): Promise<{ enriched: number; total: number }> {
+  void editionId;
   // 1. Trouver le dernier snapshot pour avoir les slugs Audiomack réels.
   const { data: snap } = await supabase
     .from("chart_snapshots")

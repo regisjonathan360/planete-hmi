@@ -48,7 +48,7 @@
       function nettoyer() {
         done = true;
         clearTimeout(timer);
-        try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+        try { delete window[cb]; } catch { window[cb] = undefined; }
         if (script.parentNode) script.parentNode.removeChild(script);
       }
 
@@ -155,7 +155,7 @@
     var carte = lecteurActif;
     fondu(0, function () {
       audio.pause();
-      try { audio.currentTime = 0; } catch (e) {}
+      try { audio.currentTime = 0; } catch {}
     });
     definirEtat(carte, "pret");
     lecteurActif = null;

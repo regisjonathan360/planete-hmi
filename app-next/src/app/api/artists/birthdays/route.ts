@@ -11,8 +11,6 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const supabase = await createClient();
   const today = new Date();
-  const todayMonth = today.getMonth() + 1;
-  const todayDay = today.getDate();
 
   // Récupérer les artistes avec une date de naissance définie et actifs
   const { data: artists } = await supabase

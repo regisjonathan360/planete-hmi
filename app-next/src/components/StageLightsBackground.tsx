@@ -191,13 +191,24 @@ export function StageLightsBackground() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    setIsMobile(window.innerWidth < 768);
-    setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const initialize = () => {
+      setMounted(true);
+      setIsMobile(window.innerWidth < 768);
+      setReducedMotion(motionPreference.matches);
+    };
 
     const handleResize = () => setIsMobile(window.innerWidth < 768);
+    const handleMotionChange = () => setReducedMotion(motionPreference.matches);
+    const frame = window.requestAnimationFrame(initialize);
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    motionPreference.addEventListener("change", handleMotionChange);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", handleResize);
+      motionPreference.removeEventListener("change", handleMotionChange);
+    };
   }, []);
 
   if (!mounted || reducedMotion) return null;

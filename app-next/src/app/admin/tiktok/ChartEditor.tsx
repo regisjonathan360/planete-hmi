@@ -70,7 +70,11 @@ export function ChartEditor({ sourceKey, chartLabel }: ChartEditorProps) {
   }
 
   useEffect(() => {
-    fetchEntries();
+    const frame = window.requestAnimationFrame(() => {
+      void fetchEntries();
+    });
+
+    return () => window.cancelAnimationFrame(frame);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceKey]);
 

@@ -23,7 +23,7 @@
       var s = document.createElement("script");
       var done = false;
       var timer = setTimeout(function () { if (!done) { cleanup(); reject(new Error("timeout")); } }, timeoutMs || 8000);
-      function cleanup() { done = true; clearTimeout(timer); try { delete window[cb]; } catch (e) { window[cb] = undefined; } if (s.parentNode) s.parentNode.removeChild(s); }
+      function cleanup() { done = true; clearTimeout(timer); try { delete window[cb]; } catch { window[cb] = undefined; } if (s.parentNode) s.parentNode.removeChild(s); }
       window[cb] = function (d) { cleanup(); resolve(d); };
       s.onerror = function () { if (!done) { cleanup(); reject(new Error("réseau")); } };
       s.src = url + (url.indexOf("?") === -1 ? "?" : "&") + "output=jsonp&callback=" + cb;
@@ -131,8 +131,8 @@
      ========================================================= */
   var LS_KEY = "hmi:favoris";
   var favSet = new Set();
-  try { (JSON.parse(localStorage.getItem(LS_KEY)) || []).forEach(function (n) { favSet.add(n); }); } catch (e) {}
-  function saveFav() { try { localStorage.setItem(LS_KEY, JSON.stringify(Array.from(favSet))); } catch (e) {} }
+  try { (JSON.parse(localStorage.getItem(LS_KEY)) || []).forEach(function (n) { favSet.add(n); }); } catch {}
+  function saveFav() { try { localStorage.setItem(LS_KEY, JSON.stringify(Array.from(favSet))); } catch {} }
 
   var coeur = '<span aria-hidden="true">♥</span>';
 
@@ -178,14 +178,12 @@
   });
 
   /* Bouton favoris dans l'en-tête + compteur (UN SEUL) */
-  var favOpenBtn = null;
   var firstActions = document.querySelector(".topbar__actions");
   if (firstActions && !firstActions.querySelector(".fav-open")) {
     var b = document.createElement("button");
     b.type = "button"; b.className = "icon-btn fav-open"; b.setAttribute("aria-label", "Mes favoris");
     b.innerHTML = '<span aria-hidden="true">♥</span><span class="fav-open__count">0</span>';
     firstActions.insertBefore(b, firstActions.firstChild);
-    favOpenBtn = b;
     b.addEventListener("click", openFavPanel);
   }
   function majCompteur() {

@@ -25,8 +25,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
       .from("tiktok_videos")
       .select(
-        "video_id, username, music_id, view_count, " +
-        "tiktok_sounds(sound_title, sound_author, validation_status)"
+        "video_id, username, music_id, view_count, tiktok_sounds!inner(sound_title, sound_author, validation_status)"
       )
       .or(`username.ilike.${query},video_id.ilike.${query}`)
       .eq("tiktok_sounds.validation_status", "valide")
@@ -38,12 +37,7 @@ export async function GET(request: Request) {
     }
 
     // Filtrer côté serveur les résultats dont le son n'est pas valide
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const filtered = (data ?? []).filter(
-      (v: any) => v.tiktok_sounds != null
-    );
-
-    return NextResponse.json({ results: filtered });
+    return NextResponse.json({ results: data ?? [] });
   }
 
   // --- Mode listing featured ---

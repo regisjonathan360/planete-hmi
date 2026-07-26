@@ -44,7 +44,11 @@ export function ValidationQueue() {
   }, []);
 
   useEffect(() => {
-    fetchPendingSounds();
+    const frame = window.requestAnimationFrame(() => {
+      void fetchPendingSounds();
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [fetchPendingSounds]);
 
   async function handleValidate(musicId: string, status: "valide" | "refuse") {

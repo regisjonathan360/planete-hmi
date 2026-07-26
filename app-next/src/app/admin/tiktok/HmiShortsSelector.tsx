@@ -80,7 +80,11 @@ export function HmiShortsSelector() {
   }, []);
 
   useEffect(() => {
-    loadShorts();
+    const frame = window.requestAnimationFrame(() => {
+      void loadShorts();
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [loadShorts]);
 
   // --- Recherche de vidéos (sons validés uniquement) ---

@@ -66,7 +66,7 @@ export const appleMusicAdapter: ChartSourceAdapter = {
     return [];
   },
 
-  async validate(entries: NormalizedChartEntry[]): Promise<ValidationResult> {
+  async validate(): Promise<ValidationResult> {
     return { valid: true, errors: [] };
   },
 };
