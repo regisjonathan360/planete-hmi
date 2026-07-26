@@ -7,8 +7,17 @@ import { getStaticPageBody, getStaticPageScripts } from "@/lib/static-page";
  * Les scripts sont chargés avec next/script (afterInteractive).
  * Note : main.js est déjà chargé dans le layout root, on l'exclut ici.
  */
-export function StaticPage({ filename }: { filename: string }) {
-  const body = getStaticPageBody(filename);
+export function StaticPage({
+  filename,
+  replacements = [],
+}: {
+  filename: string;
+  replacements?: Array<{ marker: string; html: string }>;
+}) {
+  let body = getStaticPageBody(filename);
+  for (const replacement of replacements) {
+    body = body.replace(replacement.marker, replacement.html);
+  }
   const scripts = getStaticPageScripts(filename).filter(
     (src) => !src.includes("main.js")
   );

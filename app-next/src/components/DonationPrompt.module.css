@@ -1,0 +1,139 @@
+.prompt {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 90;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.85rem;
+  width: min(390px, calc(100vw - 2rem));
+  padding: 1rem 2.8rem 1rem 1rem;
+  overflow: hidden;
+  color: #f4efe4;
+  background:
+    radial-gradient(circle at 12% 15%, rgba(139, 92, 246, 0.24), transparent 42%),
+    rgba(12, 10, 20, 0.94);
+  border: 1px solid rgba(244, 239, 228, 0.14);
+  border-radius: 14px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.prompt::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6, #22d3ee, #f59e0b);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: #08070d;
+  background: #f4efe4;
+  border-radius: 50%;
+  font-size: 1.25rem;
+}
+
+.content h2 {
+  margin: 0.12rem 0 0.4rem;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.35rem;
+  line-height: 1.05;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+.content > p:not(.eyebrow) {
+  margin: 0 0 0.75rem;
+  color: rgba(244, 239, 228, 0.7);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #67e8f9;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 38px;
+  padding: 0.55rem 0.8rem;
+  color: #08070d;
+  background: #f4efe4;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.cta:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+}
+
+.cta:focus-visible,
+.close:focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+}
+
+.close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: rgba(244, 239, 228, 0.7);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.15rem;
+}
+
+.close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .prompt {
+    animation: donation-prompt-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes donation-prompt-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 520px) {
+  .prompt {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100vw - 1.5rem);
+  }
+}
