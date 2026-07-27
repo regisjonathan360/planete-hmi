@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { SiteHeader } from "@/components/SiteHeader";
 import { EventsList } from "./EventsList";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +14,6 @@ export default async function EvenementsPage() {
     .order("published_at", { ascending: false })
     .limit(30);
 
-  // Récupérer les signets de l'utilisateur connecté
   const { data: { user } } = await supabase.auth.getUser();
   let savedIds: string[] = [];
   if (user) {
@@ -24,5 +24,18 @@ export default async function EvenementsPage() {
     savedIds = (saved ?? []).map((s) => s.event_id as string);
   }
 
-  return <EventsList events={events ?? []} savedIds={savedIds} isLoggedIn={!!user} />;
+  return (
+    <>
+      {/* Fond cosmique cohérent avec le reste du site */}
+      <div className="grain" aria-hidden="true" />
+      <div className="cosmos" aria-hidden="true">
+        <div className="cosmos__layer cosmos__stars-distant" data-depth="0.06" />
+        <div className="cosmos__layer cosmos__stars-near" data-depth="0.14" />
+        <div className="cosmos__glow" />
+      </div>
+
+      <SiteHeader />
+      <EventsList events={events ?? []} savedIds={savedIds} isLoggedIn={!!user} />
+    </>
+  );
 }
