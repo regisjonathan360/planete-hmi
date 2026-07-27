@@ -15,20 +15,24 @@ export interface PublicArtist {
   bestPosition: number | null;
 }
 
-async function getVerifiedArtists(): Promise<PublicArtist[]> {
+async function getVerifiedArtists(typeFilter?: string): Promise<PublicArtist[]> {
   const supabase = await createClient();
 
-  // Artistes validés haïtiens.
-  const { data: artists } = await supabase
+  let query = supabase
     .from("artists")
-    .select("id, name, slug, image_url, tags")
+    .select("id, name, slug, image_url, tags, artist_type")
     .in("haitian_status", [
       "verified_haitian",
       "verified_haitian_diaspora",
       "verified_haitian_group",
     ])
-    .eq("is_active", true)
-    .order("name");
+    .eq("is_active", true);
+
+  if (typeFilter) {
+    query = query.eq("artist_type", typeFilter);
+  }
+
+  const { data: artists } = await query.order("name");
 
   if (!artists?.length) return [];
 
@@ -93,8 +97,9 @@ async function getVerifiedArtists(): Promise<PublicArtist[]> {
   }));
 }
 
-export default async function ArtistesPage() {
-  const artists = await getVerifiedArtists();
+export default async function ArtistesPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
+  const { type } = await searchParams;
+  const artists = await getVerifiedArtists(type);
 
   return (
     <>

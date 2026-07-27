@@ -5,20 +5,71 @@ import { useState } from "react";
 import styles from "./haiti-map.module.css";
 
 /**
- * SVG des 10 départements d'Haïti (partie ouest de l'île, sans la RD).
- * Paths simplifiés mais reconnaissables.
+ * SVG des 10 départements d'Haïti (partie ouest de l'île Hispaniola).
+ * Paths basés sur les proportions géographiques réelles.
+ * ViewBox calibrée sur les coordonnées simplifiées.
  */
 const DEPARTMENTS = [
-  { code: "NORD_OUEST", name: "Nord-Ouest", path: "M 62,18 L 95,12 L 110,22 L 100,38 L 78,42 L 55,35 Z" },
-  { code: "NORD", name: "Nord", path: "M 110,22 L 145,15 L 170,28 L 160,48 L 130,50 L 100,38 Z" },
-  { code: "NORD_EST", name: "Nord-Est", path: "M 170,28 L 210,25 L 220,45 L 195,55 L 160,48 Z" },
-  { code: "ARTIBONITE", name: "Artibonite", path: "M 78,42 L 100,38 L 130,50 L 135,72 L 110,82 L 80,75 L 65,55 Z" },
-  { code: "CENTRE", name: "Centre", path: "M 130,50 L 160,48 L 195,55 L 200,78 L 170,90 L 135,72 Z" },
-  { code: "OUEST", name: "Ouest", path: "M 65,55 L 80,75 L 110,82 L 115,105 L 98,125 L 72,120 L 55,95 L 50,70 Z" },
-  { code: "GRAND_ANSE", name: "Grand'Anse", path: "M 50,70 L 55,95 L 72,120 L 55,140 L 30,135 L 20,110 L 30,85 Z" },
-  { code: "NIPPES", name: "Nippes", path: "M 72,120 L 98,125 L 105,145 L 85,155 L 55,140 Z" },
-  { code: "SUD", name: "Sud", path: "M 55,140 L 85,155 L 105,145 L 115,165 L 90,178 L 50,172 L 30,155 L 30,135 Z" },
-  { code: "SUD_EST", name: "Sud-Est", path: "M 98,125 L 115,105 L 135,72 L 170,90 L 175,110 L 150,130 L 120,140 L 105,145 Z" },
+  {
+    code: "NORD_OUEST",
+    name: "Nord-Ouest",
+    // Péninsule nord-ouest (longue bande horizontale)
+    path: "M 18,52 L 28,48 L 42,44 L 58,42 L 72,40 L 86,38 L 95,42 L 100,48 L 96,54 L 88,58 L 78,56 L 65,54 L 50,56 L 35,58 L 22,58 Z",
+  },
+  {
+    code: "NORD",
+    name: "Nord",
+    // Centre-nord, entre Nord-Ouest et Nord-Est
+    path: "M 100,48 L 112,42 L 126,38 L 140,36 L 152,38 L 158,44 L 154,52 L 145,56 L 134,58 L 120,56 L 108,54 L 96,54 L 100,48 Z",
+  },
+  {
+    code: "NORD_EST",
+    name: "Nord-Est",
+    // Coin nord-est
+    path: "M 158,44 L 170,40 L 184,42 L 194,48 L 196,56 L 190,64 L 180,68 L 168,66 L 158,62 L 154,52 Z",
+  },
+  {
+    code: "ARTIBONITE",
+    name: "Artibonite",
+    // Grande zone centrale ouest
+    path: "M 78,56 L 88,58 L 96,54 L 108,54 L 120,56 L 134,58 L 138,66 L 134,76 L 124,82 L 112,84 L 98,80 L 86,76 L 76,70 L 72,62 Z",
+  },
+  {
+    code: "CENTRE",
+    name: "Centre",
+    // Zone centrale intérieure
+    path: "M 134,58 L 145,56 L 154,52 L 158,62 L 168,66 L 180,68 L 182,78 L 176,88 L 164,92 L 150,90 L 138,86 L 134,76 L 138,66 Z",
+  },
+  {
+    code: "OUEST",
+    name: "Ouest",
+    // Zone côtière avec Port-au-Prince (golfe de la Gonâve)
+    path: "M 72,62 L 76,70 L 86,76 L 98,80 L 112,84 L 118,92 L 114,102 L 106,110 L 94,114 L 82,110 L 72,104 L 64,94 L 60,84 L 62,72 Z",
+  },
+  {
+    code: "NIPPES",
+    name: "Nippes",
+    // Petite zone entre Ouest et Grand'Anse
+    path: "M 60,84 L 64,94 L 72,104 L 68,112 L 58,116 L 48,112 L 42,104 L 44,94 L 50,88 Z",
+  },
+  {
+    code: "GRAND_ANSE",
+    name: "Grand'Anse",
+    // Pointe de la péninsule sud (partie ouest)
+    path: "M 42,104 L 48,112 L 58,116 L 54,126 L 44,134 L 32,138 L 20,134 L 14,126 L 18,116 L 28,108 L 36,104 Z",
+  },
+  {
+    code: "SUD",
+    name: "Sud",
+    // Péninsule sud (côte sud)
+    path: "M 58,116 L 68,112 L 72,104 L 82,110 L 94,114 L 98,122 L 92,132 L 80,138 L 66,140 L 54,136 L 44,134 L 54,126 Z",
+  },
+  {
+    code: "SUD_EST",
+    name: "Sud-Est",
+    // Sud-Est (coin sud-est, Jacmel)
+    path: "M 112,84 L 124,82 L 134,76 L 138,86 L 150,90 L 156,98 L 152,108 L 140,114 L 126,116 L 114,112 L 106,110 L 114,102 L 118,92 Z",
+  },
 ];
 
 interface HaitiMapProps {
@@ -32,7 +83,7 @@ export function HaitiMapSVG({ onDepartmentClick, artistsByDepartment = {} }: Hai
   return (
     <div className={styles.mapContainer}>
       <svg
-        viewBox="10 5 220 180"
+        viewBox="5 30 200 120"
         className={styles.mapSvg}
         aria-label="Carte d'Haïti par département"
       >
