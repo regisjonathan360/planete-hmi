@@ -217,7 +217,10 @@ export function StageLightsBackground() {
     <div
       style={{
         position: "fixed",
-        inset: 0,
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "var(--fixed-vh, 100vh)",
         zIndex: 50,
         pointerEvents: "none",
       }}

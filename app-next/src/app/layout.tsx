@@ -61,6 +61,7 @@ export default function RootLayout({
         <link rel="icon" type="image/svg+xml" href="/brand/planet-hmi-icon-dark.svg" />
       </head>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: `(function(){var h=window.innerHeight+'px';document.documentElement.style.setProperty('--fixed-vh',h)})()` }} />
         <StageLightsLoader />
         {children}
         <DonationPrompt />
