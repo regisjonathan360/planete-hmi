@@ -9,6 +9,9 @@ export interface CollectProgress {
   current?: number;
   total?: number;
   source?: string;
+  warnings?: string[];
+  runId?: string;
+  status?: string;
 }
 
 export function CollectProgressBar({ progress }: { progress: CollectProgress | null }) {
@@ -92,6 +95,19 @@ export function CollectProgressBar({ progress }: { progress: CollectProgress | n
           {progress.current}/{progress.total} traités
           {progress.inserted !== undefined && ` · ${progress.inserted} nouveaux`}
         </p>
+      ) : null}
+
+      {progress.warnings && progress.warnings.length > 0 ? (
+        <details style={{ marginTop: "0.6rem" }}>
+          <summary style={{ fontSize: "0.78rem", color: "var(--admin-warn)", cursor: "pointer" }}>
+            ⚠ {progress.warnings.length} avertissement(s)
+          </summary>
+          <ul style={{ margin: "0.4rem 0 0", paddingLeft: "1.2rem", fontSize: "0.75rem", color: "var(--admin-muted)", lineHeight: 1.6 }}>
+            {progress.warnings.map((w, i) => (
+              <li key={i}>{w}</li>
+            ))}
+          </ul>
+        </details>
       ) : null}
     </div>
   );
