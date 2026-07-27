@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { HaitiMapSVG } from "@/components/HaitiMap";
+import { HaitiMapSVG, HaitiGlobe } from "@/components/HaitiMap";
 import Link from "next/link";
 import styles from "./carte.module.css";
 
@@ -109,6 +109,11 @@ export function HaitiMapPage({ artistsByDepartment, departments }: HaitiMapPageP
         <h1 className={styles.title}>Carte <span className={styles.accent}>HMI</span></h1>
         <p className={styles.subtitle}>Découvrez les artistes haïtiens par département</p>
       </div>
+      {/* Globe 3D avec la carte d'Haïti */}
+      <HaitiGlobe />
+      <p style={{ textAlign: "center", color: "#9a9ac0", fontSize: "0.82rem", margin: "0.5rem 0 2rem" }}>
+        Faites tourner la planète • Cliquez un département ci-dessous
+      </p>
       <HaitiMapSVG
         onDepartmentClick={handleDepartmentClick}
         artistsByDepartment={artistsByDepartment}
