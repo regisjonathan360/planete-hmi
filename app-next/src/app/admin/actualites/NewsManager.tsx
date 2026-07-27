@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { CollectProgressBar, readCollectStream, type CollectProgress } from "@/components/CollectProgressBar";
 
 interface NewsSource {
   id: string;
@@ -39,6 +40,7 @@ export function NewsManager({
 }) {
   const [articles, setArticles] = useState<NewsArticle[]>(initialArticles);
   const [collecting, setCollecting] = useState(false);
+  const [progress, setProgress] = useState<CollectProgress | null>(null);
   const [filter, setFilter] = useState<string>("all");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -46,28 +48,32 @@ export function NewsManager({
   async function handleCollect(sourceId?: string) {
     setCollecting(true);
     setToast(null);
+    setProgress({ phase: "init", percent: 0, message: "Démarrage de la collecte..." });
     try {
       const res = await fetch("/api/admin/news/collect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sourceId }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        setToast(
-          `✓ ${data.found} articles Musique trouvés et ${data.synchronized ?? data.inserted} synchronisés.`
-        );
-        // Refresh articles
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setProgress({ phase: "error", percent: 0, message: data.error ?? "Collecte refusée." });
+        setCollecting(false);
+        return;
+      }
+
+      const final = await readCollectStream(res, setProgress);
+
+      if (final?.phase === "done") {
         const refreshRes = await fetch("/api/admin/news/articles");
         if (refreshRes.ok) {
           const refreshData = await refreshRes.json();
           setArticles(refreshData.articles);
         }
-      } else {
-        setToast(`✗ ${data.error}`);
       }
     } catch {
-      setToast("✗ Erreur réseau.");
+      setProgress({ phase: "error", percent: 0, message: "Erreur réseau pendant la collecte." });
     }
     setCollecting(false);
   }
@@ -128,6 +134,7 @@ export function NewsManager({
             {src.last_scraped_at && ` — Dernière collecte : ${new Date(src.last_scraped_at).toLocaleString("fr-FR")}`}
           </p>
         ))}
+        <CollectProgressBar progress={progress} />
       </div>
 
       {/* Filtres */}

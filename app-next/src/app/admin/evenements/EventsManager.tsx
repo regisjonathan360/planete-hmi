@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { CollectProgressBar, readCollectStream, type CollectProgress } from "@/components/CollectProgressBar";
 
 interface EventSource {
   id: string;
@@ -33,6 +34,7 @@ interface EventItem {
 export function EventsManager({ sources, initialEvents }: { sources: EventSource[]; initialEvents: EventItem[] }) {
   const [events, setEvents] = useState<EventItem[]>(initialEvents);
   const [collecting, setCollecting] = useState(false);
+  const [progress, setProgress] = useState<CollectProgress | null>(null);
   const [filter, setFilter] = useState<string>("all");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -40,25 +42,33 @@ export function EventsManager({ sources, initialEvents }: { sources: EventSource
   async function handleCollect(sourceId?: string) {
     setCollecting(true);
     setToast(null);
+    setProgress({ phase: "init", percent: 0, message: "Démarrage de la collecte..." });
+
     try {
       const res = await fetch("/api/admin/events/collect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sourceId }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        setToast(`✓ ${data.found} événements trouvés, ${data.inserted} nouveaux.`);
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setProgress({ phase: "error", percent: 0, message: data.error ?? "Collecte refusée." });
+        setCollecting(false);
+        return;
+      }
+
+      const final = await readCollectStream(res, setProgress);
+
+      if (final?.phase === "done") {
         const refreshRes = await fetch("/api/admin/events/articles");
         if (refreshRes.ok) {
           const refreshData = await refreshRes.json();
           setEvents(refreshData.events);
         }
-      } else {
-        setToast(`✗ ${data.error}`);
       }
     } catch {
-      setToast("✗ Erreur réseau.");
+      setProgress({ phase: "error", percent: 0, message: "Erreur réseau pendant la collecte." });
     }
     setCollecting(false);
   }
@@ -104,6 +114,7 @@ export function EventsManager({ sources, initialEvents }: { sources: EventSource
             {src.last_scraped_at && ` — Dernière collecte : ${new Date(src.last_scraped_at).toLocaleString("fr-FR")}`}
           </p>
         ))}
+        <CollectProgressBar progress={progress} />
       </div>
 
       <div className="admin-card">
