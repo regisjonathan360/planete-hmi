@@ -120,10 +120,16 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
         <div className="wrap" style={{ paddingTop: "2rem", display: "flex", gap: "2rem", alignItems: "flex-start" }}>
           {/* Sidebar : bouton carte + catégories */}
           <aside style={{ position: "sticky", top: "5rem", flexShrink: 0, width: 200 }} className="artistes-sidebar">
-            {/* Bouton carte Haïti */}
-            <Link href="/carte" style={{ display: "block", textAlign: "center", marginBottom: "1.2rem", padding: "0.8rem", borderRadius: 12, background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.3)", textDecoration: "none", color: "#f4efe4", transition: "all 0.2s" }}>
-              <svg viewBox="0 0 100 100" width="48" height="48" style={{ display: "block", margin: "0 auto 0.4rem" }}>
-                <path d="M 25,8 L 42,5 L 55,12 L 68,10 L 82,14 L 88,22 L 85,35 L 78,42 L 70,38 L 60,45 L 65,55 L 72,60 L 70,72 L 58,78 L 48,85 L 38,90 L 28,85 L 20,75 L 15,62 L 18,48 L 22,38 L 18,28 L 20,18 Z" fill="rgba(124,92,255,0.2)" stroke="rgba(124,92,255,0.8)" strokeWidth="2" />
+            {/* Bouton carte Haïti — silhouette géographique réelle */}
+            <Link href="/carte" style={{ display: "block", textAlign: "center", marginBottom: "1.2rem", padding: "0.6rem", borderRadius: 12, background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.3)", textDecoration: "none", color: "#f4efe4", transition: "all 0.2s" }}>
+              <svg viewBox="-74.5 -20.1 3.5 2.3" width="80" height="55" style={{ display: "block", margin: "0 auto 0.4rem" }} aria-hidden="true">
+                <path
+                  d="M-74.48,18.09 L-74.42,18.22 L-74.27,18.28 L-74.13,18.34 L-73.97,18.43 L-73.79,18.54 L-73.63,18.59 L-73.47,18.62 L-73.39,18.66 L-73.33,18.73 L-73.28,18.79 L-73.21,18.84 L-73.12,18.86 L-72.98,18.84 L-72.87,18.81 L-72.79,18.79 L-72.69,18.81 L-72.60,18.83 L-72.48,18.84 L-72.35,18.82 L-72.24,18.80 L-72.13,18.76 L-72.05,18.72 L-71.99,18.68 L-71.87,18.62 L-71.80,18.62 L-71.73,18.66 L-71.69,18.70 L-71.65,18.75 L-71.64,18.80 L-71.62,18.84 L-71.63,18.91 L-71.68,18.96 L-71.72,19.00 L-71.78,19.04 L-71.84,19.07 L-71.90,19.12 L-71.95,19.16 L-72.00,19.21 L-72.05,19.26 L-72.08,19.30 L-72.10,19.37 L-72.12,19.44 L-72.13,19.50 L-72.18,19.55 L-72.26,19.60 L-72.34,19.63 L-72.43,19.67 L-72.55,19.70 L-72.62,19.73 L-72.72,19.78 L-72.78,19.83 L-72.83,19.87 L-72.90,19.91 L-72.98,19.94 L-73.05,19.95 L-73.14,19.95 L-73.24,19.93 L-73.34,19.90 L-73.42,19.87 L-73.48,19.83 L-73.56,19.77 L-73.62,19.72 L-73.68,19.67 L-73.72,19.64 L-73.76,19.57 L-73.78,19.51 L-73.77,19.44 L-73.73,19.38 L-73.68,19.33 L-73.62,19.29 L-73.55,19.25 L-73.46,19.21 L-73.38,19.17 L-73.32,19.13 L-73.28,19.09 L-73.22,19.04 L-73.16,18.99 L-73.12,18.95 L-73.09,18.90 L-73.08,18.84 L-73.10,18.78 L-73.14,18.71 L-73.21,18.65 L-73.30,18.61 L-73.39,18.58 L-73.49,18.54 L-73.61,18.49 L-73.73,18.44 L-73.86,18.37 L-73.96,18.32 L-74.06,18.26 L-74.18,18.20 L-74.28,18.15 L-74.38,18.10 L-74.48,18.09 Z"
+                  fill="rgba(124,92,255,0.25)"
+                  stroke="rgba(124,92,255,0.8)"
+                  strokeWidth="0.02"
+                  transform="scale(1,-1)"
+                />
               </svg>
               <span style={{ fontSize: "0.78rem", fontWeight: 600 }}>Explorer la carte</span>
             </Link>
