@@ -42,6 +42,10 @@ export async function PATCH(
 
   try {
     const body = await request.json();
+    // Normaliser null → "" pour les champs optionnels string (le formulaire envoie null, Zod attend "")
+    if (body.displayThumbnailUrl === null) body.displayThumbnailUrl = "";
+    if (body.trackId === null) body.trackId = "";
+    if (body.exclusionReason === null || body.exclusionReason === undefined) body.exclusionReason = "";
     const parsed = youtubeVideoEditorialInputSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
