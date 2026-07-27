@@ -52,8 +52,8 @@ img { display: block; max-width: 100%; }
 
 .skip-link { position: absolute; left: 1rem; top: -3rem; z-index: 300;
   background: var(--flame-orange); color: #160500; padding: 0.6rem 1rem; border-radius: var(--radius-sm); transition: top 0.2s;
-  opacity: 0; pointer-events: none; }
-.skip-link:focus-visible { top: 1rem; opacity: 1; pointer-events: auto; }
+  opacity: 0; pointer-events: none; clip: rect(0 0 0 0); clip-path: inset(50%); overflow: hidden; width: 1px; height: 1px; }
+.skip-link:focus-visible { top: 1rem; opacity: 1; pointer-events: auto; clip: auto; clip-path: none; overflow: visible; width: auto; height: auto; }
 :focus-visible { outline: 2px solid var(--flame-orange); outline-offset: 3px; border-radius: 4px; }
 
 /* ============ COUCHES DÉCORATIVES ============ */
