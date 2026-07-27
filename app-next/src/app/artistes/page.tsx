@@ -112,14 +112,59 @@ export default async function ArtistesPage() {
       <SiteHeader />
 
       <main id="contenu">
-        <div className="wrap" style={{ paddingTop: "2rem" }}>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
-          <p className="breadcrumb"><a href="/">Accueil</a> / Artistes</p>
-          <h1 className="page-title">La galaxie des <span className="fx-o">artistes</span></h1>
-          <p className="page-lead">
-            {artists.length} artiste{artists.length > 1 ? "s" : ""} vérifié{artists.length > 1 ? "s" : ""} illuminent Planète HMI.
-          </p>
-          <ArtistesGrid artists={artists} />
+        <div className="wrap" style={{ paddingTop: "2rem", display: "flex", gap: "2rem", alignItems: "flex-start" }}>
+          {/* Sidebar : bouton carte + catégories */}
+          <aside style={{ position: "sticky", top: "5rem", flexShrink: 0, width: 200 }} className="artistes-sidebar">
+            {/* Bouton carte Haïti */}
+            <Link href="/carte" style={{ display: "block", textAlign: "center", marginBottom: "1.2rem", padding: "0.8rem", borderRadius: 12, background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.3)", textDecoration: "none", color: "#f4efe4", transition: "all 0.2s" }}>
+              <svg viewBox="0 0 100 100" width="48" height="48" style={{ display: "block", margin: "0 auto 0.4rem" }}>
+                <path d="M 25,8 L 42,5 L 55,12 L 68,10 L 82,14 L 88,22 L 85,35 L 78,42 L 70,38 L 60,45 L 65,55 L 72,60 L 70,72 L 58,78 L 48,85 L 38,90 L 28,85 L 20,75 L 15,62 L 18,48 L 22,38 L 18,28 L 20,18 Z" fill="rgba(124,92,255,0.2)" stroke="rgba(124,92,255,0.8)" strokeWidth="2" />
+              </svg>
+              <span style={{ fontSize: "0.78rem", fontWeight: 600 }}>Explorer la carte</span>
+            </Link>
+
+            {/* Catégories */}
+            <nav style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+              {[
+                { label: "Tous les artistes", type: "" },
+                { label: "Groupes", type: "group" },
+                { label: "Producteurs / Beatmakers", type: "producer" },
+                { label: "Musiciens", type: "musician" },
+                { label: "DJ", type: "dj" },
+                { label: "Chanteurs", type: "singer" },
+                { label: "Rappeurs", type: "rapper" },
+              ].map((cat) => (
+                <a
+                  key={cat.type}
+                  href={cat.type ? `/artistes?type=${cat.type}` : "/artistes"}
+                  style={{
+                    display: "block",
+                    padding: "0.55rem 0.8rem",
+                    borderRadius: 8,
+                    fontSize: "0.82rem",
+                    color: "#9a9ac0",
+                    textDecoration: "none",
+                    background: "rgba(20,20,42,0.5)",
+                    border: "1px solid transparent",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  {cat.label}
+                </a>
+              ))}
+            </nav>
+          </aside>
+
+          {/* Contenu principal */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
+            <p className="breadcrumb"><a href="/">Accueil</a> / Artistes</p>
+            <h1 className="page-title">La galaxie des <span className="fx-o">artistes</span></h1>
+            <p className="page-lead">
+              {artists.length} artiste{artists.length > 1 ? "s" : ""} vérifié{artists.length > 1 ? "s" : ""} illuminent Planète HMI.
+            </p>
+            <ArtistesGrid artists={artists} />
+          </div>
         </div>
       </main>
 

@@ -33,6 +33,8 @@ export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) 
     bio: (artist.bio as string) ?? "",
     city: (artist.city as string) ?? "",
     birth_place: (artist.birth_place as string) ?? "",
+    birth_city: (artist.birth_city as string) ?? "",
+    artist_type: (artist.artist_type as string) ?? "artist",
     label: (artist.label as string) ?? "",
     primary_genre: (artist.primary_genre as string) ?? "",
     real_name: (artist.real_name as string) ?? "",
@@ -120,7 +122,23 @@ export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) 
         </Row>
         <Row>
           <Field label="Lieu de naissance" value={form.birth_place} onChange={(v) => update("birth_place", v)} />
+          <Field label="Ville / Commune d'origine" value={form.birth_city} onChange={(v) => update("birth_city", v)} />
           <Field label="Ville ou localisation actuelle" value={form.city} onChange={(v) => update("city", v)} />
+        </Row>
+        <Row>
+          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
+            <span style={labelStyle}>Type d&apos;artiste</span>
+            <select value={form.artist_type} onChange={(e) => update("artist_type", e.target.value)} style={inputStyle}>
+              <option value="artist">Artiste (solo)</option>
+              <option value="group">Groupe / Orchestre</option>
+              <option value="producer">Producteur</option>
+              <option value="beatmaker">Beatmaker</option>
+              <option value="dj">DJ</option>
+              <option value="musician">Musicien</option>
+              <option value="singer">Chanteur / Chanteuse</option>
+              <option value="rapper">Rappeur / Rappeuse</option>
+            </select>
+          </label>
         </Row>
         <Row>
           <Field label="Label / Collectif" value={form.label} onChange={(v) => update("label", v)} />
