@@ -113,6 +113,7 @@ export default async function ArtistesPage() {
 
       <main id="contenu">
         <div className="wrap" style={{ paddingTop: "2rem" }}>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
           <p className="breadcrumb"><a href="/">Accueil</a> / Artistes</p>
           <h1 className="page-title">La galaxie des <span className="fx-o">artistes</span></h1>
           <p className="page-lead">

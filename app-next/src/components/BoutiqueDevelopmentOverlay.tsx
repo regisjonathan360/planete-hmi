@@ -138,7 +138,8 @@ export function BoutiqueDevelopmentOverlay() {
           lorsque les produits et le paiement seront prêts.
         </p>
         <div className={styles.actions}>
-          <a href="/" className={styles.backLink}>Retour � l'accueil</a>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire pour réinitialiser les animations de l'accueil */}
+          <a href="/" className={styles.backLink}>Retour à l&rsquo;accueil</a>
           {orientationPermission === "needed" ? (
             <button
               type="button"

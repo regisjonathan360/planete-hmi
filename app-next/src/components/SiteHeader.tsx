@@ -46,6 +46,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="nav" aria-label="Navigation principale">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
           <a href="/">Accueil</a>
           <Link href="/artistes">Artistes</Link>
           <Link href="/charts">Classements</Link>
@@ -85,6 +86,7 @@ export function SiteHeader() {
         aria-label="Navigation mobile"
         hidden={!menuOpen}
       >
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
         <a href="/" onClick={() => setMenuOpen(false)}>Accueil</a>
         <Link href="/artistes" onClick={() => setMenuOpen(false)}>Artistes</Link>
         <Link href="/charts" onClick={() => setMenuOpen(false)}>Classements</Link>

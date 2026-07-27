@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -144,6 +143,7 @@ export function NewsList({ articles }: { articles: Article[] }) {
         <section className="page-hero news-page__hero">
           <div className="wrap">
             <p className="breadcrumb">
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
               <a href="/">Accueil</a> / Actualités
             </p>
             <p className="section-tag">{"// La musique haïtienne en mouvement"}</p>

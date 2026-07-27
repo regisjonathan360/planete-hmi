@@ -6,6 +6,11 @@ import {
   YouTubeCollectionForm,
   YouTubeCollectionProgress,
 } from "@/components/youtube";
+import {
+  CollectProgressBar,
+  readCollectStream,
+  type CollectProgress,
+} from "@/components/CollectProgressBar";
 import type { YouTubeCollectionParams } from "@/lib/youtube/schemas";
 import type { YouTubeCollectionProgress as Progress } from "@/lib/youtube/types";
 import { defaultYouTubePeriod, isRunTerminal, readApiError } from "./utils";
@@ -46,6 +51,7 @@ export function CollectionPanel() {
   const [submitting, setSubmitting] = useState(false);
   const [runId, setRunId] = useState<string | null>(null);
   const [run, setRun] = useState<RunResponse | null>(null);
+  const [liveProgress, setLiveProgress] = useState<CollectProgress | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "warning" | "error"; text: string } | null>(null);
 
   useEffect(() => {
@@ -82,36 +88,63 @@ export function CollectionPanel() {
     setSubmitting(true);
     setMessage(null);
     setRun(null);
+    setLiveProgress({ phase: "init", percent: 0, message: "Démarrage de la collecte..." });
+
     try {
       const response = await fetch("/api/admin/youtube/collect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      const payload = await response.json();
+
       if (!response.ok) {
-        throw new Error(readApiError(payload, "La collecte n’a pas pu démarrer."));
+        const payload = await response.json().catch(() => ({}));
+        const text = readApiError(payload, "La collecte n’a pas pu démarrer.");
+        setLiveProgress({ phase: "error", percent: 0, message: text });
+        throw new Error(text);
       }
-      setRunId(payload.runId);
-      setRun({
-        id: payload.runId,
-        status: payload.status,
-        startedAt: payload.startedAt,
-        finishedAt: payload.finishedAt,
-        recordsReceived: 0,
-        recordsNormalized: 0,
-        recordsMatched: 0,
-        recordsRejected: 0,
-        metadata: {
-          progressPercent: isRunTerminal(payload.status) ? 100 : 0,
-          currentStep: null,
-          warningsCount: payload.warnings?.length ?? 0,
-        },
+
+      const final = await readCollectStream(response, (p) => {
+        setLiveProgress(p);
+        const streamed = p as CollectProgress & { runId?: string };
+        if (streamed.runId) setRunId(streamed.runId);
       });
-      setMessage({
-        type: payload.status === "COMPLETED_WITH_WARNINGS" ? "warning" : "success",
-        text: `Collecte ${payload.status.toLowerCase().replaceAll("_", " ")}.`,
-      });
+
+      const payload = (final ?? {}) as CollectProgress & {
+        runId?: string;
+        status?: string;
+        startedAt?: string | null;
+        finishedAt?: string | null;
+        warnings?: string[];
+      };
+
+      if (payload.runId) {
+        setRunId(payload.runId);
+        setRun({
+          id: payload.runId,
+          status: payload.status ?? "COMPLETED",
+          startedAt: payload.startedAt ?? null,
+          finishedAt: payload.finishedAt ?? null,
+          recordsReceived: 0,
+          recordsNormalized: 0,
+          recordsMatched: 0,
+          recordsRejected: 0,
+          metadata: {
+            progressPercent: isRunTerminal(payload.status ?? "") ? 100 : 0,
+            currentStep: null,
+            warningsCount: payload.warnings?.length ?? 0,
+          },
+        });
+      }
+
+      if (payload.phase === "error") {
+        setMessage({ type: "error", text: payload.message });
+      } else {
+        setMessage({
+          type: payload.status === "COMPLETED_WITH_WARNINGS" ? "warning" : "success",
+          text: payload.message ?? "Collecte terminée.",
+        });
+      }
     } catch (error) {
       setMessage({
         type: "error",
@@ -157,6 +190,11 @@ export function CollectionPanel() {
         <YouTubeAlert tone={message.type} title={message.type === "error" ? "Action impossible" : "Collecte"}>
           {message.text}
         </YouTubeAlert>
+      ) : null}
+      {liveProgress ? (
+        <div className={styles.panel}>
+          <CollectProgressBar progress={liveProgress} />
+        </div>
       ) : null}
       {progress ? (
         <div className={styles.panel}>

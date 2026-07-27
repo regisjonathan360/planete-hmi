@@ -345,7 +345,8 @@ describe("Invariants K6 — aucune publication/archive/restauration", () => {
 // ============================================================
 
 describe("POST /api/admin/youtube/collect", () => {
-  let POST: (req: Request) => Promise<NextResponse>;
+  // La route renvoie un flux SSE (Response) ou une erreur JSON (NextResponse).
+  let POST: (req: Request) => Promise<Response>;
 
   beforeEach(async () => {
     const mod = await import("@/app/api/admin/youtube/collect/route");
@@ -482,9 +483,14 @@ describe("POST /api/admin/youtube/collect", () => {
       discoverNewVideos: true, refreshStatistics: false, createDraft: false,
     }));
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.status).toBe("COMPLETED");
-    expect(json.runId).toBe("run-001");
+    expect(res.headers.get("Content-Type")).toBe("text/event-stream");
+
+    // La route diffuse un flux SSE : on le consomme entièrement.
+    const body = await res.text();
+    expect(body).toContain("\"phase\":\"done\"");
+    expect(body).toContain("\"runId\":\"run-001\"");
+    expect(body).toContain("COMPLETED");
+
     expect(mockLogAudit).toHaveBeenCalledWith(supabase, expect.objectContaining({
       action: "youtube_collect",
     }));
