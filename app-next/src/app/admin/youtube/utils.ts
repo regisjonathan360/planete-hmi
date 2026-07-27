@@ -49,8 +49,14 @@ export function readApiError(payload: unknown, fallback: string): string {
   const error = (payload as { error?: unknown }).error;
   if (typeof error === "string" && error.trim()) return error;
   if (error && typeof error === "object") {
-    const message = (error as { message?: unknown }).message;
-    if (typeof message === "string" && message.trim()) return message;
+    const e = error as { message?: unknown; details?: unknown };
+    const message = typeof e.message === "string" && e.message.trim() ? e.message : "";
+    // Inclure les détails de validation si présents
+    if (Array.isArray(e.details) && e.details.length > 0) {
+      const detailsStr = e.details.map((d: { path?: string; msg?: string }) => `${d.path}: ${d.msg}`).join(" | ");
+      return message ? `${message} (${detailsStr})` : detailsStr;
+    }
+    if (message) return message;
   }
   return fallback;
 }
