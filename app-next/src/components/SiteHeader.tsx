@@ -46,7 +46,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="nav" aria-label="Navigation principale">
-          <Link href="/">Accueil</Link>
+          <a href="/">Accueil</a>
           <Link href="/artistes">Artistes</Link>
           <Link href="/charts">Classements</Link>
           <Link href="/actualites">Actualités</Link>
@@ -85,7 +85,7 @@ export function SiteHeader() {
         aria-label="Navigation mobile"
         hidden={!menuOpen}
       >
-        <Link href="/" onClick={() => setMenuOpen(false)}>Accueil</Link>
+        <a href="/" onClick={() => setMenuOpen(false)}>Accueil</a>
         <Link href="/artistes" onClick={() => setMenuOpen(false)}>Artistes</Link>
         <Link href="/charts" onClick={() => setMenuOpen(false)}>Classements</Link>
         <Link href="/actualites" onClick={() => setMenuOpen(false)}>Actualités</Link>
