@@ -260,44 +260,119 @@ export async function POST(request: Request) {
       );
     }
 
-    const orchestratorStorage = createOrchestratorStorage();
-    const orchestrator = new YouTubeCollectionOrchestrator(
-      {
-        periodStart: params.periodStart,
-        periodEnd: params.periodEnd,
-        steps,
-        forceNewRun: true,
-      },
-      orchestratorStorage
-    );
+    // ============================================================
+    // Streaming SSE : progression en temps réel de la collecte
+    // ============================================================
+    const encoder = new TextEncoder();
+    const totalSteps = steps.length;
 
-    const result = await orchestrator.run();
+    const stream = new ReadableStream({
+      async start(controller) {
+        function send(data: Record<string, unknown>) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+        }
 
-    // Audit
-    await logAudit(supabase, {
-      userId: auth.user.id,
-      action: "youtube_collect",
-      entityType: "sync_run",
-      entityId: result.runId,
-      newValue: {
-        status: result.status,
-        periodStart: params.periodStart,
-        periodEnd: params.periodEnd,
-        mode: params.mode,
-        discoverNewVideos: params.discoverNewVideos,
-        refreshStatistics: params.refreshStatistics,
-        createDraft: params.createDraft,
-        recalculateChart: params.recalculateChart,
+        // Libellés lisibles pour chaque étape technique
+        const stepLabels: Record<string, string> = {
+          discover_new_videos: "Découverte des nouvelles vidéos",
+          refresh_and_snapshot: "Rafraîchissement des statistiques",
+          compute_draft: "Calcul du brouillon Top 20",
+        };
+
+        try {
+          send({ phase: "init", percent: 2, message: "Acquisition du verrou de collecte..." });
+
+          // Enrobe chaque étape pour émettre la progression avant/après exécution.
+          const instrumentedSteps: OrchestratorStep[] = steps.map((step, index) => ({
+            name: step.name,
+            execute: async (ctx) => {
+              const label = stepLabels[step.name] ?? step.name;
+              const basePercent = 5 + Math.round((index / totalSteps) * 90);
+
+              send({
+                phase: "inserting",
+                percent: basePercent,
+                message: `Étape ${index + 1}/${totalSteps} — ${label}`,
+                current: index + 1,
+                total: totalSteps,
+                runId: ctx.runId,
+              });
+
+              const result = await step.execute(ctx);
+
+              send({
+                phase: "inserting",
+                percent: 5 + Math.round(((index + 1) / totalSteps) * 90),
+                message: `${label} terminée`,
+                current: index + 1,
+                total: totalSteps,
+                runId: ctx.runId,
+              });
+
+              return result;
+            },
+          }));
+
+          const orchestratorStorage = createOrchestratorStorage();
+          const orchestrator = new YouTubeCollectionOrchestrator(
+            {
+              periodStart: params.periodStart,
+              periodEnd: params.periodEnd,
+              steps: instrumentedSteps,
+              forceNewRun: true,
+            },
+            orchestratorStorage
+          );
+
+          const result = await orchestrator.run();
+
+          await logAudit(supabase, {
+            userId: auth.user.id,
+            action: "youtube_collect",
+            entityType: "sync_run",
+            entityId: result.runId,
+            newValue: {
+              status: result.status,
+              periodStart: params.periodStart,
+              periodEnd: params.periodEnd,
+              mode: params.mode,
+              discoverNewVideos: params.discoverNewVideos,
+              refreshStatistics: params.refreshStatistics,
+              createDraft: params.createDraft,
+              recalculateChart: params.recalculateChart,
+            },
+          });
+
+          const isFailure = result.status === "FAILED";
+          send({
+            phase: isFailure ? "error" : "done",
+            percent: 100,
+            message: isFailure
+              ? `Collecte échouée : ${result.error ? sanitizeErrorMessage(result.error) : "erreur inconnue"}`
+              : `Collecte ${result.status.toLowerCase().replaceAll("_", " ")}.`,
+            runId: result.runId,
+            status: result.status,
+            startedAt: result.startedAt,
+            finishedAt: result.finishedAt,
+            warnings: result.warnings.map((w) => sanitizeErrorMessage(w)),
+            error: result.error ? sanitizeErrorMessage(result.error) : null,
+          });
+        } catch (err) {
+          const safe = toSafeApiError(err);
+          send({ phase: "error", percent: 0, message: safe.message });
+        }
+
+        controller.close();
       },
     });
 
-    return NextResponse.json({
-      status: result.status,
-      runId: result.runId,
-      warnings: result.warnings.map(w => sanitizeErrorMessage(w)),
-      error: result.error ? sanitizeErrorMessage(result.error) : null,
-      startedAt: result.startedAt,
-      finishedAt: result.finishedAt,
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+        "X-Accel-Buffering": "no",
+      },
     });
   } catch (err) {
     const safe = toSafeApiError(err);
