@@ -41,14 +41,14 @@ function Globe() {
         }
 
         const w = maxX - minX, h = maxY - minY;
-        // Center Haiti on the texture (it's a small country, so place it centered)
-        const padX = 200, padY = 100;
+        // Haiti remplit presque toute la texture (minimal padding)
+        const padX = 40, padY = 20;
         const scaleX = (1024 - 2 * padX) / w;
         const scaleY = (512 - 2 * padY) / h;
         const scale = Math.min(scaleX, scaleY);
 
-        const offsetX = padX + ((1024 - 2 * padX) - w * scale) / 2;
-        const offsetY = padY + ((512 - 2 * padY) - h * scale) / 2;
+        const offsetX = (1024 - w * scale) / 2;
+        const offsetY = (512 - h * scale) / 2;
 
         // Draw each department with gradient fill
         const colors = [
@@ -78,8 +78,27 @@ function Globe() {
           }
         }
 
-        // Add subtle grid lines
-        ctx.strokeStyle = "rgba(124, 92, 255, 0.15)";
+        // Add department names
+        ctx.fillStyle = "rgba(244, 239, 228, 0.85)";
+        ctx.font = "bold 16px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        for (const f of geo.features) {
+          const name = f.properties.NAME_1;
+          const polys = f.geometry.type === "MultiPolygon" ? f.geometry.coordinates.flat() : f.geometry.coordinates;
+          let sx = 0, sy = 0, cnt = 0;
+          for (const ring of polys) for (const [x, y] of ring) {
+            sx += offsetX + (x - minX) * scale;
+            sy += offsetY + (maxY - y) * scale;
+            cnt++;
+          }
+          if (cnt > 0) {
+            ctx.fillText(name, sx / cnt, sy / cnt);
+          }
+        }
+
+        // Subtle grid lines
+        ctx.strokeStyle = "rgba(124, 92, 255, 0.1)";
         ctx.lineWidth = 0.5;
         for (let i = 0; i < 1024; i += 64) {
           ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 512); ctx.stroke();
@@ -105,26 +124,26 @@ function Globe() {
   });
 
   const ringGeometry = useMemo(() => {
-    return new THREE.RingGeometry(1.6, 1.75, 64);
+    return new THREE.RingGeometry(1.95, 2.1, 64);
   }, []);
 
   return (
     <group>
       {/* Globe */}
       <mesh ref={meshRef}>
-        <sphereGeometry args={[1.4, 64, 64]} />
+        <sphereGeometry args={[1.7, 64, 64]} />
         <meshStandardMaterial
           map={texture}
-          roughness={0.6}
+          roughness={0.5}
           metalness={0.1}
           emissive={new THREE.Color("#1a1a3f")}
-          emissiveIntensity={0.15}
+          emissiveIntensity={0.12}
         />
       </mesh>
 
       {/* Atmosphere glow */}
       <mesh>
-        <sphereGeometry args={[1.48, 64, 64]} />
+        <sphereGeometry args={[1.78, 64, 64]} />
         <meshBasicMaterial
           color="#7c5cff"
           transparent
@@ -146,7 +165,7 @@ function Globe() {
 
       {/* Second thinner ring */}
       <mesh rotation={[Math.PI / 2.8, 0.3, 0]}>
-        <ringGeometry args={[1.8, 1.83, 64]} />
+        <ringGeometry args={[2.15, 2.18, 64]} />
         <meshBasicMaterial
           color="#00d4b8"
           transparent
@@ -169,9 +188,9 @@ export function HaitiGlobe({ onReady }: HaitiGlobeProps) {
   if (!mounted) return null;
 
   return (
-    <div style={{ width: "100%", height: "min(500px, 60vh)", position: "relative" }}>
+    <div style={{ width: "100%", height: "min(700px, 80vh)", position: "relative" }}>
       <Canvas
-        camera={{ position: [0, 0, 4.5], fov: 45 }}
+        camera={{ position: [0, 0, 3.8], fov: 50 }}
         dpr={Math.min(typeof window !== "undefined" ? window.devicePixelRatio : 1, 1.5)}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
