@@ -1,5 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Anton, Inter, Space_Mono } from "next/font/google";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Empêche le redimensionnement du viewport quand la barre d'adresse
+  // se cache/réapparaît au scroll (évite les sauts des couches fixed).
+  interactiveWidget: "resizes-content",
+  themeColor: "#08070d",
+};
 
 const anton = Anton({
   subsets: ["latin"],
@@ -56,12 +65,10 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${anton.variable} ${inter.variable} ${spaceMono.variable}`}>
       <head>
-        <meta name="theme-color" content="#08070d" />
         <meta name="tiktok-developers-site-verification" content="doqYMyXAJOluVvI8j618siiivDgAHx0x" />
         <link rel="icon" type="image/svg+xml" href="/brand/planet-hmi-icon-dark.svg" />
       </head>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: `(function(){var h=window.innerHeight+'px';document.documentElement.style.setProperty('--fixed-vh',h)})()` }} />
         <StageLightsLoader />
         {children}
         <DonationPrompt />
