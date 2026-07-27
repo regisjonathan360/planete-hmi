@@ -120,15 +120,31 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
         <div className="wrap" style={{ paddingTop: "2rem", display: "flex", gap: "2rem", alignItems: "flex-start" }}>
           {/* Sidebar : bouton carte + catégories */}
           <aside style={{ position: "sticky", top: "5rem", flexShrink: 0, width: 200 }} className="artistes-sidebar">
-            {/* Bouton carte Haïti — silhouette géographique réelle */}
-            <Link href="/carte" style={{ display: "block", textAlign: "center", marginBottom: "1.2rem", padding: "0.6rem", borderRadius: 12, background: "rgba(124,92,255,0.08)", border: "1px solid rgba(124,92,255,0.3)", textDecoration: "none", color: "#f4efe4", transition: "all 0.2s" }}>
-              <svg viewBox="-74.5 -20.1 3.5 2.3" width="80" height="55" style={{ display: "block", margin: "0 auto 0.4rem" }} aria-hidden="true">
+            {/* Bouton carte Haïti — silhouette fidèle au contour réel */}
+            <Link href="/carte" style={{ display: "block", textAlign: "center", marginBottom: "1.2rem", padding: "0.7rem", borderRadius: 12, background: "rgba(20,20,42,0.6)", border: "1px solid rgba(124,92,255,0.3)", textDecoration: "none", color: "#f4efe4", transition: "all 0.2s" }}>
+              <svg viewBox="0 0 200 160" width="90" height="72" style={{ display: "block", margin: "0 auto 0.4rem" }} aria-hidden="true">
+                <defs>
+                  <linearGradient id="haiti-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#1a3a8f">
+                      <animate attributeName="stop-color" values="#1a3a8f;#c62828;#1a3a8f" dur="4s" repeatCount="indefinite" />
+                    </stop>
+                    <stop offset="50%" stopColor="#c62828">
+                      <animate attributeName="stop-color" values="#c62828;#1a3a8f;#c62828" dur="4s" repeatCount="indefinite" />
+                    </stop>
+                    <stop offset="100%" stopColor="#1a3a8f">
+                      <animate attributeName="stop-color" values="#1a3a8f;#c62828;#1a3a8f" dur="4s" repeatCount="indefinite" />
+                    </stop>
+                  </linearGradient>
+                </defs>
+                {/* Contour fidèle d'Haïti tracé à partir de l'image de référence */}
                 <path
-                  d="M-74.48,18.09 L-74.42,18.22 L-74.27,18.28 L-74.13,18.34 L-73.97,18.43 L-73.79,18.54 L-73.63,18.59 L-73.47,18.62 L-73.39,18.66 L-73.33,18.73 L-73.28,18.79 L-73.21,18.84 L-73.12,18.86 L-72.98,18.84 L-72.87,18.81 L-72.79,18.79 L-72.69,18.81 L-72.60,18.83 L-72.48,18.84 L-72.35,18.82 L-72.24,18.80 L-72.13,18.76 L-72.05,18.72 L-71.99,18.68 L-71.87,18.62 L-71.80,18.62 L-71.73,18.66 L-71.69,18.70 L-71.65,18.75 L-71.64,18.80 L-71.62,18.84 L-71.63,18.91 L-71.68,18.96 L-71.72,19.00 L-71.78,19.04 L-71.84,19.07 L-71.90,19.12 L-71.95,19.16 L-72.00,19.21 L-72.05,19.26 L-72.08,19.30 L-72.10,19.37 L-72.12,19.44 L-72.13,19.50 L-72.18,19.55 L-72.26,19.60 L-72.34,19.63 L-72.43,19.67 L-72.55,19.70 L-72.62,19.73 L-72.72,19.78 L-72.78,19.83 L-72.83,19.87 L-72.90,19.91 L-72.98,19.94 L-73.05,19.95 L-73.14,19.95 L-73.24,19.93 L-73.34,19.90 L-73.42,19.87 L-73.48,19.83 L-73.56,19.77 L-73.62,19.72 L-73.68,19.67 L-73.72,19.64 L-73.76,19.57 L-73.78,19.51 L-73.77,19.44 L-73.73,19.38 L-73.68,19.33 L-73.62,19.29 L-73.55,19.25 L-73.46,19.21 L-73.38,19.17 L-73.32,19.13 L-73.28,19.09 L-73.22,19.04 L-73.16,18.99 L-73.12,18.95 L-73.09,18.90 L-73.08,18.84 L-73.10,18.78 L-73.14,18.71 L-73.21,18.65 L-73.30,18.61 L-73.39,18.58 L-73.49,18.54 L-73.61,18.49 L-73.73,18.44 L-73.86,18.37 L-73.96,18.32 L-74.06,18.26 L-74.18,18.20 L-74.28,18.15 L-74.38,18.10 L-74.48,18.09 Z"
-                  fill="rgba(124,92,255,0.25)"
-                  stroke="rgba(124,92,255,0.8)"
-                  strokeWidth="0.02"
-                  transform="scale(1,-1)"
+                  d="M 95,5 C 100,4 108,5 115,4 C 118,4 120,5 120,5 L 118,7
+                     M 75,15 C 82,12 92,10 100,10 C 110,10 118,12 125,14 C 133,16 140,18 148,18 C 155,17 162,15 168,16 C 175,18 180,22 183,28 C 186,34 187,40 186,47 C 185,54 182,60 180,67 C 178,73 176,78 175,84 C 174,90 174,96 175,102 C 176,108 178,114 177,120 C 175,126 172,131 168,135 C 163,139 158,142 152,144 C 146,146 140,146 134,145 C 128,144 123,141 118,138 C 114,136 110,133 106,131 C 102,129 98,128 94,128 C 89,128 84,130 80,132 C 75,135 70,138 65,140 C 59,142 53,143 47,143 C 41,142 35,140 30,137 C 25,134 21,130 18,125 C 15,121 13,116 12,111 C 11,106 12,101 14,97 C 16,93 19,90 22,87 C 25,84 28,82 32,80 C 35,79 38,78 42,78 C 45,78 48,79 52,80 C 55,81 58,82 61,82 C 64,82 67,81 69,79 C 72,77 74,74 75,71 C 76,68 76,65 75,62 C 74,58 72,55 70,52 C 68,49 65,47 62,45 C 59,43 56,42 52,41 C 48,41 44,41 40,42 C 36,43 32,45 28,46 C 24,47 20,48 16,48 C 13,47 10,46 8,44 C 6,42 5,39 5,36 C 5,33 6,30 8,28 C 10,26 13,24 16,23 C 20,21 24,20 28,19 C 33,18 38,17 43,16 C 48,15 54,14 59,14 C 64,14 69,15 75,15 Z
+                     M 55,55 C 60,53 66,52 72,53 C 76,54 78,56 78,58 C 77,60 75,62 72,62 C 68,63 64,62 60,61 C 57,60 55,58 55,55 Z"
+                  fill="url(#haiti-grad)"
+                  stroke="rgba(200,200,255,0.5)"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
                 />
               </svg>
               <span style={{ fontSize: "0.78rem", fontWeight: 600 }}>Explorer la carte</span>
