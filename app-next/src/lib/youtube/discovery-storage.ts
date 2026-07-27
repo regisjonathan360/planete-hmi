@@ -102,7 +102,8 @@ export function createDiscoveryStorage(): DiscoveryStorage {
       const { data, error } = await supabase
         .from("youtube_videos")
         .select("video_id")
-        .in("video_id", videoIds);
+        .in("video_id", videoIds)
+        .eq("is_active", true);
 
       if (error) throw new Error(`read youtube_videos: ${error.message}`);
       return new Set((data ?? []).map((row) => row.video_id as string));
@@ -127,10 +128,11 @@ export function createDiscoveryStorage(): DiscoveryStorage {
           comment_count: candidate.commentCount,
           review_status: "UNREVIEWED",
           is_eligible: false,
+          is_active: true,
           video_type: "UNKNOWN",
         }, {
           onConflict: "video_id",
-          ignoreDuplicates: true,
+          ignoreDuplicates: false,
         })
         .select("id");
 

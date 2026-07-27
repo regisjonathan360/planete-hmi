@@ -598,7 +598,7 @@ describe("adaptateur Supabase réel", () => {
     });
   });
 
-  it("insère avec ON CONFLICT video_id DO NOTHING et retourne si une ligne a été créée", async () => {
+  it("insère ou réactive une vidéo par video_id et retourne si une ligne a été créée", async () => {
     vi.resetModules();
     const selectFn = vi.fn()
       .mockResolvedValueOnce({ data: [{ id: "new-id" }], error: null })
@@ -635,18 +635,20 @@ describe("adaptateur Supabase réel", () => {
         source_description: candidate.description,
         review_status: "UNREVIEWED",
         is_eligible: false,
+        is_active: true,
         video_type: "UNKNOWN",
       }),
-      { onConflict: "video_id", ignoreDuplicates: true }
+      { onConflict: "video_id", ignoreDuplicates: false }
     );
   });
 
   it("lit les IDs existants et met à jour l'état de scan", async () => {
     vi.resetModules();
-    const inFn = vi.fn(async () => ({
+    const activeEqFn = vi.fn(async () => ({
       data: [{ video_id: "vid001abcdefg" }],
       error: null,
     }));
+    const inFn = vi.fn(() => ({ eq: activeEqFn }));
     const updateEqFn = vi.fn(async () => ({ error: null }));
     const updateFn = vi.fn(() => ({ eq: updateEqFn }));
     const fromFn = vi.fn((table: string) => {
@@ -663,6 +665,7 @@ describe("adaptateur Supabase réel", () => {
     const storage = createDiscoveryStorage();
     const existing = await storage.getExistingVideoIds(["vid001abcdefg", "vid002abcdefg"]);
     expect(existing).toEqual(new Set(["vid001abcdefg"]));
+    expect(activeEqFn).toHaveBeenCalledWith("is_active", true);
 
     await storage.updateChannelScanStatus({
       channelId: "UCxxxxxxxxxxxxxxxxxxxxxxxx",
