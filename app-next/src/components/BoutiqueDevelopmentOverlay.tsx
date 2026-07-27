@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import styles from "@/app/boutique/boutique-development.module.css";
 
 type OrientationPermission = "not-needed" | "needed" | "granted" | "denied";
@@ -139,9 +138,7 @@ export function BoutiqueDevelopmentOverlay() {
           lorsque les produits et le paiement seront prêts.
         </p>
         <div className={styles.actions}>
-          <Link href="/" className={styles.backLink}>
-            Retour à l’accueil
-          </Link>
+          <a href="/" className={styles.backLink}>Retour � l'accueil</a>
           {orientationPermission === "needed" ? (
             <button
               type="button"
