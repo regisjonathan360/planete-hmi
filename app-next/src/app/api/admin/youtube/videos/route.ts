@@ -48,6 +48,7 @@ export async function GET(request: Request) {
     let query = supabase
       .from("youtube_videos")
       .select(VIDEO_COLUMNS, { count: "exact" })
+      .eq("is_active", true)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 

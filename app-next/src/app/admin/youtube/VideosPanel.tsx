@@ -7,6 +7,7 @@ import {
 } from "@/lib/youtube/constants";
 import { YouTubeAlert, YouTubeEmptyState } from "@/components/youtube";
 import { Status } from "./YouTubeAdminManager";
+import { VideoResetPanel } from "./VideoResetPanel";
 import { formatDate, formatNumber, readApiError } from "./utils";
 import type { TrackOption, YouTubeVideo } from "./types";
 import styles from "./youtube-admin.module.css";
@@ -237,6 +238,8 @@ export function VideosPanel({
           </>
         ) : null}
       </section>
+
+      <VideoResetPanel onReset={loadVideos} />
 
       {editing ? (
         <VideoEditor
