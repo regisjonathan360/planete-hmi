@@ -94,13 +94,13 @@ export function EventsManager({ sources, initialEvents }: { sources: EventSource
         <div className="admin-toolbar">
           {sources.map((src) => (
             <button key={src.id} className="btn btn--primary" disabled={collecting || !src.is_active} onClick={() => handleCollect(src.id)}>
-              {collecting ? "Collecte..." : `Collecter ${src.name}`}
+              {collecting ? "Collecte..." : `${src.name}`}
             </button>
           ))}
         </div>
         {sources.map((src) => (
           <p key={src.id} style={{ fontSize: "0.8rem", color: "var(--admin-muted)", marginTop: "0.5rem" }}>
-            {src.name} — {src.scrape_url}
+            {src.name} — <a href={src.scrape_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--admin-accent-2)" }}>{src.scrape_url}</a>
             {src.last_scraped_at && ` — Dernière collecte : ${new Date(src.last_scraped_at).toLocaleString("fr-FR")}`}
           </p>
         ))}

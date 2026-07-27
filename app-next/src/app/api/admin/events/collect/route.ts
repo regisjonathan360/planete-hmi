@@ -1,11 +1,12 @@
 /**
  * POST /api/admin/events/collect
- * Collecte les événements depuis une source configurée.
+ * Collecte les événements depuis la source choisie.
+ * Body : { sourceId: string }
  */
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin-guard";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { scrapeEventbrite } from "@/lib/events/scraper";
+import { scrapeEvents } from "@/lib/events/scraper";
 
 export const dynamic = "force-dynamic";
 
@@ -17,25 +18,26 @@ export async function POST(request: Request) {
     const body = await request.json();
     const sourceId = body?.sourceId as string | undefined;
 
-    const supabase = createAdminClient();
-
-    let source;
-    if (sourceId) {
-      const { data } = await supabase.from("event_sources").select("*").eq("id", sourceId).eq("is_active", true).maybeSingle();
-      source = data;
-    } else {
-      const { data } = await supabase.from("event_sources").select("*").eq("is_active", true).limit(1).maybeSingle();
-      source = data;
+    if (!sourceId) {
+      return NextResponse.json({ error: "Sélectionnez une source." }, { status: 400 });
     }
+
+    const supabase = createAdminClient();
+    const { data: source } = await supabase
+      .from("event_sources")
+      .select("*")
+      .eq("id", sourceId)
+      .eq("is_active", true)
+      .maybeSingle();
 
     if (!source) {
-      return NextResponse.json({ error: "Aucune source active trouvée." }, { status: 404 });
+      return NextResponse.json({ error: "Source introuvable ou inactive." }, { status: 404 });
     }
 
-    const events = await scrapeEventbrite(source.scrape_url as string);
+    const events = await scrapeEvents(source.slug as string, source.scrape_url as string);
 
     if (events.length === 0) {
-      return NextResponse.json({ message: "Aucun événement trouvé.", collected: 0 });
+      return NextResponse.json({ message: "Aucun événement trouvé.", source: source.name, found: 0, inserted: 0 });
     }
 
     let inserted = 0;

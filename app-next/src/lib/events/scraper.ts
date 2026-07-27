@@ -1,7 +1,6 @@
 /**
- * Collecteur d'événements depuis Eventbrite.
- * Eventbrite expose une API publique de recherche qu'on peut utiliser,
- * ou on parse le HTML rendu de la page de catégorie.
+ * Collecteur d'événements multi-sources.
+ * Supporte : Eventbrite, Chokarella (WordPress), Bandsintown.
  */
 import "server-only";
 
@@ -13,120 +12,239 @@ export interface ScrapedEvent {
   time: string | null;
   location: string | null;
   price: string | null;
+  excerpt: string | null;
 }
 
 /**
- * Scrape la page Eventbrite Haiti Music Events.
+ * Collecte les événements depuis n'importe quelle source configurée.
+ * Détecte automatiquement le type de source par son slug.
  */
-export async function scrapeEventbrite(url: string): Promise<ScrapedEvent[]> {
+export async function scrapeEvents(slug: string, url: string): Promise<ScrapedEvent[]> {
+  if (slug.startsWith("chokarella")) {
+    return scrapeChokarellaEvents(url);
+  }
+  if (slug.startsWith("bandsintown")) {
+    return scrapeBandsintown(url);
+  }
+  // Eventbrite par défaut
+  return scrapeEventbrite(url);
+}
+
+// ============================================================
+// Chokarella (WordPress REST API)
+// ============================================================
+
+async function scrapeChokarellaEvents(url: string): Promise<ScrapedEvent[]> {
+  const wpBase = "https://www.chokarella.com/wp-json/wp/v2";
+
+  try {
+    // Récupérer l'ID catégorie "evenements"
+    const catRes = await fetch(`${wpBase}/categories?slug=evenements`, {
+      headers: { "User-Agent": "PlaneteHMI-EventBot/1.0" },
+      cache: "no-store",
+    });
+    let categoryId: number | null = null;
+    if (catRes.ok) {
+      const cats = await catRes.json();
+      if (Array.isArray(cats) && cats.length > 0) categoryId = cats[0].id;
+    }
+
+    let postsUrl = `${wpBase}/posts?per_page=15&_embed`;
+    if (categoryId) postsUrl += `&categories=${categoryId}`;
+
+    const postsRes = await fetch(postsUrl, {
+      headers: { "User-Agent": "PlaneteHMI-EventBot/1.0" },
+      cache: "no-store",
+    });
+    if (!postsRes.ok) throw new Error(`WordPress API HTTP ${postsRes.status}`);
+
+    const posts = await postsRes.json();
+    if (!Array.isArray(posts)) return [];
+
+    return posts.map((post: Record<string, unknown>) => {
+      const embedded = post._embedded as Record<string, unknown[]> | undefined;
+      const media = embedded?.["wp:featuredmedia"] as Array<{ source_url?: string }> | undefined;
+
+      return {
+        sourceUrl: post.link as string,
+        title: decodeHtml(((post.title as { rendered?: string })?.rendered) ?? ""),
+        imageUrl: media?.[0]?.source_url ?? null,
+        date: formatWpDate(post.date as string),
+        time: null,
+        location: null,
+        price: null,
+        excerpt: decodeHtml(stripHtml(((post.excerpt as { rendered?: string })?.rendered) ?? "")),
+      };
+    }).filter((e: ScrapedEvent) => e.title.length > 3);
+  } catch {
+    return fallbackHtmlScrape(url);
+  }
+}
+
+// ============================================================
+// Eventbrite
+// ============================================================
+
+async function scrapeEventbrite(url: string): Promise<ScrapedEvent[]> {
   const response = await fetch(url, {
     headers: {
       "User-Agent": "Mozilla/5.0 (compatible; PlaneteHMI-EventBot/1.0)",
-      "Accept": "text/html,application/xhtml+xml",
       "Accept-Language": "fr-FR,fr;q=0.9",
     },
     cache: "no-store",
   });
-
-  if (!response.ok) {
-    throw new Error(`Échec du scraping Eventbrite : HTTP ${response.status}`);
-  }
+  if (!response.ok) throw new Error(`Eventbrite HTTP ${response.status}`);
 
   const html = await response.text();
-  return parseEventbriteHtml(html);
-}
-
-/**
- * Parse le HTML d'Eventbrite pour extraire les événements.
- */
-export function parseEventbriteHtml(html: string): ScrapedEvent[] {
   const events: ScrapedEvent[] = [];
   const seen = new Set<string>();
 
-  // Eventbrite event URLs pattern: eventbrite.com/e/SLUG-tickets-ID
-  const eventLinkPattern = /href="(https:\/\/www\.eventbrite\.com\/e\/[^"?]+)"/g;
-
+  const linkPattern = /href="(https:\/\/www\.eventbrite\.com\/e\/[^"?]+)"/g;
   let match;
-  while ((match = eventLinkPattern.exec(html)) !== null) {
+  while ((match = linkPattern.exec(html)) !== null) {
     const eventUrl = match[1];
     if (seen.has(eventUrl)) continue;
     seen.add(eventUrl);
 
-    // Extract title from "Voir TITLE" patterns or aria-labels
     const pos = html.indexOf(eventUrl);
-    const contextBefore = html.slice(Math.max(0, pos - 3000), pos + 1000);
+    const context = html.slice(Math.max(0, pos - 3000), pos + 1000);
 
-    // Title: look for text after "Voir " link text
+    // Title from "Voir TITLE"
     let title: string | null = null;
-    const titleFromVoir = /Voir ([^<\n]{5,80})/i.exec(contextBefore);
-    if (titleFromVoir) {
-      title = titleFromVoir[1].trim();
-    }
-
-    // Also try aria-label
-    if (!title) {
-      const ariaPattern = new RegExp(`aria-label="[^"]*?(${escapeRegex(eventUrl)})[^"]*"`, "i");
-      const ariaMatch = ariaPattern.exec(html);
-      if (ariaMatch) {
-        // Try to get text from nearby content
-        const nearTitle = /class="[^"]*title[^"]*"[^>]*>([^<]{5,100})</i.exec(contextBefore);
-        if (nearTitle) title = nearTitle[1].trim();
-      }
-    }
-
-    // Extract from slug as last resort
+    const voirMatch = /Voir ([^<\n]{5,80})/i.exec(context);
+    if (voirMatch) title = voirMatch[1].trim();
     if (!title) {
       const slugMatch = /\/e\/(.+?)-tickets-/i.exec(eventUrl);
-      if (slugMatch) {
-        title = slugMatch[1].replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-      }
+      if (slugMatch) title = slugMatch[1].replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
     }
-
     if (!title || title.length < 3) continue;
 
-    // Date - look for date patterns near the link
-    const dateContext = html.slice(pos, pos + 500);
-    const dateMatch = /(\w{3}\.\s+\d{1,2}\s+\w+(?:,?\s+\d{2}:\d{2})?)/i.exec(dateContext);
-
+    // Date
+    const dateMatch = /(\w{3}\.\s+\d{1,2}\s+\w+(?:,?\s+\d{2}:\d{2})?)/i.exec(html.slice(pos, pos + 500));
     // Location
-    const locationMatch = /(?:location|lieu)[^>]*>([^<]{3,60})/i.exec(dateContext) ||
-      /\n\s*\n\s*([A-ZÀ-Ü][^<\n]{3,50})\s*\n/m.exec(dateContext);
-
-    // Price
-    const priceMatch = /(?:prix|price|billet)[^>]*>([^<]{2,30})/i.exec(dateContext) ||
-      /(\d+[\s,.]?\d*\s*(?:€|\$|HTG|USD|Gratuit|Free))/i.exec(dateContext);
-
+    const locContext = html.slice(pos, pos + 600);
+    const locMatch = /\n\s*\n\s*([A-ZÀ-Ü][^\n<]{3,50})\s*\n/m.exec(locContext);
     // Image
     const imgContext = html.slice(Math.max(0, pos - 2000), pos + 500);
     const imgMatch = /(?:src|data-src)="(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i.exec(imgContext);
-    const imageUrl = imgMatch?.[1] ?? null;
 
     events.push({
       sourceUrl: eventUrl,
-      title: decodeHtmlEntities(title),
-      imageUrl: imageUrl && !imageUrl.includes("avatar") ? imageUrl : null,
+      title: decodeHtml(title),
+      imageUrl: imgMatch?.[1] && !imgMatch[1].includes("avatar") ? imgMatch[1] : null,
       date: dateMatch?.[1]?.trim() ?? null,
       time: null,
-      location: locationMatch?.[1]?.trim() ?? null,
-      price: priceMatch?.[1]?.trim() ?? null,
+      location: locMatch?.[1]?.trim() ?? null,
+      price: null,
+      excerpt: null,
     });
   }
 
   return events.slice(0, 20);
 }
 
-function decodeHtmlEntities(str: string): string {
-  return str
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&#8211;/g, "–")
-    .replace(/&#8217;/g, "'")
-    .trim();
+// ============================================================
+// Bandsintown
+// ============================================================
+
+async function scrapeBandsintown(url: string): Promise<ScrapedEvent[]> {
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (compatible; PlaneteHMI-EventBot/1.0)",
+      "Accept-Language": "fr-FR,fr;q=0.9",
+    },
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error(`Bandsintown HTTP ${response.status}`);
+
+  const html = await response.text();
+  const events: ScrapedEvent[] = [];
+  const seen = new Set<string>();
+
+  // Bandsintown event links pattern
+  const linkPattern = /href="(https:\/\/www\.bandsintown\.com\/[^"]*\/e\/[^"]+)"/g;
+  let match;
+  while ((match = linkPattern.exec(html)) !== null) {
+    const eventUrl = match[1];
+    if (seen.has(eventUrl)) continue;
+    seen.add(eventUrl);
+
+    const pos = html.indexOf(eventUrl);
+    const context = html.slice(Math.max(0, pos - 1500), pos + 800);
+
+    // Artist/event name from nearby text
+    const nameMatch = /class="[^"]*[Nn]ame[^"]*"[^>]*>([^<]{3,80})</i.exec(context);
+    const title = nameMatch?.[1]?.trim() ?? null;
+    if (!title) continue;
+
+    // Date
+    const dateMatch = /(\d{1,2}\s+\w{3,10}(?:\s+\d{4})?)/i.exec(context);
+    // Venue
+    const venueMatch = /class="[^"]*[Vv]enue[^"]*"[^>]*>([^<]{3,60})</i.exec(context);
+    // Image
+    const imgMatch = /(?:src|data-src)="(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i.exec(context);
+
+    events.push({
+      sourceUrl: eventUrl,
+      title: decodeHtml(title),
+      imageUrl: imgMatch?.[1] ?? null,
+      date: dateMatch?.[1]?.trim() ?? null,
+      time: null,
+      location: venueMatch?.[1]?.trim() ?? null,
+      price: null,
+      excerpt: null,
+    });
+  }
+
+  return events.slice(0, 20);
 }
 
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// ============================================================
+// Fallback HTML scrape (generic)
+// ============================================================
+
+async function fallbackHtmlScrape(url: string): Promise<ScrapedEvent[]> {
+  const response = await fetch(url, {
+    headers: { "User-Agent": "PlaneteHMI-EventBot/1.0" },
+    cache: "no-store",
+  });
+  if (!response.ok) return [];
+
+  const html = await response.text();
+  const events: ScrapedEvent[] = [];
+  const seen = new Set<string>();
+
+  const linkPattern = /href="(https:\/\/www\.chokarella\.com\/\d{4}\/\d{2}\/\d{2}\/[^"]+)"/g;
+  let match;
+  while ((match = linkPattern.exec(html)) !== null) {
+    const eventUrl = match[1];
+    if (seen.has(eventUrl)) continue;
+    seen.add(eventUrl);
+
+    const titlePattern = new RegExp(`href="${eventUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"[^>]*>([^<]{5,})<`, "i");
+    const titleMatch = titlePattern.exec(html);
+    const title = titleMatch?.[1]?.trim();
+    if (!title) continue;
+
+    events.push({ sourceUrl: eventUrl, title: decodeHtml(title), imageUrl: null, date: null, time: null, location: null, price: null, excerpt: null });
+  }
+  return events.slice(0, 15);
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+
+function decodeHtml(str: string): string {
+  return str.replace(/&#8217;/g, "'").replace(/&#8216;/g, "'").replace(/&#8220;/g, "\u00ab").replace(/&#8221;/g, "\u00bb").replace(/&#8211;/g, "–").replace(/&#038;/g, "&").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/\u00a0/g, " ").trim();
+}
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+}
+
+function formatWpDate(dateStr: string): string | null {
+  if (!dateStr) return null;
+  try { return new Date(dateStr).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); }
+  catch { return dateStr; }
 }
