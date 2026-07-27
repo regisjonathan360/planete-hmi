@@ -16,7 +16,7 @@
 .deptPath {
   fill: rgba(20, 20, 42, 0.85);
   stroke: rgba(124, 92, 255, 0.4);
-  stroke-width: 0.8;
+  stroke-width: 0.005;
   cursor: pointer;
   transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   transform-origin: center;
@@ -26,34 +26,33 @@
 .deptHovered {
   fill: rgba(124, 92, 255, 0.15);
   stroke: rgba(124, 92, 255, 1);
-  stroke-width: 1.5;
-  transform: scale(1.03) translateY(-2px);
-  filter: drop-shadow(0 0 8px rgba(124, 92, 255, 0.6));
+  stroke-width: 0.01;
+  transform: scale(1.02);
+  filter: drop-shadow(0 0 0.02px rgba(124, 92, 255, 0.6));
 }
 
 .glowPath {
   fill: none;
   stroke: rgba(124, 92, 255, 0.9);
-  stroke-width: 2.5;
+  stroke-width: 0.015;
   opacity: 0.8;
   pointer-events: none;
   animation: neon-pulse 1.2s ease-in-out infinite alternate;
 }
 
 @keyframes neon-pulse {
-  from { stroke: rgba(124, 92, 255, 0.7); stroke-width: 2; }
-  to { stroke: rgba(0, 212, 184, 1); stroke-width: 3.5; }
+  from { stroke: rgba(124, 92, 255, 0.7); stroke-width: 0.012; }
+  to { stroke: rgba(0, 212, 184, 1); stroke-width: 0.02; }
 }
 
 .deptLabel {
   fill: rgba(244, 239, 228, 0.7);
-  font-size: 4.5px;
+  font-size: 0.035px;
   font-family: system-ui, sans-serif;
   font-weight: 600;
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
 }
 
 /* Artist preview au hover */

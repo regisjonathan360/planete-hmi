@@ -1,4 +1,5 @@
 import { StaticPage } from "@/components/StaticPage";
+import { SiteHeader } from "@/components/SiteHeader";
 import { SOURCE_KEY_PAR_SLUG } from "@/lib/charts/format";
 import { getPlatformChart } from "@/lib/charts/queries/get-platform-chart";
 import { buildAudiomackTickerHtml } from "@/lib/home/audiomack-ticker";
@@ -27,11 +28,15 @@ export default async function HomePage() {
   }
 
   return (
-    <StaticPage
-      filename="index.html"
-      replacements={[
-        { marker: "<!-- AUDIOMACK_TICKER -->", html: tickerHtml },
-      ]}
-    />
+    <>
+      <SiteHeader />
+      <StaticPage
+        filename="index.html"
+        replacements={[
+          { marker: "<!-- AUDIOMACK_TICKER -->", html: tickerHtml },
+        ]}
+        hideStaticHeader
+      />
+    </>
   );
 }

@@ -1,76 +1,32 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./haiti-map.module.css";
 
-/**
- * SVG des 10 départements d'Haïti (partie ouest de l'île Hispaniola).
- * Paths basés sur les proportions géographiques réelles.
- * ViewBox calibrée sur les coordonnées simplifiées.
- */
-const DEPARTMENTS = [
-  {
-    code: "NORD_OUEST",
-    name: "Nord-Ouest",
-    // Péninsule nord-ouest (longue bande horizontale)
-    path: "M 18,52 L 28,48 L 42,44 L 58,42 L 72,40 L 86,38 L 95,42 L 100,48 L 96,54 L 88,58 L 78,56 L 65,54 L 50,56 L 35,58 L 22,58 Z",
-  },
-  {
-    code: "NORD",
-    name: "Nord",
-    // Centre-nord, entre Nord-Ouest et Nord-Est
-    path: "M 100,48 L 112,42 L 126,38 L 140,36 L 152,38 L 158,44 L 154,52 L 145,56 L 134,58 L 120,56 L 108,54 L 96,54 L 100,48 Z",
-  },
-  {
-    code: "NORD_EST",
-    name: "Nord-Est",
-    // Coin nord-est
-    path: "M 158,44 L 170,40 L 184,42 L 194,48 L 196,56 L 190,64 L 180,68 L 168,66 L 158,62 L 154,52 Z",
-  },
-  {
-    code: "ARTIBONITE",
-    name: "Artibonite",
-    // Grande zone centrale ouest
-    path: "M 78,56 L 88,58 L 96,54 L 108,54 L 120,56 L 134,58 L 138,66 L 134,76 L 124,82 L 112,84 L 98,80 L 86,76 L 76,70 L 72,62 Z",
-  },
-  {
-    code: "CENTRE",
-    name: "Centre",
-    // Zone centrale intérieure
-    path: "M 134,58 L 145,56 L 154,52 L 158,62 L 168,66 L 180,68 L 182,78 L 176,88 L 164,92 L 150,90 L 138,86 L 134,76 L 138,66 Z",
-  },
-  {
-    code: "OUEST",
-    name: "Ouest",
-    // Zone côtière avec Port-au-Prince (golfe de la Gonâve)
-    path: "M 72,62 L 76,70 L 86,76 L 98,80 L 112,84 L 118,92 L 114,102 L 106,110 L 94,114 L 82,110 L 72,104 L 64,94 L 60,84 L 62,72 Z",
-  },
-  {
-    code: "NIPPES",
-    name: "Nippes",
-    // Petite zone entre Ouest et Grand'Anse
-    path: "M 60,84 L 64,94 L 72,104 L 68,112 L 58,116 L 48,112 L 42,104 L 44,94 L 50,88 Z",
-  },
-  {
-    code: "GRAND_ANSE",
-    name: "Grand'Anse",
-    // Pointe de la péninsule sud (partie ouest)
-    path: "M 42,104 L 48,112 L 58,116 L 54,126 L 44,134 L 32,138 L 20,134 L 14,126 L 18,116 L 28,108 L 36,104 Z",
-  },
-  {
-    code: "SUD",
-    name: "Sud",
-    // Péninsule sud (côte sud)
-    path: "M 58,116 L 68,112 L 72,104 L 82,110 L 94,114 L 98,122 L 92,132 L 80,138 L 66,140 L 54,136 L 44,134 L 54,126 Z",
-  },
-  {
-    code: "SUD_EST",
-    name: "Sud-Est",
-    // Sud-Est (coin sud-est, Jacmel)
-    path: "M 112,84 L 124,82 L 134,76 L 138,86 L 150,90 L 156,98 L 152,108 L 140,114 L 126,116 L 114,112 L 106,110 L 114,102 L 118,92 Z",
-  },
-];
+interface GeoFeature {
+  type: string;
+  properties: { NAME_1: string; HASC_1: string; [key: string]: unknown };
+  geometry: { type: string; coordinates: number[][][][] | number[][][] };
+}
+
+interface GeoJSON {
+  features: GeoFeature[];
+}
+
+// Map HASC codes to our internal department codes
+const HASC_TO_CODE: Record<string, string> = {
+  "HT.AR": "ARTIBONITE",
+  "HT.CE": "CENTRE",
+  "HT.GA": "GRAND_ANSE",
+  "HT.NI": "NIPPES",
+  "HT.ND": "NORD",
+  "HT.NE": "NORD_EST",
+  "HT.NO": "NORD_OUEST",
+  "HT.OU": "OUEST",
+  "HT.SD": "SUD",
+  "HT.SE": "SUD_EST",
+};
 
 interface HaitiMapProps {
   onDepartmentClick?: (code: string, name: string) => void;
@@ -78,22 +34,49 @@ interface HaitiMapProps {
 }
 
 export function HaitiMapSVG({ onDepartmentClick, artistsByDepartment = {} }: HaitiMapProps) {
+  const [geojson, setGeojson] = useState<GeoJSON | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/data/haiti-departments.geojson")
+      .then((r) => r.json())
+      .then((data) => setGeojson(data))
+      .catch(() => {});
+  }, []);
+
+  if (!geojson) {
+    return <div className={styles.mapContainer} style={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center", color: "#9a9ac0" }}>Chargement de la carte...</div>;
+  }
+
+  // Compute bounding box to set viewBox (only Haiti, no DR)
+  const allCoords: [number, number][] = [];
+  for (const feature of geojson.features) {
+    const coords = feature.geometry.type === "MultiPolygon"
+      ? (feature.geometry.coordinates as number[][][][]).flat(2)
+      : (feature.geometry.coordinates as number[][][]).flat(1);
+    for (const c of coords) allCoords.push([c[0], c[1]]);
+  }
+  const minX = Math.min(...allCoords.map(c => c[0]));
+  const maxX = Math.max(...allCoords.map(c => c[0]));
+  const minY = Math.min(...allCoords.map(c => c[1]));
+  const maxY = Math.max(...allCoords.map(c => c[1]));
+
+  const padding = 0.05;
+  const vbX = minX - padding;
+  const vbY = -(maxY + padding); // Flip Y for SVG
+  const vbW = (maxX - minX) + 2 * padding;
+  const vbH = (maxY - minY) + 2 * padding;
 
   return (
     <div className={styles.mapContainer}>
       <svg
-        viewBox="5 30 200 120"
+        viewBox={`${vbX} ${vbY} ${vbW} ${vbH}`}
         className={styles.mapSvg}
         aria-label="Carte d'Haïti par département"
       >
         <defs>
-          <filter id="neon-glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
           <filter id="neon-strong">
-            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feGaussianBlur stdDeviation="0.015" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="blur" />
@@ -102,39 +85,41 @@ export function HaitiMapSVG({ onDepartmentClick, artistsByDepartment = {} }: Hai
           </filter>
         </defs>
 
-        {DEPARTMENTS.map((dept) => (
-          <g key={dept.code}>
-            {/* Glow layer (visible on hover) */}
-            {hovered === dept.code && (
+        {geojson.features.map((feature) => {
+          const code = HASC_TO_CODE[feature.properties.HASC_1] ?? feature.properties.NAME_1;
+          const name = feature.properties.NAME_1;
+          const isHovered = hovered === code;
+
+          // Convert GeoJSON coordinates to SVG path (flip Y axis)
+          const pathD = geoToSvgPath(feature.geometry);
+
+          return (
+            <g key={code}>
+              {isHovered && (
+                <path d={pathD} className={styles.glowPath} filter="url(#neon-strong)" />
+              )}
               <path
-                d={dept.path}
-                className={styles.glowPath}
-                filter="url(#neon-strong)"
+                d={pathD}
+                className={`${styles.deptPath} ${isHovered ? styles.deptHovered : ""}`}
+                onMouseEnter={() => setHovered(code)}
+                onMouseLeave={() => setHovered(null)}
+                onClick={() => onDepartmentClick?.(code, name)}
+                role="button"
+                aria-label={name}
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter") onDepartmentClick?.(code, name); }}
               />
-            )}
-            {/* Main department path */}
-            <path
-              d={dept.path}
-              className={`${styles.deptPath} ${hovered === dept.code ? styles.deptHovered : ""}`}
-              onMouseEnter={() => setHovered(dept.code)}
-              onMouseLeave={() => setHovered(null)}
-              onClick={() => onDepartmentClick?.(dept.code, dept.name)}
-              role="button"
-              aria-label={dept.name}
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === "Enter") onDepartmentClick?.(dept.code, dept.name); }}
-            />
-            {/* Department label */}
-            <text
-              x={getCenter(dept.path).x}
-              y={getCenter(dept.path).y}
-              className={styles.deptLabel}
-              pointerEvents="none"
-            >
-              {dept.name}
-            </text>
-          </g>
-        ))}
+              <text
+                x={getCentroid(feature.geometry)[0]}
+                y={-getCentroid(feature.geometry)[1]}
+                className={styles.deptLabel}
+                pointerEvents="none"
+              >
+                {name}
+              </text>
+            </g>
+          );
+        })}
       </svg>
 
       {/* Artist preview on hover */}
@@ -158,14 +143,40 @@ export function HaitiMapSVG({ onDepartmentClick, artistsByDepartment = {} }: Hai
   );
 }
 
-/** Calcule le centre approximatif d'un path SVG */
-function getCenter(path: string): { x: number; y: number } {
-  const coords = path.match(/\d+\.?\d*/g)?.map(Number) ?? [];
-  let sumX = 0, sumY = 0, count = 0;
-  for (let i = 0; i < coords.length; i += 2) {
-    sumX += coords[i];
-    sumY += coords[i + 1];
-    count++;
+/** Convert GeoJSON geometry to SVG path string (Y-axis flipped) */
+function geoToSvgPath(geometry: { type: string; coordinates: number[][][][] | number[][][] }): string {
+  const polygons = geometry.type === "MultiPolygon"
+    ? (geometry.coordinates as number[][][][])
+    : [geometry.coordinates as number[][][]];
+
+  let d = "";
+  for (const polygon of polygons) {
+    for (const ring of polygon) {
+      d += ring.map((coord, i) => {
+        const x = coord[0];
+        const y = -coord[1]; // Flip Y for SVG coordinate system
+        return `${i === 0 ? "M" : "L"} ${x} ${y}`;
+      }).join(" ") + " Z ";
+    }
   }
-  return { x: sumX / (count || 1), y: sumY / (count || 1) };
+  return d.trim();
+}
+
+/** Compute centroid of a GeoJSON geometry */
+function getCentroid(geometry: { type: string; coordinates: number[][][][] | number[][][] }): [number, number] {
+  const polygons = geometry.type === "MultiPolygon"
+    ? (geometry.coordinates as number[][][][])
+    : [geometry.coordinates as number[][][]];
+
+  let sumX = 0, sumY = 0, count = 0;
+  for (const polygon of polygons) {
+    for (const ring of polygon) {
+      for (const coord of ring) {
+        sumX += coord[0];
+        sumY += coord[1];
+        count++;
+      }
+    }
+  }
+  return [sumX / (count || 1), sumY / (count || 1)];
 }
