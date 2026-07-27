@@ -144,7 +144,7 @@ export function NewsList({ articles }: { articles: Article[] }) {
         <section className="page-hero news-page__hero">
           <div className="wrap">
             <p className="breadcrumb">
-              <Link href="/">Accueil</Link> / Actualités
+              <a href="/">Accueil</a> / Actualités
             </p>
             <p className="section-tag">{"// La musique haïtienne en mouvement"}</p>
             <h1 className="page-title">
