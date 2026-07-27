@@ -113,7 +113,7 @@ export default async function ArtistesPage() {
 
       <main id="contenu">
         <div className="wrap" style={{ paddingTop: "2rem" }}>
-          <p className="breadcrumb"><Link href="/">Accueil</Link> / Artistes</p>
+          <p className="breadcrumb"><a href="/">Accueil</a> / Artistes</p>
           <h1 className="page-title">La galaxie des <span className="fx-o">artistes</span></h1>
           <p className="page-lead">
             {artists.length} artiste{artists.length > 1 ? "s" : ""} vérifié{artists.length > 1 ? "s" : ""} illuminent Planète HMI.
