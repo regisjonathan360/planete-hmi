@@ -349,7 +349,9 @@ export async function POST(request: Request) {
             percent: 100,
             message: isFailure
               ? `Collecte échouée : ${result.error ? sanitizeErrorMessage(result.error) : "erreur inconnue"}`
-              : `Collecte ${result.status.toLowerCase().replaceAll("_", " ")}.`,
+              : result.warnings.length > 0
+                ? `Collecte terminée avec ${result.warnings.length} avertissement(s).`
+                : "Collecte terminée avec succès.",
             runId: result.runId,
             status: result.status,
             startedAt: result.startedAt,
