@@ -44,6 +44,9 @@ export function AdminHeader({ email, active }: { email: string | null; active?: 
         <Link href="/admin/actualites" className={active === "actualites" ? "is-active" : ""}>
           Actualités
         </Link>
+        <Link href="/admin/evenements" className={active === "evenements" ? "is-active" : ""}>
+          Événements
+        </Link>
         <Link href="/charts" target="_blank" style={{ color: "var(--admin-accent-2)" }}>
           Classements publics ↗
         </Link>
