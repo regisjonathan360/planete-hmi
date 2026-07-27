@@ -10,11 +10,22 @@ import { getStaticPageBody, getStaticPageScripts } from "@/lib/static-page";
 export function StaticPage({
   filename,
   replacements = [],
+  hideStaticHeader = false,
 }: {
   filename: string;
   replacements?: Array<{ marker: string; html: string }>;
+  hideStaticHeader?: boolean;
 }) {
   let body = getStaticPageBody(filename);
+  for (const replacement of replacements) {
+    body = body.replace(replacement.marker, replacement.html);
+  }
+  // Supprimer le header statique si demandé (le SiteHeader React prend le relais)
+  if (hideStaticHeader) {
+    body = body.replace(/<header[^>]*class="topbar"[^>]*>[\s\S]*?<\/header>/i, "");
+    // Aussi supprimer le menu-mobile statique
+    body = body.replace(/<nav[^>]*class="menu-mobile"[^>]*>[\s\S]*?<\/nav>/i, "");
+  }
   for (const replacement of replacements) {
     body = body.replace(replacement.marker, replacement.html);
   }
