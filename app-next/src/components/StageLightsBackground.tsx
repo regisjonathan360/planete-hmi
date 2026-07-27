@@ -215,12 +215,12 @@ export function StageLightsBackground() {
 
   return (
     <div
+      className="stage-lights-canvas"
       style={{
         position: "fixed",
         top: 0,
         left: 0,
         width: "100%",
-        height: "var(--fixed-vh, 100vh)",
         zIndex: 50,
         pointerEvents: "none",
       }}

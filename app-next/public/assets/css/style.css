@@ -67,13 +67,16 @@ img { display: block; max-width: 100%; }
     url("../../image/backgrounds/planet-hmi-background-desktop.webp.webp");
   background-repeat: no-repeat; background-position: center top; background-size: cover; }
 @media (max-width: 768px) {
-  /* Fix mobile : hauteur figée au chargement via --fixed-vh (set par JS une seule fois).
-     Empêche le saut quand la barre d'adresse apparaît/disparaît. */
+  /* Fix mobile : on dimensionne les couches fixes au "large viewport" (barre
+     d'adresse masquée). L'élément est donc déjà à sa taille maximale et ne
+     grandit jamais au scroll : plus aucun saut ni recadrage de l'image. */
   .cosmos,
   .grain,
-  .stage-lights {
+  .stage-lights,
+  .stage-lights-canvas {
     top: 0; left: 0; right: 0; bottom: auto;
-    height: var(--fixed-vh, 100svh);
+    height: 100vh;   /* fallback navigateurs anciens */
+    height: 100lvh;  /* large viewport height : constante */
   }
   .cosmos { background-image:
     radial-gradient(120% 90% at 50% -10%, rgba(20, 12, 40, 0.35) 0%, rgba(10, 8, 22, 0.6) 45%, rgba(8, 7, 13, 0.82) 100%),
