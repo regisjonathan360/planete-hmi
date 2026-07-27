@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { useState } from "react";
+import styles from "./evenements.module.css";
+
 interface EventItem {
   id: string;
   source_url: string;
@@ -16,83 +19,106 @@ interface EventItem {
   category: string;
   is_featured: boolean;
   published_at: string | null;
+  event_date: string | null;
 }
 
-export function EventsList({ events }: { events: EventItem[] }) {
+export function EventsList({ events, savedIds, isLoggedIn }: { events: EventItem[]; savedIds: string[]; isLoggedIn: boolean }) {
+  const [saved, setSaved] = useState<Set<string>>(new Set(savedIds));
+
+  async function toggleSave(eventId: string) {
+    if (!isLoggedIn) return;
+    const isSaved = saved.has(eventId);
+    const method = isSaved ? "DELETE" : "POST";
+
+    setSaved((prev) => {
+      const next = new Set(prev);
+      if (isSaved) next.delete(eventId);
+      else next.add(eventId);
+      return next;
+    });
+
+    await fetch("/api/events/save", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ eventId }),
+    });
+  }
+
   if (events.length === 0) {
     return (
-      <main style={{ padding: "4rem 1.5rem", textAlign: "center", minHeight: "60vh" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>Événements HMI</h1>
-        <p style={{ color: "#9a9ac0" }}>Aucun événement à venir pour le moment.</p>
+      <main className={styles.page}>
+        <div className={styles.hero}>
+          <h1 className={styles.pageTitle}>Événements <span className={styles.accent}>HMI</span></h1>
+          <p className={styles.lead}>Aucun événement à venir pour le moment.</p>
+        </div>
       </main>
     );
   }
 
+  const featured = events.find((e) => e.is_featured) ?? events[0];
+  const rest = events.filter((e) => e.id !== featured.id);
+
   return (
-    <main style={{ padding: "2rem 1.5rem", maxWidth: 1100, margin: "0 auto" }}>
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Événements <span style={{ color: "#7c5cff" }}>HMI</span></h1>
-        <p style={{ color: "#9a9ac0" }}>Concerts, festivals et événements musicaux haïtiens.</p>
+    <main className={styles.page}>
+      <div className={styles.hero}>
+        <h1 className={styles.pageTitle}>Événements <span className={styles.accent}>HMI</span></h1>
+        <p className={styles.lead}>Concerts, festivals et soirées de la musique haïtienne.</p>
       </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-        gap: "1.25rem",
-      }}>
-        {events.map((event) => (
-          <a
-            key={event.id}
-            href={event.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "block",
-              borderRadius: 12,
-              overflow: "hidden",
-              background: "#14142a",
-              border: "1px solid #2a2a4a",
-              textDecoration: "none",
-              color: "inherit",
-              transition: "border-color 0.2s, transform 0.2s",
-            }}
-          >
-            {(event.display_image_url || event.source_image_url) && (
-              <img
-                src={event.display_image_url || event.source_image_url!}
-                alt=""
-                style={{ width: "100%", height: 180, objectFit: "cover" }}
-                loading="lazy"
-              />
+      {/* Événement à la une */}
+      <section className={styles.featuredSection}>
+        <a href={featured.source_url} target="_blank" rel="noopener noreferrer" className={styles.featuredCard}>
+          {(featured.display_image_url || featured.source_image_url) && (
+            <img src={featured.display_image_url || featured.source_image_url!} alt="" className={styles.featuredImage} />
+          )}
+          <div className={styles.featuredBody}>
+            <span className={styles.tag}>À la une</span>
+            <h2 className={styles.featuredTitle}>{featured.display_title || featured.source_title}</h2>
+            {featured.source_date && <p className={styles.meta}>📅 {featured.source_date}</p>}
+            {featured.source_location && <p className={styles.meta}>📍 {featured.source_location}</p>}
+            {featured.display_description && <p className={styles.excerpt}>{featured.display_description}</p>}
+          </div>
+        </a>
+        {isLoggedIn && (
+          <button className={`${styles.saveBtn} ${saved.has(featured.id) ? styles.saved : ""}`} onClick={(e) => { e.preventDefault(); toggleSave(featured.id); }} title={saved.has(featured.id) ? "Retirer" : "Enregistrer"}>
+            <BookmarkIcon filled={saved.has(featured.id)} />
+          </button>
+        )}
+      </section>
+
+      {/* Grille des événements */}
+      <section className={styles.grid}>
+        {rest.map((event) => (
+          <article key={event.id} className={styles.card}>
+            <a href={event.source_url} target="_blank" rel="noopener noreferrer" className={styles.cardLink}>
+              {(event.display_image_url || event.source_image_url) ? (
+                <img src={event.display_image_url || event.source_image_url!} alt="" className={styles.cardImage} loading="lazy" />
+              ) : (
+                <div className={styles.cardImagePlaceholder}>🎵</div>
+              )}
+              <div className={styles.cardBody}>
+                <h3 className={styles.cardTitle}>{event.display_title || event.source_title}</h3>
+                {event.source_date && <p className={styles.cardMeta}>📅 {event.source_date}</p>}
+                {event.source_location && <p className={styles.cardMeta}>📍 {event.source_location}</p>}
+                {event.source_price && <p className={styles.cardPrice}>🎫 {event.source_price}</p>}
+              </div>
+            </a>
+            {isLoggedIn && (
+              <button className={`${styles.saveBtn} ${styles.cardSaveBtn} ${saved.has(event.id) ? styles.saved : ""}`} onClick={() => toggleSave(event.id)} title={saved.has(event.id) ? "Retirer" : "Enregistrer"}>
+                <BookmarkIcon filled={saved.has(event.id)} />
+              </button>
             )}
-            <div style={{ padding: "1.1rem" }}>
-              <h3 style={{ fontSize: "1.05rem", margin: "0 0 0.5rem", lineHeight: 1.3 }}>
-                {event.display_title || event.source_title}
-              </h3>
-              {event.source_date && (
-                <p style={{ margin: "0 0 0.3rem", fontSize: "0.85rem", color: "#7c5cff", fontWeight: 600 }}>
-                  📅 {event.source_date} {event.source_time && `· ${event.source_time}`}
-                </p>
-              )}
-              {event.source_location && (
-                <p style={{ margin: "0 0 0.3rem", fontSize: "0.83rem", color: "#9a9ac0" }}>
-                  📍 {event.source_location}
-                </p>
-              )}
-              {event.source_price && (
-                <p style={{ margin: "0", fontSize: "0.8rem", color: "#00d4b8" }}>
-                  🎫 {event.source_price}
-                </p>
-              )}
-              {event.display_description && (
-                <p style={{ margin: "0.5rem 0 0", fontSize: "0.85rem", color: "#9a9ac0" }}>
-                  {event.display_description}
-                </p>
-              )}
-            </div>
-          </a>
+          </article>
         ))}
-      </div>
+      </section>
     </main>
+  );
+}
+
+function BookmarkIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+    </svg>
   );
 }
