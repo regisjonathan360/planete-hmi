@@ -1,0 +1,1 @@
+export { HaitiMapSVG } from "./HaitiMapSVG";
