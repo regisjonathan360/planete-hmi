@@ -16,19 +16,39 @@ const COUNTRY = "HT";
 const CHART_NAME = "Weekly 100: Haiti";
 const SOURCE_URL = "https://audiomack.com/geo-charts/playlist/haiti";
 
+/**
+ * Identité du classement dont on prend un instantané.
+ *
+ * Ces valeurs étaient auparavant figées sur Audiomack : toute autre plateforme
+ * écrivait donc dans les snapshots Audiomack, faussant à la fois la
+ * déduplication par `content_hash` et le calcul des mouvements.
+ */
+export interface SnapshotIdentity {
+  platform: string;
+  chartName: string;
+  sourceUrl: string;
+}
+
+const AUDIOMACK_IDENTITY: SnapshotIdentity = {
+  platform: PLATFORM,
+  chartName: CHART_NAME,
+  sourceUrl: SOURCE_URL,
+};
+
 function computeContentHash(entries: AudiomackNormalizedEntry[]): string {
   const payload = entries.map((e) => `${e.platformTrackId ?? e.title}:${e.rank}`).join("|");
   return crypto.createHash("sha256").update(payload).digest("hex").slice(0, 16);
 }
 
-/** Récupère les entrées du dernier snapshot réussi. */
+/** Récupère les entrées du dernier snapshot réussi de la plateforme. */
 export async function getLastSuccessfulEntries(
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
+  identity: SnapshotIdentity = AUDIOMACK_IDENTITY
 ): Promise<AudiomackSnapshotEntry[] | null> {
   const { data: snapshot } = await supabase
     .from("chart_snapshots")
     .select("id")
-    .eq("platform", PLATFORM)
+    .eq("platform", identity.platform)
     .eq("country_code", COUNTRY)
     .eq("status", "success")
     .order("collected_at", { ascending: false })
@@ -46,15 +66,15 @@ export async function getLastSuccessfulEntries(
   if (!entries?.length) return null;
 
   return entries.map((e) => ({
-    platform: "audiomack" as const,
-    countryCode: "HT" as const,
+    platform: identity.platform,
+    countryCode: COUNTRY,
     rank: e.rank,
     platformTrackId: e.platform_track_id,
     title: e.title,
     artistName: e.artist_name,
     artworkUrl: e.artwork_url,
     artistImageUrl: e.artist_image_url ?? null,
-    sourceTrackUrl: e.source_track_url ?? SOURCE_URL,
+    sourceTrackUrl: e.source_track_url ?? identity.sourceUrl,
     artistSlug: e.artist_slug,
     trackSlug: e.track_slug,
     albumName: e.album_name,
@@ -71,8 +91,10 @@ export async function getLastSuccessfulEntries(
 export async function saveSnapshot(
   supabase: SupabaseClient,
   normalized: AudiomackNormalizedEntry[],
-  options: { sourceUpdatedAt?: string | null } = {}
+  options: { sourceUpdatedAt?: string | null; identity?: SnapshotIdentity } = {}
 ): Promise<{ created: boolean; error?: string }> {
+  const identity = options.identity ?? AUDIOMACK_IDENTITY;
+
   // Validation Zod
   const { valid, entries: validated, errors } = validateEntries(normalized);
   if (!valid) return { created: false, error: errors.join(" | ") };
@@ -84,7 +106,7 @@ export async function saveSnapshot(
   const { data: existing } = await supabase
     .from("chart_snapshots")
     .select("id")
-    .eq("platform", PLATFORM)
+    .eq("platform", identity.platform)
     .eq("country_code", COUNTRY)
     .eq("content_hash", hash)
     .limit(1)
@@ -93,17 +115,17 @@ export async function saveSnapshot(
   if (existing) return { created: false, error: "Contenu identique au dernier snapshot." };
 
   // Récupérer les données précédentes pour calculer les mouvements
-  const previousEntries = await getLastSuccessfulEntries(supabase);
+  const previousEntries = await getLastSuccessfulEntries(supabase, identity);
   const withMovements = calculateMovements(validated, previousEntries);
 
   // Créer le snapshot
   const { data: snapshot, error: snapErr } = await supabase
     .from("chart_snapshots")
     .insert({
-      platform: PLATFORM,
+      platform: identity.platform,
       country_code: COUNTRY,
-      chart_name: CHART_NAME,
-      source_url: SOURCE_URL,
+      chart_name: identity.chartName,
+      source_url: identity.sourceUrl,
       source_updated_at: options.sourceUpdatedAt ?? null,
       content_hash: hash,
       status: "success",

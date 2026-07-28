@@ -9,8 +9,20 @@ import * as THREE from "three";
 const R = 2;
 /** Rayon englobant anneaux compris, utilisé pour cadrer la caméra. */
 const FIT_R = R * 1.31;
-/** Part du rayon visible occupée par la silhouette d'Haïti (0-1). */
-const FILL = 0.84;
+
+/**
+ * Étendue en latitude occupée par Haïti sur la planète, en degrés.
+ *
+ * La carte est peinte à l'échelle géographique (même nombre de degrés par
+ * degré en longitude et en latitude), centrée sur l'équateur du globe : c'est
+ * une vraie projection équirectangulaire. La courbure de la sphère se charge
+ * du raccourcissement sur les bords, ce qui donne une carte réellement
+ * enroulée sur la boule plutôt qu'une image posée devant.
+ *
+ * 56° laisse la carte grande et lisible sans l'approcher des pôles, où le
+ * maillage équirectangulaire se pince.
+ */
+const LAT_SPAN_DEG = 56;
 
 type GeoRing = [number, number][];
 
@@ -30,19 +42,31 @@ function ringsOf(f: GeoFeature): GeoRing[] {
 /**
  * Construit la texture équirectangulaire de la planète.
  *
- * Point clé : la silhouette n'est PAS étalée linéairement sur la texture
- * (ce qui l'écrase et la tord sur la sphère). On applique la projection
- * orthographique inverse — lat = asin(v), lon = asin(u / cos(lat)) — pour que
- * la carte apparaisse exactement à sa vraie forme vue de face, comme une
- * véritable planète cartographiée.
+ * La carte est agrandie d'un facteur constant depuis ses coordonnées
+ * géographiques réelles, puis placée à cheval sur l'équateur du globe. Le
+ * rapport degrés/pixel est identique en longitude et en latitude : la sphère
+ * applique donc naturellement le raccourcissement d'un vrai globe, et la carte
+ * paraît collée à la surface au lieu d'être plaquée face à la caméra.
  */
-function buildPlanetTexture(geo: { features: GeoFeature[] }, size: number): HTMLCanvasElement {
+function buildPlanetTexture(
+  geo: { features: GeoFeature[] },
+  size: number,
+): { color: HTMLCanvasElement; relief: HTMLCanvasElement } {
   const W = size;
   const H = size / 2;
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext("2d")!;
+
+  // Carte de relief : terres en clair, océan en sombre. Utilisée comme bumpMap
+  // pour que les départements accrochent la lumière comme un vrai continent.
+  const reliefCanvas = document.createElement("canvas");
+  reliefCanvas.width = W;
+  reliefCanvas.height = H;
+  const relief = reliefCanvas.getContext("2d")!;
+  relief.fillStyle = "#000000";
+  relief.fillRect(0, 0, W, H);
 
   // --- Océan / surface de la planète ---
   const ocean = ctx.createLinearGradient(0, 0, 0, H);
@@ -87,39 +111,33 @@ function buildPlanetTexture(geo: { features: GeoFeature[] }, size: number): HTML
       }
     }
   }
-  const spanX = maxX - minX;
   const spanY = maxY - minY;
   const cx = (minX + maxX) / 2;
   const cy = (minY + maxY) / 2;
 
-  // Rectangle inscrit dans le disque visible de rayon FILL
-  const ratio = spanX / spanY;
-  const halfV = FILL / Math.sqrt(ratio * ratio + 1);
-  const halfU = halfV * ratio;
+  // Agrandissement unique appliqué aux deux axes : la forme reste exacte.
+  const zoom = LAT_SPAN_DEG / spanY;
 
-  /** géo (lng,lat) → pixel texture, via orthographique inverse. */
+  /**
+   * géo (lng, lat) → pixel de la texture équirectangulaire.
+   * Le centre d'Haïti est ramené sur (lon 0, lat 0) du globe.
+   */
   const toTexel = (lng: number, lat: number): [number, number] => {
-    const u = ((lng - cx) / spanX) * 2 * halfU;
-    const v = ((lat - cy) / spanY) * 2 * halfV;
-    const latOut = Math.asin(Math.max(-1, Math.min(1, v)));
-    const cosLat = Math.cos(latOut);
-    const ratioU = cosLat < 1e-6 ? 0 : u / cosLat;
-    const lonOut = Math.asin(Math.max(-1, Math.min(1, ratioU)));
-    return [
-      ((THREE.MathUtils.radToDeg(lonOut) + 180) / 360) * W,
-      ((90 - THREE.MathUtils.radToDeg(latOut)) / 180) * H,
-    ];
+    const lonOut = (lng - cx) * zoom;
+    const latOut = (lat - cy) * zoom;
+    return [((lonOut + 180) / 360) * W, ((90 - latOut) / 180) * H];
   };
 
-  const tracePath = (ring: GeoRing) => {
-    ctx.beginPath();
+  const tracePathOn = (target: CanvasRenderingContext2D, ring: GeoRing) => {
+    target.beginPath();
     for (let i = 0; i < ring.length; i++) {
       const [px, py] = toTexel(ring[i][0], ring[i][1]);
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
+      if (i === 0) target.moveTo(px, py);
+      else target.lineTo(px, py);
     }
-    ctx.closePath();
+    target.closePath();
   };
+  const tracePath = (ring: GeoRing) => tracePathOn(ctx, ring);
 
   // Palette drapeau haïtien, alternée par département
   const palette = ["#1b3fa8", "#c62828", "#22499f", "#b71c1c", "#1f3f96"];
@@ -149,6 +167,19 @@ function buildPlanetTexture(geo: { features: GeoFeature[] }, size: number): HTML
     }
   });
 
+  // Relief : terres pleines, bord adouci pour une transition côtière franche.
+  relief.fillStyle = "#d8d8d8";
+  relief.strokeStyle = "#5a5a5a";
+  relief.lineWidth = 6 * unit;
+  relief.lineJoin = "round";
+  for (const f of geo.features) {
+    for (const ring of ringsOf(f)) {
+      tracePathOn(relief, ring);
+      relief.stroke();
+      relief.fill();
+    }
+  }
+
   // Noms de départements
   ctx.fillStyle = "rgba(248, 245, 236, 0.95)";
   ctx.strokeStyle = "rgba(4, 4, 12, 0.85)";
@@ -172,7 +203,7 @@ function buildPlanetTexture(geo: { features: GeoFeature[] }, size: number): HTML
     ctx.fillText(name, tx, ty);
   }
 
-  return canvas;
+  return { color: canvas, relief: reliefCanvas };
 }
 
 /** Recadre la caméra pour que la planète remplisse toujours le cadre. */
@@ -194,22 +225,30 @@ function Planet({ gyro }: { gyro: React.RefObject<{ x: number; y: number }> }) {
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const ring2Ref = useRef<THREE.Mesh>(null);
-  const [texture, setTexture] = useState<THREE.Texture | null>(null);
+  const [maps, setMaps] = useState<{ color: THREE.Texture; bump: THREE.Texture } | null>(null);
   const { gl } = useThree();
 
   useEffect(() => {
     let cancelled = false;
     const size = typeof window !== "undefined" && window.innerWidth > 700 ? 4096 : 2048;
+    const anisotropy = gl.capabilities.getMaxAnisotropy();
 
     fetch("/data/haiti-departments.geojson")
       .then((r) => r.json())
       .then((geo: { features: GeoFeature[] }) => {
         if (cancelled) return;
-        const tex = new THREE.CanvasTexture(buildPlanetTexture(geo, size));
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.anisotropy = gl.capabilities.getMaxAnisotropy();
-        tex.needsUpdate = true;
-        setTexture(tex);
+        const { color, relief } = buildPlanetTexture(geo, size);
+
+        const colorTex = new THREE.CanvasTexture(color);
+        colorTex.colorSpace = THREE.SRGBColorSpace;
+        colorTex.anisotropy = anisotropy;
+        colorTex.needsUpdate = true;
+
+        const bumpTex = new THREE.CanvasTexture(relief);
+        bumpTex.anisotropy = anisotropy;
+        bumpTex.needsUpdate = true;
+
+        setMaps({ color: colorTex, bump: bumpTex });
       })
       .catch(() => undefined);
 
@@ -217,6 +256,15 @@ function Planet({ gyro }: { gyro: React.RefObject<{ x: number; y: number }> }) {
       cancelled = true;
     };
   }, [gl]);
+
+  // Libère la mémoire GPU quand les textures sont remplacées ou démontées.
+  useEffect(
+    () => () => {
+      maps?.color.dispose();
+      maps?.bump.dispose();
+    },
+    [maps],
+  );
 
   useFrame((_, delta) => {
     if (ringRef.current) ringRef.current.rotation.z += delta * 0.06;
@@ -243,13 +291,15 @@ function Planet({ gyro }: { gyro: React.RefObject<{ x: number; y: number }> }) {
     <group ref={groupRef}>
       {/* Sphère : rotation.y = -PI/2 amène le centre de la texture (Haïti) face caméra */}
       <mesh rotation={[0, -Math.PI / 2, 0]}>
-        <sphereGeometry args={[R, 96, 96]} />
+        <sphereGeometry args={[R, 128, 128]} />
         <meshStandardMaterial
-          map={texture}
+          map={maps?.color ?? null}
+          bumpMap={maps?.bump ?? null}
+          bumpScale={1.4}
           roughness={0.62}
           metalness={0.08}
           emissive={new THREE.Color("#ffffff")}
-          emissiveMap={texture}
+          emissiveMap={maps?.color ?? null}
           emissiveIntensity={0.22}
         />
       </mesh>

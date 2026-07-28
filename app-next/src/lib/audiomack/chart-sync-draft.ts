@@ -49,40 +49,88 @@ function weekWindowFromSourceDate(sourceUpdatedAt: string | null | undefined): {
   };
 }
 
-const SOURCE_CONFIGS: Record<string, { platform: string; displayName: string; chartContext: string; sourceUrl: string }> = {
+interface SourceConfig {
+  platform: string;
+  displayName: string;
+  chartContext: string;
+  sourceUrl: string;
+  ingestionMode: string;
+}
+
+const SOURCE_CONFIGS: Record<string, SourceConfig> = {
   audiomack_haiti_weekly100: {
     platform: "audiomack",
     displayName: "Audiomack - Top Songs Haiti",
     chartContext: "Top Songs Haiti officiel Audiomack",
     sourceUrl: "https://audiomack.com/top/songs?country=haiti",
+    ingestionMode: "OFFICIAL_EXPORT",
   },
   deezer_haiti_top100: {
     platform: "deezer",
     displayName: "Deezer - Top Haiti",
     chartContext: "Top 100 Haiti (playlist communautaire Deezer)",
     sourceUrl: "https://www.deezer.com/playlist/15034575123",
+    ingestionMode: "OFFICIAL_EXPORT",
+  },
+  spotify_haiti_popular: {
+    platform: "spotify",
+    displayName: "Spotify — Top 50 GlobHaitian",
+    chartContext: "Top 50 GlobHaitian (playlist Spotify)",
+    sourceUrl: "https://open.spotify.com/playlist/1cXIKrbi0PwJkNQgrzOokU",
+    // Une playlist éditoriale n'est pas un export officiel de classement :
+    // chaque édition est vérifiée puis publiée à la main.
+    ingestionMode: "VERIFIED_ADMIN_IMPORT",
+  },
+  tiktok_haiti_viral_playlist: {
+    platform: "tiktok",
+    displayName: "Top TikTok Haiti — Viral (playlist)",
+    chartContext: "TikTok Viral Haiti (playlist Spotify)",
+    sourceUrl: "https://open.spotify.com/playlist/4SRJiaVoFWqcVLKvsvd5dH",
+    ingestionMode: "VERIFIED_ADMIN_IMPORT",
   },
 };
 
+/**
+ * Garantit l'existence de la source.
+ *
+ * Une source déjà présente n'est PAS réécrite : seuls les champs volatils sont
+ * touchés. Sans cela, chaque collecte annulait les réglages faits en admin
+ * (URL de playlist, libellé, mode d'ingestion).
+ */
 async function ensureSource(supabase: SupabaseClient, sourceKey: string): Promise<string> {
-  const config = SOURCE_CONFIGS[sourceKey] ?? SOURCE_CONFIGS.audiomack_haiti_weekly100;
+  const now = new Date().toISOString();
 
+  const { data: existing } = await supabase
+    .from("chart_sources")
+    .select("id")
+    .eq("source_key", sourceKey)
+    .maybeSingle();
+
+  if (existing?.id) {
+    await supabase
+      .from("chart_sources")
+      .update({ last_success_at: now, last_error: null })
+      .eq("id", existing.id);
+    return existing.id as string;
+  }
+
+  const config = SOURCE_CONFIGS[sourceKey] ?? SOURCE_CONFIGS.audiomack_haiti_weekly100;
   const { data, error } = await supabase
     .from("chart_sources")
-    .upsert({
+    .insert({
       platform: config.platform,
       source_key: sourceKey,
       display_name: config.displayName,
       chart_context: config.chartContext,
       market_code: "HT",
       genre_id: "all",
-      ingestion_mode: "OFFICIAL_EXPORT",
+      ingestion_mode: config.ingestionMode,
       source_url: config.sourceUrl,
       is_enabled: true,
       is_automatic: false,
-      last_success_at: new Date().toISOString(),
+      last_success_at: now,
       last_error: null,
-    }, { onConflict: "source_key" })
+    })
     .select("id")
     .single();
 
@@ -90,18 +138,32 @@ async function ensureSource(supabase: SupabaseClient, sourceKey: string): Promis
   return data.id;
 }
 
+/**
+ * Retrouve une chanson depuis son identifiant plateforme.
+ *
+ * Le repli sur `audiomack` couvre les lignes historiques : avant la
+ * généralisation multi-plateforme, toutes les correspondances étaient
+ * enregistrées sous cette plateforme, y compris celles de Deezer.
+ */
 async function findTrackByPlatformId(
   supabase: SupabaseClient,
-  platformTrackId: string
+  platformTrackId: string,
+  platform: string
 ): Promise<string | null> {
-  const { data } = await supabase
-    .from("platform_tracks")
-    .select("track_id")
-    .eq("platform", "audiomack")
-    .eq("external_id", platformTrackId)
-    .maybeSingle();
+  const platforms = platform === "audiomack" ? [platform] : [platform, "audiomack"];
 
-  return data?.track_id ?? null;
+  for (const candidate of platforms) {
+    const { data } = await supabase
+      .from("platform_tracks")
+      .select("track_id")
+      .eq("platform", candidate)
+      .eq("external_id", platformTrackId)
+      .maybeSingle();
+
+    if (data?.track_id) return data.track_id as string;
+  }
+
+  return null;
 }
 
 async function ensureArtist(supabase: SupabaseClient, name: string, fallbackIndex: number, imageUrl?: string | null): Promise<string> {
@@ -149,7 +211,7 @@ async function ensureTrack(
   entry: AudiomackNormalizedEntry
 ): Promise<string> {
   if (entry.platformTrackId) {
-    const trackId = await findTrackByPlatformId(supabase, entry.platformTrackId);
+    const trackId = await findTrackByPlatformId(supabase, entry.platformTrackId, entry.platform);
     if (trackId) return trackId;
   }
 
@@ -207,24 +269,32 @@ async function ensurePlatformTrack(
   const externalId = entry.platformTrackId ?? entry.sourceTrackUrl;
   if (!externalId) return null;
 
+  // La plateforme réelle de l'entrée est enregistrée : la contrainte
+  // unique (platform, external_id) ne peut donc plus faire collisionner
+  // deux identifiants numériques venant de plateformes différentes.
+  const platform = entry.platform;
+
   const { data, error } = await supabase
     .from("platform_tracks")
     .upsert({
       track_id: trackId,
-      platform: "audiomack",
+      platform,
       external_id: externalId,
       external_url: entry.sourceTrackUrl,
       platform_title: entry.title,
       platform_artist_text: entry.artistName,
       artwork_url: entry.artworkUrl,
-      match_status: "official_audiomack_haiti",
+      match_status:
+        platform === "audiomack"
+          ? "official_audiomack_haiti"
+          : `official_${platform}_${entry.countryCode.toLowerCase()}`,
       match_confidence: 1,
       verified_at: new Date().toISOString(),
     }, { onConflict: "platform,external_id" })
     .select("id")
     .single();
 
-  if (error) throw new Error(`Correspondance Audiomack échouée: ${error.message}`);
+  if (error) throw new Error(`Correspondance ${platform} échouée: ${error.message}`);
   return data?.id ?? null;
 }
 

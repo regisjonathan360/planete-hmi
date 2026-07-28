@@ -4,6 +4,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminHeader } from "../AdminHeader";
 import { TikTokManager } from "./TikTokManager";
 import type { PendingArtistClaim } from "./ArtistConnectionsQueue";
+import { PlaylistChartPanel } from "@/components/admin/PlaylistChartPanel";
+import { loadPlaylistPanelData } from "@/lib/charts/admin/playlist-panel-data";
+import { playlistChartSourcesForTab } from "@/lib/charts/playlist-sources";
 
 export const dynamic = "force-dynamic";
 
@@ -112,16 +115,41 @@ export default async function TikTokAdminPage() {
     },
   };
 
+  // Deuxième source du classement TikTok : playlist Spotify « TikTok Viral Haiti ».
+  const playlistPanels = await Promise.all(
+    playlistChartSourcesForTab("tiktok").map((source) =>
+      loadPlaylistPanelData(supabase, source),
+    ),
+  );
+
   return (
     <>
       <AdminHeader email={user.email} active="tiktok" />
       <main className="admin__main">
         <h1 className="admin__title">TikTok — Classements Haiti</h1>
         <p className="admin__subtitle">
-          Gestion des classements TikTok : collecte, validation des sons,
-          édition manuelle et publication.
+          Deux sources indépendantes : l&apos;API Research TikTok (sons validés à la main) et
+          une playlist Spotify des titres viraux. Collecte, validation, édition et publication
+          restent séparées par source.
         </p>
         <TikTokManager initialData={initialData} />
+
+        <h2 className="admin__title" style={{ fontSize: "1.2rem", marginTop: "2rem" }}>
+          Source 2 — Playlist virale
+        </h2>
+        {playlistPanels.map(({ source, chart, state, loadError }) => (
+          <div key={source.sourceKey}>
+            {loadError && <div className="banner banner--error">{loadError}</div>}
+            <PlaylistChartPanel
+              sourceKey={source.sourceKey}
+              title={source.displayName}
+              description={source.description}
+              data={chart}
+              source={state}
+              defaultPlaylistUrl={source.defaultPlaylistUrl}
+            />
+          </div>
+        ))}
       </main>
     </>
   );

@@ -29,6 +29,9 @@ export function AdminHeader({ email, active }: { email: string | null; active?: 
         <Link href="/admin/deezer" className={active === "deezer" ? "is-active" : ""}>
           Deezer
         </Link>
+        <Link href="/admin/spotify" className={active === "spotify" ? "is-active" : ""}>
+          Spotify
+        </Link>
         <Link href="/admin/artistes" className={active === "artistes" ? "is-active" : ""}>
           Artistes
         </Link>
