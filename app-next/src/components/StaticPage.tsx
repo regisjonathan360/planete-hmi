@@ -30,12 +30,15 @@ export function StaticPage({
   // est remplacé par le vrai top 5 issu de la moyenne cross-plateformes.
   const podiumReplacement = replacements.find((r) => r.marker === "<!-- PODIUM_CONTENT -->");
   if (podiumReplacement && podiumReplacement.html) {
+    // La structure cible est :
+    //   <div class="section-head reveal"> ... Voir le Top 100 ... </div>
+    //   ... podium de démo ...
+    //   </section>
+    //   <!-- ============ BANDE ... ou <section class="feature-strip"
     body = body.replace(
-      /(<div class="section-head reveal">[\s\S]*?Voir le Top 100[\s\S]*?<\/div>\s*<\/div>)([\s\S]*?)(<\/section>\s*(?:<!-- ============ BANDE|<section class="feature-strip"))/,
-      `$1\n${podiumReplacement.html}\n      $3`,
+      /(<div class="section-head reveal">[\s\S]*?Voir le Top 100[\s\S]*?<\/div>)\s*([\s\S]*?)(\s*<\/section>\s*\n?\s*(?:<!-- ============ BANDE|<section class="feature-strip"))/,
+      `$1\n\n${podiumReplacement.html}\n      $3`,
     );
-    // Le marker ne sera pas trouvé littéralement dans le HTML : on le retire
-    // de la liste pour ne pas laisser un texte vide.
     activeReplacements = activeReplacements.filter((r) => r.marker !== "<!-- PODIUM_CONTENT -->");
   }
 
