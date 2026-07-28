@@ -27,6 +27,9 @@ export interface AdminChartEntry {
   displayArtist: string | null;
   displayArtworkUrl: string | null;
   displayUrl: string | null;
+  // Métriques (monthly listeners, etc.)
+  metricValue: number | null;
+  metricUnit: string | null;
   // Éligibilité haïtienne du crédit principal.
   primaryArtistId: string | null;
   primaryArtistName: string | null;

@@ -11,6 +11,12 @@ import {
 import type { AdminChartData, AdminChartEntry } from "@/lib/charts/admin/types";
 import type { PlaylistSourceState } from "@/lib/charts/playlist-sources";
 
+function formatListeners(value: number): string {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(0)}k`;
+  return String(value);
+}
+
 interface Toast {
   message: string;
   error?: boolean;
@@ -131,6 +137,55 @@ export function PlaylistChartPanel({
       });
   };
 
+  const reorderByListeners = async () => {
+    if (!edition) return;
+    if (!confirm("Récupérer les auditeurs mensuels de chaque artiste et reclasser ? Cela peut prendre 30 secondes.")) return;
+    setBusy(true);
+    setToast(null);
+    try {
+      const res = await fetch("/api/admin/charts/spotify-listeners", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sourceKey, editionId: edition.editionId }),
+      });
+      const json = await res.json();
+      if (!res.ok) { notify(json.error ?? "Erreur.", true); return; }
+      notify(json.message ?? "Reclassement terminé.");
+      startTransition(() => router.refresh());
+    } catch { notify("Erreur réseau.", true); }
+    finally { setBusy(false); }
+  };
+
+  const fetchListeners = async (entryId: string) => {
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/admin/charts/spotify-listeners?entryId=${encodeURIComponent(entryId)}`);
+      const json = await res.json();
+      if (!res.ok) { notify(json.error ?? "Erreur.", true); return; }
+      const ml = json.monthlyListeners;
+      const followers = json.followers;
+      const value = ml ?? followers;
+      const label = ml ? `${(ml / 1000).toFixed(0)}k auditeurs/mois` : followers ? `${(followers / 1000).toFixed(0)}k followers` : "indisponible";
+      notify(`${json.artistName} : ${label} (${json.method})`);
+      if (value !== null) {
+        // Mettre à jour la valeur dans la base
+        await fetch("/api/admin/charts/entry", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            editionId: edition?.editionId,
+            entryId,
+            action: "edit",
+            metricValue: value,
+            metricUnit: "monthly_listeners",
+          }),
+        });
+        startTransition(() => router.refresh());
+      }
+    } catch { notify("Erreur réseau.", true); }
+    finally { setBusy(false); }
+  };
+
   const entryAction = (entryId: string, action: string, extra: Record<string, unknown> = {}) =>
     edition
       ? post("/api/admin/charts/entry", {
@@ -176,6 +231,9 @@ export function PlaylistChartPanel({
           )}
           <button className="btn btn--danger btn--sm" onClick={clearEdition} disabled={busy || !edition}>
             🗑 Vider
+          </button>
+          <button className="btn btn--sm btn--primary" onClick={reorderByListeners} disabled={busy || !edition}>
+            🎧 Reclasser par auditeurs mensuels
           </button>
         </div>
 
@@ -292,6 +350,7 @@ export function PlaylistChartPanel({
                 entry={entry}
                 busy={busy}
                 onAction={entryAction}
+                onFetchListeners={fetchListeners}
               />
             ))}
           </div>
@@ -307,15 +366,20 @@ function PlaylistEntry({
   entry,
   busy,
   onAction,
+  onFetchListeners,
 }: {
   entry: AdminChartEntry;
   busy: boolean;
   onAction: (entryId: string, action: string, extra?: Record<string, unknown>) => void;
+  onFetchListeners?: (entryId: string) => void;
 }) {
   const cls = `entry${entry.isHidden ? " is-hidden" : ""}${entry.isExcluded ? " is-excluded" : ""}`;
   const spotifyUrl = entry.platformTrackId
     ? `https://open.spotify.com/track/${entry.platformTrackId}`
     : entry.audiomackUrl;
+
+  // Afficher la métrique si elle est renseignée
+  const hasListeners = entry.metricValue != null && entry.metricUnit === "monthly_listeners";
 
   return (
     <div className={cls}>
@@ -332,6 +396,11 @@ function PlaylistEntry({
         <div className="entry__title">{entry.title}</div>
         <div className="entry__artist">
           {entry.artist}
+          {hasListeners && (
+            <span className="badge badge--ok" style={{ marginLeft: "0.4rem" }}>
+              🎧 {formatListeners(entry.metricValue!)}
+            </span>
+          )}
           {entry.isEligible && (
             <span className="badge badge--ok" style={{ marginLeft: "0.4rem" }}>
               Publiable
@@ -355,6 +424,16 @@ function PlaylistEntry({
         </div>
       </div>
       <div className="entry__actions">
+        {onFetchListeners && (
+          <button
+            className="btn btn--sm"
+            disabled={busy}
+            onClick={() => onFetchListeners(entry.entryId)}
+            title="Récupérer les auditeurs mensuels Spotify"
+          >
+            🎧
+          </button>
+        )}
         {spotifyUrl && (
           <a className="btn btn--sm btn--ghost" href={spotifyUrl} target="_blank" rel="noreferrer">
             ▶
