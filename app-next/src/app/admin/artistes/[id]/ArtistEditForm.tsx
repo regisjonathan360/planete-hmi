@@ -326,13 +326,18 @@ function Field({ label, value, onChange, textarea, type }: {
   );
 }
 
-// ---------- Panneau d'enrichissement automatique ----------
+// ---------- Panneau de collecte par plateforme ----------
 
-interface PlatformData {
+interface CollectedImage {
+  url: string;
+  label: string;
+  type: "avatar" | "banner" | "cover";
+}
+
+interface FieldResult {
   platform: string;
   name: string | null;
-  imageUrl: string | null;
-  bannerUrl: string | null;
+  images: CollectedImage[];
   monthlyListeners: number | null;
   followers: number | null;
   subscriberCount: number | null;
@@ -351,114 +356,171 @@ function formatBigNumber(n: number | null): string {
   return String(n);
 }
 
-const PLATFORM_LABELS: Record<string, string> = {
-  spotify: "Spotify",
-  deezer: "Deezer",
-  youtube: "YouTube",
-  audiomack: "Audiomack",
+const FIELD_LABELS: Record<string, { label: string; icon: string }> = {
+  url_spotify: { label: "Spotify", icon: "🟢" },
+  url_deezer: { label: "Deezer", icon: "🎵" },
+  url_youtube: { label: "YouTube", icon: "▶️" },
+  url_youtube_music: { label: "YouTube Music", icon: "🎶" },
+  url_audiomack: { label: "Audiomack", icon: "🔊" },
+  url_instagram: { label: "Instagram", icon: "📸" },
 };
 
 function EnrichmentPanel({ artistId }: { artistId: string }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{
-    platforms: PlatformData[];
-    applied: { imageUrl: boolean; bannerUrl: boolean; primaryGenre: boolean };
-    warnings: string[];
-  } | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [loadingField, setLoadingField] = useState<string | null>(null);
+  const [results, setResults] = useState<Record<string, FieldResult>>({});
+  const [applying, setApplying] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
-  async function handleEnrich() {
-    setLoading(true);
-    setError(null);
-    setResult(null);
+  async function collectField(field: string) {
+    setLoadingField(field);
+    setToast(null);
     try {
-      const res = await fetch(`/api/admin/artistes/${artistId}/enrich`, { method: "POST" });
+      const res = await fetch(`/api/admin/artistes/${artistId}/enrich`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ field }),
+      });
       const json = await res.json();
-      if (!res.ok) { setError(json.error ?? "Erreur."); return; }
-      setResult({ platforms: json.platforms, applied: json.applied, warnings: json.warnings });
+      if (!res.ok) {
+        setToast(`❌ ${json.error ?? "Erreur."}`);
+        return;
+      }
+      setResults((prev) => ({ ...prev, [field]: json as FieldResult }));
+      setToast(`✓ ${FIELD_LABELS[field]?.label ?? field} : données collectées.`);
       router.refresh();
-    } catch { setError("Erreur réseau."); }
-    finally { setLoading(false); }
+    } catch {
+      setToast("❌ Erreur réseau.");
+    } finally {
+      setLoadingField(null);
+    }
   }
+
+  async function applyImage(imageUrl: string, target: "image_url" | "banner_url") {
+    setApplying(true);
+    try {
+      const res = await fetch(`/api/admin/artistes/${artistId}/enrich`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl, target }),
+      });
+      const json = await res.json();
+      setToast(res.ok ? `✓ ${json.message}` : `❌ ${json.error}`);
+      if (res.ok) router.refresh();
+    } catch {
+      setToast("❌ Erreur réseau.");
+    } finally {
+      setApplying(false);
+    }
+  }
+
+  // Toutes les images collectées depuis toutes les plateformes
+  const allImages = Object.values(results).flatMap((r) => r.images ?? []);
 
   return (
     <div>
       <p style={{ fontSize: "0.82rem", color: "var(--admin-muted)", margin: "0 0 0.8rem" }}>
-        Récupère automatiquement les données publiques depuis Spotify, Deezer, YouTube et Audiomack :
-        photo, bannière, auditeurs mensuels, abonnés, vues totales, genres, nombre d&apos;albums/titres.
-        Les champs vides de la fiche sont complétés. Les métriques sont sauvegardées dans les identités plateforme.
+        Cliquez sur un bouton pour collecter les données de cette plateforme uniquement,
+        depuis l&apos;URL renseignée ci-dessus. Aucune recherche aléatoire : seules les
+        URLs que vous avez saisies sont utilisées.
       </p>
 
-      <button
-        type="button"
-        className="btn btn--primary"
-        onClick={handleEnrich}
-        disabled={loading}
-      >
-        {loading ? "⟳ Enrichissement en cours…" : "🔄 Récupérer les données de toutes les plateformes"}
-      </button>
+      {/* Boutons de collecte par plateforme */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
+        {Object.entries(FIELD_LABELS).map(([field, { label, icon }]) => (
+          <button
+            key={field}
+            type="button"
+            className="btn btn--sm"
+            style={{ background: results[field] ? "var(--admin-ok)" : undefined, color: results[field] ? "#04210f" : undefined }}
+            onClick={() => collectField(field)}
+            disabled={loadingField !== null}
+          >
+            {loadingField === field ? "⟳…" : `${icon} Collecter ${label}`}
+          </button>
+        ))}
+      </div>
 
-      {error && <p style={{ color: "var(--admin-danger)", fontSize: "0.82rem", marginTop: "0.6rem" }}>{error}</p>}
+      {toast && <p style={{ fontSize: "0.82rem", color: toast.startsWith("✓") ? "var(--admin-ok)" : "var(--admin-danger)", margin: "0 0 0.8rem" }}>{toast}</p>}
 
-      {result && (
+      {/* Résultats de collecte */}
+      {Object.entries(results).map(([field, data]) => (
+        <div
+          key={field}
+          style={{
+            border: `1px solid ${data.error ? "var(--admin-warn)" : "var(--admin-border)"}`,
+            borderRadius: 10,
+            padding: "0.7rem",
+            marginBottom: "0.6rem",
+            background: "var(--admin-panel-2)",
+          }}
+        >
+          <strong style={{ fontSize: "0.85rem" }}>
+            {FIELD_LABELS[field]?.icon} {FIELD_LABELS[field]?.label ?? field}
+            {data.name && <span style={{ fontWeight: 400, color: "var(--admin-muted)", marginLeft: "0.4rem" }}>— {data.name}</span>}
+          </strong>
+
+          {data.error && <p style={{ fontSize: "0.75rem", color: "var(--admin-warn)", margin: "0.3rem 0 0" }}>⚠ {data.error}</p>}
+
+          <div style={{ fontSize: "0.78rem", color: "var(--admin-text)", lineHeight: 1.8, marginTop: "0.3rem" }}>
+            {data.monthlyListeners !== null && <div>🎧 Auditeurs mensuels : <strong>{formatBigNumber(data.monthlyListeners)}</strong></div>}
+            {data.followers !== null && <div>👥 Followers / Fans : <strong>{formatBigNumber(data.followers)}</strong></div>}
+            {data.subscriberCount !== null && <div>📺 Abonnés : <strong>{formatBigNumber(data.subscriberCount)}</strong></div>}
+            {data.totalViews !== null && <div>👁 Vues totales : <strong>{formatBigNumber(data.totalViews)}</strong></div>}
+            {data.albumCount !== null && <div>💿 Albums : <strong>{data.albumCount}</strong></div>}
+            {data.trackCount !== null && <div>🎵 Titres / Vidéos : <strong>{data.trackCount}</strong></div>}
+            {data.genres.length > 0 && <div>🏷️ Genres : {data.genres.join(", ")}</div>}
+          </div>
+
+          <p style={{ fontSize: "0.68rem", color: "var(--admin-muted)", margin: "0.2rem 0 0" }}>Méthode : {data.method}</p>
+        </div>
+      ))}
+
+      {/* Sélection d'images collectées */}
+      {allImages.length > 0 && (
         <div style={{ marginTop: "1rem" }}>
-          {/* Résumé des actions */}
-          {(result.applied.imageUrl || result.applied.bannerUrl || result.applied.primaryGenre) && (
-            <p style={{ fontSize: "0.82rem", color: "var(--admin-ok)", margin: "0 0 0.6rem" }}>
-              ✓ Mis à jour :
-              {result.applied.imageUrl && " photo de profil"}
-              {result.applied.bannerUrl && " · bannière"}
-              {result.applied.primaryGenre && " · genre principal"}
-            </p>
-          )}
-
-          {result.warnings.length > 0 && (
-            <details style={{ marginBottom: "0.8rem" }}>
-              <summary style={{ fontSize: "0.78rem", color: "var(--admin-warn)", cursor: "pointer" }}>
-                ⚠ {result.warnings.length} avertissement(s)
-              </summary>
-              <ul style={{ fontSize: "0.75rem", color: "var(--admin-muted)", paddingLeft: "1.2rem", margin: "0.3rem 0" }}>
-                {result.warnings.map((w, i) => <li key={i}>{w}</li>)}
-              </ul>
-            </details>
-          )}
-
-          {/* Tableau des résultats par plateforme */}
-          <div style={{ display: "grid", gap: "0.6rem", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
-            {result.platforms.map((pm) => (
-              <div
-                key={pm.platform}
-                style={{
-                  border: `1px solid ${pm.error ? "var(--admin-warn)" : "var(--admin-border)"}`,
-                  borderRadius: 10,
-                  padding: "0.7rem",
-                  background: "var(--admin-panel-2)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
-                  {pm.imageUrl && (
-                    <img src={pm.imageUrl} alt="" width={36} height={36} style={{ borderRadius: "50%", objectFit: "cover" }} />
+          <strong style={{ fontSize: "0.85rem" }}>📷 Images collectées — cliquez pour appliquer</strong>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem", marginTop: "0.6rem" }}>
+            {allImages.map((img, i) => (
+              <div key={`${img.url}-${i}`} style={{ textAlign: "center", width: img.type === "banner" ? 200 : 80 }}>
+                <img
+                  src={img.url}
+                  alt={img.label}
+                  style={{
+                    width: img.type === "banner" ? 200 : 80,
+                    height: img.type === "banner" ? 56 : 80,
+                    objectFit: "cover",
+                    borderRadius: img.type === "banner" ? 8 : "50%",
+                    border: "2px solid var(--admin-border)",
+                    cursor: "pointer",
+                  }}
+                  title={img.label}
+                />
+                <div style={{ display: "flex", gap: "0.2rem", justifyContent: "center", marginTop: "0.3rem" }}>
+                  <button
+                    type="button"
+                    className="btn btn--sm"
+                    disabled={applying}
+                    onClick={() => applyImage(img.url, "image_url")}
+                    title="Utiliser comme photo de profil"
+                    style={{ fontSize: "0.68rem", padding: "0.15rem 0.35rem" }}
+                  >
+                    📷 Profil
+                  </button>
+                  {img.type === "banner" && (
+                    <button
+                      type="button"
+                      className="btn btn--sm"
+                      disabled={applying}
+                      onClick={() => applyImage(img.url, "banner_url")}
+                      title="Utiliser comme bannière"
+                      style={{ fontSize: "0.68rem", padding: "0.15rem 0.35rem" }}
+                    >
+                      🖼️ Bannière
+                    </button>
                   )}
-                  <div>
-                    <strong style={{ fontSize: "0.85rem" }}>{PLATFORM_LABELS[pm.platform] ?? pm.platform}</strong>
-                    {pm.name && <span style={{ fontSize: "0.75rem", color: "var(--admin-muted)", marginLeft: "0.4rem" }}>{pm.name}</span>}
-                  </div>
                 </div>
-
-                <div style={{ fontSize: "0.78rem", color: "var(--admin-text)", lineHeight: 1.7 }}>
-                  {pm.monthlyListeners !== null && <div>🎧 Auditeurs mensuels : <strong>{formatBigNumber(pm.monthlyListeners)}</strong></div>}
-                  {pm.followers !== null && <div>👥 Followers / Fans : <strong>{formatBigNumber(pm.followers)}</strong></div>}
-                  {pm.subscriberCount !== null && <div>📺 Abonnés : <strong>{formatBigNumber(pm.subscriberCount)}</strong></div>}
-                  {pm.totalViews !== null && <div>👁 Vues totales : <strong>{formatBigNumber(pm.totalViews)}</strong></div>}
-                  {pm.albumCount !== null && <div>💿 Albums : <strong>{pm.albumCount}</strong></div>}
-                  {pm.trackCount !== null && <div>🎵 Titres / Vidéos : <strong>{pm.trackCount}</strong></div>}
-                  {pm.genres.length > 0 && <div>🏷️ Genres : {pm.genres.join(", ")}</div>}
-                  {pm.bannerUrl && <div>🖼️ <a href={pm.bannerUrl} target="_blank" rel="noreferrer" style={{ color: "var(--admin-accent-2)" }}>Voir la bannière</a></div>}
-                </div>
-
-                {pm.error && <p style={{ fontSize: "0.72rem", color: "var(--admin-warn)", margin: "0.3rem 0 0" }}>⚠ {pm.error}</p>}
-                <p style={{ fontSize: "0.68rem", color: "var(--admin-muted)", margin: "0.2rem 0 0" }}>via {pm.method}</p>
+                <p style={{ fontSize: "0.65rem", color: "var(--admin-muted)", margin: "0.15rem 0 0" }}>{img.label}</p>
               </div>
             ))}
           </div>
