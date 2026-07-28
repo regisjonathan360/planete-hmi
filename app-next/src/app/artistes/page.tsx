@@ -132,73 +132,107 @@ async function getVerifiedArtists(typeFilter?: string): Promise<PublicArtist[]> 
   return withAvatars;
 }
 
-interface Category {
-  label: string;
-  type: string;
-  title: string;
-  accent: string;
-  lead: (count: number) => string;
-}
-
-const CATEGORIES: Category[] = [
-  {
+/** Libellés affichés dans la sidebar : alignés sur le CHECK artist_type + la vue publique. */
+const CATEGORY_META: Record<string, { label: string; title: string; accent: string; lead: (n: number) => string }> = {
+  "": {
     label: "Tous les artistes",
-    type: "",
     title: "La galaxie des",
     accent: "artistes",
-    lead: (n) =>
-      `${n} artiste${n > 1 ? "s" : ""} vérifié${n > 1 ? "s" : ""} illuminent Planète HMI.`,
+    lead: (n) => `${n} artiste${n > 1 ? "s" : ""} vérifié${n > 1 ? "s" : ""} illuminent Planète HMI.`,
   },
-  {
+  group: {
     label: "Groupes",
-    type: "group",
     title: "Les",
     accent: "groupes",
-    lead: (n) => `${n} groupe${n > 1 ? "s" : ""} et orchestre${n > 1 ? "s" : ""} vérifié${n > 1 ? "s" : ""}.`,
+    lead: (n) => `${n} groupe${n > 1 ? "s" : ""} vérifié${n > 1 ? "s" : ""}.`,
   },
-  {
+  producer: {
     label: "Producteurs / Beatmakers",
-    type: "producer",
     title: "Les",
     accent: "producteurs",
-    lead: (n) =>
-      `${n} producteur${n > 1 ? "s" : ""} et beatmaker${n > 1 ? "s" : ""} crédité${n > 1 ? "s" : ""} sur les titres du catalogue.`,
+    lead: (n) => `${n} producteur${n > 1 ? "s" : ""} et beatmaker${n > 1 ? "s" : ""} crédité${n > 1 ? "s" : ""}.`,
   },
-  {
+  musician: {
     label: "Musiciens",
-    type: "musician",
     title: "Les",
     accent: "musiciens",
     lead: (n) => `${n} musicien${n > 1 ? "s" : ""} vérifié${n > 1 ? "s" : ""}.`,
   },
-  {
+  dj: {
     label: "DJ",
-    type: "dj",
     title: "Les",
     accent: "DJ",
     lead: (n) => `${n} DJ vérifié${n > 1 ? "s" : ""}.`,
   },
-  {
+  singer: {
     label: "Chanteurs",
-    type: "singer",
     title: "Les",
     accent: "chanteurs",
     lead: (n) => `${n} chanteur${n > 1 ? "s" : ""} ou chanteuse${n > 1 ? "s" : ""} vérifié${n > 1 ? "s" : ""}.`,
   },
-  {
+  rapper: {
     label: "Rappeurs",
-    type: "rapper",
     title: "Les",
     accent: "rappeurs",
     lead: (n) => `${n} rappeur${n > 1 ? "s" : ""} ou rappeuse${n > 1 ? "s" : ""} vérifié${n > 1 ? "s" : ""}.`,
   },
-];
+};
+
+interface CategoryWithCount {
+  type: string;
+  label: string;
+  title: string;
+  accent: string;
+  lead: (n: number) => string;
+  count: number;
+}
+
+/** Construit la liste des catégories avec le comptage réel par type en base. */
+async function buildCategories(): Promise<CategoryWithCount[]> {
+  const supabase = await createClient();
+
+  // Un seul aller-retour : comptage par artist_type pour tous les artistes actifs + vérifiés.
+  const { data: rows } = await supabase
+    .from("artists")
+    .select("artist_type")
+    .eq("is_active", true)
+    .eq("is_auto_generated", false)
+    .in("haitian_status", VERIFIED_STATUSES);
+
+  const counts = new Map<string, number>();
+  let total = 0;
+  for (const row of rows ?? []) {
+    const type = (row.artist_type as string) ?? "artist";
+    counts.set(type, (counts.get(type) ?? 0) + 1);
+    total++;
+  }
+  // Les producteurs/beatmakers comptent ensemble.
+  const producerCount = (counts.get("producer") ?? 0) + (counts.get("beatmaker") ?? 0);
+
+  const categories: CategoryWithCount[] = [
+    { ...CATEGORY_META[""], type: "", count: total },
+  ];
+
+  // On n'affiche que les catégories qui ont au moins 1 artiste vérifié.
+  const typeOrder = ["group", "producer", "musician", "dj", "singer", "rapper"];
+  for (const type of typeOrder) {
+    const cnt = type === "producer" ? producerCount : (counts.get(type) ?? 0);
+    if (cnt === 0) continue;
+    const meta = CATEGORY_META[type];
+    if (meta) categories.push({ ...meta, type, count: cnt });
+  }
+
+  return categories;
+}
 
 export default async function ArtistesPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
   const { type } = await searchParams;
-  const artists = await getVerifiedArtists(type);
+  const [artists, categories] = await Promise.all([
+    getVerifiedArtists(type),
+    buildCategories(),
+  ]);
   const activeType = type === "beatmaker" ? "producer" : type ?? "";
-  const category = CATEGORIES.find((c) => c.type === activeType) ?? CATEGORIES[0];
+  const category = categories.find((c) => c.type === activeType) ?? categories[0];
   const isProducerView = activeType === "producer";
 
   return (
@@ -228,7 +262,7 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
               style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}
               aria-label="Catégories d'artistes"
             >
-              {CATEGORIES.map((cat) => {
+              {categories.map((cat) => {
                 const isActive = cat.type === activeType;
                 return (
                   <a
@@ -236,7 +270,9 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
                     href={cat.type ? `/artistes?type=${cat.type}` : "/artistes"}
                     aria-current={isActive ? "page" : undefined}
                     style={{
-                      display: "block",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                       padding: "0.55rem 0.8rem",
                       borderRadius: 8,
                       fontSize: "0.82rem",
@@ -248,7 +284,18 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
                       transition: "all 0.15s",
                     }}
                   >
-                    {cat.label}
+                    <span>{cat.label}</span>
+                    <span
+                      style={{
+                        fontSize: "0.7rem",
+                        opacity: 0.6,
+                        background: isActive ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)",
+                        padding: "0.1rem 0.4rem",
+                        borderRadius: 999,
+                      }}
+                    >
+                      {cat.count}
+                    </span>
                   </a>
                 );
               })}
