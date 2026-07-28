@@ -414,6 +414,45 @@ function formatBigNumber(n: number | null): string {
   return String(n);
 }
 
+function hasUsableResult(data: FieldResult): boolean {
+  const hasSpecificName = Boolean(
+    data.name &&
+    !(data.platform === "instagram" && data.name.trim().toLowerCase() === "instagram"),
+  );
+  return Boolean(
+    hasSpecificName ||
+    data.description ||
+    data.images.length ||
+    data.genres.length ||
+    data.monthlyListeners !== null ||
+    data.followers !== null ||
+    data.subscriberCount !== null ||
+    data.totalViews !== null ||
+    data.popularity !== null ||
+    data.albumCount !== null ||
+    data.trackCount !== null
+  );
+}
+
+const COLLECTION_METHOD_LABELS: Record<string, string> = {
+  none: "Aucune donnée disponible",
+  web_api: "API officielle Spotify",
+  spotify_oembed: "Profil public Spotify (oEmbed)",
+  embed: "Page publique Spotify",
+  embed_metadata: "Ancienne lecture de page Spotify (limitée)",
+  page_metadata: "Métadonnées publiques de la page (limitées)",
+  youtube_data_api: "API officielle YouTube Data",
+  public_api: "API publique officielle",
+  oembed: "Métadonnées publiques oEmbed",
+};
+
+function formatCollectionMethod(method: string): string {
+  return method
+    .split("+")
+    .map((part) => COLLECTION_METHOD_LABELS[part] ?? part)
+    .join(" + ");
+}
+
 const FIELD_LABELS: Record<string, { label: string; icon: string }> = {
   url_spotify: { label: "Spotify", icon: "🟢" },
   url_deezer: { label: "Deezer", icon: "🎵" },
@@ -613,7 +652,13 @@ function EnrichmentPanel({
       }
       setResults((prev) => ({ ...prev, [field]: json as FieldResult }));
       setMetricSummaries(json.metricSummaries ?? []);
-      setToast(`✓ ${FIELD_LABELS[field]?.label ?? field} : données collectées.`);
+      if (json.error) {
+        setToast(`⚠ ${FIELD_LABELS[field]?.label ?? field} : ${json.error}`);
+      } else if (!hasUsableResult(json as FieldResult)) {
+        setToast(`⚠ ${FIELD_LABELS[field]?.label ?? field} : aucune donnée exploitable reçue.`);
+      } else {
+        setToast(`✓ ${FIELD_LABELS[field]?.label ?? field} : données collectées.`);
+      }
       router.refresh();
     } catch {
       setToast("❌ Erreur réseau.");
@@ -705,7 +750,14 @@ function EnrichmentPanel({
             key={field}
             type="button"
             className="btn btn--sm"
-            style={{ background: results[field] ? "var(--admin-ok)" : undefined, color: results[field] ? "#04210f" : undefined }}
+            style={{
+              background: results[field] && !results[field].error && hasUsableResult(results[field])
+                ? "var(--admin-ok)"
+                : undefined,
+              color: results[field] && !results[field].error && hasUsableResult(results[field])
+                ? "#04210f"
+                : undefined,
+            }}
             onClick={() => collectField(field)}
             disabled={loadingField !== null || loadingHistory || !availableFields.includes(field)}
             title={availableFields.includes(field) ? `Collecter ${label}` : `Enregistrez d'abord l'URL ${label}`}
@@ -739,6 +791,11 @@ function EnrichmentPanel({
           </strong>
 
           {data.error && <p style={{ fontSize: "0.75rem", color: "var(--admin-warn)", margin: "0.3rem 0 0" }}>⚠ {data.error}</p>}
+          {!data.error && !hasUsableResult(data) ? (
+            <p style={{ fontSize: "0.75rem", color: "var(--admin-warn)", margin: "0.3rem 0 0" }}>
+              ⚠ Aucune donnée exploitable n&apos;a été reçue.
+            </p>
+          ) : null}
           {data.description ? (
             <p style={{ fontSize: "0.75rem", color: "var(--admin-muted)", margin: "0.35rem 0" }}>
               {data.description.length > 320 ? `${data.description.slice(0, 320)}…` : data.description}
@@ -769,7 +826,7 @@ function EnrichmentPanel({
           </div>
 
           <p style={{ fontSize: "0.68rem", color: "var(--admin-muted)", margin: "0.2rem 0 0" }}>
-            Méthode : {data.method}
+            Source : {formatCollectionMethod(data.method)}
             {data.fetchedAt ? ` · ${new Date(data.fetchedAt).toLocaleString("fr")}` : ""}
           </p>
         </div>
