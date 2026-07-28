@@ -9,6 +9,11 @@ import {
   synchronizeArtistRoleFields,
   type ArtistType,
 } from "@/lib/artists/roles";
+import {
+  ARTIST_METRIC_KEYS,
+  type ArtistMetricKey,
+  type ArtistMetricSummary,
+} from "@/lib/artists/artist-metrics";
 
 const ADDITIONAL_ROLES = [
   { id: "arrangeur", label: "Arrangeur" },
@@ -402,8 +407,10 @@ interface FieldResult {
 
 function formatBigNumber(n: number | null): string {
   if (n === null) return "—";
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
+  const sign = n < 0 ? "-" : "";
+  const absolute = Math.abs(n);
+  if (absolute >= 1_000_000) return `${sign}${(absolute / 1_000_000).toFixed(1)}M`;
+  if (absolute >= 1_000) return `${sign}${(absolute / 1_000).toFixed(0)}k`;
   return String(n);
 }
 
@@ -424,6 +431,128 @@ const FIELD_LABELS: Record<string, { label: string; icon: string }> = {
   url_website: { label: "Site officiel", icon: "🌐" },
 };
 
+const METRIC_LABELS: Record<ArtistMetricKey, { label: string; icon: string }> = {
+  monthlyListeners: { label: "Auditeurs mensuels", icon: "🎧" },
+  followers: { label: "Followers / Fans", icon: "👥" },
+  subscriberCount: { label: "Abonnés", icon: "📺" },
+  totalViews: { label: "Vues totales", icon: "👁" },
+  popularity: { label: "Popularité", icon: "★" },
+  albumCount: { label: "Albums", icon: "💿" },
+  trackCount: { label: "Titres / Vidéos", icon: "🎵" },
+};
+
+function formatMetricValue(key: ArtistMetricKey, value: number): string {
+  return key === "popularity" ? `${value}/100` : formatBigNumber(value);
+}
+
+function formatMetricDelta(key: ArtistMetricKey, value: number): string {
+  return key === "popularity" ? `${value} point(s)` : formatBigNumber(value);
+}
+
+function MetricsSection({ summaries }: { summaries: ArtistMetricSummary[] }) {
+  return (
+    <section
+      style={{
+        border: "1px solid var(--admin-border)",
+        borderRadius: 12,
+        padding: "0.85rem",
+        marginBottom: "1rem",
+        background: "var(--admin-panel-2)",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}>
+        <div>
+          <strong style={{ fontSize: "0.92rem" }}>Indicateurs enregistrés</strong>
+          <p style={{ color: "var(--admin-muted)", fontSize: "0.72rem", margin: "0.2rem 0 0" }}>
+            Valeurs actuelles et évolution depuis le relevé précédent.
+          </p>
+        </div>
+        <span className="badge" style={{ alignSelf: "flex-start" }}>
+          {summaries.length} plateforme(s)
+        </span>
+      </div>
+
+      {!summaries.length ? (
+        <p style={{ color: "var(--admin-muted)", fontSize: "0.78rem", margin: "0.8rem 0 0" }}>
+          Aucun indicateur enregistré. Lancez une collecte pour créer le premier relevé.
+        </p>
+      ) : (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(245px, 1fr))",
+            gap: "0.65rem",
+            marginTop: "0.8rem",
+          }}
+        >
+          {summaries.map((summary) => {
+            const platform = FIELD_LABELS[summary.sourceField] ?? {
+              label: summary.platform,
+              icon: "📊",
+            };
+            return (
+              <article
+                key={summary.platform}
+                style={{
+                  border: "1px solid var(--admin-border)",
+                  borderRadius: 10,
+                  padding: "0.7rem",
+                  background: "var(--admin-panel)",
+                }}
+              >
+                <strong style={{ fontSize: "0.82rem" }}>
+                  {platform.icon} {platform.label}
+                </strong>
+                <div style={{ display: "grid", gap: "0.38rem", marginTop: "0.55rem" }}>
+                  {ARTIST_METRIC_KEYS.map((key) => {
+                    const value = summary.latest.values[key];
+                    if (value === null) return null;
+                    const delta = summary.deltas[key];
+                    return (
+                      <div
+                        key={key}
+                        style={{
+                          display: "flex",
+                          alignItems: "baseline",
+                          justifyContent: "space-between",
+                          gap: "0.5rem",
+                          fontSize: "0.75rem",
+                        }}
+                      >
+                        <span style={{ color: "var(--admin-muted)" }}>
+                          {METRIC_LABELS[key].icon} {METRIC_LABELS[key].label}
+                        </span>
+                        <span style={{ textAlign: "right" }}>
+                          <strong>{formatMetricValue(key, value)}</strong>
+                          {delta !== null && delta !== 0 ? (
+                            <small
+                              style={{
+                                display: "block",
+                                color: delta > 0 ? "var(--admin-ok)" : "var(--admin-warn)",
+                              }}
+                            >
+                              {delta > 0 ? "+" : ""}
+                              {formatMetricDelta(key, delta)}
+                            </small>
+                          ) : null}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p style={{ color: "var(--admin-muted)", fontSize: "0.66rem", margin: "0.6rem 0 0" }}>
+                  Relevé le {new Date(summary.latest.collectedAt).toLocaleString("fr")}
+                  {summary.previous ? " · comparaison disponible" : " · premier relevé"}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function EnrichmentPanel({
   artistId,
   urls,
@@ -434,6 +563,7 @@ function EnrichmentPanel({
   const router = useRouter();
   const [loadingField, setLoadingField] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, FieldResult>>({});
+  const [metricSummaries, setMetricSummaries] = useState<ArtistMetricSummary[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [applying, setApplying] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -445,7 +575,10 @@ function EnrichmentPanel({
       .then(async (response) => {
         const json = await response.json();
         if (!response.ok) throw new Error(json.error ?? "Historique indisponible.");
-        if (active) setResults(json.results ?? {});
+        if (active) {
+          setResults(json.results ?? {});
+          setMetricSummaries(json.metricSummaries ?? []);
+        }
       })
       .catch((error) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
@@ -479,6 +612,7 @@ function EnrichmentPanel({
         return;
       }
       setResults((prev) => ({ ...prev, [field]: json as FieldResult }));
+      setMetricSummaries(json.metricSummaries ?? []);
       setToast(`✓ ${FIELD_LABELS[field]?.label ?? field} : données collectées.`);
       router.refresh();
     } catch {
@@ -503,6 +637,7 @@ function EnrichmentPanel({
         return;
       }
       setResults((previous) => ({ ...previous, ...(json.results ?? {}) }));
+      setMetricSummaries(json.metricSummaries ?? []);
       const total = Object.keys(json.results ?? {}).length;
       const failures = Number(json.failures ?? 0);
       setToast(
@@ -547,6 +682,8 @@ function EnrichmentPanel({
 
   return (
     <div>
+      <MetricsSection summaries={metricSummaries} />
+
       <p style={{ fontSize: "0.82rem", color: "var(--admin-muted)", margin: "0 0 0.8rem" }}>
         Cliquez sur un bouton pour collecter les données de cette plateforme uniquement,
         depuis l&apos;URL renseignée ci-dessus. Aucune recherche aléatoire : seules les
