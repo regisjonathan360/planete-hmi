@@ -1,8 +1,24 @@
 /** Schémas de validation Zod pour les données Audiomack. */
 import { z } from "zod";
 
+/**
+ * Plateformes acceptées par le pipeline de collecte.
+ *
+ * Le schéma imposait `platform: "audiomack"` : toute autre plateforme voyait
+ * ses entrées rejetées en silence par `saveSnapshot`, donc aucun instantané ni
+ * calcul de mouvements pour Deezer, Spotify ou TikTok.
+ */
+export const COLLECTABLE_PLATFORMS = [
+  "audiomack",
+  "deezer",
+  "spotify",
+  "tiktok",
+  "youtube",
+  "apple_music",
+] as const;
+
 export const audiomackEntrySchema = z.object({
-  platform: z.literal("audiomack"),
+  platform: z.enum(COLLECTABLE_PLATFORMS),
   countryCode: z.literal("HT"),
   rank: z.number().int().min(1).max(200),
   platformTrackId: z.string().nullable(),

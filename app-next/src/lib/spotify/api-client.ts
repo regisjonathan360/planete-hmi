@@ -175,6 +175,109 @@ export async function searchSpotifyArtist(
   return best;
 }
 
+interface SpotifyPlaylistResponse {
+  name?: string;
+  snapshot_id?: string;
+  external_urls?: { spotify?: string };
+  images?: { url: string }[];
+  owner?: { display_name?: string };
+}
+
+export interface SpotifyPlaylistMeta {
+  name: string;
+  ownerName: string | null;
+  coverUrl: string | null;
+  /** Identifiant de version Spotify : change dès que la playlist est modifiée. */
+  snapshotId: string | null;
+  url: string;
+}
+
+/** Métadonnées d'une playlist. Renvoie null si l'identifiant est inconnu. */
+export async function getSpotifyPlaylistMeta(
+  playlistId: string,
+): Promise<SpotifyPlaylistMeta | null> {
+  const data = await spotifyGet<SpotifyPlaylistResponse>(
+    `/playlists/${playlistId}?fields=name,snapshot_id,external_urls,images,owner(display_name)`,
+  );
+  if (!data) return null;
+
+  return {
+    name: data.name ?? "Playlist Spotify",
+    ownerName: data.owner?.display_name ?? null,
+    coverUrl: data.images?.[0]?.url ?? null,
+    snapshotId: data.snapshot_id ?? null,
+    url: data.external_urls?.spotify ?? `https://open.spotify.com/playlist/${playlistId}`,
+  };
+}
+
+interface SpotifyPlaylistItemsResponse {
+  items?: {
+    track?: {
+      id?: string | null;
+      name?: string;
+      external_ids?: { isrc?: string };
+      external_urls?: { spotify?: string };
+      preview_url?: string | null;
+      album?: { name?: string; images?: { url: string }[] };
+      artists?: { id: string; name: string }[];
+    } | null;
+  }[];
+  next?: string | null;
+}
+
+export interface SpotifyPlaylistTrack {
+  id: string;
+  title: string;
+  artistNames: string[];
+  artworkUrl: string | null;
+  previewUrl: string | null;
+  url: string;
+  isrc: string | null;
+  albumName: string | null;
+}
+
+/**
+ * Pistes d'une playlist, dans l'ordre de la playlist.
+ * Pagine par lots de 100 (maximum imposé par l'API).
+ */
+export async function getSpotifyPlaylistTracks(
+  playlistId: string,
+  limit = 100,
+): Promise<SpotifyPlaylistTrack[]> {
+  const tracks: SpotifyPlaylistTrack[] = [];
+  const pageSize = 100;
+
+  for (let offset = 0; offset < limit; offset += pageSize) {
+    const page = await spotifyGet<SpotifyPlaylistItemsResponse>(
+      `/playlists/${playlistId}/tracks?limit=${Math.min(pageSize, limit - offset)}&offset=${offset}` +
+        "&fields=next,items(track(id,name,preview_url,external_ids(isrc),external_urls(spotify),album(name,images),artists(id,name)))",
+    );
+    if (!page) break;
+
+    for (const item of page.items ?? []) {
+      const track = item.track;
+      // Les épisodes de podcast et les titres retirés arrivent sans identifiant.
+      if (!track?.id || !track.name) continue;
+
+      tracks.push({
+        id: track.id,
+        title: track.name,
+        artistNames: (track.artists ?? []).map((a) => a.name).filter(Boolean),
+        artworkUrl: track.album?.images?.[0]?.url ?? null,
+        previewUrl: track.preview_url ?? null,
+        url: track.external_urls?.spotify ?? `https://open.spotify.com/track/${track.id}`,
+        isrc: track.external_ids?.isrc ?? null,
+        albumName: track.album?.name ?? null,
+      });
+      if (tracks.length >= limit) return tracks;
+    }
+
+    if (!page.next) break;
+  }
+
+  return tracks;
+}
+
 interface SpotifyTrackResponse {
   id: string;
   name: string;

@@ -62,7 +62,14 @@ export async function POST() {
   }));
 
   const supabase = createAdminClient();
-  const { created } = await saveSnapshot(supabase, entries, { sourceUpdatedAt: new Date().toISOString() });
+  const { created } = await saveSnapshot(supabase, entries, {
+    sourceUpdatedAt: new Date().toISOString(),
+    identity: {
+      platform: "deezer",
+      chartName: "Top 100 Haiti",
+      sourceUrl: `https://www.deezer.com/playlist/${PLAYLIST_ID}`,
+    },
+  });
 
   let draft;
   try {

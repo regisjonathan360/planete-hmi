@@ -129,14 +129,22 @@ export async function publishEdition(
     };
   });
 
+  // Métadonnées réelles de la source : sans cela, tout classement publié
+  // héritait du contexte et du mode d'ingestion d'Audiomack.
+  const { data: sourceRow } = await supabase
+    .from("chart_sources")
+    .select("chart_context, market_code, ingestion_mode, is_automatic")
+    .eq("source_key", sourceKey)
+    .maybeSingle();
+
   const payload = {
     source_key: data.edition.sourceKey,
     platform: data.edition.platform,
     display_name: data.edition.displayName,
-    chart_context: "Weekly 100: Haiti officiel Audiomack",
-    market_code: "HT",
-    ingestion_mode: "OFFICIAL_EXPORT",
-    is_automatic: true,
+    chart_context: (sourceRow?.chart_context as string | null) ?? data.edition.displayName,
+    market_code: (sourceRow?.market_code as string | null) ?? "HT",
+    ingestion_mode: (sourceRow?.ingestion_mode as string | null) ?? "VERIFIED_ADMIN_IMPORT",
+    is_automatic: sourceRow?.is_automatic ?? false,
     edition: {
       edition_id: editionId,
       period_start: data.edition.periodStart,
