@@ -54,7 +54,7 @@ const structuredData = JSON.stringify({
       description: SITE_DESCRIPTION,
       logo: {
         "@type": "ImageObject",
-        url: `${SITE_URL}/brand/icon-512x512.png`,
+        url: `${SITE_URL}/brand/icon-512x512.png?v=2`,
         width: 512,
         height: 512,
       },
@@ -83,22 +83,22 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.ico?v=2", sizes: "any" },
       {
-        url: "/brand/favicon-32x32.png",
+        url: "/brand/favicon-32x32.png?v=2",
         type: "image/png",
         sizes: "32x32",
       },
       {
-        url: "/brand/favicon-16x16.png",
+        url: "/brand/favicon-16x16.png?v=2",
         type: "image/png",
         sizes: "16x16",
       },
     ],
-    shortcut: [{ url: "/favicon.ico" }],
+    shortcut: [{ url: "/favicon.ico?v=2" }],
     apple: [
       {
-        url: "/brand/apple-touch-icon.png",
+        url: "/brand/apple-touch-icon.png?v=2",
         type: "image/png",
         sizes: "180x180",
       },
