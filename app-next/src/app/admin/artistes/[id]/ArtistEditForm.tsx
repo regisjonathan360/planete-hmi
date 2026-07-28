@@ -3,12 +3,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ARTIST_TAGS } from "@/lib/artists/tags";
+import {
+  roleTagForArtistType,
+  synchronizeArtistRoleFields,
+  type ArtistType,
+} from "@/lib/artists/roles";
 
-const ROLES = [
-  "chanteur", "chanteuse", "rappeur", "rappeuse", "beatmaker",
-  "producteur", "productrice", "compositeur", "compositrice",
-  "auteur", "autrice", "dj", "musicien", "musicienne",
-  "groupe", "orchestre", "arrangeur", "ingenieur_son",
+const ADDITIONAL_ROLES = [
+  { id: "arrangeur", label: "Arrangeur" },
+  { id: "ingenieur_son", label: "Ingénieur du son" },
+] as const;
+
+const ROLE_OPTIONS = [
+  ...ARTIST_TAGS.map(({ id, label }) => ({ id, label })),
+  ...ADDITIONAL_ROLES,
 ];
 
 const STATUSES = [
@@ -76,8 +85,24 @@ export function ArtistEditForm({
   }
 
   function toggleTag(tag: string) {
-    const tags = form.tags.includes(tag) ? form.tags.filter((t) => t !== tag) : [...form.tags, tag];
-    update("tags", tags);
+    setForm((prev) => {
+      const removing = prev.tags.includes(tag);
+      const tags = removing ? prev.tags.filter((t) => t !== tag) : [...prev.tags, tag];
+      const currentType = prev.artist_type as ArtistType;
+      const typeWithoutRemovedPrimary =
+        removing && roleTagForArtistType(currentType) === tag ? "artist" : currentType;
+      const synced = synchronizeArtistRoleFields(typeWithoutRemovedPrimary, tags);
+      return { ...prev, tags: synced.tags, artist_type: synced.artistType };
+    });
+  }
+
+  function changeArtistType(value: string) {
+    const synced = synchronizeArtistRoleFields(value as ArtistType, form.tags);
+    setForm((prev) => ({
+      ...prev,
+      artist_type: synced.artistType,
+      tags: synced.tags,
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -168,7 +193,7 @@ export function ArtistEditForm({
         <Row>
           <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
             <span style={labelStyle}>Type d&apos;artiste</span>
-            <select value={form.artist_type} onChange={(e) => update("artist_type", e.target.value)} style={inputStyle}>
+            <select value={form.artist_type} onChange={(e) => changeArtistType(e.target.value)} style={inputStyle}>
               <option value="artist">Artiste (solo)</option>
               <option value="group">Groupe / Orchestre</option>
               <option value="producer">Producteur</option>
@@ -209,20 +234,23 @@ export function ArtistEditForm({
 
       {/* Rôles */}
       <Fieldset title="Rôles / Étiquettes">
+        <p style={{ color: "var(--admin-muted)", fontSize: "0.78rem", marginTop: 0 }}>
+          Le type principal et les catégories publiques sont synchronisés automatiquement avec ces rôles.
+        </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-          {ROLES.map((role) => (
+          {ROLE_OPTIONS.map((role) => (
             <button
-              key={role}
+              key={role.id}
               type="button"
-              onClick={() => toggleTag(role)}
+              onClick={() => toggleTag(role.id)}
               className="btn btn--sm"
               style={{
-                background: form.tags.includes(role) ? "var(--admin-accent)" : "transparent",
-                borderColor: form.tags.includes(role) ? "var(--admin-accent)" : "var(--admin-border)",
-                color: form.tags.includes(role) ? "#fff" : "var(--admin-muted)",
+                background: form.tags.includes(role.id) ? "var(--admin-accent)" : "transparent",
+                borderColor: form.tags.includes(role.id) ? "var(--admin-accent)" : "var(--admin-border)",
+                color: form.tags.includes(role.id) ? "#fff" : "var(--admin-muted)",
               }}
             >
-              {role}
+              {role.label}
             </button>
           ))}
         </div>

@@ -157,7 +157,7 @@ async function insertProducer(
       haitian_status: "pending_review",
       is_auto_generated: true,
       is_active: true,
-      tags: [role === "beatmaker" ? "Beatmaker" : "Producteur"],
+      tags: ["beatmaker"],
     })
     .select("id")
     .single();

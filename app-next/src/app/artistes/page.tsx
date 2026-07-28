@@ -5,6 +5,7 @@ import Link from "next/link";
 import { HaitiShapeButton } from "@/components/HaitiMap/HaitiShapeButton";
 import { withFallbackAvatars } from "@/lib/artists/avatar";
 import { PRODUCER_ARTIST_TYPES, countProductionsByProducer } from "@/lib/producers/queries";
+import { canonicalizeArtistRoles } from "@/lib/artists/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,16 @@ const VERIFIED_STATUSES = [
   "verified_haitian_group",
 ];
 
+const CATEGORY_TAG_BY_TYPE: Record<string, string> = {
+  group: "groupe",
+  producer: "beatmaker",
+  beatmaker: "beatmaker",
+  musician: "musicien",
+  dj: "dj",
+  singer: "chanteur",
+  rapper: "rappeur",
+};
+
 async function getVerifiedArtists(typeFilter?: string): Promise<PublicArtist[]> {
   const supabase = await createClient();
 
@@ -41,7 +52,9 @@ async function getVerifiedArtists(typeFilter?: string): Promise<PublicArtist[]> 
   if (isProducerView) {
     query = query.in("artist_type", PRODUCER_ARTIST_TYPES as unknown as string[]);
   } else if (typeFilter) {
-    query = query.eq("artist_type", typeFilter).in("haitian_status", VERIFIED_STATUSES);
+    const roleTag = CATEGORY_TAG_BY_TYPE[typeFilter];
+    if (roleTag) query = query.contains("tags", [roleTag]);
+    query = query.in("haitian_status", VERIFIED_STATUSES);
   } else {
     // Grille générale : uniquement des artistes vérifiés, sans les profils
     // générés automatiquement (qui restent sur la page producteurs).
@@ -194,29 +207,26 @@ async function buildCategories(): Promise<CategoryWithCount[]> {
   // Un seul aller-retour : comptage par artist_type pour tous les artistes actifs + vérifiés.
   const { data: rows } = await supabase
     .from("artists")
-    .select("artist_type")
+    .select("tags")
     .eq("is_active", true)
     .in("haitian_status", VERIFIED_STATUSES);
 
   const counts = new Map<string, number>();
-  let total = 0;
   for (const row of rows ?? []) {
-    const type = (row.artist_type as string) ?? "artist";
-    counts.set(type, (counts.get(type) ?? 0) + 1);
-    total++;
+    for (const role of canonicalizeArtistRoles((row.tags as string[] | null) ?? [])) {
+      counts.set(role, (counts.get(role) ?? 0) + 1);
+    }
   }
-  // Les producteurs/beatmakers comptent ensemble.
-  const producerCount = (counts.get("producer") ?? 0) + (counts.get("beatmaker") ?? 0);
 
   const categories: CategoryWithCount[] = [
-    { ...CATEGORY_META[""], type: "", count: total },
+    { ...CATEGORY_META[""], type: "", count: rows?.length ?? 0 },
   ];
 
   // Les options restent toujours visibles. Un filtre vide affiche simplement
   // un compteur à zéro au lieu de faire disparaître la navigation latérale.
   const typeOrder = ["group", "producer", "musician", "dj", "singer", "rapper"];
   for (const type of typeOrder) {
-    const cnt = type === "producer" ? producerCount : (counts.get(type) ?? 0);
+    const cnt = counts.get(CATEGORY_TAG_BY_TYPE[type]) ?? 0;
     const meta = CATEGORY_META[type];
     if (meta) categories.push({ ...meta, type, count: cnt });
   }
