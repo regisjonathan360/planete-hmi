@@ -9,6 +9,11 @@ import { resolveChannelUrl } from "@/lib/youtube/api-client";
 import { sanitizeErrorMessage } from "@/lib/youtube/api-error";
 import { synchronizeArtistProfiles } from "@/lib/youtube/artist-channel-sync";
 import { createArtistChannelSyncStorage } from "@/lib/youtube/artist-channel-sync-storage";
+import {
+  ARTIST_TYPES,
+  synchronizeArtistRoleFields,
+  type ArtistType,
+} from "@/lib/artists/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -21,9 +26,7 @@ const TEXT_FIELDS = [
   "url_youtube", "url_threads", "url_website",
 ];
 
-const ARTIST_TYPES = new Set([
-  "artist", "group", "producer", "beatmaker", "dj", "musician", "singer", "rapper",
-]);
+const ARTIST_TYPE_SET = new Set<string>(ARTIST_TYPES);
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -57,7 +60,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   // Type d'artiste : valeurs alignées sur la contrainte CHECK de la table.
   if ("artist_type" in body) {
     const type = String(body.artist_type ?? "").trim();
-    if (!ARTIST_TYPES.has(type)) {
+    if (!ARTIST_TYPE_SET.has(type)) {
       return NextResponse.json({ error: "Type d'artiste inconnu." }, { status: 400 });
     }
     patch.artist_type = type;
@@ -80,6 +83,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if ("tags" in body && Array.isArray(body.tags)) {
     patch.tags = body.tags.filter((t: unknown) => typeof t === "string" && t.trim());
+  }
+
+  if ("artist_type" in patch && "tags" in patch) {
+    const synced = synchronizeArtistRoleFields(
+      patch.artist_type as ArtistType,
+      patch.tags as string[],
+    );
+    patch.artist_type = synced.artistType;
+    patch.tags = synced.tags;
   }
 
   patch.updated_at = new Date().toISOString();

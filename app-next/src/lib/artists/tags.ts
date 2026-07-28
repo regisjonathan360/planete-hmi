@@ -5,7 +5,14 @@
  * Palette de couleurs et icônes associées.
  */
 
-export type ArtistTag = "chanteur" | "rappeur" | "beatmaker" | "auteur_compositeur" | "groupe" | "dj";
+export type ArtistTag =
+  | "chanteur"
+  | "rappeur"
+  | "beatmaker"
+  | "auteur_compositeur"
+  | "groupe"
+  | "dj"
+  | "musicien";
 
 export interface TagMeta {
   id: ArtistTag;
@@ -57,6 +64,13 @@ export const ARTIST_TAGS: TagMeta[] = [
     icon: "🎧",
     color: "#f472b6",
     bgColor: "rgba(244, 114, 182, 0.15)",
+  },
+  {
+    id: "musicien",
+    label: "Musicien",
+    icon: "🎸",
+    color: "#22d3ee",
+    bgColor: "rgba(34, 211, 238, 0.15)",
   },
 ];
 
