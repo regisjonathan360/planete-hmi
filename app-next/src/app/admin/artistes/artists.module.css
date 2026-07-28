@@ -141,6 +141,32 @@
   font-size: 0.76rem;
 }
 
+.resultControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.8rem;
+}
+
+.pageSize {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--admin-muted);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.pageSize select {
+  height: 34px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  padding: 0 1.8rem 0 0.55rem;
+  font: inherit;
+}
+
 .listCard {
   padding: 0.55rem;
 }
@@ -207,15 +233,75 @@
   text-transform: none;
 }
 
-.empty p,
-.limitMessage {
+.empty p {
   color: var(--admin-muted);
   font-size: 0.78rem;
 }
 
-.limitMessage {
-  margin: 0;
-  padding: 1rem;
+.pagination {
+  display: grid;
+  grid-template-columns: minmax(92px, auto) 1fr minmax(92px, auto);
+  align-items: center;
+  gap: 0.7rem;
+  border-top: 1px solid var(--admin-border);
+  padding: 0.9rem 0.45rem 0.35rem;
+}
+
+.pageNumbers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.pageNumber,
+.pageNav {
+  min-width: 36px;
+  height: 36px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-panel-2);
+  color: var(--admin-text);
+  padding: 0 0.7rem;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pageNumber:hover:not(:disabled),
+.pageNav:hover:not(:disabled) {
+  border-color: var(--admin-accent);
+  color: var(--admin-accent);
+}
+
+.pageNumber:active:not(:disabled),
+.pageNav:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.pageNumber:focus-visible,
+.pageNav:focus-visible,
+.pageSize select:focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 2px;
+}
+
+.pageNumber.currentPage {
+  border-color: var(--admin-accent);
+  background: var(--admin-accent);
+  color: #fff;
+}
+
+.pageNav:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.ellipsis {
+  min-width: 24px;
+  color: var(--admin-muted);
   text-align: center;
 }
 
@@ -261,6 +347,25 @@
 
   .toolbar :global(.btn) {
     width: 100%;
+  }
+
+  .resultSummary,
+  .resultControls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .resultControls {
+    gap: 0.55rem;
+  }
+
+  .pagination {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pageNumbers {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
 
   .slug {

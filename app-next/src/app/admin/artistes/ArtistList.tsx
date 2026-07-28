@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import styles from "./artists.module.css";
 
+const PAGE_SIZE_OPTIONS = [25, 50, 100, 200] as const;
+
 export interface ArtistAdminRecord {
   id: string;
   name: string;
@@ -186,11 +188,32 @@ export function matchesArtistFilter(artist: ArtistAdminRecord, filter: FilterKey
   }
 }
 
+export function getPaginationItems(currentPage: number, totalPages: number): Array<number | "ellipsis"> {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const pages = new Set([1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
+  const visiblePages = [...pages]
+    .filter((candidate) => candidate >= 1 && candidate <= totalPages)
+    .sort((a, b) => a - b);
+  const items: Array<number | "ellipsis"> = [];
+
+  visiblePages.forEach((candidate, index) => {
+    if (index > 0 && candidate - visiblePages[index - 1] > 1) items.push("ellipsis");
+    items.push(candidate);
+  });
+
+  return items;
+}
+
 export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
   const [search, setSearch] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<FilterKey>("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [pageSize, setPageSize] = useState<number>(50);
+  const [page, setPage] = useState(1);
 
   const counts = useMemo(() => {
     const next = new Map<FilterKey, number>();
@@ -215,6 +238,25 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
   const selectedLabel = selectedFilter === "all"
     ? "Tous les artistes"
     : FILTER_GROUPS.flatMap((group) => group.items).find((item) => item.key === selectedFilter)?.label;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const firstResult = filtered.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const lastResult = Math.min(currentPage * pageSize, filtered.length);
+  const paginatedArtists = filtered.slice(firstResult ? firstResult - 1 : 0, lastResult);
+  const paginationItems = getPaginationItems(currentPage, totalPages);
+
+  function selectFilter(filter: FilterKey) {
+    setSelectedFilter(filter);
+    setPage(1);
+  }
+
+  function goToPage(nextPage: number) {
+    setPage(Math.min(Math.max(nextPage, 1), totalPages));
+    document.getElementById("artist-results-title")?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start",
+    });
+  }
 
   return (
     <div className={styles.layout}>
@@ -222,7 +264,7 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
         <button
           type="button"
           className={`${styles.filterButton} ${selectedFilter === "all" ? styles.active : ""}`}
-          onClick={() => setSelectedFilter("all")}
+          onClick={() => selectFilter("all")}
           aria-pressed={selectedFilter === "all"}
         >
           <span>Tous les artistes</span>
@@ -237,7 +279,7 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
                 type="button"
                 key={item.key}
                 className={`${styles.filterButton} ${selectedFilter === item.key ? styles.active : ""}`}
-                onClick={() => setSelectedFilter(item.key)}
+                onClick={() => selectFilter(item.key)}
                 aria-pressed={selectedFilter === item.key}
               >
                 <span>{item.label}</span>
@@ -257,12 +299,18 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
                 type="search"
                 placeholder="Nom de l’artiste"
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setPage(1);
+                }}
               />
             </label>
             <label>
               <span className={styles.visuallyHidden}>Statut d’identité</span>
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+              <select value={statusFilter} onChange={(event) => {
+                setStatusFilter(event.target.value);
+                setPage(1);
+              }}>
                 <option value="all">Tous les statuts</option>
                 <option value="verified_haitian">Vérifié haïtien</option>
                 <option value="verified_haitian_diaspora">Diaspora</option>
@@ -273,7 +321,10 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
             </label>
             <label>
               <span className={styles.visuallyHidden}>Visibilité</span>
-              <select value={activeFilter} onChange={(event) => setActiveFilter(event.target.value)}>
+              <select value={activeFilter} onChange={(event) => {
+                setActiveFilter(event.target.value);
+                setPage(1);
+              }}>
                 <option value="all">Actifs et masqués</option>
                 <option value="active">Actifs uniquement</option>
                 <option value="inactive">Masqués uniquement</option>
@@ -285,13 +336,31 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
           </div>
           <div className={styles.resultSummary}>
             <h2 id="artist-results-title">{selectedLabel}</h2>
-            <span>{filtered.length} résultat{filtered.length > 1 ? "s" : ""}</span>
+            <div className={styles.resultControls}>
+              <span>
+                {firstResult}–{lastResult} sur {filtered.length} artiste{filtered.length > 1 ? "s" : ""}
+              </span>
+              <label className={styles.pageSize}>
+                <span>Par page</span>
+                <select
+                  value={pageSize}
+                  onChange={(event) => {
+                    setPageSize(Number(event.target.value));
+                    setPage(1);
+                  }}
+                >
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <option key={size} value={size}>{size}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
           </div>
         </div>
 
         <div className={`admin-card ${styles.listCard}`}>
           <div className="entry-list">
-            {filtered.slice(0, 100).map((artist) => (
+            {paginatedArtists.map((artist) => (
               <Link
                 key={artist.id}
                 href={`/admin/artistes/${artist.id}`}
@@ -324,12 +393,43 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
                 <p>Modifiez les filtres ou complétez les fiches déjà ouvertes.</p>
               </div>
             ) : null}
-            {filtered.length > 100 ? (
-              <p className={styles.limitMessage}>
-                {filtered.length - 100} autres artistes. Affinez la recherche pour les afficher.
-              </p>
-            ) : null}
           </div>
+          {filtered.length > 0 ? (
+            <nav className={styles.pagination} aria-label="Pagination des artistes">
+              <button
+                type="button"
+                className={styles.pageNav}
+                disabled={currentPage === 1}
+                onClick={() => goToPage(currentPage - 1)}
+              >
+                Précédent
+              </button>
+              <div className={styles.pageNumbers}>
+                {paginationItems.map((item, index) => item === "ellipsis" ? (
+                  <span className={styles.ellipsis} key={`ellipsis-${index}`} aria-hidden="true">…</span>
+                ) : (
+                  <button
+                    type="button"
+                    key={item}
+                    className={`${styles.pageNumber} ${item === currentPage ? styles.currentPage : ""}`}
+                    onClick={() => goToPage(item)}
+                    aria-current={item === currentPage ? "page" : undefined}
+                    aria-label={`Page ${item}`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className={styles.pageNav}
+                disabled={currentPage === totalPages}
+                onClick={() => goToPage(currentPage + 1)}
+              >
+                Suivant
+              </button>
+            </nav>
+          ) : null}
         </div>
       </section>
     </div>
