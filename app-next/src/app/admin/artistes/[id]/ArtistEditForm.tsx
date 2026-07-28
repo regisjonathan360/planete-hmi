@@ -258,6 +258,11 @@ export function ArtistEditForm({
         <Row><Field label="Site web" value={form.url_website} onChange={(v) => update("url_website", v)} /></Row>
       </Fieldset>
 
+      {/* Enrichissement multi-plateforme */}
+      <Fieldset title="Enrichissement automatique">
+        <EnrichmentPanel artistId={artist.id as string} />
+      </Fieldset>
+
       {message ? (
         <p
           role="status"
@@ -318,5 +323,147 @@ function Field({ label, value, onChange, textarea, type }: {
         <input type={type ?? "text"} value={value} onChange={(e) => onChange(e.target.value)} style={inputStyle} />
       )}
     </label>
+  );
+}
+
+// ---------- Panneau d'enrichissement automatique ----------
+
+interface PlatformData {
+  platform: string;
+  name: string | null;
+  imageUrl: string | null;
+  bannerUrl: string | null;
+  monthlyListeners: number | null;
+  followers: number | null;
+  subscriberCount: number | null;
+  totalViews: number | null;
+  genres: string[];
+  albumCount: number | null;
+  trackCount: number | null;
+  method: string;
+  error: string | null;
+}
+
+function formatBigNumber(n: number | null): string {
+  if (n === null) return "—";
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
+  return String(n);
+}
+
+const PLATFORM_LABELS: Record<string, string> = {
+  spotify: "Spotify",
+  deezer: "Deezer",
+  youtube: "YouTube",
+  audiomack: "Audiomack",
+};
+
+function EnrichmentPanel({ artistId }: { artistId: string }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{
+    platforms: PlatformData[];
+    applied: { imageUrl: boolean; bannerUrl: boolean; primaryGenre: boolean };
+    warnings: string[];
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleEnrich() {
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const res = await fetch(`/api/admin/artistes/${artistId}/enrich`, { method: "POST" });
+      const json = await res.json();
+      if (!res.ok) { setError(json.error ?? "Erreur."); return; }
+      setResult({ platforms: json.platforms, applied: json.applied, warnings: json.warnings });
+      router.refresh();
+    } catch { setError("Erreur réseau."); }
+    finally { setLoading(false); }
+  }
+
+  return (
+    <div>
+      <p style={{ fontSize: "0.82rem", color: "var(--admin-muted)", margin: "0 0 0.8rem" }}>
+        Récupère automatiquement les données publiques depuis Spotify, Deezer, YouTube et Audiomack :
+        photo, bannière, auditeurs mensuels, abonnés, vues totales, genres, nombre d&apos;albums/titres.
+        Les champs vides de la fiche sont complétés. Les métriques sont sauvegardées dans les identités plateforme.
+      </p>
+
+      <button
+        type="button"
+        className="btn btn--primary"
+        onClick={handleEnrich}
+        disabled={loading}
+      >
+        {loading ? "⟳ Enrichissement en cours…" : "🔄 Récupérer les données de toutes les plateformes"}
+      </button>
+
+      {error && <p style={{ color: "var(--admin-danger)", fontSize: "0.82rem", marginTop: "0.6rem" }}>{error}</p>}
+
+      {result && (
+        <div style={{ marginTop: "1rem" }}>
+          {/* Résumé des actions */}
+          {(result.applied.imageUrl || result.applied.bannerUrl || result.applied.primaryGenre) && (
+            <p style={{ fontSize: "0.82rem", color: "var(--admin-ok)", margin: "0 0 0.6rem" }}>
+              ✓ Mis à jour :
+              {result.applied.imageUrl && " photo de profil"}
+              {result.applied.bannerUrl && " · bannière"}
+              {result.applied.primaryGenre && " · genre principal"}
+            </p>
+          )}
+
+          {result.warnings.length > 0 && (
+            <details style={{ marginBottom: "0.8rem" }}>
+              <summary style={{ fontSize: "0.78rem", color: "var(--admin-warn)", cursor: "pointer" }}>
+                ⚠ {result.warnings.length} avertissement(s)
+              </summary>
+              <ul style={{ fontSize: "0.75rem", color: "var(--admin-muted)", paddingLeft: "1.2rem", margin: "0.3rem 0" }}>
+                {result.warnings.map((w, i) => <li key={i}>{w}</li>)}
+              </ul>
+            </details>
+          )}
+
+          {/* Tableau des résultats par plateforme */}
+          <div style={{ display: "grid", gap: "0.6rem", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+            {result.platforms.map((pm) => (
+              <div
+                key={pm.platform}
+                style={{
+                  border: `1px solid ${pm.error ? "var(--admin-warn)" : "var(--admin-border)"}`,
+                  borderRadius: 10,
+                  padding: "0.7rem",
+                  background: "var(--admin-panel-2)",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
+                  {pm.imageUrl && (
+                    <img src={pm.imageUrl} alt="" width={36} height={36} style={{ borderRadius: "50%", objectFit: "cover" }} />
+                  )}
+                  <div>
+                    <strong style={{ fontSize: "0.85rem" }}>{PLATFORM_LABELS[pm.platform] ?? pm.platform}</strong>
+                    {pm.name && <span style={{ fontSize: "0.75rem", color: "var(--admin-muted)", marginLeft: "0.4rem" }}>{pm.name}</span>}
+                  </div>
+                </div>
+
+                <div style={{ fontSize: "0.78rem", color: "var(--admin-text)", lineHeight: 1.7 }}>
+                  {pm.monthlyListeners !== null && <div>🎧 Auditeurs mensuels : <strong>{formatBigNumber(pm.monthlyListeners)}</strong></div>}
+                  {pm.followers !== null && <div>👥 Followers / Fans : <strong>{formatBigNumber(pm.followers)}</strong></div>}
+                  {pm.subscriberCount !== null && <div>📺 Abonnés : <strong>{formatBigNumber(pm.subscriberCount)}</strong></div>}
+                  {pm.totalViews !== null && <div>👁 Vues totales : <strong>{formatBigNumber(pm.totalViews)}</strong></div>}
+                  {pm.albumCount !== null && <div>💿 Albums : <strong>{pm.albumCount}</strong></div>}
+                  {pm.trackCount !== null && <div>🎵 Titres / Vidéos : <strong>{pm.trackCount}</strong></div>}
+                  {pm.genres.length > 0 && <div>🏷️ Genres : {pm.genres.join(", ")}</div>}
+                  {pm.bannerUrl && <div>🖼️ <a href={pm.bannerUrl} target="_blank" rel="noreferrer" style={{ color: "var(--admin-accent-2)" }}>Voir la bannière</a></div>}
+                </div>
+
+                {pm.error && <p style={{ fontSize: "0.72rem", color: "var(--admin-warn)", margin: "0.3rem 0 0" }}>⚠ {pm.error}</p>}
+                <p style={{ fontSize: "0.68rem", color: "var(--admin-muted)", margin: "0.2rem 0 0" }}>via {pm.method}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
