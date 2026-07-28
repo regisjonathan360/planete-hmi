@@ -13,13 +13,19 @@ import { createArtistChannelSyncStorage } from "@/lib/youtube/artist-channel-syn
 export const dynamic = "force-dynamic";
 
 const TEXT_FIELDS = [
-  "name", "slug", "bio", "city", "birth_place", "label", "primary_genre", "real_name",
+  "name", "slug", "bio", "city", "birth_place", "birth_city", "label", "primary_genre", "real_name",
   "birth_date", "haitian_status", "image_url", "banner_url",
   "url_spotify", "url_apple_music", "url_youtube_music", "url_audiomack",
   "url_deezer", "url_soundcloud", "url_tidal",
   "url_instagram", "url_tiktok", "url_twitter", "url_facebook",
   "url_youtube", "url_threads", "url_website",
 ];
+
+const ARTIST_TYPES = new Set([
+  "artist", "group", "producer", "beatmaker", "dj", "musician", "singer", "rapper",
+]);
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAdmin();
@@ -46,6 +52,30 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if ("is_active" in body) {
     patch.is_active = !!body.is_active;
+  }
+
+  // Type d'artiste : valeurs alignées sur la contrainte CHECK de la table.
+  if ("artist_type" in body) {
+    const type = String(body.artist_type ?? "").trim();
+    if (!ARTIST_TYPES.has(type)) {
+      return NextResponse.json({ error: "Type d'artiste inconnu." }, { status: 400 });
+    }
+    patch.artist_type = type;
+  }
+
+  // Rattachement à la carte : département et commune de naissance.
+  for (const field of ["birth_department_id", "birth_commune_id"] as const) {
+    if (!(field in body)) continue;
+    const raw = body[field];
+    if (raw === "" || raw === null) {
+      patch[field] = null;
+      continue;
+    }
+    const value = String(raw).trim();
+    if (!UUID_RE.test(value)) {
+      return NextResponse.json({ error: `${field} invalide.` }, { status: 400 });
+    }
+    patch[field] = value;
   }
 
   if ("tags" in body && Array.isArray(body.tags)) {

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/SiteHeader";
-import { HaitiMapPage } from "./HaitiMapPage";
+import { HaitiMapPage, type MapArtist } from "./HaitiMapPage";
+import { resolveFallbackAvatars } from "@/lib/artists/avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -13,20 +14,33 @@ export default async function CartePage() {
 
   const { data: artists } = await supabase
     .from("artists")
-    .select("id, name, slug, image_url, birth_department_id, haiti_departments(code, name)")
+    .select(
+      "id, name, slug, image_url, birth_department_id, birth_commune_id, haiti_departments(code, name)",
+    )
     .not("birth_department_id", "is", null)
     .eq("is_active", true)
-    .limit(200);
+    .limit(400);
 
-  const artistsByDepartment: Record<string, Array<{ id: string; name: string; image_url: string | null }>> = {};
-  for (const artist of artists ?? []) {
+  const rows = artists ?? [];
+
+  // Photo manquante : récupérée depuis une plateforme rattachée à la fiche.
+  const fallbacks = await resolveFallbackAvatars(
+    supabase,
+    rows.filter((a) => !a.image_url).map((a) => a.id as string),
+  );
+
+  const artistsByDepartment: Record<string, MapArtist[]> = {};
+  for (const artist of rows) {
     const dept = artist.haiti_departments as unknown as { code: string; name: string } | null;
     if (!dept) continue;
     if (!artistsByDepartment[dept.code]) artistsByDepartment[dept.code] = [];
     artistsByDepartment[dept.code].push({
       id: artist.id as string,
       name: artist.name as string,
-      image_url: artist.image_url as string | null,
+      slug: artist.slug as string,
+      communeId: (artist.birth_commune_id as string) ?? null,
+      imageUrl:
+        (artist.image_url as string | null) ?? fallbacks.get(artist.id as string) ?? null,
     });
   }
 

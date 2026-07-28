@@ -137,6 +137,11 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.artist-card__meta {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  color: rgba(244, 239, 228, 0.6);
+}
 .artist-card__tags {
   display: flex;
   gap: 0.3rem;

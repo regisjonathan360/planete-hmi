@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ArtistTopVideo } from "@/components/ArtistTopVideo";
 import type { Metadata } from "next";
@@ -22,6 +23,12 @@ import {
   SiYoutube,
   SiYoutubemusic,
 } from "react-icons/si";
+import { artistAvatarSrc, resolveFallbackAvatars } from "@/lib/artists/avatar";
+import {
+  PRODUCER_ARTIST_TYPES,
+  PRODUCTION_ROLE_LABELS,
+  getProductionsForProducer,
+} from "@/lib/producers/queries";
 import "./artist-profile.css";
 import "@/components/artist-top-video.css";
 
@@ -234,6 +241,35 @@ export default async function ArtistProfilePage({ params }: Props) {
   const isClaimed = !!artist.user_id;
   const hasTikTokUrl = !!artist.url_tiktok;
 
+  // Photo de profil : celle de la fiche, sinon celle d'une plateforme rattachée.
+  const fallbackAvatars = artist.image_url
+    ? new Map<string, string>()
+    : await resolveFallbackAvatars(supabase, [artist.id as string]);
+  const avatarSrc = artistAvatarSrc(
+    artist.image_url as string | null,
+    fallbackAvatars.get(artist.id as string),
+  );
+
+  // Section « Productions » : producteurs / beatmakers, ou tout artiste crédité.
+  const isProducerProfile = PRODUCER_ARTIST_TYPES.includes(
+    artist.artist_type as (typeof PRODUCER_ARTIST_TYPES)[number],
+  );
+  const productions = await getProductionsForProducer(supabase, artist.id as string);
+
+  // Origine géographique : commune / département rattachés à la carte.
+  let origin: string | null =
+    (artist.birth_city as string) || (artist.birth_place as string) || null;
+  if (artist.birth_department_id) {
+    const { data: department } = await supabase
+      .from("haiti_departments")
+      .select("name")
+      .eq("id", artist.birth_department_id)
+      .maybeSingle();
+    if (department?.name) {
+      origin = origin ? `${origin}, ${department.name}` : (department.name as string);
+    }
+  }
+
   return (
     <>
       <SiteHeader />
@@ -254,7 +290,7 @@ export default async function ArtistProfilePage({ params }: Props) {
             <Image
               unoptimized
               className="artist-profile__avatar"
-              src={artist.image_url ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"}
+              src={avatarSrc}
               alt={artist.name}
               width={140}
               height={140}
@@ -268,6 +304,12 @@ export default async function ArtistProfilePage({ params }: Props) {
                   ))}
                 </div>
               )}
+              {isProducerProfile && (
+                <p className="artist-profile__role-badge">
+                  🎛️ {PRODUCTION_ROLE_LABELS[artist.artist_type as string] ?? "Producteur"}
+                </p>
+              )}
+              {origin && <p className="artist-profile__city">🗺️ Originaire de {origin}</p>}
               {artist.city && <p className="artist-profile__city">📍 {artist.city}</p>}
               {artist.label && <p className="artist-profile__label">🏷️ {artist.label}</p>}
               {artist.bio && <p className="artist-profile__bio">{artist.bio}</p>}
@@ -363,6 +405,66 @@ export default async function ArtistProfilePage({ params }: Props) {
                       <span className="artist-profile__chart-genre">{entry.genre}</span>
                     )}
                   </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Productions (producteurs / beatmakers) */}
+          {productions.length > 0 && (
+            <section className="artist-profile__section">
+              <h2 className="artist-profile__section-title">
+                🎛️ {isProducerProfile ? "Productions" : "Titres produits"}
+                <span className="artist-profile__section-count">{productions.length}</span>
+              </h2>
+              <div className="artist-profile__productions">
+                {productions.map((production) => (
+                  <article key={production.id} className="production-card">
+                    <div
+                      className="production-card__art"
+                      style={
+                        production.artworkUrl
+                          ? { backgroundImage: `url(${production.artworkUrl})` }
+                          : undefined
+                      }
+                      aria-hidden="true"
+                    >
+                      {!production.artworkUrl && <span>♪</span>}
+                    </div>
+                    <div className="production-card__body">
+                      <h3 className="production-card__title">{production.title}</h3>
+                      {production.performers.length > 0 && (
+                        <p className="production-card__performers">
+                          {production.performers.map((performer, i) => (
+                            <span key={performer.slug}>
+                              {i > 0 && ", "}
+                              <Link href={`/artistes/${performer.slug}`}>{performer.name}</Link>
+                            </span>
+                          ))}
+                        </p>
+                      )}
+                      <p className="production-card__meta">
+                        <span className="production-card__role">
+                          {PRODUCTION_ROLE_LABELS[production.role] ?? production.role}
+                        </span>
+                        {production.releaseDate && (
+                          <span>{production.releaseDate.slice(0, 4)}</span>
+                        )}
+                        {production.isVerified ? (
+                          <span className="production-card__badge production-card__badge--ok">
+                            ✓ Crédit vérifié
+                          </span>
+                        ) : (
+                          <span
+                            className="production-card__badge"
+                            title={production.creditNote ?? undefined}
+                          >
+                            Crédit à confirmer
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </article>
                 ))}
               </div>
             </section>
