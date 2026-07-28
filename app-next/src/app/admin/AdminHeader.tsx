@@ -23,6 +23,9 @@ export function AdminHeader({ email, active }: { email: string | null; active?: 
         <Link href="/admin" className={active === "home" ? "is-active" : ""}>
           Tableau de bord
         </Link>
+        <Link href="/admin/accueil" className={active === "accueil" ? "is-active" : ""}>
+          Page d&apos;accueil
+        </Link>
         <Link href="/admin/audiomack" className={active === "audiomack" ? "is-active" : ""}>
           Audiomack
         </Link>

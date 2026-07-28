@@ -3,11 +3,15 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SOURCE_KEY_PAR_SLUG } from "@/lib/charts/format";
 import { getPlatformChart } from "@/lib/charts/queries/get-platform-chart";
 import { buildAudiomackTickerHtml } from "@/lib/home/audiomack-ticker";
+import { getPublishedHomepageChart } from "@/lib/home/homepage-chart";
+import { buildPodiumHtml } from "@/lib/home/podium-html";
+import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   let tickerHtml = buildAudiomackTickerHtml([]);
+  let podiumHtml = "";
 
   try {
     const chart = await getPlatformChart(
@@ -27,14 +31,33 @@ export default async function HomePage() {
     // La page reste disponible si le classement est momentanément inaccessible.
   }
 
+  try {
+    const supabase = await createClient();
+    const entries = await getPublishedHomepageChart(supabase);
+    podiumHtml = buildPodiumHtml(entries);
+  } catch {
+    // En cas d'erreur, le podium statique de démo reste en place.
+  }
+
+  // Si le classement planétaire est publié, on remplace toute la section podium
+  // du HTML statique par le vrai contenu.
+  const replacements = [
+    { marker: "<!-- AUDIOMACK_TICKER -->", html: tickerHtml },
+  ];
+
+  if (podiumHtml) {
+    replacements.push({
+      marker: "<!-- PODIUM_CONTENT -->",
+      html: podiumHtml,
+    });
+  }
+
   return (
     <>
       <SiteHeader />
       <StaticPage
         filename="index.html"
-        replacements={[
-          { marker: "<!-- AUDIOMACK_TICKER -->", html: tickerHtml },
-        ]}
+        replacements={replacements}
         hideStaticHeader
       />
     </>
