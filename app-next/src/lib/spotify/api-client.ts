@@ -134,6 +134,109 @@ interface SpotifySearchResponse {
   };
 }
 
+interface SpotifyArtistResponse {
+  id: string;
+  name: string;
+  followers?: { total?: number };
+}
+
+/**
+ * Nombre d'auditeurs mensuels d'un artiste Spotify.
+ *
+ * L'API Web officielle n'expose pas directement monthly_listeners sur
+ * l'endpoint /artists/{id}. On récupère donc le nombre de followers comme
+ * approximation la plus fiable disponible sans scraping.
+ *
+ * Si SPOTIFY_CLIENT_ID n'est pas configuré, on utilise la page publique embed
+ * de l'artiste qui expose le chiffre exact dans __NEXT_DATA__.
+ */
+export async function getSpotifyArtistMonthlyListeners(
+  artistId: string,
+): Promise<{ monthlyListeners: number | null; followers: number | null; method: string }> {
+  // Tentative 1 : page embed publique (monthly_listeners exact)
+  try {
+    const embedRes = await fetch(
+      `https://open.spotify.com/embed/artist/${encodeURIComponent(artistId)}`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+          Accept: "text/html",
+        },
+        cache: "no-store",
+      },
+    );
+    if (embedRes.ok) {
+      const html = await embedRes.text();
+      const match = /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(html);
+      if (match) {
+        const nextData = JSON.parse(match[1]) as {
+          props?: {
+            pageProps?: {
+              state?: {
+                data?: {
+                  entity?: { monthlyListeners?: number; stats?: { monthlyListeners?: number; followers?: number } };
+                };
+              };
+            };
+          };
+        };
+        const entity = nextData?.props?.pageProps?.state?.data?.entity;
+        const ml =
+          entity?.monthlyListeners ??
+          entity?.stats?.monthlyListeners ??
+          null;
+        const followers = entity?.stats?.followers ?? null;
+        if (typeof ml === "number" && ml > 0) {
+          return { monthlyListeners: ml, followers, method: "embed" };
+        }
+      }
+    }
+  } catch {
+    // fallback ci-dessous
+  }
+
+  // Tentative 2 : Web API (followers uniquement, pas monthly_listeners)
+  if (isSpotifyConfigured()) {
+    try {
+      const data = await spotifyGet<SpotifyArtistResponse>(`/artists/${artistId}`);
+      if (data) {
+        return {
+          monthlyListeners: null,
+          followers: data.followers?.total ?? null,
+          method: "web_api",
+        };
+      }
+    } catch {
+      // pas bloquant
+    }
+  }
+
+  return { monthlyListeners: null, followers: null, method: "none" };
+}
+
+/**
+ * Cherche un artiste par son nom et retourne ses monthly listeners.
+ * Utile quand on n'a pas l'ID Spotify de l'artiste.
+ */
+export async function searchArtistMonthlyListeners(
+  name: string,
+): Promise<{
+  artistId: string | null;
+  monthlyListeners: number | null;
+  followers: number | null;
+  method: string;
+}> {
+  // D'abord trouver l'artiste
+  const profile = await searchSpotifyArtist(name, 0.65);
+  if (!profile) {
+    return { artistId: null, monthlyListeners: null, followers: null, method: "not_found" };
+  }
+
+  const result = await getSpotifyArtistMonthlyListeners(profile.id);
+  return { artistId: profile.id, ...result };
+}
+
 /**
  * Cherche le profil Spotify d'un artiste par son nom.
  *

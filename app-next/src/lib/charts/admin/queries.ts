@@ -104,7 +104,7 @@ export async function getAdminChartData(
   const { data: entryRows } = await supabase
     .from("chart_entries")
     .select(
-      "id, track_id, platform_track_id, source_position, filtered_position, admin_position, is_hidden, is_excluded, exclusion_reason, display_title, display_artist, display_artwork_url, display_url, genre, raw_track_title, raw_artist_text"
+      "id, track_id, platform_track_id, source_position, filtered_position, admin_position, is_hidden, is_excluded, exclusion_reason, display_title, display_artist, display_artwork_url, display_url, genre, raw_track_title, raw_artist_text, metric_value, metric_unit"
     )
     .eq("chart_edition_id", editionId);
 
@@ -250,6 +250,8 @@ export async function getAdminChartData(
         haitianStatus: primary?.status ?? null,
         artistIsActive: primary?.isActive ?? true,
         isEligible: eligible,
+        metricValue: (r.metric_value as number) ?? null,
+        metricUnit: (r.metric_unit as string) ?? null,
       };
     })
     .sort((a, b) => {
