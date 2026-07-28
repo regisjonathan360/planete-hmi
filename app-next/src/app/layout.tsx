@@ -73,6 +73,7 @@ export default function RootLayout({
         {children}
         <DonationPrompt />
         <Script src="/assets/js/main.js" strategy="afterInteractive" />
+        <Script src="/assets/js/features.js" strategy="afterInteractive" />
       </body>
     </html>
   );

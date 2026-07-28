@@ -728,6 +728,8 @@ a.section-link:hover { color: var(--flame-orange); }
 .result__meta { display: flex; flex-direction: column; min-width: 0; margin-right: auto; }
 .result__title { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .result__artist { font-family: var(--font-mono); font-size: 0.78rem; color: var(--cream-dim); }
+.result--artist { text-decoration: none; }
+.result__open { color: var(--flame-orange); font-size: 1.25rem; padding: 0 0.45rem; }
 .result__play, .result__remove { width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; cursor: pointer;
   border: 1px solid var(--line-2); background: transparent; color: var(--cream); transition: 0.2s; }
 .result__play:hover { background: var(--flame-orange); border-color: var(--flame-orange); color: #160500; }

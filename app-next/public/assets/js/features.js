@@ -1,9 +1,9 @@
 /* =========================================================
    Planète HMI — Fonctionnalités client
-   1) Recherche globale (overlay) via l'API publique Deezer
+   1) Recherche globale : profils publics Planète HMI + titres Deezer
    2) Favoris persistants (localStorage) : cœur sur les cartes,
       compteur dans l'en-tête, panneau de gestion.
-   Aucun backend, aucune dépendance.
+   Sans dépendance côté navigateur.
    ========================================================= */
 (function () {
   "use strict";
@@ -83,6 +83,10 @@
     setTimeout(function () { sInput.focus(); }, 40);
   }
   function closeSearch() {
+    if (searchAbort) {
+      searchAbort.abort();
+      searchAbort = null;
+    }
     searchOverlay.hidden = true;
     document.body.classList.remove("no-scroll");
     sResults.innerHTML = ""; sInput.value = ""; stopAudio();
@@ -90,6 +94,7 @@
   }
 
   var sTimer;
+  var searchAbort = null;
   sInput.addEventListener("input", function () {
     var q = sInput.value.trim();
     clearTimeout(sTimer);
@@ -99,19 +104,46 @@
   });
 
   function runSearch(q) {
-    jsonp("https://api.deezer.com/search?limit=10&q=" + encodeURIComponent(q)).then(function (rep) {
-      var list = (rep && rep.data) || [];
+    if (searchAbort) searchAbort.abort();
+    searchAbort = new AbortController();
+    var currentAbort = searchAbort;
+
+    fetch("/api/search?q=" + encodeURIComponent(q), {
+      headers: { "Accept": "application/json" },
+      signal: currentAbort.signal
+    }).then(function (response) {
+      if (!response.ok) throw new Error("search_unavailable");
+      return response.json();
+    }).then(function (rep) {
+      if (currentAbort !== searchAbort) return;
+      var list = (rep && rep.results) || [];
       if (!list.length) { sResults.innerHTML = '<p class="overlay__hint">Aucun résultat.</p>'; return; }
-      sResults.innerHTML = list.map(function (t) {
-        var cover = (t.album && t.album.cover_small) || "";
-        return '<button class="result" type="button" data-preview="' + (t.preview || "") + '" data-artist="' + esc(t.artist && t.artist.name) + '">' +
-          (cover ? '<img class="result__cover" src="' + cover + '" alt="" width="44" height="44" loading="lazy" />' : '<span class="result__cover"></span>') +
-          '<span class="result__meta"><span class="result__title">' + esc(t.title) + '</span>' +
-          '<span class="result__artist">' + esc(t.artist && t.artist.name) + '</span></span>' +
+      sResults.innerHTML = list.map(function (item) {
+        var cover = item.imageUrl || "";
+        var coverHtml = cover
+          ? '<img class="result__cover" src="' + esc(cover) + '" alt="" width="44" height="44" loading="lazy" />'
+          : '<span class="result__cover" aria-hidden="true"></span>';
+
+        if (item.type === "artist") {
+          return '<a class="result result--artist" href="' + esc(item.url) + '">' +
+            coverHtml +
+            '<span class="result__meta"><span class="result__title">' + esc(item.name) + '</span>' +
+            '<span class="result__artist">Profil artiste · Planète HMI</span></span>' +
+            '<span class="result__open" aria-hidden="true">→</span>' +
+          '</a>';
+        }
+
+        return '<button class="result" type="button" data-preview="' + esc(item.previewUrl || "") + '" data-artist="' + esc(item.artist || "") + '">' +
+          coverHtml +
+          '<span class="result__meta"><span class="result__title">' + esc(item.name) + '</span>' +
+          '<span class="result__artist">' + esc(item.artist || "") + ' · Deezer</span></span>' +
           '<span class="result__play" aria-hidden="true">▶</span>' +
         '</button>';
       }).join("");
-    }).catch(function () { sResults.innerHTML = '<p class="overlay__hint">Recherche indisponible.</p>'; });
+    }).catch(function (error) {
+      if (error && error.name === "AbortError") return;
+      sResults.innerHTML = '<p class="overlay__hint">Recherche indisponible.</p>';
+    });
   }
 
   sResults.addEventListener("click", function (e) {
@@ -121,9 +153,12 @@
   searchOverlay.querySelector(".overlay__close").addEventListener("click", closeSearch);
   searchOverlay.addEventListener("click", function (e) { if (e.target === searchOverlay) closeSearch(); });
 
-  /* Ouvre la recherche depuis toute icône loupe (sauf le bouton favoris) */
-  document.querySelectorAll(".icon-btn:not(.fav-open)").forEach(function (b) {
-    b.addEventListener("click", function (e) { e.preventDefault(); openSearch(); });
+  /* Délégation : la loupe continue de fonctionner après une navigation Next.js. */
+  document.addEventListener("click", function (e) {
+    var searchButton = e.target.closest(".icon-btn:not(.fav-open)");
+    if (!searchButton) return;
+    e.preventDefault();
+    openSearch();
   });
 
   /* =========================================================
@@ -247,8 +282,13 @@
   });
 
   /* Init : injecte les cœurs sur toutes les entités artistes */
-  document.addEventListener("DOMContentLoaded", function () {
+  function initArtistFavorites() {
     document.querySelectorAll("[data-preview-artist]").forEach(ajouterCoeur);
     majCompteur();
-  });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initArtistFavorites);
+  } else {
+    initArtistFavorites();
+  }
 })();
