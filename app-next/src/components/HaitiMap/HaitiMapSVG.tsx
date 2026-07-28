@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { artistAvatarSrc } from "@/lib/artists/avatar";
 import styles from "./haiti-map.module.css";
 
 interface GeoFeature {
@@ -30,7 +31,10 @@ const HASC_TO_CODE: Record<string, string> = {
 
 interface HaitiMapProps {
   onDepartmentClick?: (code: string, name: string) => void;
-  artistsByDepartment?: Record<string, Array<{ id: string; name: string; image_url: string | null }>>;
+  artistsByDepartment?: Record<
+    string,
+    Array<{ id: string; name: string; imageUrl: string | null }>
+  >;
 }
 
 export function HaitiMapSVG({ onDepartmentClick, artistsByDepartment = {} }: HaitiMapProps) {
@@ -128,11 +132,11 @@ export function HaitiMapSVG({ onDepartmentClick, artistsByDepartment = {} }: Hai
           <div className={styles.artistScroll}>
             {artistsByDepartment[hovered].map((artist) => (
               <div key={artist.id} className={styles.artistChip}>
-                {artist.image_url ? (
-                  <img src={artist.image_url} alt="" className={styles.artistAvatar} />
-                ) : (
-                  <div className={styles.artistAvatarPlaceholder}>♪</div>
-                )}
+                <img
+                  src={artistAvatarSrc(artist.imageUrl)}
+                  alt=""
+                  className={styles.artistAvatar}
+                />
                 <span>{artist.name}</span>
               </div>
             ))}

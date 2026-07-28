@@ -1,0 +1,71 @@
+/* Admin — Producteurs & Beatmakers */
+.input {
+  background: var(--admin-bg);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--admin-accent);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.45rem 0.55rem;
+  border-bottom: 1px solid var(--admin-border);
+  vertical-align: top;
+}
+
+.table th {
+  color: var(--admin-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.producerList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.producerRow {
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: var(--admin-panel-2);
+  padding: 0.7rem 0.9rem;
+}
+
+.producerHead {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #05050c;
+}

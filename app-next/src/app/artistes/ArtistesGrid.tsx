@@ -3,6 +3,7 @@
 
 import { useState, useMemo } from "react";
 import { ARTIST_TAGS, getTagMeta } from "@/lib/artists/tags";
+import { artistAvatarSrc } from "@/lib/artists/avatar";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import type { PublicArtist } from "./page";
 
@@ -27,7 +28,14 @@ const GENRE_FILTERS = [
 type SortMode = "name" | "ranking";
 type FilterTag = string;
 
-export function ArtistesGrid({ artists }: { artists: PublicArtist[] }) {
+export function ArtistesGrid({
+  artists,
+  showProductionCount = false,
+}: {
+  artists: PublicArtist[];
+  /** Affiche le nombre de titres produits (vue Producteurs / Beatmakers). */
+  showProductionCount?: boolean;
+}) {
   const [roleFilter, setRoleFilter] = useState<FilterTag>("all");
   const [genreFilter, setGenreFilter] = useState<FilterTag>("all");
   const [search, setSearch] = useState("");
@@ -143,7 +151,7 @@ export function ArtistesGrid({ artists }: { artists: PublicArtist[] }) {
               <FavoriteButton artistId={artist.id} />
               <img
                 className="artist-card__img"
-                src={artist.imageUrl ?? "/image/artists/planet-hmi-artist-placeholder-square.webp.webp"}
+                src={artistAvatarSrc(artist.imageUrl)}
                 alt={artist.name}
                 loading="lazy"
                 width={120}
@@ -151,6 +159,13 @@ export function ArtistesGrid({ artists }: { artists: PublicArtist[] }) {
               />
               <div className="artist-card__info">
                 <h3 className="artist-card__name">{artist.name}</h3>
+                {showProductionCount && (
+                  <p className="artist-card__meta">
+                    {artist.productionCount ?? 0} titre
+                    {(artist.productionCount ?? 0) > 1 ? "s" : ""} produit
+                    {(artist.productionCount ?? 0) > 1 ? "s" : ""}
+                  </p>
+                )}
                 {artist.tags.length > 0 && (
                   <div className="artist-card__tags">
                     {artist.tags.map((t) => {

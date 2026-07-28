@@ -1,7 +1,17 @@
 "use client";
 
 export interface CollectProgress {
-  phase: "init" | "start" | "source" | "scraping" | "scraped" | "inserting" | "done" | "error";
+  phase:
+    | "init"
+    | "start"
+    | "source"
+    | "scraping"
+    | "scraped"
+    | "inserting"
+    | "loading"
+    | "scanning"
+    | "done"
+    | "error";
   percent: number;
   message: string;
   found?: number;
