@@ -10,7 +10,24 @@ interface EventSource {
   slug: string;
   scrape_url: string;
   is_active: boolean;
+  source_type: string | null;
+  notes: string | null;
   last_scraped_at: string | null;
+  last_success_at: string | null;
+  last_found_count: number | null;
+  last_error: string | null;
+}
+
+const SOURCE_TYPE_LABELS: Record<string, string> = {
+  auto: "détection auto",
+  eventbrite: "Eventbrite (JSON-LD)",
+  wordpress: "API WordPress",
+  bandsintown: "Bandsintown",
+  jsonld: "schema.org générique",
+};
+
+function formatDateTime(value: string | null): string | null {
+  return value ? new Date(value).toLocaleString("fr-FR") : null;
 }
 
 interface EventItem {
@@ -102,18 +119,80 @@ export function EventsManager({ sources, initialEvents }: { sources: EventSource
       <div className="admin-card">
         <h2 className="admin-card__title">Sources</h2>
         <div className="admin-toolbar">
+          {sources
+            .filter((src) => src.is_active)
+            .map((src) => (
+              <button
+                key={src.id}
+                className="btn btn--primary"
+                disabled={collecting}
+                onClick={() => handleCollect(src.id)}
+              >
+                {collecting ? "Collecte..." : src.name}
+              </button>
+            ))}
+        </div>
+
+        <div style={{ display: "grid", gap: "0.5rem", marginTop: "0.9rem" }}>
           {sources.map((src) => (
-            <button key={src.id} className="btn btn--primary" disabled={collecting || !src.is_active} onClick={() => handleCollect(src.id)}>
-              {collecting ? "Collecte..." : `${src.name}`}
-            </button>
+            <div
+              key={src.id}
+              style={{
+                padding: "0.6rem 0.75rem",
+                borderRadius: 8,
+                background: "var(--admin-panel-2)",
+                border: `1px solid ${src.last_error ? "var(--admin-warn)" : "var(--admin-border)"}`,
+                opacity: src.is_active ? 1 : 0.65,
+                fontSize: "0.8rem",
+              }}
+            >
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "baseline", flexWrap: "wrap" }}>
+                <strong style={{ fontSize: "0.85rem" }}>{src.name}</strong>
+                <span className={src.is_active ? "badge badge--ok" : "badge badge--muted"}>
+                  {src.is_active ? "active" : "désactivée"}
+                </span>
+                <span className="badge badge--muted">
+                  {SOURCE_TYPE_LABELS[src.source_type ?? "auto"] ?? src.source_type}
+                </span>
+                {src.last_found_count !== null && (
+                  <span style={{ color: "var(--admin-muted)" }}>
+                    {src.last_found_count} trouvé(s) au dernier passage
+                  </span>
+                )}
+              </div>
+
+              <p style={{ margin: "0.3rem 0 0", color: "var(--admin-muted)", wordBreak: "break-all" }}>
+                <a
+                  href={src.scrape_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "var(--admin-accent-2)" }}
+                >
+                  {src.scrape_url}
+                </a>
+              </p>
+
+              {src.notes && (
+                <p style={{ margin: "0.3rem 0 0", color: "var(--admin-muted)" }}>{src.notes}</p>
+              )}
+
+              <p style={{ margin: "0.3rem 0 0", color: "var(--admin-muted)" }}>
+                {formatDateTime(src.last_success_at)
+                  ? `Dernier succès : ${formatDateTime(src.last_success_at)}`
+                  : "Aucune collecte réussie pour l'instant"}
+                {src.last_scraped_at &&
+                  ` · dernière tentative : ${formatDateTime(src.last_scraped_at)}`}
+              </p>
+
+              {src.last_error && (
+                <p style={{ margin: "0.35rem 0 0", color: "var(--admin-warn)" }}>
+                  ⚠ {src.last_error}
+                </p>
+              )}
+            </div>
           ))}
         </div>
-        {sources.map((src) => (
-          <p key={src.id} style={{ fontSize: "0.8rem", color: "var(--admin-muted)", marginTop: "0.5rem" }}>
-            {src.name} — <a href={src.scrape_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--admin-accent-2)" }}>{src.scrape_url}</a>
-            {src.last_scraped_at && ` — Dernière collecte : ${new Date(src.last_scraped_at).toLocaleString("fr-FR")}`}
-          </p>
-        ))}
+
         <CollectProgressBar progress={progress} />
       </div>
 

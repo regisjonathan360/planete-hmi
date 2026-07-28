@@ -14,7 +14,10 @@ export default async function AdminEvenementsPage() {
 
   const { data: sources } = await supabase
     .from("event_sources")
-    .select("id, name, slug, scrape_url, is_active, last_scraped_at")
+    .select(
+      "id, name, slug, scrape_url, is_active, source_type, notes, last_scraped_at, last_success_at, last_found_count, last_error",
+    )
+    .order("is_active", { ascending: false })
     .order("name");
 
   const { data: events } = await supabase
