@@ -23,11 +23,25 @@ export default async function AdminArtistEditPage({ params }: Props) {
 
   if (!artist) notFound();
 
+  // Départements et communes pour les sélecteurs lieu de naissance
+  const { data: departments } = await supabase
+    .from("haiti_departments")
+    .select("id, name, code")
+    .order("name");
+  const { data: communes } = await supabase
+    .from("haiti_communes")
+    .select("id, department_id, name")
+    .order("name");
+
   return (
     <>
       <AdminHeader email={user.email} active="artistes" />
       <main className="admin__main">
-        <ArtistEditForm artist={artist} />
+        <ArtistEditForm
+          artist={artist}
+          departments={departments ?? []}
+          communes={communes ?? []}
+        />
       </main>
     </>
   );

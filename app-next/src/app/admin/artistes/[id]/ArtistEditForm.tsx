@@ -19,7 +19,15 @@ const STATUSES = [
   { value: "rejected", label: "Refusé" },
 ];
 
-export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) {
+export function ArtistEditForm({
+  artist,
+  departments = [],
+  communes = [],
+}: {
+  artist: Record<string, unknown>;
+  departments?: { id: string; name: string; code: string }[];
+  communes?: { id: string; department_id: string; name: string }[];
+}) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{
@@ -34,6 +42,8 @@ export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) 
     city: (artist.city as string) ?? "",
     birth_place: (artist.birth_place as string) ?? "",
     birth_city: (artist.birth_city as string) ?? "",
+    birth_department_id: (artist.birth_department_id as string) ?? "",
+    birth_commune_id: (artist.birth_commune_id as string) ?? "",
     artist_type: (artist.artist_type as string) ?? "artist",
     label: (artist.label as string) ?? "",
     primary_genre: (artist.primary_genre as string) ?? "",
@@ -121,8 +131,38 @@ export function ArtistEditForm({ artist }: { artist: Record<string, unknown> }) 
           <Field label="Biographie" value={form.bio} onChange={(v) => update("bio", v)} textarea />
         </Row>
         <Row>
-          <Field label="Lieu de naissance" value={form.birth_place} onChange={(v) => update("birth_place", v)} />
-          <Field label="Ville / Commune d'origine" value={form.birth_city} onChange={(v) => update("birth_city", v)} />
+          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
+            <span style={labelStyle}>Département de naissance</span>
+            <select
+              value={form.birth_department_id}
+              onChange={(e) => {
+                update("birth_department_id", e.target.value);
+                update("birth_commune_id", "");
+              }}
+              style={inputStyle}
+            >
+              <option value="">— Aucun —</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
+            <span style={labelStyle}>Commune de naissance</span>
+            <select
+              value={form.birth_commune_id}
+              onChange={(e) => update("birth_commune_id", e.target.value)}
+              style={inputStyle}
+              disabled={!form.birth_department_id}
+            >
+              <option value="">— Aucune —</option>
+              {communes
+                .filter((c) => c.department_id === form.birth_department_id)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+            </select>
+          </label>
           <Field label="Ville ou localisation actuelle" value={form.city} onChange={(v) => update("city", v)} />
         </Row>
         <Row>
