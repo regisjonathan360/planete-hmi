@@ -1,5 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Inter, Space_Mono } from "next/font/google";
+import {
+  SITE_DESCRIPTION,
+  SITE_LANGUAGE,
+  SITE_LOCALE,
+  SITE_NAME,
+  SITE_URL,
+  SOCIAL_IMAGE,
+} from "@/lib/site-config";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -27,28 +35,104 @@ const spaceMono = Space_Mono({
   variable: "--font-mono",
 });
 
+const structuredData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      inLanguage: SITE_LANGUAGE,
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/brand/icon-512x512.png`,
+        width: 512,
+        height: 512,
+      },
+    },
+  ],
+}).replace(/</g, "\\u003c");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Planète HMI — Haitian Music Index",
-    template: "%s — Planète HMI",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: "Planète HMI : classements, profils d'artistes et découverte de la musique haïtienne. Là où les étoiles de la musique haïtienne deviennent des légendes.",
-  metadataBase: new URL("https://planete-hmi.vercel.app"),
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  category: "music",
+  keywords: [
+    "musique haïtienne",
+    "artistes haïtiens",
+    "classements musicaux",
+    "tendances musicales",
+    "Haitian Music Index",
+  ],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      {
+        url: "/brand/favicon-32x32.png",
+        type: "image/png",
+        sizes: "32x32",
+      },
+      {
+        url: "/brand/favicon-16x16.png",
+        type: "image/png",
+        sizes: "16x16",
+      },
+    ],
+    shortcut: [{ url: "/favicon.ico" }],
+    apple: [
+      {
+        url: "/brand/apple-touch-icon.png",
+        type: "image/png",
+        sizes: "180x180",
+      },
+    ],
+  },
   openGraph: {
-    title: "Planète HMI — Haitian Music Index",
-    description: "Charts, artistes, districts et HMI Shorts. L'univers de référence de la musique haïtienne.",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    locale: SITE_LOCALE,
     type: "website",
-    images: ["/image/social/planet-hmi-social.png"],
-    siteName: "Planète HMI",
+    images: [SOCIAL_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Planète HMI — Haitian Music Index",
-    description: "Charts, artistes et découverte de la musique haïtienne.",
-    images: ["/image/social/planet-hmi-social.png"],
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: SOCIAL_IMAGE.url,
+        width: SOCIAL_IMAGE.width,
+        height: SOCIAL_IMAGE.height,
+        alt: SOCIAL_IMAGE.alt,
+      },
+    ],
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: "https://planete-hmi.vercel.app" },
+  alternates: { canonical: SITE_URL },
+  appleWebApp: {
+    capable: true,
+    title: SITE_NAME,
+    statusBarStyle: "black-translucent",
+  },
 };
 
 import { StageLightsLoader } from "@/components/StageLightsLoader";
@@ -63,10 +147,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${anton.variable} ${inter.variable} ${spaceMono.variable}`}>
+    <html lang={SITE_LANGUAGE} className={`${anton.variable} ${inter.variable} ${spaceMono.variable}`}>
       <head>
         <meta name="tiktok-developers-site-verification" content="doqYMyXAJOluVvI8j618siiivDgAHx0x" />
-        <link rel="icon" type="image/svg+xml" href="/brand/planet-hmi-icon-dark.svg" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: structuredData }}
+        />
       </head>
       <body>
         <StageLightsLoader />
