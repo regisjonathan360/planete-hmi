@@ -442,6 +442,7 @@ const COLLECTION_METHOD_LABELS: Record<string, string> = {
   embed_metadata: "Ancienne lecture de page Spotify (limitée)",
   page_metadata: "Métadonnées publiques de la page (limitées)",
   youtube_data_api: "API officielle YouTube Data",
+  youtube_channel_registry: "Chaîne YouTube approuvée dans l'administration",
   public_api: "API publique officielle",
   oembed: "Métadonnées publiques oEmbed",
 };
