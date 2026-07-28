@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# aperçus ASCII générés par les scripts de vérification de la carte
+/scripts/*-preview.txt
