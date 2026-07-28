@@ -583,6 +583,9 @@ a.section-link:hover { color: var(--flame-orange); }
 
 /* Grille d'artistes */
 .artist-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+.artistes-layout { padding-top: 2rem; display: flex; gap: 2rem; align-items: flex-start; }
+.artistes-sidebar { position: sticky; top: 5rem; flex-shrink: 0; width: 200px; }
+.artistes-sidebar__nav { display: flex; flex-direction: column; gap: 0.3rem; }
 .a-card { display: flex; flex-direction: column; transition: transform 0.25s var(--ease); }
 .a-card:hover { transform: translateY(-5px); }
 .a-card__media { position: relative; aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
@@ -668,6 +671,15 @@ a.section-link:hover { color: var(--flame-orange); }
   .news-card--feature { grid-column: span 2; }
 }
 @media (max-width: 720px) {
+  .artistes-layout { flex-direction: column; gap: 1.25rem; }
+  .artistes-sidebar { position: static; width: 100%; }
+  .artistes-sidebar__nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+    scrollbar-width: thin;
+  }
+  .artistes-sidebar__nav > a { min-width: max-content; }
   .artist-grid, .shop-grid { grid-template-columns: repeat(2, 1fr); }
   .news-grid { grid-template-columns: 1fr; }
   .news-card--feature { grid-column: auto; }

@@ -64,7 +64,51 @@
      renvoyé par l'API (ex. "Vwadèzil" == "Vwadezil"). */
   function normaliser(s) {
     if (!s) return "";
-    return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    return s
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/\b(feat|featuring|ft)\.?\b.*$/i, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
+
+  function recouvrement(a, b) {
+    var motsA = normaliser(a).split(" ").filter(Boolean);
+    var motsB = new Set(normaliser(b).split(" ").filter(Boolean));
+    if (!motsA.length || !motsB.size) return 0;
+    var communs = motsA.filter(function (mot) { return motsB.has(mot); }).length;
+    return communs / Math.max(motsA.length, motsB.size);
+  }
+
+  function scorePiste(piste, req) {
+    if (!piste || !piste.preview) return -1;
+    var artisteDemande = normaliser(req.artiste);
+    var artisteTrouve = normaliser(piste.artist && piste.artist.name);
+    var titreDemande = normaliser(req.titre);
+    var titreTrouve = normaliser(piste.title_short || piste.title);
+    var score = 0;
+
+    if (artisteDemande && artisteDemande === artisteTrouve) score += 70;
+    else if (
+      artisteDemande &&
+      artisteTrouve &&
+      (artisteDemande.indexOf(artisteTrouve) !== -1 || artisteTrouve.indexOf(artisteDemande) !== -1)
+    ) score += 42;
+    else score += recouvrement(artisteDemande, artisteTrouve) * 35;
+
+    if (titreDemande && titreDemande === titreTrouve) score += 90;
+    else if (
+      titreDemande &&
+      titreTrouve &&
+      (titreDemande.indexOf(titreTrouve) !== -1 || titreTrouve.indexOf(titreDemande) !== -1)
+    ) score += 58;
+    else score += recouvrement(titreDemande, titreTrouve) * 55;
+
+    ["live", "remix", "karaoke", "instrumental"].forEach(function (variante) {
+      if (titreTrouve.indexOf(variante) !== -1 && titreDemande.indexOf(variante) === -1) score -= 24;
+    });
+    return score;
   }
 
   /* --- Adaptateur Deezer (extraits publics 30 s) ---
@@ -75,16 +119,18 @@
   function deezerChercherExtrait(req) {
     var q = req.titre ? (req.artiste + " " + req.titre) : req.artiste;
     var url = "https://api.deezer.com/search?limit=15&q=" + encodeURIComponent(q);
-    var cible = normaliser(req.artiste);
     return jsonp(url, 8000).then(function (rep) {
       var liste = (rep && rep.data) || [];
       var t = null;
+      var meilleurScore = -1;
       for (var i = 0; i < liste.length; i++) {
-        if (liste[i].preview && normaliser(liste[i].artist && liste[i].artist.name) === cible) {
-          t = liste[i]; break;
+        var score = scorePiste(liste[i], req);
+        if (score > meilleurScore) {
+          meilleurScore = score;
+          t = liste[i];
         }
       }
-      if (!t) return { statut: "vide" };
+      if (!t || meilleurScore < 45) return { statut: "vide" };
       return {
         statut: "ok",
         urlExtrait: t.preview,
@@ -137,6 +183,16 @@
 
   var lecteurActif = null;   // carte en cours
   var fonduTimer = null;
+  var preloads = new Map();
+
+  function prechargerUrl(url) {
+    if (!url || preloads.has(url) || preloads.size >= 3) return;
+    var media = new Audio();
+    media.preload = "metadata";
+    media.src = url;
+    preloads.set(url, media);
+    media.load();
+  }
 
   function fondu(vers, apres) {
     if (fonduTimer) { clearInterval(fonduTimer); fonduTimer = null; }
@@ -180,7 +236,7 @@
   }
 
   function jouerCarte(carte) {
-    var req = { artiste: carte.getAttribute("data-preview-artist") };
+    var req = { artiste: carte.getAttribute("data-preview-artist"), titre: carte.getAttribute("data-preview-titre") || "" };
     if (!req.artiste) return;
 
     // Coupe l'extrait précédent
@@ -217,17 +273,14 @@
   }
 
   function precharger(carte) {
-    var req = { artiste: carte.getAttribute("data-preview-artist") };
+    var req = { artiste: carte.getAttribute("data-preview-artist"), titre: carte.getAttribute("data-preview-titre") || "" };
     if (!req.artiste) return;
     if (carte.dataset.previewState === "chargement" || carte.dataset.previewState === "lecture") return;
     definirEtat(carte, "chargement");
     chercherExtraitCache(req).then(function (res) {
       if (res.statut === "ok" && res.urlExtrait) {
-        // Prépare la balise pour une lecture quasi instantanée.
-        if (audio.src !== res.urlExtrait && !lecteurActif) {
-          audio.src = res.urlExtrait;
-          audio.load();
-        }
+        // Prépare au maximum trois extraits, sans remplacer la lecture en cours.
+        prechargerUrl(res.urlExtrait);
         definirEtat(carte, "pret");
       } else if (res.statut === "non-configure") {
         definirEtat(carte, "non-configure");
@@ -302,7 +355,36 @@
     cartes.forEach(initCarte);
   }
 
-  document.addEventListener("DOMContentLoaded", rafraichir);
+  function prechargerPodium() {
+    if (saveData) return;
+    var connexion = navigator.connection;
+    if (connexion && /(^|-)2g$/.test(connexion.effectiveType || "")) return;
+    var cartes = Array.prototype.slice.call(
+      document.querySelectorAll(".podium__card[data-preview-artist][data-preview-titre]"),
+      0,
+      3
+    );
+    cartes.forEach(function (carte, index) {
+      setTimeout(function () { precharger(carte); }, index * 180);
+    });
+  }
+
+  function initialiser() {
+    rafraichir();
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(prechargerPodium, { timeout: 1800 });
+    } else {
+      setTimeout(prechargerPodium, 700);
+    }
+  }
+
+  // Le script est chargé avec Next.js après l'hydratation : DOMContentLoaded
+  // peut déjà avoir eu lieu. On initialise immédiatement dans ce cas.
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initialiser, { once: true });
+  } else {
+    initialiser();
+  }
 
   // Exposé pour ré-attacher l'aperçu aux cartes générées dynamiquement
   // (après chargement des données réelles).
