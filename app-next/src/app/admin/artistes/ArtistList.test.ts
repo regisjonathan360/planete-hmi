@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  getPaginationItems,
   matchesArtistFilter,
   type ArtistAdminRecord,
 } from "./ArtistList";
@@ -76,5 +77,20 @@ describe("filtres administratifs des artistes", () => {
     };
     expect(matchesArtistFilter(artist, "pending_review")).toBe(true);
     expect(matchesArtistFilter(artist, "hidden")).toBe(true);
+  });
+});
+
+describe("pagination administrative des artistes", () => {
+  it("affiche toutes les pages lorsque la liste est courte", () => {
+    expect(getPaginationItems(2, 4)).toEqual([1, 2, 3, 4]);
+  });
+
+  it("conserve la premiÃ¨re, la derniÃ¨re et les pages proches", () => {
+    expect(getPaginationItems(6, 12)).toEqual([1, "ellipsis", 5, 6, 7, "ellipsis", 12]);
+  });
+
+  it("ne produit pas de page hors limites aux extrÃ©mitÃ©s", () => {
+    expect(getPaginationItems(1, 10)).toEqual([1, 2, "ellipsis", 10]);
+    expect(getPaginationItems(10, 10)).toEqual([1, "ellipsis", 9, 10]);
   });
 });
