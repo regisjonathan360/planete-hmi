@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element -- avatars distants (Spotify/YouTube) */
 "use client";
 
-import { useState } from "react";
-import { HaitiMapSVG, HaitiGlobe } from "@/components/HaitiMap";
+import { useState, useMemo } from "react";
+import { HaitiInteractiveGlobe } from "@/components/HaitiMap";
 import Link from "next/link";
 import { artistAvatarSrc } from "@/lib/artists/avatar";
 import styles from "./carte.module.css";
@@ -58,6 +58,15 @@ export function HaitiMapPage({ artistsByDepartment, departments }: HaitiMapPageP
     }
   }
 
+  // Données pour le globe interactif (shape adaptée au composant).
+  const artistsByDepartmentForGlobe = useMemo(() => {
+    const result: Record<string, { id: string; name: string; imageUrl: string | null }[]> = {};
+    for (const [code, artists] of Object.entries(artistsByDepartment)) {
+      result[code] = artists.map((a) => ({ id: a.id, name: a.name, imageUrl: a.imageUrl }));
+    }
+    return result;
+  }, [artistsByDepartment]);
+
   // Vue commune : artistes rattachés à cette commune
   if (selectedDept && selectedCommune) {
     const communeArtists = (artistsByDepartment[selectedDept.code] ?? []).filter(
@@ -111,22 +120,20 @@ export function HaitiMapPage({ artistsByDepartment, departments }: HaitiMapPageP
     );
   }
 
-  // Vue carte complète
+  // Vue carte complète : le globe 3D interactif EST la carte.
+  // Pas besoin de la carte SVG séparée en dessous : chaque département est
+  // cliquable directement sur la sphère.
   return (
     <main className={styles.page}>
       <div className={styles.hero}>
         <h1 className={styles.title}>Carte <span className={styles.accent}>HMI</span></h1>
         <p className={styles.subtitle}>Découvrez les artistes haïtiens par département</p>
       </div>
-      {/* Globe 3D avec la carte d'Haïti */}
-      <HaitiGlobe />
-      <p style={{ textAlign: "center", color: "#9a9ac0", fontSize: "0.82rem", margin: "0.5rem 0 2rem" }}>
-        Faites tourner la planète au doigt ou à la souris • Inclinez votre mobile pour la
-        faire bouger • Cliquez un département sur la carte ci-dessous
-      </p>
-      <HaitiMapSVG
+
+      {/* Globe 3D interactif : chaque département est un mesh cliquable */}
+      <HaitiInteractiveGlobe
         onDepartmentClick={handleDepartmentClick}
-        artistsByDepartment={artistsByDepartment}
+        artistsByDepartment={artistsByDepartmentForGlobe}
       />
     </main>
   );
