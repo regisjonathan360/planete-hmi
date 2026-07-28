@@ -76,7 +76,7 @@ export default async function YouTubeAdminPage() {
           <div>
             <h1 className="admin__title">YouTube HMI</h1>
             <p className="admin__subtitle">
-              Collecte, vérification éditoriale et publication du Top 20 YouTube.
+              Classement des vidéos officielles selon les vues gagnées pendant la période.
             </p>
           </div>
           <a

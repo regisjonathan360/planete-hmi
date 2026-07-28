@@ -41,6 +41,9 @@ export function AdminHeader({ email, active }: { email: string | null; active?: 
         <Link href="/admin/producteurs" className={active === "producteurs" ? "is-active" : ""}>
           Producteurs
         </Link>
+        <Link href="/admin/labels" className={active === "labels" ? "is-active" : ""}>
+          Labels
+        </Link>
         <Link href="/admin/doublons" className={active === "doublons" ? "is-active" : ""}>
           Doublons
         </Link>

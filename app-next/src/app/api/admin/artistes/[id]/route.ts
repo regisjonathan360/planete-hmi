@@ -40,6 +40,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   catch { return NextResponse.json({ error: "Corps invalide." }, { status: 400 }); }
 
   const patch: Record<string, unknown> = {};
+  const groupIds = parseUuidArray(body.group_ids);
+  const memberIds = parseUuidArray(body.member_ids);
+  if (groupIds === null || memberIds === null) {
+    return NextResponse.json({ error: "Liste de groupes ou de membres invalide." }, { status: 400 });
+  }
 
   for (const field of TEXT_FIELDS) {
     if (field in body) {
@@ -100,14 +105,28 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { error } = await supabase.from("artists").update(patch).eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  if ("group_ids" in body || "member_ids" in body) {
+    const { error: relationshipError } = await supabase.rpc("set_artist_group_relationships", {
+      p_artist_id: id,
+      p_group_ids: groupIds,
+      p_member_ids: memberIds,
+    });
+    if (relationshipError) {
+      return NextResponse.json(
+        { error: "La fiche a été mise à jour, mais les relations de groupe n’ont pas pu être enregistrées." },
+        { status: 500 },
+      );
+    }
+  }
+
   let youtubeSync: { created: number; linkedExisting: number; errors: number } | null = null;
   let youtubeSyncWarning: string | null = null;
 
-  if ("url_youtube" in patch || "url_youtube_music" in patch) {
+  if ("url_youtube" in patch) {
     try {
       const { data: artist, error: artistError } = await supabase
         .from("artists")
-        .select("id, name, url_youtube, url_youtube_music")
+        .select("id, name, url_youtube")
         .eq("id", id)
         .single();
       if (artistError) throw artistError;
@@ -118,7 +137,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           id: artist.id as string,
           name: artist.name as string,
           urlYoutube: (artist.url_youtube as string | null) ?? null,
-          urlYouTubeMusic: (artist.url_youtube_music as string | null) ?? null,
+          urlYouTubeMusic: null,
         }],
         resolveChannelUrl
       );
@@ -145,4 +164,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     youtubeSync,
     youtubeSyncWarning,
   });
+}
+
+function parseUuidArray(value: unknown): string[] | null {
+  if (value === undefined) return [];
+  if (!Array.isArray(value)) return null;
+  const ids = [...new Set(value.map((item) => String(item).trim()))];
+  return ids.every((item) => UUID_RE.test(item)) ? ids : null;
 }

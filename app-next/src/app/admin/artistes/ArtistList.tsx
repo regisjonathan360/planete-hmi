@@ -17,6 +17,7 @@ export interface ArtistAdminRecord {
   haitian_status: string;
   is_active: boolean;
   is_claimed: boolean;
+  artist_type: string;
   tags: string[] | null;
   primary_genre: string | null;
   city: string | null;
@@ -141,6 +142,18 @@ const STATUS_LABELS: Record<string, string> = {
   rejected: "Refusé",
 };
 
+const ARTIST_TYPE_OPTIONS = [
+  { value: "all", label: "Tous les profils" },
+  { value: "artist", label: "Artistes solo" },
+  { value: "group", label: "Groupes / orchestres" },
+  { value: "singer", label: "Chanteurs / chanteuses" },
+  { value: "rapper", label: "Rappeurs / rappeuses" },
+  { value: "producer", label: "Producteurs" },
+  { value: "beatmaker", label: "Beatmakers" },
+  { value: "dj", label: "DJ" },
+  { value: "musician", label: "Musiciens / musiciennes" },
+] as const;
+
 function isMissing(value: string | null | undefined): boolean {
   return !value?.trim();
 }
@@ -212,6 +225,8 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
   const [selectedFilter, setSelectedFilter] = useState<FilterKey>("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [genreFilter, setGenreFilter] = useState("all");
   const [pageSize, setPageSize] = useState<number>(50);
   const [page, setPage] = useState(1);
 
@@ -232,8 +247,16 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
     if (statusFilter !== "all" && artist.haitian_status !== statusFilter) return false;
     if (activeFilter === "active" && !artist.is_active) return false;
     if (activeFilter === "inactive" && artist.is_active) return false;
+    if (typeFilter !== "all" && artist.artist_type !== typeFilter) return false;
+    if (genreFilter !== "all" && artist.primary_genre !== genreFilter) return false;
     return true;
-  }), [activeFilter, artists, search, selectedFilter, statusFilter]);
+  }), [activeFilter, artists, genreFilter, search, selectedFilter, statusFilter, typeFilter]);
+
+  const genres = useMemo(
+    () => [...new Set(artists.map((artist) => artist.primary_genre?.trim()).filter(Boolean) as string[])]
+      .sort((a, b) => a.localeCompare(b, "fr")),
+    [artists],
+  );
 
   const selectedLabel = selectedFilter === "all"
     ? "Tous les artistes"
@@ -304,6 +327,27 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
                   setPage(1);
                 }}
               />
+            </label>
+            <label>
+              <span className={styles.visuallyHidden}>Type de profil</span>
+              <select value={typeFilter} onChange={(event) => {
+                setTypeFilter(event.target.value);
+                setPage(1);
+              }}>
+                {ARTIST_TYPE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span className={styles.visuallyHidden}>Genre musical</span>
+              <select value={genreFilter} onChange={(event) => {
+                setGenreFilter(event.target.value);
+                setPage(1);
+              }}>
+                <option value="all">Tous les genres</option>
+                {genres.map((genre) => <option key={genre} value={genre}>{genre}</option>)}
+              </select>
             </label>
             <label>
               <span className={styles.visuallyHidden}>Statut d’identité</span>
@@ -380,6 +424,7 @@ export function ArtistList({ artists }: { artists: ArtistAdminRecord[] }) {
                   <div className={styles.metadata}>
                     <span>{STATUS_LABELS[artist.haitian_status] ?? artist.haitian_status}</span>
                     <span>{artist.is_claimed ? "Profil revendiqué" : "Non revendiqué"}</span>
+                    <span>{ARTIST_TYPE_OPTIONS.find((option) => option.value === artist.artist_type)?.label ?? artist.artist_type}</span>
                     {artist.tags?.length ? <span>{artist.tags.join(", ")}</span> : null}
                     {artist.primary_genre ? <span>{artist.primary_genre}</span> : null}
                   </div>

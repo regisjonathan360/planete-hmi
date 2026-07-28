@@ -10,9 +10,15 @@ import { createClient } from "@/lib/supabase/client";
  * Affiche un mini-profil si l'utilisateur est connecté,
  * sinon le bouton "Connexion".
  */
-export function SiteHeader() {
+interface HeaderUser {
+  email: string | null;
+  initial: string;
+}
+
+export function SiteHeader({ initialUser }: { initialUser?: HeaderUser | null }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState<{ email: string | null; initial: string } | null>(null);
+  const [user, setUser] = useState<HeaderUser | null>(initialUser ?? null);
+  const [authReady, setAuthReady] = useState(initialUser !== undefined);
 
   useEffect(() => {
     const supabase = createClient();
@@ -21,8 +27,17 @@ export function SiteHeader() {
         const email = data.user.email ?? null;
         const initial = (email ?? "U").charAt(0).toUpperCase();
         setUser({ email, initial });
+      } else {
+        setUser(null);
       }
+      setAuthReady(true);
     });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const email = session?.user.email ?? null;
+      setUser(session?.user ? { email, initial: (email ?? "U").charAt(0).toUpperCase() } : null);
+      setAuthReady(true);
+    });
+    return () => listener.subscription.unsubscribe();
   }, []);
 
   async function handleLogout() {
@@ -52,6 +67,7 @@ export function SiteHeader() {
           <Link href="/charts">Classements</Link>
           <Link href="/actualites">Actualités</Link>
           <Link href="/evenements">Événements</Link>
+          <Link href="/labels">Labels</Link>
           <Link href="/boutique">Boutique</Link>
         </nav>
 
@@ -59,7 +75,9 @@ export function SiteHeader() {
           <button className="icon-btn" type="button" aria-label="Rechercher">
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
           </button>
-          {(
+          {!authReady ? (
+            <span className="topbar__auth-placeholder" aria-hidden="true" />
+          ) : (
             user ? (
               <UserBadge email={user.email} initial={user.initial} onLogout={handleLogout} />
             ) : (
@@ -95,8 +113,9 @@ export function SiteHeader() {
         <Link href="/charts" onClick={() => setMenuOpen(false)}>Classements</Link>
         <Link href="/actualites" onClick={() => setMenuOpen(false)}>Actualités</Link>
         <Link href="/evenements" onClick={() => setMenuOpen(false)}>Événements</Link>
+        <Link href="/labels" onClick={() => setMenuOpen(false)}>Labels</Link>
         <Link href="/boutique" onClick={() => setMenuOpen(false)}>Boutique</Link>
-        {(
+        {authReady ? (
           user ? (
             <>
               <Link href="/compte" onClick={() => setMenuOpen(false)}>Mon espace</Link>
@@ -114,7 +133,7 @@ export function SiteHeader() {
               Connexion
             </Link>
           )
-        )}
+        ) : null}
       </nav>
     </header>
   );

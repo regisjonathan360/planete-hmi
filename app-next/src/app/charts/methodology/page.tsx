@@ -4,11 +4,11 @@ export const dynamic = "force-static";
 
 const PLATEFORMES = [
   {
-    nom: "YouTube Music — Haïti",
-    mesure: "Chansons présentes dans le classement officiel YouTube Music pour Haïti.",
-    territoire: "Haïti",
-    metrique: "Position (import vérifié) ; un classement distinct « YouTube HMI » mesure les vues mondiales gagnées en 7 jours.",
-    methode: "Import administratif vérifié (API officielle en préparation).",
+    nom: "Top vidéos YouTube HMI",
+    mesure: "Vidéos officielles approuvées et rattachées à une chanson dans Planète HMI.",
+    territoire: "Audience mondiale",
+    metrique: "Nouvelles vues gagnées pendant la période, avec agrégation des vidéos officielles d’une même chanson.",
+    methode: "YouTube Data API officielle, snapshots immuables et validation éditoriale avant publication.",
   },
   {
     nom: "Spotify — Populaire en Haïti",

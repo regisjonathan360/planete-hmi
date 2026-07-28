@@ -37,10 +37,18 @@ export function ArtistEditForm({
   artist,
   departments = [],
   communes = [],
+  groups = [],
+  potentialMembers = [],
+  initialGroupIds = [],
+  initialMemberIds = [],
 }: {
   artist: Record<string, unknown>;
   departments?: { id: string; name: string; code: string }[];
   communes?: { id: string; department_id: string; name: string }[];
+  groups?: { id: string; name: string }[];
+  potentialMembers?: { id: string; name: string }[];
+  initialGroupIds?: string[];
+  initialMemberIds?: string[];
 }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
@@ -48,6 +56,8 @@ export function ArtistEditForm({
     text: string;
     tone: "success" | "warning" | "error";
   } | null>(null);
+  const [groupIds, setGroupIds] = useState(initialGroupIds);
+  const [memberIds, setMemberIds] = useState(initialMemberIds);
 
   const [form, setForm] = useState({
     name: (artist.name as string) ?? "",
@@ -118,7 +128,11 @@ export function ArtistEditForm({
       const res = await fetch(`/api/admin/artistes/${artist.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          group_ids: form.artist_type === "group" ? [] : groupIds,
+          member_ids: form.artist_type === "group" ? memberIds : [],
+        }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -314,6 +328,36 @@ export function ArtistEditForm({
         />
       </Fieldset>
 
+      <Fieldset title="Groupes et membres">
+        {form.artist_type === "group" ? (
+          <>
+            <p style={{ color: "var(--admin-muted)", fontSize: "0.78rem", marginTop: 0 }}>
+              Sélectionnez les artistes qui appartiennent actuellement à ce groupe ou orchestre.
+            </p>
+            <RelationshipPicker
+              label="Membres du groupe"
+              options={potentialMembers}
+              selectedIds={memberIds}
+              onChange={setMemberIds}
+              emptyLabel="Aucun autre artiste disponible"
+            />
+          </>
+        ) : (
+          <>
+            <p style={{ color: "var(--admin-muted)", fontSize: "0.78rem", marginTop: 0 }}>
+              Un artiste peut être membre de plusieurs groupes. Cette relation apparaîtra aussi sur sa fiche publique.
+            </p>
+            <RelationshipPicker
+              label="Membre de"
+              options={groups}
+              selectedIds={groupIds}
+              onChange={setGroupIds}
+              emptyLabel="Aucun groupe enregistré"
+            />
+          </>
+        )}
+      </Fieldset>
+
       {message ? (
         <p
           role="status"
@@ -374,6 +418,57 @@ function Field({ label, value, onChange, textarea, type }: {
         <input type={type ?? "text"} value={value} onChange={(e) => onChange(e.target.value)} style={inputStyle} />
       )}
     </label>
+  );
+}
+
+function RelationshipPicker({
+  label,
+  options,
+  selectedIds,
+  onChange,
+  emptyLabel,
+}: {
+  label: string;
+  options: { id: string; name: string }[];
+  selectedIds: string[];
+  onChange: (ids: string[]) => void;
+  emptyLabel: string;
+}) {
+  if (options.length === 0) {
+    return <p style={{ color: "var(--admin-muted)", fontSize: "0.8rem" }}>{emptyLabel}</p>;
+  }
+
+  return (
+    <div>
+      <strong style={labelStyle}>{label}</strong>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: "0.45rem", marginTop: "0.6rem" }}>
+        {options.map((option) => (
+          <label
+            key={option.id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              border: "1px solid var(--admin-border)",
+              borderRadius: 8,
+              padding: "0.5rem 0.65rem",
+              cursor: "pointer",
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={selectedIds.includes(option.id)}
+              onChange={(event) => onChange(
+                event.target.checked
+                  ? [...selectedIds, option.id]
+                  : selectedIds.filter((id) => id !== option.id),
+              )}
+            />
+            <span style={{ fontSize: "0.82rem" }}>{option.name}</span>
+          </label>
+        ))}
+      </div>
+    </div>
   );
 }
 

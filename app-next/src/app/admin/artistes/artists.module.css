@@ -88,7 +88,7 @@
 
 .toolbar {
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) auto auto auto;
+  grid-template-columns: minmax(180px, 1fr) repeat(4, minmax(135px, auto)) auto;
   gap: 0.65rem;
   align-items: end;
 }

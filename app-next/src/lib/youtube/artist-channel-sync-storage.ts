@@ -30,8 +30,8 @@ export function createArtistChannelSyncStorage(
     ): Promise<ArtistYouTubeProfile[]> {
       let query = supabase
         .from("artists")
-        .select("id, name, url_youtube, url_youtube_music")
-        .or("url_youtube.not.is.null,url_youtube_music.not.is.null")
+        .select("id, name, url_youtube")
+        .not("url_youtube", "is", null)
         .order("id", { ascending: true })
         .limit(limit);
       if (cursor) query = query.gt("id", cursor);
@@ -42,7 +42,7 @@ export function createArtistChannelSyncStorage(
         id: row.id as string,
         name: row.name as string,
         urlYoutube: (row.url_youtube as string | null) ?? null,
-        urlYouTubeMusic: (row.url_youtube_music as string | null) ?? null,
+        urlYouTubeMusic: null,
       }));
     },
 

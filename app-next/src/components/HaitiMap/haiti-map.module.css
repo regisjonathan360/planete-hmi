@@ -7,6 +7,62 @@
   min-height: 460px;
 }
 
+.globeContainer {
+  position: relative;
+  width: min(100%, 820px);
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+.globeHitArea {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  clip-path: circle(49% at 50% 50%);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.gyroButton {
+  position: absolute;
+  left: 50%;
+  bottom: 2.25rem;
+  z-index: 25;
+  transform: translateX(-50%);
+  border: 1px solid rgba(0, 255, 204, 0.45);
+  border-radius: 999px;
+  background: rgba(8, 10, 25, 0.76);
+  color: #f4efe4;
+  padding: 0.6rem 0.9rem;
+  font: inherit;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.globeHint {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  margin: 0;
+  color: #9a9ac0;
+  font-size: 0.78rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
 .mapSvg {
   width: 100%;
   height: auto;

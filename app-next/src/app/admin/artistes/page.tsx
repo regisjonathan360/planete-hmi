@@ -18,7 +18,7 @@ export default async function AdminArtistesPage() {
     supabase
       .from("artists")
       .select(`
-        id, name, slug, image_url, banner_url, bio, haitian_status, is_active,
+        id, name, slug, image_url, banner_url, bio, haitian_status, is_active, artist_type,
         tags, primary_genre, city, birth_place, birth_date, user_id,
         url_youtube, url_youtube_music, url_deezer, url_spotify, url_audiomack,
         url_apple_music, url_soundcloud, url_tidal, url_tiktok, url_instagram,
