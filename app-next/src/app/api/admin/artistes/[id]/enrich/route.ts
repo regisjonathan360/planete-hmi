@@ -84,7 +84,13 @@ export async function POST(
         platforms: Object.keys(results).length,
         failures,
       });
-      return NextResponse.json({ ok: true, results, failures });
+      const stored = await getStoredEnrichment(supabase, id);
+      return NextResponse.json({
+        ok: true,
+        results,
+        failures,
+        metricSummaries: stored.metricSummaries,
+      });
     }
     const urlOverride = typeof bodyRecord.url === "string" ? bodyRecord.url : undefined;
     const result = await enrichArtistFromField(supabase, id, field as EnrichableField, urlOverride);
@@ -94,7 +100,12 @@ export async function POST(
       images: result.images.length,
       hasError: Boolean(result.error),
     });
-    return NextResponse.json({ ok: true, ...result });
+    const stored = await getStoredEnrichment(supabase, id);
+    return NextResponse.json({
+      ok: true,
+      ...result,
+      metricSummaries: stored.metricSummaries,
+    });
   } catch (err) {
     console.warn("[artist-enrich] collection_failed", {
       artistId: id,

@@ -66,6 +66,11 @@ describe("routes d'enrichissement artiste", () => {
       ok: true,
       user: { id: "admin-id", email: "admin@example.com" },
     });
+    mocks.getStoredEnrichment.mockResolvedValue({
+      results: {},
+      availableFields: [],
+      metricSummaries: [],
+    });
   });
 
   it("protège aussi la lecture de l'historique", async () => {
@@ -85,6 +90,7 @@ describe("routes d'enrichissement artiste", () => {
     mocks.getStoredEnrichment.mockResolvedValue({
       results: { url_spotify: result("spotify") },
       availableFields: ["url_spotify"],
+      metricSummaries: [],
     });
 
     const response = await GET(request("GET"), params);
@@ -115,8 +121,10 @@ describe("routes d'enrichissement artiste", () => {
       }),
       params,
     );
+    const payload = await response.json();
 
     expect(response.status).toBe(200);
+    expect(payload.metricSummaries).toEqual([]);
     expect(mocks.enrichArtistFromField).toHaveBeenCalledWith(
       { name: "admin-client" },
       "artist-id",

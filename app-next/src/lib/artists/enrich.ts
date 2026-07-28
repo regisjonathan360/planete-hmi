@@ -21,6 +21,13 @@ import {
   mergeImages,
   type ExtractedImage,
 } from "@/lib/artists/enrich-html";
+import {
+  ARTIST_METRIC_KEYS,
+  buildMetricSummaries,
+  type ArtistMetricDatabaseRow,
+  type ArtistMetricSummary,
+  type ArtistMetricValues,
+} from "@/lib/artists/artist-metrics";
 
 const FETCH_TIMEOUT_MS = 12_000;
 const MAX_HTML_BYTES = 2 * 1024 * 1024;
@@ -126,6 +133,7 @@ interface YouTubeChannelPayload {
 export interface StoredEnrichment {
   results: Record<string, PlatformData>;
   availableFields: EnrichableField[];
+  metricSummaries: ArtistMetricSummary[];
 }
 
 function makeBase(field: EnrichableField, url: string): PlatformData {
@@ -553,6 +561,15 @@ async function persistResult(
   artistId: string,
   result: PlatformData,
 ): Promise<void> {
+  const freshMetrics: ArtistMetricValues = {
+    monthlyListeners: result.monthlyListeners,
+    followers: result.followers,
+    subscriberCount: result.subscriberCount,
+    totalViews: result.totalViews,
+    popularity: result.popularity,
+    albumCount: result.albumCount,
+    trackCount: result.trackCount,
+  };
   const { data: existing } = await supabase
     .from("artist_platform_identities")
     .select("platform, external_id, external_url, platform_name, metadata")
@@ -610,6 +627,33 @@ async function persistResult(
     { onConflict: "artist_id,platform" },
   );
   if (error) throw new Error(`Impossible d'enregistrer la collecte ${result.platform}.`);
+
+  if (ARTIST_METRIC_KEYS.some((key) => freshMetrics[key] !== null)) {
+    const { error: snapshotError } = await supabase
+      .from("artist_metric_snapshots")
+      .upsert(
+        {
+          artist_id: artistId,
+          platform: result.platform,
+          source_field: result.field,
+          collected_at: result.fetchedAt,
+          monthly_listeners: freshMetrics.monthlyListeners,
+          followers: freshMetrics.followers,
+          subscriber_count: freshMetrics.subscriberCount,
+          total_views: freshMetrics.totalViews,
+          popularity: freshMetrics.popularity,
+          album_count: freshMetrics.albumCount,
+          track_count: freshMetrics.trackCount,
+        },
+        {
+          onConflict: "artist_id,platform,collected_at",
+          ignoreDuplicates: true,
+        },
+      );
+    if (snapshotError) {
+      throw new Error(`Les indicateurs ${result.platform} n'ont pas pu être enregistrés.`);
+    }
+  }
 }
 
 export async function enrichArtistFromField(
@@ -693,15 +737,26 @@ export async function getStoredEnrichment(
   supabase: SupabaseClient,
   artistId: string,
 ): Promise<StoredEnrichment> {
-  const [artist, identities] = await Promise.all([
+  const [artist, identities, metricSnapshots] = await Promise.all([
     getArtistUrls(supabase, artistId),
     supabase
       .from("artist_platform_identities")
       .select("platform, external_id, external_url, platform_name, metadata")
       .eq("artist_id", artistId)
       .order("updated_at", { ascending: false }),
+    supabase
+      .from("artist_metric_snapshots")
+      .select(`
+        id, platform, source_field, collected_at,
+        monthly_listeners, followers, subscriber_count, total_views,
+        popularity, album_count, track_count
+      `)
+      .eq("artist_id", artistId)
+      .order("collected_at", { ascending: false })
+      .limit(500),
   ]);
   if (identities.error) throw new Error("Impossible de charger l'historique de collecte.");
+  if (metricSnapshots.error) throw new Error("Impossible de charger les indicateurs enregistrés.");
   const results: Record<string, PlatformData> = {};
   for (const identity of identities.data ?? []) {
     const result = storedToPlatformData(identity as StoredIdentity);
@@ -710,6 +765,9 @@ export async function getStoredEnrichment(
   return {
     results,
     availableFields: ENRICHABLE_FIELDS.filter((field) => Boolean(artist[field]?.trim())),
+    metricSummaries: buildMetricSummaries(
+      (metricSnapshots.data ?? []) as ArtistMetricDatabaseRow[],
+    ),
   };
 }
 
