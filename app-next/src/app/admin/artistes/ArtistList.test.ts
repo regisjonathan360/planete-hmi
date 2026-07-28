@@ -15,6 +15,7 @@ const COMPLETE_ARTIST: ArtistAdminRecord = {
   haitian_status: "verified_haitian",
   is_active: true,
   is_claimed: true,
+  artist_type: "singer",
   tags: ["chanteur"],
   primary_genre: "Konpa",
   city: "Port-au-Prince",

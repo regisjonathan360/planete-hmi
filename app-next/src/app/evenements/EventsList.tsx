@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./evenements.module.css";
 
 interface EventItem {
@@ -23,12 +24,21 @@ interface EventItem {
 }
 
 export function EventsList({ events, savedIds, isLoggedIn }: { events: EventItem[]; savedIds: string[]; isLoggedIn: boolean }) {
+  const router = useRouter();
   const [saved, setSaved] = useState<Set<string>>(new Set(savedIds));
+  const [pending, setPending] = useState<Set<string>>(new Set());
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function toggleSave(eventId: string) {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      router.push("/connexion?next=/evenements");
+      return;
+    }
+    if (pending.has(eventId)) return;
     const isSaved = saved.has(eventId);
     const method = isSaved ? "DELETE" : "POST";
+    setPending((current) => new Set(current).add(eventId));
+    setNotice(null);
 
     setSaved((prev) => {
       const next = new Set(prev);
@@ -37,11 +47,32 @@ export function EventsList({ events, savedIds, isLoggedIn }: { events: EventItem
       return next;
     });
 
-    await fetch("/api/events/save", {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ eventId }),
-    });
+    try {
+      const response = await fetch("/api/events/save", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error ?? "Action impossible.");
+      setNotice(isSaved
+        ? "Événement retiré de vos favoris."
+        : "Événement enregistré dans « Mes favoris ».");
+    } catch (error) {
+      setSaved((current) => {
+        const rollback = new Set(current);
+        if (isSaved) rollback.add(eventId);
+        else rollback.delete(eventId);
+        return rollback;
+      });
+      setNotice(error instanceof Error ? error.message : "Action impossible.");
+    } finally {
+      setPending((current) => {
+        const next = new Set(current);
+        next.delete(eventId);
+        return next;
+      });
+    }
   }
 
   if (events.length === 0) {
@@ -64,6 +95,7 @@ export function EventsList({ events, savedIds, isLoggedIn }: { events: EventItem
         <h1 className={styles.pageTitle}>Événements <span className={styles.accent}>HMI</span></h1>
         <p className={styles.lead}>Concerts, festivals et soirées de la musique haïtienne.</p>
       </div>
+      {notice ? <p className={styles.saveNotice} role="status">{notice}</p> : null}
 
       {/* Événement à la une */}
       <section className={styles.featuredSection}>
@@ -79,11 +111,16 @@ export function EventsList({ events, savedIds, isLoggedIn }: { events: EventItem
             {featured.display_description && <p className={styles.excerpt}>{featured.display_description}</p>}
           </div>
         </a>
-        {isLoggedIn && (
-          <button className={`${styles.saveBtn} ${saved.has(featured.id) ? styles.saved : ""}`} onClick={(e) => { e.preventDefault(); toggleSave(featured.id); }} title={saved.has(featured.id) ? "Retirer" : "Enregistrer"}>
+          <button
+            type="button"
+            className={`${styles.saveBtn} ${saved.has(featured.id) ? styles.saved : ""}`}
+            onClick={(e) => { e.preventDefault(); toggleSave(featured.id); }}
+            title={saved.has(featured.id) ? "Retirer de mes favoris" : "Enregistrer dans mes favoris"}
+            aria-pressed={saved.has(featured.id)}
+            disabled={pending.has(featured.id)}
+          >
             <BookmarkIcon filled={saved.has(featured.id)} />
           </button>
-        )}
       </section>
 
       {/* Grille des événements */}
@@ -103,11 +140,16 @@ export function EventsList({ events, savedIds, isLoggedIn }: { events: EventItem
                 {event.source_price && <p className={styles.cardPrice}>🎫 {event.source_price}</p>}
               </div>
             </a>
-            {isLoggedIn && (
-              <button className={`${styles.saveBtn} ${styles.cardSaveBtn} ${saved.has(event.id) ? styles.saved : ""}`} onClick={() => toggleSave(event.id)} title={saved.has(event.id) ? "Retirer" : "Enregistrer"}>
+              <button
+                type="button"
+                className={`${styles.saveBtn} ${styles.cardSaveBtn} ${saved.has(event.id) ? styles.saved : ""}`}
+                onClick={() => toggleSave(event.id)}
+                title={saved.has(event.id) ? "Retirer de mes favoris" : "Enregistrer dans mes favoris"}
+                aria-pressed={saved.has(event.id)}
+                disabled={pending.has(event.id)}
+              >
                 <BookmarkIcon filled={saved.has(event.id)} />
               </button>
-            )}
           </article>
         ))}
       </section>

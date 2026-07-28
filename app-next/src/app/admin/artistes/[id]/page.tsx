@@ -23,15 +23,27 @@ export default async function AdminArtistEditPage({ params }: Props) {
 
   if (!artist) notFound();
 
-  // Départements et communes pour les sélecteurs lieu de naissance
-  const { data: departments } = await supabase
-    .from("haiti_departments")
-    .select("id, name, code")
-    .order("name");
-  const { data: communes } = await supabase
-    .from("haiti_communes")
-    .select("id, department_id, name")
-    .order("name");
+  const [
+    { data: departments },
+    { data: communes },
+    { data: groups },
+    { data: parentGroups },
+    { data: groupMembers },
+  ] = await Promise.all([
+    supabase.from("haiti_departments").select("id, name, code").order("name"),
+    supabase.from("haiti_communes").select("id, department_id, name").order("name"),
+    supabase.from("artists").select("id, name").eq("artist_type", "group").neq("id", id).order("name"),
+    supabase.from("artist_group_members").select("group_artist_id").eq("member_artist_id", id),
+    supabase.from("artist_group_members").select("member_artist_id").eq("group_artist_id", id),
+  ]);
+
+  const { data: potentialMembers } = artist.artist_type === "group"
+    ? await supabase
+      .from("artists")
+      .select("id, name")
+      .neq("id", id)
+      .order("name")
+    : { data: [] };
 
   return (
     <>
@@ -41,6 +53,10 @@ export default async function AdminArtistEditPage({ params }: Props) {
           artist={artist}
           departments={departments ?? []}
           communes={communes ?? []}
+          groups={groups ?? []}
+          potentialMembers={potentialMembers ?? []}
+          initialGroupIds={(parentGroups ?? []).map((row) => row.group_artist_id as string)}
+          initialMemberIds={(groupMembers ?? []).map((row) => row.member_artist_id as string)}
         />
       </main>
     </>

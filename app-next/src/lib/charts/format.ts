@@ -57,7 +57,7 @@ export const SLUG_PAR_PLATEFORME: Record<string, string> = {
 
 /** source_key principal par slug de plateforme (page détail). */
 export const SOURCE_KEY_PAR_SLUG: Record<string, string> = {
-  youtube: "youtube_haiti_official",
+  youtube: "youtube_hmi_weekly_delta",
   spotify: "spotify_haiti_popular",
   audiomack: "audiomack_haiti_weekly100",
   deezer: "deezer_haiti_top100",

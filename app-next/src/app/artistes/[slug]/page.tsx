@@ -116,6 +116,35 @@ export default async function ArtistProfilePage({ params }: Props) {
 
   if (!artist) notFound();
 
+  const [
+    { data: parentGroupRows },
+    { data: groupMemberRows },
+  ] = await Promise.all([
+    supabase
+      .from("artist_group_members")
+      .select("group_artist_id")
+      .eq("member_artist_id", artist.id)
+      .eq("is_current", true),
+    supabase
+      .from("artist_group_members")
+      .select("member_artist_id")
+      .eq("group_artist_id", artist.id)
+      .eq("is_current", true),
+  ]);
+  const parentGroupIds = (parentGroupRows ?? []).map((row) => row.group_artist_id as string);
+  const groupMemberIds = (groupMemberRows ?? []).map((row) => row.member_artist_id as string);
+  const [
+    { data: parentGroups },
+    { data: groupMembers },
+  ] = await Promise.all([
+    parentGroupIds.length
+      ? supabase.from("artists").select("id, name, slug, image_url").in("id", parentGroupIds).order("name")
+      : Promise.resolve({ data: [] }),
+    groupMemberIds.length
+      ? supabase.from("artists").select("id, name, slug, image_url").in("id", groupMemberIds).order("name")
+      : Promise.resolve({ data: [] }),
+  ]);
+
   // Vidéo TikTok la plus populaire de la semaine (si artiste connecté)
   let topVideo: { title: string | null; description: string | null; coverUrl: string | null; embedLink: string | null; shareUrl: string | null; viewCount: number; likeCount: number } | null = null;
   if (artist.user_id) {
@@ -327,6 +356,28 @@ export default async function ArtistProfilePage({ params }: Props) {
               )}
             </div>
           </div>
+
+          {(parentGroups?.length || groupMembers?.length) ? (
+            <section className="artist-profile__section artist-profile__section--relations">
+              <h2 className="artist-profile__section-title">
+                {artist.artist_type === "group" ? "Membres du groupe" : "Groupes associés"}
+              </h2>
+              <div className="artist-profile__relations">
+                {(artist.artist_type === "group" ? groupMembers : parentGroups)?.map((related) => (
+                  <Link key={related.id} href={`/artistes/${related.slug}`} className="artist-profile__relation">
+                    <Image
+                      unoptimized
+                      src={artistAvatarSrc(related.image_url as string | null)}
+                      alt=""
+                      width={48}
+                      height={48}
+                    />
+                    <span>{related.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           {/* Plateformes musicales */}
           {platforms.length > 0 && (

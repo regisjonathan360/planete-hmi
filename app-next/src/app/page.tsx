@@ -12,6 +12,18 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   let tickerHtml = buildAudiomackTickerHtml([]);
   let podiumHtml = "";
+  let initialUser: { email: string | null; initial: string } | null = null;
+
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const email = user.email ?? null;
+      initialUser = { email, initial: (email ?? "U").charAt(0).toUpperCase() };
+    }
+  } catch {
+    initialUser = null;
+  }
 
   try {
     const chart = await getPlatformChart(
@@ -54,7 +66,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <SiteHeader />
+      <SiteHeader initialUser={initialUser} />
       <StaticPage
         filename="index.html"
         replacements={replacements}

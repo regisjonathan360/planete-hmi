@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback, type RefObject } from "react";
 import { Canvas, useFrame, useThree, ThreeEvent } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
@@ -267,10 +267,13 @@ function Atmosphere() {
 
 interface DeptProps {
   feature: GeoFeature; cx: number; cy: number; zoom: number;
-  isHovered: boolean; onHover: (c: string | null) => void; onClick: (c: string, n: string) => void;
+  isActive: boolean;
+  onHover: (c: string | null) => void;
+  onSelect: (c: string) => void;
+  onClick: (c: string, n: string) => void;
 }
 
-function DepartmentMesh({ feature, cx, cy, zoom, isHovered, onHover, onClick }: DeptProps) {
+function DepartmentMesh({ feature, cx, cy, zoom, isActive, onHover, onSelect, onClick }: DeptProps) {
   const code = HASC_TO_CODE[feature.properties.HASC_1] ?? feature.properties.NAME_1;
   const name = feature.properties.NAME_1;
   const meshRef = useRef<THREE.Mesh>(null);
@@ -300,14 +303,14 @@ function DepartmentMesh({ feature, cx, cy, zoom, isHovered, onHover, onClick }: 
     // Animation du gradient
     if (matRef.current) {
       matRef.current.uniforms.uTime.value = state.clock.elapsedTime;
-      const target = isHovered ? 1 : 0;
+      const target = isActive ? 1 : 0;
       matRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(
         matRef.current.uniforms.uHover.value, target, Math.min(1, delta * 10),
       );
     }
     // Détachement animé
     if (meshRef.current) {
-      const targetScale = isHovered ? 1 + HOVER_LIFT : 1;
+      const targetScale = isActive ? 1 + HOVER_LIFT : 1;
       meshRef.current.scale.setScalar(
         THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, Math.min(1, delta * 10)),
       );
@@ -320,10 +323,15 @@ function DepartmentMesh({ feature, cx, cy, zoom, isHovered, onHover, onClick }: 
   const handleOver = useCallback((e: ThreeEvent<PointerEvent>) => { e.stopPropagation(); onHover(code); document.body.style.cursor = "pointer"; }, [code, onHover]);
   const handleOut = useCallback(() => { onHover(null); document.body.style.cursor = ""; }, [onHover]);
   const handleClick = useCallback((e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); onClick(code, name); }, [code, name, onClick]);
+  const handleDown = useCallback((e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    onSelect(code);
+    onHover(code);
+  }, [code, onHover, onSelect]);
 
   return (
     <group>
-      <mesh ref={meshRef} geometry={geometry} onPointerOver={handleOver} onPointerOut={handleOut} onClick={handleClick}>
+      <mesh ref={meshRef} geometry={geometry} onPointerOver={handleOver} onPointerOut={handleOut} onPointerDown={handleDown} onClick={handleClick}>
         <shaderMaterial
           ref={matRef}
           vertexShader={DEPT_VERTEX}
@@ -335,9 +343,9 @@ function DepartmentMesh({ feature, cx, cy, zoom, isHovered, onHover, onClick }: 
       {/* Contour néon : discret au repos, très brillant au hover */}
       <lineSegments ref={outlineRef} geometry={outlineGeo}>
         <lineBasicMaterial
-          color={isHovered ? "#00ffcc" : "#7c5cff"}
+          color={isActive ? "#00ffcc" : "#7c5cff"}
           transparent
-          opacity={isHovered ? 1.0 : 0.25}
+          opacity={isActive ? 1.0 : 0.25}
         />
       </lineSegments>
     </group>
@@ -420,27 +428,45 @@ function FitCamera() {
 
 // ---------- Scène ----------
 
-function Scene({ features, cx, cy, zoom, hovered, onHover, onClick }: {
+function Scene({ features, cx, cy, zoom, hovered, selected, gyro, onHover, onSelect, onClick }: {
   features: GeoFeature[]; cx: number; cy: number; zoom: number;
-  hovered: string | null; onHover: (c: string | null) => void; onClick: (c: string, n: string) => void;
+  hovered: string | null;
+  selected: string | null;
+  gyro: RefObject<{ x: number; y: number }>;
+  onHover: (c: string | null) => void;
+  onSelect: (c: string) => void;
+  onClick: (c: string, n: string) => void;
 }) {
+  const worldRef = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    if (!worldRef.current) return;
+    const responsiveness = Math.min(1, delta * 4);
+    worldRef.current.rotation.x = THREE.MathUtils.lerp(worldRef.current.rotation.x, gyro.current.x, responsiveness);
+    worldRef.current.rotation.y = THREE.MathUtils.lerp(worldRef.current.rotation.y, gyro.current.y, responsiveness);
+  });
+
   return (
     <>
       <FitCamera />
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 4, 6]} intensity={0.9} />
       <pointLight position={[-3, 0, 5]} intensity={0.4} color="#7c5cff" />
-      <OceanSphere />
-      <Atmosphere />
-      <PlanetRings />
-      {features.map((feature) => {
-        const code = HASC_TO_CODE[feature.properties.HASC_1] ?? feature.properties.NAME_1;
-        return (
-          <DepartmentMesh key={code} feature={feature} cx={cx} cy={cy} zoom={zoom}
-            isHovered={hovered === code} onHover={onHover} onClick={onClick} />
-        );
-      })}
-      <DepartmentLabels features={features} cx={cx} cy={cy} zoom={zoom} hovered={hovered} />
+      <group ref={worldRef}>
+        <OceanSphere />
+        <Atmosphere />
+        <PlanetRings />
+        {features.map((feature) => {
+          const code = HASC_TO_CODE[feature.properties.HASC_1] ?? feature.properties.NAME_1;
+          return (
+            <DepartmentMesh key={code} feature={feature} cx={cx} cy={cy} zoom={zoom}
+              isActive={hovered === code || selected === code}
+              onHover={onHover}
+              onSelect={onSelect}
+              onClick={onClick} />
+          );
+        })}
+        <DepartmentLabels features={features} cx={cx} cy={cy} zoom={zoom} hovered={selected ?? hovered} />
+      </group>
       <OrbitControls enableZoom={false} enablePan={false} rotateSpeed={0.4} enableDamping dampingFactor={0.08}
         minPolarAngle={Math.PI / 3} maxPolarAngle={(Math.PI * 2) / 3}
         minAzimuthAngle={-Math.PI / 4} maxAzimuthAngle={Math.PI / 4} />
@@ -453,8 +479,32 @@ function Scene({ features, cx, cy, zoom, hovered, onHover, onClick }: {
 export function HaitiInteractiveGlobe({ onDepartmentClick, artistsByDepartment = {} }: HaitiInteractiveGlobeProps) {
   const [geojson, setGeojson] = useState<{ features: GeoFeature[] } | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [gyroEnabled, setGyroEnabled] = useState(false);
+  const [gyroAvailable, setGyroAvailable] = useState(false);
+  const gyro = useRef({ x: 0, y: 0 });
+  const gyroOrigin = useRef<{ beta: number; gamma: number } | null>(null);
 
   useEffect(() => { fetch("/data/haiti-departments.geojson").then((r) => r.json()).then(setGeojson).catch(() => {}); }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setGyroAvailable("DeviceOrientationEvent" in window);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+  useEffect(() => {
+    if (!gyroEnabled) return;
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      if (event.beta == null || event.gamma == null) return;
+      gyroOrigin.current ??= { beta: event.beta, gamma: event.gamma };
+      gyro.current = {
+        x: THREE.MathUtils.clamp((event.beta - gyroOrigin.current.beta) * DEG2RAD * 0.22, -0.24, 0.24),
+        y: THREE.MathUtils.clamp((event.gamma - gyroOrigin.current.gamma) * DEG2RAD * 0.3, -0.32, 0.32),
+      };
+    };
+    window.addEventListener("deviceorientation", handleOrientation, true);
+    return () => window.removeEventListener("deviceorientation", handleOrientation, true);
+  }, [gyroEnabled]);
 
   const { cx, cy, zoom } = useMemo(() => {
     if (!geojson) return { cx: -72.3, cy: 19.0, zoom: 35 };
@@ -465,7 +515,23 @@ export function HaitiInteractiveGlobe({ onDepartmentClick, artistsByDepartment =
     return { cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, zoom: LAT_SPAN_DEG / (maxY - minY) };
   }, [geojson]);
 
-  const handleClick = useCallback((c: string, n: string) => onDepartmentClick?.(c, n), [onDepartmentClick]);
+  const handleClick = useCallback((c: string, n: string) => {
+    setSelected(c);
+    window.setTimeout(() => onDepartmentClick?.(c, n), 240);
+  }, [onDepartmentClick]);
+
+  const enableGyroscope = useCallback(async () => {
+    type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
+      requestPermission?: () => Promise<"granted" | "denied">;
+    };
+    const orientation = DeviceOrientationEvent as DeviceOrientationWithPermission;
+    if (orientation.requestPermission) {
+      const permission = await orientation.requestPermission();
+      if (permission !== "granted") return;
+    }
+    gyroOrigin.current = null;
+    setGyroEnabled(true);
+  }, []);
 
   if (!geojson) return (
     <div style={{ width: "100%", height: "min(880px, 88vh)", display: "flex", alignItems: "center", justifyContent: "center", color: "#9a9ac0" }}>
@@ -474,11 +540,30 @@ export function HaitiInteractiveGlobe({ onDepartmentClick, artistsByDepartment =
   );
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "min(880px, 88vh)" }}>
-      <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }} style={{ background: "transparent", touchAction: "pan-y" }}>
-        <Scene features={geojson.features} cx={cx} cy={cy} zoom={zoom} hovered={hovered} onHover={setHovered} onClick={handleClick} />
-      </Canvas>
+    <div className={styles.globeContainer}>
+      <div className={styles.globeHitArea}>
+        <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 2]}
+          gl={{ antialias: true, alpha: true }} style={{ background: "transparent", touchAction: "none" }}>
+          <Scene
+            features={geojson.features}
+            cx={cx}
+            cy={cy}
+            zoom={zoom}
+            hovered={hovered}
+            selected={selected}
+            gyro={gyro}
+            onHover={setHovered}
+            onSelect={setSelected}
+            onClick={handleClick}
+          />
+        </Canvas>
+      </div>
+
+      {gyroAvailable && !gyroEnabled ? (
+        <button type="button" className={styles.gyroButton} onClick={enableGyroscope}>
+          Activer le mouvement du téléphone
+        </button>
+      ) : null}
 
       {hovered && artistsByDepartment[hovered] && artistsByDepartment[hovered].length > 0 && (
         <div className={styles.artistPreview}>
@@ -493,8 +578,11 @@ export function HaitiInteractiveGlobe({ onDepartmentClick, artistsByDepartment =
         </div>
       )}
 
-      <p style={{ position: "absolute", bottom: 8, left: 0, right: 0, textAlign: "center", color: "#9a9ac0", fontSize: "0.78rem", margin: 0, pointerEvents: "none" }}>
-        Survolez un département pour voir ses artistes • Cliquez pour explorer
+      <p className={styles.globeHint}>
+        Touchez directement un département pour l’explorer
+      </p>
+      <p className={styles.visuallyHidden} aria-live="polite">
+        {selected ? `Département sélectionné : ${selected.replaceAll("_", " ")}` : ""}
       </p>
     </div>
   );
