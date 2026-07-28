@@ -13,16 +13,16 @@ export default async function AdminDoublonsPage() {
   const supabase = createAdminClient();
 
   // Charger les candidats à la fusion en attente
-  const { data: candidates } = await supabase
+  const { data: candidates, count } = await supabase
     .from("artist_merge_candidates")
     .select(`
       id, confidence, reason, status, created_at,
       artist_a:artist_a_id(id, name, slug, image_url, haitian_status, tags),
       artist_b:artist_b_id(id, name, slug, image_url, haitian_status, tags)
-    `)
+    `, { count: "exact" })
     .eq("status", "pending")
     .order("confidence", { ascending: false })
-    .limit(50);
+    .limit(100);
 
   return (
     <>
@@ -32,7 +32,7 @@ export default async function AdminDoublonsPage() {
         <p className="admin__subtitle">
           Artistes qui pourraient être la même personne. Comparez et décidez : fusionner ou garder séparés.
         </p>
-        <DoublonsList candidates={candidates ?? []} />
+        <DoublonsList candidates={candidates ?? []} totalCount={count ?? 0} />
       </main>
     </>
   );
