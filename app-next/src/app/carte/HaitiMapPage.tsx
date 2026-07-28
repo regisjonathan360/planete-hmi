@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- avatars distants (Spotify/YouTube) */
 "use client";
 
 import { useState } from "react";
@@ -112,7 +113,8 @@ export function HaitiMapPage({ artistsByDepartment, departments }: HaitiMapPageP
       {/* Globe 3D avec la carte d'Haïti */}
       <HaitiGlobe />
       <p style={{ textAlign: "center", color: "#9a9ac0", fontSize: "0.82rem", margin: "0.5rem 0 2rem" }}>
-        Faites tourner la planète • Cliquez un département ci-dessous
+        Faites tourner la planète au doigt ou à la souris • Inclinez votre mobile pour la
+        faire bouger • Cliquez un département sur la carte ci-dessous
       </p>
       <HaitiMapSVG
         onDepartmentClick={handleDepartmentClick}

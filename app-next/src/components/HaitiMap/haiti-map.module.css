@@ -2,9 +2,9 @@
 .mapContainer {
   position: relative;
   width: 100%;
-  max-width: 900px;
+  max-width: 1180px;
   margin: 0 auto;
-  min-height: 400px;
+  min-height: 460px;
 }
 
 .mapSvg {
