@@ -46,7 +46,7 @@ export function StaticPage({
     body = body.replace(replacement.marker, replacement.html);
   }
   const scripts = getStaticPageScripts(filename).filter(
-    (src) => !src.includes("main.js")
+    (src) => !src.includes("main.js") && !src.includes("features.js")
   );
 
   return (
