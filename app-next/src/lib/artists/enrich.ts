@@ -1,20 +1,13 @@
 /**
- * Enrichissement multi-plateforme d'un artiste.
+ * Enrichissement d'un artiste depuis UNE plateforme spécifique.
  *
- * Récupère automatiquement toutes les données publiques disponibles depuis les
- * URLs renseignées dans la fiche artiste : photo, bannière, auditeurs mensuels,
- * abonnés, popularité, genres, etc.
+ * Chaque collecte est déclenchée individuellement par l'admin en cliquant sur
+ * un bouton à côté de l'URL concernée. Aucune donnée n'est récupérée d'une URL
+ * que l'admin n'a pas lui-même renseignée dans la fiche.
  *
- * Plateformes supportées :
- *  - Spotify  (embed public : monthly listeners, photo, genres, followers)
- *  - Deezer   (API publique : fans, photo, nb albums/tracks)
- *  - YouTube  (Data API v3 si YOUTUBE_API_KEY configurée : subscribers, views, banner)
- *  - Audiomack (page publique : followers, photo)
- *
- * Les résultats sont écrits dans :
- *  - `artist_platform_identities.metadata` (métriques par plateforme)
- *  - `artists.image_url` / `artists.banner_url` (si vides, complétés)
- *  - `artists.primary_genre` (si vide, complété depuis Spotify)
+ * Les résultats (photos, métriques) sont stockés dans
+ * `artist_platform_identities.metadata` et proposés à l'admin pour
+ * sélection (photo de profil, bannière, etc.).
  */
 import "server-only";
 
@@ -27,145 +20,79 @@ import {
 
 // ---------- Types ----------
 
-export interface PlatformMetrics {
+export interface PlatformData {
   platform: string;
   externalId: string | null;
-  externalUrl: string | null;
+  externalUrl: string;
   name: string | null;
-  imageUrl: string | null;
-  bannerUrl: string | null;
+  images: { url: string; label: string; type: "avatar" | "banner" | "cover" }[];
   monthlyListeners: number | null;
   followers: number | null;
+  subscriberCount: number | null;
   totalViews: number | null;
   popularity: number | null;
   genres: string[];
   albumCount: number | null;
   trackCount: number | null;
-  subscriberCount: number | null;
-  /** Méthode de lecture : embed, web_api, public_api, scrape */
   method: string;
-  /** Erreur éventuelle (non bloquante). */
   error: string | null;
   fetchedAt: string;
 }
 
-export interface EnrichmentReport {
-  artistId: string;
-  artistName: string;
-  platforms: PlatformMetrics[];
-  applied: {
-    imageUrl: boolean;
-    bannerUrl: boolean;
-    primaryGenre: boolean;
-  };
-  warnings: string[];
-}
-
 // ---------- Spotify ----------
 
-async function enrichFromSpotify(
-  artistName: string,
-  urlSpotify: string | null,
-): Promise<PlatformMetrics> {
-  const base: PlatformMetrics = {
-    platform: "spotify",
-    externalId: null,
-    externalUrl: urlSpotify,
-    name: null,
-    imageUrl: null,
-    bannerUrl: null,
-    monthlyListeners: null,
-    followers: null,
-    totalViews: null,
-    popularity: null,
-    genres: [],
-    albumCount: null,
-    trackCount: null,
-    subscriberCount: null,
-    method: "none",
-    error: null,
-    fetchedAt: new Date().toISOString(),
-  };
+export async function enrichSpotify(url: string): Promise<PlatformData> {
+  const base = makeBase("spotify", url);
 
   try {
-    // Extraire l'ID depuis l'URL si disponible
     let artistId: string | null = null;
-    if (urlSpotify) {
-      const m = /artist\/([A-Za-z0-9]{22})/.exec(urlSpotify);
-      if (m) artistId = m[1];
-    }
-
-    // Sinon, rechercher par nom
-    if (!artistId) {
-      const profile = isSpotifyConfigured()
-        ? await searchSpotifyArtist(artistName, 0.65)
-        : null;
-      if (profile) {
-        artistId = profile.id;
-        base.externalUrl = profile.url;
-        base.name = profile.name;
-        base.imageUrl = profile.imageUrl;
-        base.followers = profile.followers;
-        base.genres = profile.genres;
-      }
-    }
+    const m = /artist\/([A-Za-z0-9]{22})/.exec(url);
+    if (m) artistId = m[1];
 
     if (!artistId) {
-      // Tentative de recherche via embed sans API
-      const searchRes = await fetch(
-        `https://open.spotify.com/search/${encodeURIComponent(artistName)}`,
-        { headers: { "User-Agent": "Mozilla/5.0" }, cache: "no-store" },
-      ).catch(() => null);
-      if (searchRes?.ok) {
-        const html = await searchRes.text();
-        const idMatch = /artist\/([A-Za-z0-9]{22})/.exec(html);
-        if (idMatch) artistId = idMatch[1];
-      }
-    }
-
-    if (!artistId) {
-      base.error = "Artiste non trouvé sur Spotify.";
+      base.error = "URL Spotify invalide : impossible d'extraire l'identifiant artiste.";
       return base;
     }
 
     base.externalId = artistId;
-    base.externalUrl ??= `https://open.spotify.com/artist/${artistId}`;
 
-    // Monthly listeners via la page embed
+    // Monthly listeners via page embed
     const ml = await getSpotifyArtistMonthlyListeners(artistId);
     base.monthlyListeners = ml.monthlyListeners;
-    base.followers ??= ml.followers;
+    base.followers = ml.followers;
     base.method = ml.method;
 
-    // Détails supplémentaires via la page embed
-    try {
-      const embedRes = await fetch(
-        `https://open.spotify.com/embed/artist/${artistId}`,
-        {
-          headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
-          cache: "no-store",
-        },
-      );
-      if (embedRes.ok) {
-        const html = await embedRes.text();
-        const match = /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(html);
-        if (match) {
-          const nd = JSON.parse(match[1]);
-          const entity = nd?.props?.pageProps?.state?.data?.entity;
-          if (entity) {
-            base.name ??= entity.name ?? null;
-            base.imageUrl ??= entity.headerImage?.url ?? entity.visuals?.headerImage?.sources?.[0]?.url ?? null;
-            // L'image d'en-tête Spotify sert de bannière
-            const header = entity.headerImage?.url ?? entity.visuals?.headerImage?.sources?.[0]?.url;
-            if (header) base.bannerUrl = header;
-            // L'avatar Spotify
-            const avatar = entity.visuals?.avatarImage?.sources?.[0]?.url ?? entity.images?.[0]?.url;
-            if (avatar) base.imageUrl = avatar;
-          }
+    // Profil complet via embed
+    const embedRes = await fetch(
+      `https://open.spotify.com/embed/artist/${artistId}`,
+      { headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" }, cache: "no-store" },
+    );
+    if (embedRes.ok) {
+      const html = await embedRes.text();
+      const match = /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(html);
+      if (match) {
+        const nd = JSON.parse(match[1]);
+        const entity = nd?.props?.pageProps?.state?.data?.entity;
+        if (entity) {
+          base.name = entity.name ?? null;
+          const avatar = entity.visuals?.avatarImage?.sources?.[0]?.url ?? entity.images?.[0]?.url;
+          if (avatar) base.images.push({ url: avatar, label: "Photo Spotify", type: "avatar" });
+          const header = entity.visuals?.headerImage?.sources?.[0]?.url ?? entity.headerImage?.url;
+          if (header) base.images.push({ url: header, label: "Bannière Spotify", type: "banner" });
         }
       }
-    } catch {
-      // Non bloquant
+    }
+
+    // Web API si configurée (pour genres et popularité)
+    if (isSpotifyConfigured()) {
+      const profile = await searchSpotifyArtist(base.name ?? "", 0.9);
+      if (profile) {
+        base.genres = profile.genres;
+        base.followers ??= profile.followers;
+        if (profile.imageUrl && !base.images.some((i) => i.type === "avatar")) {
+          base.images.push({ url: profile.imageUrl, label: "Photo Spotify (API)", type: "avatar" });
+        }
+      }
     }
   } catch (err) {
     base.error = err instanceof Error ? err.message : "Erreur Spotify.";
@@ -176,80 +103,32 @@ async function enrichFromSpotify(
 
 // ---------- Deezer ----------
 
-interface DeezerArtistResponse {
-  id?: number;
-  name?: string;
-  picture_xl?: string;
-  picture_big?: string;
-  picture_medium?: string;
-  nb_album?: number;
-  nb_fan?: number;
-  link?: string;
-}
-
-async function enrichFromDeezer(
-  artistName: string,
-  urlDeezer: string | null,
-): Promise<PlatformMetrics> {
-  const base: PlatformMetrics = {
-    platform: "deezer",
-    externalId: null,
-    externalUrl: urlDeezer,
-    name: null,
-    imageUrl: null,
-    bannerUrl: null,
-    monthlyListeners: null,
-    followers: null,
-    totalViews: null,
-    popularity: null,
-    genres: [],
-    albumCount: null,
-    trackCount: null,
-    subscriberCount: null,
-    method: "public_api",
-    error: null,
-    fetchedAt: new Date().toISOString(),
-  };
+export async function enrichDeezer(url: string): Promise<PlatformData> {
+  const base = makeBase("deezer", url);
 
   try {
-    let artistId: string | null = null;
-    if (urlDeezer) {
-      const m = /artist\/(\d+)/.exec(urlDeezer);
-      if (m) artistId = m[1];
-    }
+    const m = /artist\/(\d+)/.exec(url);
+    if (!m) { base.error = "URL Deezer invalide : pas d'identifiant artiste trouvé."; return base; }
 
-    if (!artistId) {
-      const searchRes = await fetch(
-        `https://api.deezer.com/search/artist?q=${encodeURIComponent(artistName)}&limit=3`,
-        { cache: "no-store" },
-      );
-      if (searchRes.ok) {
-        const searchData = (await searchRes.json()) as { data?: DeezerArtistResponse[] };
-        const best = searchData.data?.[0];
-        if (best?.id) artistId = String(best.id);
-      }
-    }
-
-    if (!artistId) {
-      base.error = "Artiste non trouvé sur Deezer.";
-      return base;
-    }
-
+    const artistId = m[1];
     base.externalId = artistId;
+
     const res = await fetch(`https://api.deezer.com/artist/${artistId}`, { cache: "no-store" });
     if (!res.ok) { base.error = `Deezer HTTP ${res.status}`; return base; }
 
-    const data = (await res.json()) as DeezerArtistResponse;
+    const data = await res.json();
     base.name = data.name ?? null;
-    base.imageUrl = data.picture_xl ?? data.picture_big ?? data.picture_medium ?? null;
     base.followers = data.nb_fan ?? null;
     base.albumCount = data.nb_album ?? null;
-    base.externalUrl ??= data.link ?? `https://www.deezer.com/artist/${artistId}`;
+    base.method = "public_api";
 
-    // Nombre de tracks
+    if (data.picture_xl) base.images.push({ url: data.picture_xl, label: "Photo Deezer (XL)", type: "avatar" });
+    else if (data.picture_big) base.images.push({ url: data.picture_big, label: "Photo Deezer", type: "avatar" });
+
+    // Top tracks count
     const topRes = await fetch(`https://api.deezer.com/artist/${artistId}/top?limit=1`, { cache: "no-store" });
     if (topRes.ok) {
-      const topData = (await topRes.json()) as { total?: number };
+      const topData = await topRes.json();
       base.trackCount = topData.total ?? null;
     }
   } catch (err) {
@@ -261,48 +140,8 @@ async function enrichFromDeezer(
 
 // ---------- YouTube ----------
 
-interface YouTubeChannelSnippet {
-  title?: string;
-  thumbnails?: { high?: { url?: string } };
-}
-interface YouTubeChannelBranding {
-  image?: { bannerExternalUrl?: string };
-}
-interface YouTubeChannelStats {
-  viewCount?: string;
-  subscriberCount?: string;
-  videoCount?: string;
-}
-interface YouTubeChannelItem {
-  id?: string;
-  snippet?: YouTubeChannelSnippet;
-  brandingSettings?: YouTubeChannelBranding;
-  statistics?: YouTubeChannelStats;
-}
-
-async function enrichFromYouTube(
-  artistName: string,
-  urlYoutube: string | null,
-): Promise<PlatformMetrics> {
-  const base: PlatformMetrics = {
-    platform: "youtube",
-    externalId: null,
-    externalUrl: urlYoutube,
-    name: null,
-    imageUrl: null,
-    bannerUrl: null,
-    monthlyListeners: null,
-    followers: null,
-    totalViews: null,
-    popularity: null,
-    genres: [],
-    albumCount: null,
-    trackCount: null,
-    subscriberCount: null,
-    method: "youtube_data_api",
-    error: null,
-    fetchedAt: new Date().toISOString(),
-  };
+export async function enrichYouTube(url: string): Promise<PlatformData> {
+  const base = makeBase("youtube", url);
 
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) { base.error = "YOUTUBE_API_KEY non configurée."; base.method = "none"; return base; }
@@ -310,42 +149,46 @@ async function enrichFromYouTube(
   try {
     let channelId: string | null = null;
 
-    if (urlYoutube) {
-      // Extraire l'ID de la chaîne depuis l'URL
-      const ucMatch = /(UC[\w-]{22})/.exec(urlYoutube);
-      if (ucMatch) channelId = ucMatch[1];
+    // UC... direct
+    const ucMatch = /(UC[\w-]{22})/.exec(url);
+    if (ucMatch) channelId = ucMatch[1];
 
-      // Handle @handle ou /c/name
-      if (!channelId) {
-        const handleMatch = /@([\w.-]+)/.exec(urlYoutube);
-        if (handleMatch) {
+    // @handle
+    if (!channelId) {
+      const handleMatch = /@([\w.-]+)/.exec(url);
+      if (handleMatch) {
+        const sRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(handleMatch[1])}&key=${apiKey}`,
+          { cache: "no-store" },
+        );
+        if (sRes.ok) {
+          const sData = await sRes.json();
+          channelId = sData.items?.[0]?.id ?? null;
+        }
+        // Fallback : search
+        if (!channelId) {
           const searchRes = await fetch(
             `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(handleMatch[1])}&maxResults=1&key=${apiKey}`,
             { cache: "no-store" },
           );
           if (searchRes.ok) {
-            const searchData = (await searchRes.json()) as { items?: { id?: { channelId?: string } }[] };
+            const searchData = await searchRes.json();
             channelId = searchData.items?.[0]?.id?.channelId ?? null;
           }
         }
       }
     }
 
+    // /channel/UCxxx
     if (!channelId) {
-      // Recherche par nom
-      const searchRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(artistName)}&maxResults=1&key=${apiKey}`,
-        { cache: "no-store" },
-      );
-      if (searchRes.ok) {
-        const searchData = (await searchRes.json()) as { items?: { id?: { channelId?: string } }[] };
-        channelId = searchData.items?.[0]?.id?.channelId ?? null;
-      }
+      const chMatch = /channel\/(UC[\w-]{22})/.exec(url);
+      if (chMatch) channelId = chMatch[1];
     }
 
-    if (!channelId) { base.error = "Chaîne YouTube non trouvée."; return base; }
+    if (!channelId) { base.error = "Impossible d'identifier la chaîne YouTube depuis cette URL."; return base; }
 
     base.externalId = channelId;
+    base.method = "youtube_data_api";
 
     const res = await fetch(
       `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${channelId}&key=${apiKey}`,
@@ -353,23 +196,20 @@ async function enrichFromYouTube(
     );
     if (!res.ok) { base.error = `YouTube API HTTP ${res.status}`; return base; }
 
-    const data = (await res.json()) as { items?: YouTubeChannelItem[] };
+    const data = await res.json();
     const channel = data.items?.[0];
-    if (!channel) { base.error = "Chaîne introuvable dans la réponse."; return base; }
+    if (!channel) { base.error = "Chaîne introuvable."; return base; }
 
     base.name = channel.snippet?.title ?? null;
-    base.imageUrl = channel.snippet?.thumbnails?.high?.url ?? null;
-    base.bannerUrl = channel.brandingSettings?.image?.bannerExternalUrl ?? null;
-    base.subscriberCount = channel.statistics?.subscriberCount
-      ? Number(channel.statistics.subscriberCount)
-      : null;
-    base.totalViews = channel.statistics?.viewCount
-      ? Number(channel.statistics.viewCount)
-      : null;
-    base.trackCount = channel.statistics?.videoCount
-      ? Number(channel.statistics.videoCount)
-      : null;
-    base.externalUrl ??= `https://www.youtube.com/channel/${channelId}`;
+    base.subscriberCount = channel.statistics?.subscriberCount ? Number(channel.statistics.subscriberCount) : null;
+    base.totalViews = channel.statistics?.viewCount ? Number(channel.statistics.viewCount) : null;
+    base.trackCount = channel.statistics?.videoCount ? Number(channel.statistics.videoCount) : null;
+
+    const thumb = channel.snippet?.thumbnails?.high?.url ?? channel.snippet?.thumbnails?.medium?.url;
+    if (thumb) base.images.push({ url: thumb, label: "Photo YouTube", type: "avatar" });
+
+    const banner = channel.brandingSettings?.image?.bannerExternalUrl;
+    if (banner) base.images.push({ url: banner, label: "Bannière YouTube", type: "banner" });
   } catch (err) {
     base.error = err instanceof Error ? err.message : "Erreur YouTube.";
   }
@@ -379,73 +219,36 @@ async function enrichFromYouTube(
 
 // ---------- Audiomack ----------
 
-async function enrichFromAudiomack(
-  artistName: string,
-  urlAudiomack: string | null,
-): Promise<PlatformMetrics> {
-  const base: PlatformMetrics = {
-    platform: "audiomack",
-    externalId: null,
-    externalUrl: urlAudiomack,
-    name: null,
-    imageUrl: null,
-    bannerUrl: null,
-    monthlyListeners: null,
-    followers: null,
-    totalViews: null,
-    popularity: null,
-    genres: [],
-    albumCount: null,
-    trackCount: null,
-    subscriberCount: null,
-    method: "scrape",
-    error: null,
-    fetchedAt: new Date().toISOString(),
-  };
+export async function enrichAudiomack(url: string): Promise<PlatformData> {
+  const base = makeBase("audiomack", url);
 
   try {
-    let slug: string | null = null;
-    if (urlAudiomack) {
-      const m = /audiomack\.com\/([^/?#]+)/.exec(urlAudiomack);
-      if (m) slug = m[1];
-    }
-
-    const pageUrl = slug
-      ? `https://audiomack.com/${slug}`
-      : `https://audiomack.com/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, "-"))}`;
-
-    base.externalUrl ??= pageUrl;
-
-    const res = await fetch(pageUrl, {
+    const res = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; PlaneteHMI-Bot/1.0)" },
       cache: "no-store",
     });
-
     if (!res.ok) { base.error = `Audiomack HTTP ${res.status}`; return base; }
 
     const html = await res.text();
+    base.method = "scrape";
 
-    // Extraire les données de __NEXT_DATA__ ou du JSON-LD
     const nextData = /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(html);
     if (nextData) {
-      try {
-        const nd = JSON.parse(nextData[1]);
-        const artist = nd?.props?.pageProps?.artist ?? nd?.props?.pageProps?.data?.artist;
-        if (artist) {
-          base.name = artist.name ?? null;
-          base.imageUrl = artist.image ?? artist.image_base ?? null;
-          base.followers = artist.followers_count ?? artist.total_followers ?? null;
-          base.totalViews = artist.total_plays ?? null;
-          base.externalId = artist.url_slug ?? slug;
-        }
-      } catch {
-        // parsing échoué — on continue avec le HTML brut
+      const nd = JSON.parse(nextData[1]);
+      const artist = nd?.props?.pageProps?.artist ?? nd?.props?.pageProps?.data?.artist;
+      if (artist) {
+        base.name = artist.name ?? null;
+        base.followers = artist.followers_count ?? artist.total_followers ?? null;
+        base.totalViews = artist.total_plays ?? null;
+        base.externalId = artist.url_slug ?? null;
+        if (artist.image) base.images.push({ url: artist.image, label: "Photo Audiomack", type: "avatar" });
+        if (artist.image_banner) base.images.push({ url: artist.image_banner, label: "Bannière Audiomack", type: "banner" });
       }
     }
 
-    if (!base.imageUrl) {
+    if (base.images.length === 0) {
       const imgMatch = /og:image[^>]*content="([^"]+)"/.exec(html);
-      if (imgMatch) base.imageUrl = imgMatch[1];
+      if (imgMatch) base.images.push({ url: imgMatch[1], label: "Photo Audiomack (OG)", type: "avatar" });
     }
   } catch (err) {
     base.error = err instanceof Error ? err.message : "Erreur Audiomack.";
@@ -454,108 +257,154 @@ async function enrichFromAudiomack(
   return base;
 }
 
-// ---------- Orchestration ----------
+// ---------- Instagram ----------
+
+export async function enrichInstagram(url: string): Promise<PlatformData> {
+  const base = makeBase("instagram", url);
+  base.method = "oembed";
+
+  try {
+    // Instagram oEmbed officiel (endpoint Meta)
+    const oembedRes = await fetch(
+      `https://graph.facebook.com/v18.0/instagram_oembed?url=${encodeURIComponent(url)}&access_token=public`,
+      { cache: "no-store" },
+    ).catch(() => null);
+
+    // Fallback : page publique pour la photo de profil
+    const pageRes = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; PlaneteHMI-Bot/1.0)" },
+      cache: "no-store",
+    });
+
+    if (pageRes.ok) {
+      const html = await pageRes.text();
+      const ogImage = /og:image[^>]*content="([^"]+)"/.exec(html);
+      if (ogImage) base.images.push({ url: ogImage[1], label: "Photo Instagram", type: "avatar" });
+      const nameMatch = /og:title[^>]*content="([^"]+)"/.exec(html);
+      if (nameMatch) base.name = nameMatch[1].split("(")[0].trim();
+    }
+
+    if (oembedRes?.ok) {
+      const data = await oembedRes.json();
+      if (data.thumbnail_url) base.images.push({ url: data.thumbnail_url, label: "Photo Instagram (oEmbed)", type: "avatar" });
+      base.name ??= data.author_name ?? null;
+    }
+  } catch (err) {
+    base.error = err instanceof Error ? err.message : "Erreur Instagram.";
+  }
+
+  return base;
+}
+
+// ---------- Dispatch ----------
+
+const ENRICHERS: Record<string, (url: string) => Promise<PlatformData>> = {
+  url_spotify: enrichSpotify,
+  url_deezer: enrichDeezer,
+  url_youtube: enrichYouTube,
+  url_youtube_music: enrichYouTube,
+  url_audiomack: enrichAudiomack,
+  url_instagram: enrichInstagram,
+};
+
+/** Champs URL reconnus comme enrichissables. */
+export const ENRICHABLE_FIELDS = Object.keys(ENRICHERS);
 
 /**
- * Enrichit un artiste depuis toutes les plateformes disponibles dans sa fiche.
- * Met à jour sa photo, sa bannière et son genre si vides.
+ * Enrichit un artiste depuis UNE seule URL spécifique, choisie par l'admin.
+ * Ne touche à rien d'autre : les champs image_url / banner_url ne sont PAS
+ * modifiés automatiquement. L'admin choisit ensuite quelles images utiliser.
  */
-export async function enrichArtist(
+export async function enrichArtistFromField(
   supabase: SupabaseClient,
   artistId: string,
-): Promise<EnrichmentReport> {
+  field: string,
+): Promise<PlatformData> {
+  const enricher = ENRICHERS[field];
+  if (!enricher) throw new Error(`Champ « ${field} » non enrichissable.`);
+
+  // Lire l'URL depuis la fiche artiste
   const { data: artist, error } = await supabase
     .from("artists")
-    .select("id, name, image_url, banner_url, primary_genre, url_spotify, url_deezer, url_audiomack, url_youtube, url_youtube_music")
+    .select("id, name, url_spotify, url_deezer, url_youtube, url_youtube_music, url_audiomack, url_instagram")
     .eq("id", artistId)
     .single();
 
   if (error || !artist) throw new Error("Artiste introuvable.");
+  const artistRecord = artist as Record<string, unknown>;
+  const url = (artistRecord[field] as string)?.trim();
+  if (!url) throw new Error(`Le champ « ${field} » est vide. Renseignez l'URL avant de collecter.`);
 
-  const name = artist.name as string;
-  const warnings: string[] = [];
-  const platforms: PlatformMetrics[] = [];
+  const result = await enricher(url);
 
-  // Lancer les enrichissements en parallèle
-  const [spotify, deezer, youtube, audiomack] = await Promise.allSettled([
-    enrichFromSpotify(name, (artist.url_spotify as string) ?? null),
-    enrichFromDeezer(name, (artist.url_deezer as string) ?? null),
-    enrichFromYouTube(name, (artist.url_youtube as string) ?? (artist.url_youtube_music as string) ?? null),
-    enrichFromAudiomack(name, (artist.url_audiomack as string) ?? null),
-  ]);
+  // Stocker dans artist_platform_identities.metadata
+  const platform = field.replace("url_", "").replace("_music", "");
+  const metadata = {
+    monthly_listeners: result.monthlyListeners,
+    followers: result.followers,
+    subscriber_count: result.subscriberCount,
+    total_views: result.totalViews,
+    popularity: result.popularity,
+    genres: result.genres,
+    album_count: result.albumCount,
+    track_count: result.trackCount,
+    images: result.images,
+    fetched_at: result.fetchedAt,
+    method: result.method,
+  };
 
-  for (const result of [spotify, deezer, youtube, audiomack]) {
-    if (result.status === "fulfilled") {
-      platforms.push(result.value);
-      if (result.value.error) warnings.push(`${result.value.platform}: ${result.value.error}`);
-    } else {
-      warnings.push(`Enrichissement échoué : ${result.reason}`);
-    }
-  }
+  await supabase.from("artist_platform_identities").upsert(
+    {
+      artist_id: artistId,
+      platform,
+      external_id: result.externalId ?? `manual_${platform}`,
+      external_url: url,
+      platform_name: result.name,
+      platform_image_url: result.images.find((i) => i.type === "avatar")?.url ?? null,
+      metadata,
+      match_method: "manual_admin",
+      last_seen_at: new Date().toISOString(),
+    },
+    { onConflict: "platform,external_id" },
+  );
 
-  // Appliquer les données récupérées
-  const patch: Record<string, unknown> = {};
-  const applied = { imageUrl: false, bannerUrl: false, primaryGenre: false };
+  return result;
+}
 
-  // Photo de profil : premier résultat exploitable (Spotify > Deezer > YouTube > Audiomack)
-  if (!artist.image_url || (artist.image_url as string).trim() === "") {
-    const img = platforms.find((p) => p.imageUrl)?.imageUrl;
-    if (img) { patch.image_url = img; applied.imageUrl = true; }
-  }
+/**
+ * Applique une image collectée (avatar ou bannière) à la fiche de l'artiste.
+ */
+export async function applyCollectedImage(
+  supabase: SupabaseClient,
+  artistId: string,
+  imageUrl: string,
+  target: "image_url" | "banner_url",
+): Promise<void> {
+  await supabase
+    .from("artists")
+    .update({ [target]: imageUrl, updated_at: new Date().toISOString() })
+    .eq("id", artistId);
+}
 
-  // Bannière : YouTube ou Spotify
-  if (!artist.banner_url || (artist.banner_url as string).trim() === "") {
-    const banner = platforms.find((p) => p.bannerUrl)?.bannerUrl;
-    if (banner) { patch.banner_url = banner; applied.bannerUrl = true; }
-  }
+// ---------- Helpers ----------
 
-  // Genre principal : Spotify
-  if (!artist.primary_genre || (artist.primary_genre as string).trim() === "") {
-    const spotifyResult = platforms.find((p) => p.platform === "spotify");
-    if (spotifyResult?.genres.length) {
-      patch.primary_genre = spotifyResult.genres[0];
-      applied.primaryGenre = true;
-    }
-  }
-
-  if (Object.keys(patch).length > 0) {
-    patch.updated_at = new Date().toISOString();
-    await supabase.from("artists").update(patch).eq("id", artistId);
-  }
-
-  // Sauvegarder les métriques dans artist_platform_identities.metadata
-  for (const pm of platforms) {
-    if (!pm.externalId && !pm.externalUrl) continue;
-
-    const metadata = {
-      monthly_listeners: pm.monthlyListeners,
-      followers: pm.followers,
-      subscriber_count: pm.subscriberCount,
-      total_views: pm.totalViews,
-      popularity: pm.popularity,
-      genres: pm.genres,
-      album_count: pm.albumCount,
-      track_count: pm.trackCount,
-      banner_url: pm.bannerUrl,
-      fetched_at: pm.fetchedAt,
-      method: pm.method,
-    };
-
-    await supabase.from("artist_platform_identities").upsert(
-      {
-        artist_id: artistId,
-        platform: pm.platform,
-        external_id: pm.externalId ?? `manual_${pm.platform}`,
-        external_url: pm.externalUrl,
-        platform_name: pm.name,
-        platform_image_url: pm.imageUrl,
-        metadata,
-        match_method: "auto_collect",
-        last_seen_at: new Date().toISOString(),
-      },
-      { onConflict: "platform,external_id" },
-    );
-  }
-
-  return { artistId, artistName: name, platforms, applied, warnings };
+function makeBase(platform: string, url: string): PlatformData {
+  return {
+    platform,
+    externalId: null,
+    externalUrl: url,
+    name: null,
+    images: [],
+    monthlyListeners: null,
+    followers: null,
+    subscriberCount: null,
+    totalViews: null,
+    popularity: null,
+    genres: [],
+    albumCount: null,
+    trackCount: null,
+    method: "none",
+    error: null,
+    fetchedAt: new Date().toISOString(),
+  };
 }
