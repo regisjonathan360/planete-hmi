@@ -15,6 +15,7 @@ import {
   getSpotifyArtistById,
   getSpotifyArtistMonthlyListeners,
   isSpotifyConfigured,
+  nameSimilarity,
 } from "@/lib/spotify/api-client";
 import {
   extractPageMetadata,
@@ -281,8 +282,15 @@ async function enrichGeneric(field: EnrichableField, url: string, label: string)
   try {
     const page = await fetchPageMetadata(url, label, EXPECTED_HOSTS[field]);
     applyPageMetadata(base, page, "page_metadata");
-    if (!base.name && !base.description && base.images.length === 0) {
-      base.warnings.push("La plateforme n'a exposé aucune métadonnée publique sur cette page.");
+    const hasOnlyInstagramShell =
+      field === "url_instagram" &&
+      base.name?.trim().toLowerCase() === "instagram" &&
+      !base.description &&
+      base.images.length === 0;
+    if ((!base.name && !base.description && base.images.length === 0) || hasOnlyInstagramShell) {
+      base.error = field === "url_instagram"
+        ? "Instagram n'a transmis aucune donnée publique exploitable. La collecte officielle d'un profil nécessite une connexion Meta autorisée."
+        : "La plateforme n'a exposé aucune donnée publique exploitable sur cette page.";
     }
   } catch (error) {
     base.error = safeMessage(error, `Collecte ${label} impossible.`);
@@ -305,22 +313,50 @@ export async function enrichSpotify(url: string): Promise<PlatformData> {
     base.method = metrics.method;
 
     if (isSpotifyConfigured()) {
-      const profile = await getSpotifyArtistById(id);
-      if (profile) {
-        base.name = profile.name;
-        base.followers ??= profile.followers;
-        base.genres = profile.genres;
-        base.popularity = profile.popularity;
-        if (profile.imageUrl) {
-          base.images.push({ url: profile.imageUrl, label: "Photo Spotify (API)", type: "avatar" });
+      try {
+        const profile = await getSpotifyArtistById(id);
+        if (profile) {
+          base.name = profile.name;
+          base.followers ??= profile.followers;
+          base.genres = profile.genres;
+          base.popularity = profile.popularity;
+          if (profile.imageUrl) {
+            base.images.push({ url: profile.imageUrl, label: "Photo Spotify (API)", type: "avatar" });
+          }
+          if (!base.method.split("+").includes("web_api")) {
+            base.method = base.method === "none" ? "web_api" : `${base.method}+web_api`;
+          }
         }
-        base.method = base.method === "none" ? "web_api" : `${base.method}+web_api`;
+      } catch (error) {
+        base.warnings.push(safeMessage(error, "API Spotify temporairement indisponible."));
       }
+    } else {
+      base.warnings.push(
+        "API Spotify non configurée : le nom et l'image publics sont collectés, mais les abonnés et la popularité ne sont pas disponibles.",
+      );
     }
 
     try {
-      const page = await fetchPageMetadata(`https://open.spotify.com/embed/artist/${id}`, "Spotify");
-      applyPageMetadata(base, page, "embed_metadata");
+      const response = await safeFetch(
+        `https://open.spotify.com/oembed?url=${encodeURIComponent(`https://open.spotify.com/artist/${id}`)}`,
+        { headers: { Accept: "application/json" } },
+        EXPECTED_HOSTS[field],
+      );
+      if (!response.ok) throw new Error(`Spotify oEmbed a répondu HTTP ${response.status}.`);
+      const data = await response.json() as {
+        title?: string;
+        thumbnail_url?: string;
+        provider_name?: string;
+      };
+      base.name ??= data.title?.trim() || null;
+      if (data.thumbnail_url) {
+        base.images = mergeImages(
+          base.images,
+          [{ url: data.thumbnail_url, label: "Photo Spotify (oEmbed)", type: "avatar" }],
+        );
+      }
+      base.details.provider = data.provider_name ?? "Spotify";
+      base.method = base.method === "none" ? "spotify_oembed" : `${base.method}+spotify_oembed`;
     } catch (error) {
       base.warnings.push(safeMessage(error, "Métadonnées visuelles Spotify indisponibles."));
     }
@@ -392,13 +428,17 @@ async function resolveYouTubeChannelId(url: string): Promise<string | null> {
   }
 }
 
-export async function enrichYouTube(url: string, field: EnrichableField = "url_youtube"): Promise<PlatformData> {
+export async function enrichYouTube(
+  url: string,
+  field: EnrichableField = "url_youtube",
+  preferredChannelId?: string,
+): Promise<PlatformData> {
   const base = makeBase(field, url);
   try {
     await assertPublicUrl(url, EXPECTED_HOSTS[field]);
     const apiKey = process.env.YOUTUBE_API_KEY;
     if (!apiKey) throw new Error("La clé YouTube n'est pas configurée sur le serveur.");
-    const channelId = await resolveYouTubeChannelId(url);
+    const channelId = preferredChannelId || await resolveYouTubeChannelId(url);
     if (!channelId) throw new Error("Impossible d'identifier la chaîne YouTube depuis cette URL.");
     base.externalId = channelId;
 
@@ -546,6 +586,45 @@ const ENRICHERS: Record<EnrichableField, (url: string) => Promise<PlatformData>>
   url_website: (url) => enrichGeneric("url_website", url, "Site officiel"),
 };
 
+export function hasCollectedData(result: PlatformData): boolean {
+  const hasSpecificName = Boolean(
+    result.name &&
+    !(result.platform === "instagram" && result.name.trim().toLowerCase() === "instagram"),
+  );
+  return Boolean(
+    hasSpecificName ||
+    result.description ||
+    result.images.length ||
+    result.genres.length ||
+    ARTIST_METRIC_KEYS.some((key) => result[key] !== null),
+  );
+}
+
+export function validateCollectedIdentity(
+  result: PlatformData,
+  artistName: string,
+  trustedIdentity = false,
+): PlatformData {
+  if (result.error) return result;
+
+  if (!hasCollectedData(result)) {
+    result.error = "La plateforme n'a retourné aucune donnée exploitable pour cette URL.";
+    return result;
+  }
+
+  if (
+    !trustedIdentity &&
+    (result.field === "url_youtube" || result.field === "url_youtube_music") &&
+    result.name &&
+    nameSimilarity(artistName, result.name) < 0.45
+  ) {
+    result.error =
+      `La chaîne YouTube « ${result.name} » ne correspond pas à l'artiste « ${artistName} ». ` +
+      "L'URL n'a pas été enregistrée et aucune donnée n'a été associée.";
+  }
+  return result;
+}
+
 async function getArtistUrls(supabase: SupabaseClient, artistId: string): Promise<ArtistUrlRecord> {
   const { data, error } = await supabase
     .from("artists")
@@ -556,11 +635,52 @@ async function getArtistUrls(supabase: SupabaseClient, artistId: string): Promis
   return data as unknown as ArtistUrlRecord;
 }
 
+async function collectFromArtistUrl(
+  supabase: SupabaseClient,
+  artist: ArtistUrlRecord,
+  field: EnrichableField,
+  url: string,
+): Promise<PlatformData> {
+  if (field !== "url_youtube" && field !== "url_youtube_music") {
+    return validateCollectedIdentity(await ENRICHERS[field](url), artist.name);
+  }
+
+  const { data: mappedChannel, error } = await supabase
+    .from("youtube_channels")
+    .select("channel_id, channel_url, channel_handle")
+    .eq("artist_id", artist.id)
+    .eq("status", "active")
+    .eq("is_active", true)
+    .order("approved_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error("Impossible de vérifier la chaîne YouTube approuvée de cet artiste.");
+
+  const normalizedUrl = url.trim().replace(/\/+$/, "").toLowerCase();
+  const mappedUrl = typeof mappedChannel?.channel_url === "string"
+    ? mappedChannel.channel_url.trim().replace(/\/+$/, "").toLowerCase()
+    : "";
+  const mappedHandle = typeof mappedChannel?.channel_handle === "string"
+    ? mappedChannel.channel_handle.trim().toLowerCase()
+    : "";
+  const urlMatchesMappedChannel =
+    Boolean(mappedUrl && normalizedUrl === mappedUrl) ||
+    Boolean(mappedHandle && normalizedUrl.includes(`/${mappedHandle}`));
+  const preferredChannelId =
+    urlMatchesMappedChannel && mappedChannel && typeof mappedChannel.channel_id === "string"
+      ? mappedChannel.channel_id
+      : undefined;
+  const result = await enrichYouTube(url, field, preferredChannelId);
+  return validateCollectedIdentity(result, artist.name, Boolean(preferredChannelId));
+}
+
 async function persistResult(
   supabase: SupabaseClient,
   artistId: string,
   result: PlatformData,
 ): Promise<void> {
+  if (result.error || !hasCollectedData(result)) return;
+
   const freshMetrics: ArtistMetricValues = {
     monthlyListeners: result.monthlyListeners,
     followers: result.followers,
@@ -665,12 +785,12 @@ export async function enrichArtistFromField(
   const artist = await getArtistUrls(supabase, artistId);
   const url = urlOverride?.trim() || artist[field]?.trim();
   if (!url) throw new Error(`L'URL ${field.replace(/^url_/, "")} est vide. Enregistrez-la avant de collecter.`);
-  if (urlOverride?.trim() && urlOverride.trim() !== artist[field]?.trim()) {
-    const { error } = await supabase.from("artists").update({ [field]: url }).eq("id", artistId);
-    if (error) throw new Error("Impossible d'enregistrer cette URL avant la collecte.");
-  }
-  const result = await ENRICHERS[field](url);
+  const result = await collectFromArtistUrl(supabase, artist, field, url);
   await persistResult(supabase, artistId, result);
+  if (!result.error && urlOverride?.trim() && urlOverride.trim() !== artist[field]?.trim()) {
+    const { error } = await supabase.from("artists").update({ [field]: url }).eq("id", artistId);
+    if (error) throw new Error("Données collectées, mais impossible d'enregistrer cette URL.");
+  }
   return result;
 }
 
@@ -679,24 +799,21 @@ export async function enrichArtistFromAllFields(
   artistId: string,
   urlOverrides?: Partial<Record<EnrichableField, string>>,
 ): Promise<Record<string, PlatformData>> {
-  let artist = await getArtistUrls(supabase, artistId);
-  const patch = Object.fromEntries(
-    ENRICHABLE_FIELDS
-      .map((field) => [field, urlOverrides?.[field]?.trim()])
-      .filter((entry): entry is [EnrichableField, string] => Boolean(entry[1])),
+  const artist = await getArtistUrls(supabase, artistId);
+  const fields = ENRICHABLE_FIELDS.filter(
+    (field) => Boolean(urlOverrides?.[field]?.trim() || artist[field]?.trim()),
   );
-  if (Object.keys(patch).length) {
-    const { error } = await supabase.from("artists").update(patch).eq("id", artistId);
-    if (error) throw new Error("Impossible d'enregistrer les URL avant la collecte.");
-    artist = { ...artist, ...patch };
-  }
-  const fields = ENRICHABLE_FIELDS.filter((field) => Boolean(artist[field]?.trim()));
   if (!fields.length) throw new Error("Aucune URL n'est enregistrée sur cette fiche.");
 
   const entries = await Promise.all(fields.map(async (field) => {
-    const result = await ENRICHERS[field](artist[field]!.trim());
+    const url = urlOverrides?.[field]?.trim() || artist[field]!.trim();
+    const result = await collectFromArtistUrl(supabase, artist, field, url);
     try {
       await persistResult(supabase, artistId, result);
+      if (!result.error && url !== artist[field]?.trim()) {
+        const { error } = await supabase.from("artists").update({ [field]: url }).eq("id", artistId);
+        if (error) throw new Error(`L'URL ${result.platform} n'a pas pu être enregistrée.`);
+      }
     } catch (error) {
       result.error ??= safeMessage(error, "Persistance impossible.");
     }
