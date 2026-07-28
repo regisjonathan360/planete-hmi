@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ARTIST_TAGS } from "@/lib/artists/tags";
 import {
@@ -288,7 +288,25 @@ export function ArtistEditForm({
 
       {/* Enrichissement multi-plateforme */}
       <Fieldset title="Enrichissement automatique">
-        <EnrichmentPanel artistId={artist.id as string} />
+        <EnrichmentPanel
+          artistId={artist.id as string}
+          urls={{
+            url_spotify: form.url_spotify,
+            url_deezer: form.url_deezer,
+            url_youtube: form.url_youtube,
+            url_youtube_music: form.url_youtube_music,
+            url_audiomack: form.url_audiomack,
+            url_apple_music: form.url_apple_music,
+            url_soundcloud: form.url_soundcloud,
+            url_tidal: form.url_tidal,
+            url_instagram: form.url_instagram,
+            url_tiktok: form.url_tiktok,
+            url_facebook: form.url_facebook,
+            url_twitter: form.url_twitter,
+            url_threads: form.url_threads,
+            url_website: form.url_website,
+          }}
+        />
       </Fieldset>
 
       {message ? (
@@ -365,6 +383,7 @@ interface CollectedImage {
 interface FieldResult {
   platform: string;
   name: string | null;
+  description: string | null;
   images: CollectedImage[];
   monthlyListeners: number | null;
   followers: number | null;
@@ -373,8 +392,12 @@ interface FieldResult {
   genres: string[];
   albumCount: number | null;
   trackCount: number | null;
+  popularity: number | null;
+  details: Record<string, string | number | boolean | string[] | null>;
   method: string;
+  warnings: string[];
   error: string | null;
+  fetchedAt: string;
 }
 
 function formatBigNumber(n: number | null): string {
@@ -390,15 +413,56 @@ const FIELD_LABELS: Record<string, { label: string; icon: string }> = {
   url_youtube: { label: "YouTube", icon: "▶️" },
   url_youtube_music: { label: "YouTube Music", icon: "🎶" },
   url_audiomack: { label: "Audiomack", icon: "🔊" },
+  url_apple_music: { label: "Apple Music", icon: "🎧" },
+  url_soundcloud: { label: "SoundCloud", icon: "☁️" },
+  url_tidal: { label: "TIDAL", icon: "🌊" },
   url_instagram: { label: "Instagram", icon: "📸" },
+  url_tiktok: { label: "TikTok", icon: "🎬" },
+  url_facebook: { label: "Facebook", icon: "🔵" },
+  url_twitter: { label: "X", icon: "✕" },
+  url_threads: { label: "Threads", icon: "@" },
+  url_website: { label: "Site officiel", icon: "🌐" },
 };
 
-function EnrichmentPanel({ artistId }: { artistId: string }) {
+function EnrichmentPanel({
+  artistId,
+  urls,
+}: {
+  artistId: string;
+  urls: Record<string, string>;
+}) {
   const router = useRouter();
   const [loadingField, setLoadingField] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, FieldResult>>({});
+  const [loadingHistory, setLoadingHistory] = useState(true);
   const [applying, setApplying] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let active = true;
+    void fetch(`/api/admin/artistes/${artistId}/enrich`, { signal: controller.signal })
+      .then(async (response) => {
+        const json = await response.json();
+        if (!response.ok) throw new Error(json.error ?? "Historique indisponible.");
+        if (active) setResults(json.results ?? {});
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        if (active) {
+          setToast(`❌ ${error instanceof Error ? error.message : "Historique indisponible."}`);
+        }
+      })
+      .finally(() => {
+        if (active) setLoadingHistory(false);
+      });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [artistId]);
+
+  const availableFields = Object.keys(FIELD_LABELS).filter((field) => Boolean(urls[field]?.trim()));
 
   async function collectField(field: string) {
     setLoadingField(field);
@@ -407,7 +471,7 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
       const res = await fetch(`/api/admin/artistes/${artistId}/enrich`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ field }),
+        body: JSON.stringify({ field, url: urls[field] }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -416,6 +480,36 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
       }
       setResults((prev) => ({ ...prev, [field]: json as FieldResult }));
       setToast(`✓ ${FIELD_LABELS[field]?.label ?? field} : données collectées.`);
+      router.refresh();
+    } catch {
+      setToast("❌ Erreur réseau.");
+    } finally {
+      setLoadingField(null);
+    }
+  }
+
+  async function collectAllFields() {
+    setLoadingField("all");
+    setToast(null);
+    try {
+      const response = await fetch(`/api/admin/artistes/${artistId}/enrich`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ field: "all", urls }),
+      });
+      const json = await response.json();
+      if (!response.ok) {
+        setToast(`❌ ${json.error ?? "Collecte impossible."}`);
+        return;
+      }
+      setResults((previous) => ({ ...previous, ...(json.results ?? {}) }));
+      const total = Object.keys(json.results ?? {}).length;
+      const failures = Number(json.failures ?? 0);
+      setToast(
+        failures
+          ? `⚠ ${total} plateforme(s) traitée(s), dont ${failures} avec une limitation ou une erreur.`
+          : `✓ ${total} plateforme(s) collectée(s) avec succès.`,
+      );
       router.refresh();
     } catch {
       setToast("❌ Erreur réseau.");
@@ -443,7 +537,13 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
   }
 
   // Toutes les images collectées depuis toutes les plateformes
-  const allImages = Object.values(results).flatMap((r) => r.images ?? []);
+  const allImages = Array.from(
+    new Map(
+      Object.values(results)
+        .flatMap((result) => result.images ?? [])
+        .map((image) => [image.url, image]),
+    ).values(),
+  );
 
   return (
     <div>
@@ -455,6 +555,14 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
 
       {/* Boutons de collecte par plateforme */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
+        <button
+          type="button"
+          className="btn btn--primary btn--sm"
+          onClick={collectAllFields}
+          disabled={loadingField !== null || loadingHistory || availableFields.length === 0}
+        >
+          {loadingField === "all" ? "Collecte en cours…" : `Collecter toutes les URLs (${availableFields.length})`}
+        </button>
         {Object.entries(FIELD_LABELS).map(([field, { label, icon }]) => (
           <button
             key={field}
@@ -462,12 +570,17 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
             className="btn btn--sm"
             style={{ background: results[field] ? "var(--admin-ok)" : undefined, color: results[field] ? "#04210f" : undefined }}
             onClick={() => collectField(field)}
-            disabled={loadingField !== null}
+            disabled={loadingField !== null || loadingHistory || !availableFields.includes(field)}
+            title={availableFields.includes(field) ? `Collecter ${label}` : `Enregistrez d'abord l'URL ${label}`}
           >
             {loadingField === field ? "⟳…" : `${icon} Collecter ${label}`}
           </button>
         ))}
       </div>
+
+      {loadingHistory ? (
+        <p style={{ fontSize: "0.76rem", color: "var(--admin-muted)" }}>Chargement des collectes précédentes…</p>
+      ) : null}
 
       {toast && <p style={{ fontSize: "0.82rem", color: toast.startsWith("✓") ? "var(--admin-ok)" : "var(--admin-danger)", margin: "0 0 0.8rem" }}>{toast}</p>}
 
@@ -489,6 +602,16 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
           </strong>
 
           {data.error && <p style={{ fontSize: "0.75rem", color: "var(--admin-warn)", margin: "0.3rem 0 0" }}>⚠ {data.error}</p>}
+          {data.description ? (
+            <p style={{ fontSize: "0.75rem", color: "var(--admin-muted)", margin: "0.35rem 0" }}>
+              {data.description.length > 320 ? `${data.description.slice(0, 320)}…` : data.description}
+            </p>
+          ) : null}
+          {(data.warnings ?? []).map((warning) => (
+            <p key={warning} style={{ fontSize: "0.72rem", color: "var(--admin-warn)", margin: "0.2rem 0" }}>
+              ⚠ {warning}
+            </p>
+          ))}
 
           <div style={{ fontSize: "0.78rem", color: "var(--admin-text)", lineHeight: 1.8, marginTop: "0.3rem" }}>
             {data.monthlyListeners !== null && <div>🎧 Auditeurs mensuels : <strong>{formatBigNumber(data.monthlyListeners)}</strong></div>}
@@ -497,10 +620,21 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
             {data.totalViews !== null && <div>👁 Vues totales : <strong>{formatBigNumber(data.totalViews)}</strong></div>}
             {data.albumCount !== null && <div>💿 Albums : <strong>{data.albumCount}</strong></div>}
             {data.trackCount !== null && <div>🎵 Titres / Vidéos : <strong>{data.trackCount}</strong></div>}
+            {data.popularity !== null && <div>Popularité : <strong>{data.popularity}/100</strong></div>}
             {data.genres.length > 0 && <div>🏷️ Genres : {data.genres.join(", ")}</div>}
+            {Object.entries(data.details ?? {}).map(([key, value]) => (
+              value === null || value === "" || (Array.isArray(value) && value.length === 0) ? null : (
+                <div key={key}>
+                  {key.replaceAll("_", " ")} : <strong>{Array.isArray(value) ? value.join(", ") : String(value)}</strong>
+                </div>
+              )
+            ))}
           </div>
 
-          <p style={{ fontSize: "0.68rem", color: "var(--admin-muted)", margin: "0.2rem 0 0" }}>Méthode : {data.method}</p>
+          <p style={{ fontSize: "0.68rem", color: "var(--admin-muted)", margin: "0.2rem 0 0" }}>
+            Méthode : {data.method}
+            {data.fetchedAt ? ` · ${new Date(data.fetchedAt).toLocaleString("fr")}` : ""}
+          </p>
         </div>
       ))}
 
@@ -510,13 +644,13 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
           <strong style={{ fontSize: "0.85rem" }}>📷 Images collectées — cliquez pour appliquer</strong>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem", marginTop: "0.6rem" }}>
             {allImages.map((img, i) => (
-              <div key={`${img.url}-${i}`} style={{ textAlign: "center", width: img.type === "banner" ? 200 : 80 }}>
+              <div key={`${img.url}-${i}`} style={{ textAlign: "center", width: img.type === "banner" ? 200 : 120 }}>
                 <img
                   src={img.url}
                   alt={img.label}
                   style={{
-                    width: img.type === "banner" ? 200 : 80,
-                    height: img.type === "banner" ? 56 : 80,
+                    width: img.type === "banner" ? 200 : 120,
+                    height: img.type === "banner" ? 70 : 120,
                     objectFit: "cover",
                     borderRadius: img.type === "banner" ? 8 : "50%",
                     border: "2px solid var(--admin-border)",
@@ -535,18 +669,16 @@ function EnrichmentPanel({ artistId }: { artistId: string }) {
                   >
                     📷 Profil
                   </button>
-                  {img.type === "banner" && (
-                    <button
-                      type="button"
-                      className="btn btn--sm"
-                      disabled={applying}
-                      onClick={() => applyImage(img.url, "banner_url")}
-                      title="Utiliser comme bannière"
-                      style={{ fontSize: "0.68rem", padding: "0.15rem 0.35rem" }}
-                    >
-                      🖼️ Bannière
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="btn btn--sm"
+                    disabled={applying}
+                    onClick={() => applyImage(img.url, "banner_url")}
+                    title="Utiliser comme bannière"
+                    style={{ fontSize: "0.68rem", padding: "0.15rem 0.35rem" }}
+                  >
+                    🖼️ Bannière
+                  </button>
                 </div>
                 <p style={{ fontSize: "0.65rem", color: "var(--admin-muted)", margin: "0.15rem 0 0" }}>{img.label}</p>
               </div>

@@ -17,6 +17,7 @@ export interface SpotifyArtistProfile {
   imageUrl: string | null;
   followers: number | null;
   genres: string[];
+  popularity: number | null;
   /** 0 → 1 : proximité entre le nom cherché et le nom trouvé. */
   matchConfidence: number;
 }
@@ -137,7 +138,11 @@ interface SpotifySearchResponse {
 interface SpotifyArtistResponse {
   id: string;
   name: string;
+  external_urls?: { spotify?: string };
+  images?: { url: string; width?: number }[];
   followers?: { total?: number };
+  genres?: string[];
+  popularity?: number;
 }
 
 /**
@@ -271,11 +276,32 @@ export async function searchSpotifyArtist(
       imageUrl: image,
       followers: item.followers?.total ?? null,
       genres: item.genres ?? [],
+      popularity: null,
       matchConfidence: Number(confidence.toFixed(2)),
     };
   }
 
   return best;
+}
+
+/** Lit directement un artiste Spotify connu, sans recherche approximative par nom. */
+export async function getSpotifyArtistById(artistId: string): Promise<SpotifyArtistProfile | null> {
+  const id = artistId.trim();
+  if (!/^[A-Za-z0-9]{22}$/.test(id)) return null;
+
+  const item = await spotifyGet<SpotifyArtistResponse>(`/artists/${id}`);
+  if (!item) return null;
+
+  return {
+    id: item.id,
+    name: item.name,
+    url: item.external_urls?.spotify ?? `https://open.spotify.com/artist/${item.id}`,
+    imageUrl: item.images?.[0]?.url ?? null,
+    followers: item.followers?.total ?? null,
+    genres: item.genres ?? [],
+    popularity: item.popularity ?? null,
+    matchConfidence: 1,
+  };
 }
 
 interface SpotifyPlaylistResponse {
