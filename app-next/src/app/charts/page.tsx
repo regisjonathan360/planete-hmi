@@ -2,7 +2,6 @@ import { getChartOverview } from "@/lib/charts/queries/get-chart-overview";
 import { ChartsPageHeader } from "@/components/charts/ChartsPageHeader";
 import { PlatformChartRow } from "@/components/charts/PlatformChartRow";
 import { ChartEmptyState } from "@/components/charts/ChartEmptyState";
-import { HmiShorts } from "@/components/HmiShorts";
 import { SOURCE_KEY_PAR_SLUG, dateHaiti } from "@/lib/charts/format";
 import type { ChartOverviewRow } from "@/lib/charts/queries/types";
 
@@ -49,7 +48,6 @@ export default async function ChartsPage() {
       ) : (
         rangees.map((row) => <PlatformChartRow key={row.source_key} row={row} />)
       )}
-      <HmiShorts />
     </>
   );
 }

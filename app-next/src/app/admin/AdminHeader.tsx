@@ -50,6 +50,9 @@ export function AdminHeader({ email, active }: { email: string | null; active?: 
         <Link href="/admin/tiktok" className={active === "tiktok" ? "is-active" : ""}>
           TikTok
         </Link>
+        <Link href="/admin/shorts" className={active === "shorts" ? "is-active" : ""}>
+          HMI Shorts
+        </Link>
         <Link href="/admin/youtube" className={active === "youtube" ? "is-active" : ""}>
           YouTube
         </Link>

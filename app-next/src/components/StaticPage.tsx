@@ -42,6 +42,19 @@ export function StaticPage({
     activeReplacements = activeReplacements.filter((r) => r.marker !== "<!-- PODIUM_CONTENT -->");
   }
 
+  const shortsReplacement = replacements.find(
+    (replacement) => replacement.marker === "<!-- HMI_SHORTS_CONTENT -->",
+  );
+  if (shortsReplacement) {
+    body = body.replace(
+      /(<section class="section" id="shorts"[\s\S]*?<div class="shorts reveal">)[\s\S]*?(<\/div>\s*<\/section>)/,
+      `$1\n${shortsReplacement.html}\n        $2`,
+    );
+    activeReplacements = activeReplacements.filter(
+      (replacement) => replacement.marker !== "<!-- HMI_SHORTS_CONTENT -->",
+    );
+  }
+
   for (const replacement of activeReplacements) {
     body = body.replace(replacement.marker, replacement.html);
   }

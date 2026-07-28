@@ -148,6 +148,23 @@ body:has(.admin) > div[aria-hidden="true"][style*="z-index: 50"] {
   margin-bottom: 1.25rem;
 }
 
+.shorts-admin-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.shorts-admin-heading__eyebrow {
+  color: var(--admin-accent-2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
 @media (max-width: 900px) {
   .admin__header {
     align-items: flex-start;
@@ -162,6 +179,7 @@ body:has(.admin) > div[aria-hidden="true"][style*="z-index: 50"] {
 @media (max-width: 620px) {
   .admin__main { padding: 1rem; }
   .youtube-admin-heading { flex-direction: column; }
+  .shorts-admin-heading { flex-direction: column; }
 }
 
 /* Login */

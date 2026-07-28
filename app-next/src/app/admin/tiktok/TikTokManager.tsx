@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ValidationQueue } from "./ValidationQueue";
 import { ChartEditor } from "./ChartEditor";
-import { HmiShortsSelector } from "./HmiShortsSelector";
 import {
   ArtistConnectionsQueue,
   type PendingArtistClaim,
@@ -15,8 +14,7 @@ type Tab =
   | "en_montee"
   | "nouveautes"
   | "validation"
-  | "connections"
-  | "shorts";
+  | "connections";
 
 interface Toast {
   message: string;
@@ -242,13 +240,6 @@ export function TikTokManager({ initialData }: TikTokManagerProps) {
               </span>
             )}
           </button>
-          <button
-            type="button"
-            className={tabCls(activeTab, "shorts")}
-            onClick={() => setActiveTab("shorts")}
-          >
-            HMI Shorts
-          </button>
         </div>
 
         {/* Contenu onglet */}
@@ -265,7 +256,6 @@ export function TikTokManager({ initialData }: TikTokManagerProps) {
         {activeTab === "connections" && (
           <ArtistConnectionsQueue claims={stats.pendingArtistClaims} />
         )}
-        {activeTab === "shorts" && <HmiShortsSelector />}
       </div>
 
       {/* Toast */}
