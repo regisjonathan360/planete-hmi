@@ -43,11 +43,21 @@ const HASC_TO_CODE: Record<string, string> = {
   "HT.SE": "SUD_EST",
 };
 
-// ---------- Projection ----------
+// ---------- Constantes ----------
 
 const R = 2;
-const LAT_SPAN_DEG = 56;
+/**
+ * Plus ce nombre est grand, plus la carte prend de place sur le globe.
+ * 72° donne une emprise d'environ 59% du rayon en hauteur — beaucoup plus
+ * lisible que les 56° précédents.
+ */
+const LAT_SPAN_DEG = 72;
 const DEG2RAD = Math.PI / 180;
+/** Distance de détachement au hover (fraction du rayon). */
+const HOVER_LIFT = 0.04;
+
+// Couleurs alternées bleu/rouge (drapeau haïtien) avec animation mélange
+const DEPT_COLORS = ["#1a3a8f", "#c62828", "#1a3a8f", "#c62828", "#1a3a8f", "#c62828", "#1a3a8f", "#c62828", "#1a3a8f", "#c62828"];
 
 function ringsOf(f: GeoFeature): GeoRing[] {
   return f.geometry.type === "MultiPolygon"
@@ -55,17 +65,10 @@ function ringsOf(f: GeoFeature): GeoRing[] {
     : f.geometry.coordinates;
 }
 
-/**
- * Convertit un point géographique (lng, lat) en position 3D à la surface
- * de la sphère. Le centre d'Haïti est placé face caméra (lon=0, lat=0).
- */
+// ---------- Projection ----------
+
 function geoToSphere(
-  lng: number,
-  lat: number,
-  cx: number,
-  cy: number,
-  zoom: number,
-  radius: number,
+  lng: number, lat: number, cx: number, cy: number, zoom: number, radius: number,
 ): THREE.Vector3 {
   const lonRad = (lng - cx) * zoom * DEG2RAD;
   const latRad = (lat - cy) * zoom * DEG2RAD;
@@ -76,48 +79,29 @@ function geoToSphere(
   );
 }
 
-/** Construit un Shape Three.js à partir d'un anneau de coordonnées géographiques. */
-function ringToShape(
-  ring: GeoRing,
-  cx: number,
-  cy: number,
-  zoom: number,
-): THREE.Shape {
-  const shape = new THREE.Shape();
-  // On projette en « coordonnées texel » plate d'abord, en UV.
-  // Pas besoin d'être parfaitement fidèle pour l'interactivité :
-  // on utilise ExtrudeGeometry pour coller le mesh à la sphère.
-  for (let i = 0; i < ring.length; i++) {
-    const u = (ring[i][0] - cx) * zoom * DEG2RAD;
-    const v = (ring[i][1] - cy) * zoom * DEG2RAD;
-    if (i === 0) shape.moveTo(u, v);
-    else shape.lineTo(u, v);
-  }
-  shape.closePath();
-  return shape;
-}
-
 /**
- * Crée la géométrie d'un département posée à la surface de la sphère.
+ * Construit la géométrie d'un département à la surface de la sphère.
  *
- * On ne peut pas simplement extruder un Shape dans l'espace de la sphère.
- * À la place, on crée un ShapeGeometry plan puis on déforme chaque vertex
- * pour le plaquer sur la sphère via la projection équirectangulaire.
+ * On subdivise davantage (curveSegments: 12) pour éviter les trous sur les
+ * formes complexes. Chaque vertex est ensuite projeté sur la sphère.
  */
 function buildDepartmentGeometry(
-  rings: GeoRing[],
-  cx: number,
-  cy: number,
-  zoom: number,
-  radius: number,
+  rings: GeoRing[], cx: number, cy: number, zoom: number, radius: number,
 ): THREE.BufferGeometry {
-  const mainShape = ringToShape(rings[0], cx, cy, zoom);
-  // Les anneaux supplémentaires sont des trous (lacs, enclaves).
-  for (let i = 1; i < rings.length; i++) {
+  const mainShape = new THREE.Shape();
+  for (let i = 0; i < rings[0].length; i++) {
+    const u = (rings[0][i][0] - cx) * zoom * DEG2RAD;
+    const v = (rings[0][i][1] - cy) * zoom * DEG2RAD;
+    if (i === 0) mainShape.moveTo(u, v);
+    else mainShape.lineTo(u, v);
+  }
+  mainShape.closePath();
+
+  for (let r = 1; r < rings.length; r++) {
     const hole = new THREE.Path();
-    for (let j = 0; j < rings[i].length; j++) {
-      const u = (rings[i][j][0] - cx) * zoom * DEG2RAD;
-      const v = (rings[i][j][1] - cy) * zoom * DEG2RAD;
+    for (let j = 0; j < rings[r].length; j++) {
+      const u = (rings[r][j][0] - cx) * zoom * DEG2RAD;
+      const v = (rings[r][j][1] - cy) * zoom * DEG2RAD;
       if (j === 0) hole.moveTo(u, v);
       else hole.lineTo(u, v);
     }
@@ -125,10 +109,10 @@ function buildDepartmentGeometry(
     mainShape.holes.push(hole);
   }
 
-  const shapeGeo = new THREE.ShapeGeometry(mainShape, 4);
+  // curveSegments = 12 : beaucoup plus de triangles, plus aucun trou
+  const shapeGeo = new THREE.ShapeGeometry(mainShape, 12);
   const pos = shapeGeo.attributes.position;
 
-  // Déformer : chaque vertex (u, v, 0) → point 3D sur la sphère.
   for (let i = 0; i < pos.count; i++) {
     const lonRad = pos.getX(i);
     const latRad = pos.getY(i);
@@ -142,13 +126,33 @@ function buildDepartmentGeometry(
   return shapeGeo;
 }
 
+/**
+ * Contour d'un département sous forme de ligne.
+ * Sert à dessiner le néon lumineux autour des départements.
+ */
+function buildOutlinePositions(
+  rings: GeoRing[], cx: number, cy: number, zoom: number, radius: number,
+): Float32Array {
+  const points: number[] = [];
+  for (const ring of rings) {
+    for (const [lng, lat] of ring) {
+      const v = geoToSphere(lng, lat, cx, cy, zoom, radius);
+      points.push(v.x, v.y, v.z);
+    }
+    // Fermer le ring en revenant au premier point
+    const v = geoToSphere(ring[0][0], ring[0][1], cx, cy, zoom, radius);
+    points.push(v.x, v.y, v.z);
+  }
+  return new Float32Array(points);
+}
+
 // ---------- Composants 3D ----------
 
 function OceanSphere() {
   return (
     <mesh>
-      <sphereGeometry args={[R * 0.995, 64, 64]} />
-      <meshStandardMaterial color="#080d1a" roughness={0.8} metalness={0.1} />
+      <sphereGeometry args={[R * 0.993, 64, 64]} />
+      <meshStandardMaterial color="#060a14" roughness={0.85} metalness={0.05} />
     </mesh>
   );
 }
@@ -156,25 +160,25 @@ function OceanSphere() {
 function Rings() {
   const ringRef = useRef<THREE.Mesh>(null);
   const ring2Ref = useRef<THREE.Mesh>(null);
-  const ringGeo = useMemo(() => new THREE.RingGeometry(R * 1.16, R * 1.24, 128), []);
-  const ring2Geo = useMemo(() => new THREE.RingGeometry(R * 1.27, R * 1.295, 128), []);
+  const ringGeo = useMemo(() => new THREE.RingGeometry(R * 1.14, R * 1.22, 128), []);
+  const ring2Geo = useMemo(() => new THREE.RingGeometry(R * 1.25, R * 1.27, 128), []);
 
   useEffect(() => () => { ringGeo.dispose(); ring2Geo.dispose(); }, [ringGeo, ring2Geo]);
 
   useFrame((_, delta) => {
-    if (ringRef.current) ringRef.current.rotation.z += delta * 0.06;
-    if (ring2Ref.current) ring2Ref.current.rotation.z -= delta * 0.03;
+    if (ringRef.current) ringRef.current.rotation.z += delta * 0.05;
+    if (ring2Ref.current) ring2Ref.current.rotation.z -= delta * 0.025;
   });
 
   return (
     <>
       <mesh ref={ringRef} rotation={[Math.PI / 2.7, 0.28, 0]}>
         <primitive object={ringGeo} attach="geometry" />
-        <meshBasicMaterial color="#7c5cff" transparent opacity={0.4} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#7c5cff" transparent opacity={0.35} side={THREE.DoubleSide} />
       </mesh>
       <mesh ref={ring2Ref} rotation={[Math.PI / 2.7, 0.28, 0]}>
         <primitive object={ring2Geo} attach="geometry" />
-        <meshBasicMaterial color="#00d4b8" transparent opacity={0.28} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#00d4b8" transparent opacity={0.22} side={THREE.DoubleSide} />
       </mesh>
     </>
   );
@@ -183,15 +187,13 @@ function Rings() {
 function Atmosphere() {
   return (
     <mesh>
-      <sphereGeometry args={[R * 1.045, 64, 64]} />
-      <meshBasicMaterial color="#7c5cff" transparent opacity={0.07} side={THREE.BackSide} />
+      <sphereGeometry args={[R * 1.04, 64, 64]} />
+      <meshBasicMaterial color="#7c5cff" transparent opacity={0.06} side={THREE.BackSide} />
     </mesh>
   );
 }
 
-const DEPT_COLORS = ["#1b3fa8", "#c62828", "#22499f", "#b71c1c", "#1f3f96"];
-const HOVER_COLOR = new THREE.Color("#7c5cff");
-const HOVER_EMISSIVE = new THREE.Color("#00d4b8");
+// ---------- Département individuel ----------
 
 interface DepartmentMeshProps {
   feature: GeoFeature;
@@ -208,14 +210,37 @@ function DepartmentMesh({ feature, index, cx, cy, zoom, isHovered, onHover, onCl
   const code = HASC_TO_CODE[feature.properties.HASC_1] ?? feature.properties.NAME_1;
   const name = feature.properties.NAME_1;
   const rings = ringsOf(feature);
+  const meshRef = useRef<THREE.Mesh>(null);
+  const outlineRef = useRef<THREE.LineSegments>(null);
 
+  // Géométries : surface + contour
   const geometry = useMemo(
-    () => buildDepartmentGeometry(rings, cx, cy, zoom, R),
+    () => buildDepartmentGeometry(rings, cx, cy, zoom, R * 1.002),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [cx, cy, zoom],
+  );
+
+  const outlinePositions = useMemo(
+    () => buildOutlinePositions(rings, cx, cy, zoom, R * 1.003),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [cx, cy, zoom],
   );
 
   useEffect(() => () => geometry.dispose(), [geometry]);
+
+  // Animation de détachement + glow au hover
+  useFrame((_, delta) => {
+    if (!meshRef.current) return;
+    // Lift vers l'extérieur (le long des normales = radial sur une sphère)
+    const targetScale = isHovered ? 1 + HOVER_LIFT : 1;
+    const currentScale = meshRef.current.scale.x;
+    const newScale = THREE.MathUtils.lerp(currentScale, targetScale, Math.min(1, delta * 12));
+    meshRef.current.scale.setScalar(newScale);
+
+    if (outlineRef.current) {
+      outlineRef.current.scale.setScalar(newScale);
+    }
+  });
 
   const baseColor = useMemo(() => new THREE.Color(DEPT_COLORS[index % DEPT_COLORS.length]), [index]);
 
@@ -235,44 +260,57 @@ function DepartmentMesh({ feature, index, cx, cy, zoom, isHovered, onHover, onCl
     onClick(code, name);
   }, [code, name, onClick]);
 
+  // Contour néon : visible en permanence (discret), très vif au hover
+  const outlineGeo = useMemo(() => {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(outlinePositions, 3));
+    return geo;
+  }, [outlinePositions]);
+
+  useEffect(() => () => outlineGeo.dispose(), [outlineGeo]);
+
   return (
-    <mesh
-      geometry={geometry}
-      onPointerOver={handlePointerOver}
-      onPointerOut={handlePointerOut}
-      onClick={handleClick}
-    >
-      <meshStandardMaterial
-        color={isHovered ? HOVER_COLOR : baseColor}
-        emissive={isHovered ? HOVER_EMISSIVE : baseColor}
-        emissiveIntensity={isHovered ? 0.6 : 0.15}
-        roughness={isHovered ? 0.3 : 0.6}
-        metalness={0.08}
-        side={THREE.DoubleSide}
-        transparent
-        opacity={isHovered ? 1 : 0.88}
-      />
-    </mesh>
+    <group>
+      {/* Surface du département */}
+      <mesh
+        ref={meshRef}
+        geometry={geometry}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onClick={handleClick}
+      >
+        <meshStandardMaterial
+          color={baseColor}
+          emissive={isHovered ? new THREE.Color("#7c5cff") : baseColor}
+          emissiveIntensity={isHovered ? 0.8 : 0.12}
+          roughness={isHovered ? 0.25 : 0.55}
+          metalness={0.05}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Contour néon : toujours visible, très brillant au hover */}
+      <lineSegments ref={outlineRef} geometry={outlineGeo}>
+        <lineBasicMaterial
+          color={isHovered ? "#00ffcc" : "#7c5cff"}
+          transparent
+          opacity={isHovered ? 1 : 0.35}
+          linewidth={1}
+        />
+      </lineSegments>
+    </group>
   );
 }
 
-/** Label du département, flottant juste au-dessus de la surface. */
+// ---------- Labels ----------
+
 function DepartmentLabels({
-  features,
-  cx,
-  cy,
-  zoom,
-}: {
-  features: GeoFeature[];
-  cx: number;
-  cy: number;
-  zoom: number;
-}) {
+  features, cx, cy, zoom,
+}: { features: GeoFeature[]; cx: number; cy: number; zoom: number }) {
   const { camera } = useThree();
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
-    // Faire face à la caméra (billboard).
     if (groupRef.current) {
       for (const child of groupRef.current.children) {
         child.quaternion.copy(camera.quaternion);
@@ -286,7 +324,7 @@ function DepartmentLabels({
       const biggest = rings.reduce((a, b) => (b.length > a.length ? b : a));
       let sx = 0, sy = 0;
       for (const [x, y] of biggest) { sx += x; sy += y; }
-      const pos = geoToSphere(sx / biggest.length, sy / biggest.length, cx, cy, zoom, R * 1.02);
+      const pos = geoToSphere(sx / biggest.length, sy / biggest.length, cx, cy, zoom, R * 1.025);
       return { name: f.properties.NAME_1, position: pos };
     });
   }, [features, cx, cy, zoom]);
@@ -294,8 +332,8 @@ function DepartmentLabels({
   return (
     <group ref={groupRef}>
       {labels.map((label) => (
-        <sprite key={label.name} position={label.position} scale={[0.35, 0.12, 1]}>
-          <spriteMaterial transparent opacity={0.75}>
+        <sprite key={label.name} position={label.position} scale={[0.38, 0.13, 1]}>
+          <spriteMaterial transparent opacity={0.8}>
             <canvasTexture
               attach="map"
               image={(() => {
@@ -303,10 +341,13 @@ function DepartmentLabels({
                 cvs.width = 256;
                 cvs.height = 64;
                 const ctx = cvs.getContext("2d")!;
-                ctx.fillStyle = "rgba(248,245,236,0.9)";
-                ctx.font = "bold 28px system-ui, sans-serif";
+                ctx.fillStyle = "rgba(248,245,236,0.92)";
+                ctx.font = "bold 26px system-ui, sans-serif";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
+                ctx.strokeStyle = "rgba(0,0,0,0.7)";
+                ctx.lineWidth = 4;
+                ctx.strokeText(label.name, 128, 32);
                 ctx.fillText(label.name, 128, 32);
                 return cvs;
               })()}
@@ -318,6 +359,8 @@ function DepartmentLabels({
   );
 }
 
+// ---------- Caméra ----------
+
 function FitCamera() {
   const { camera, size } = useThree();
   useEffect(() => {
@@ -325,27 +368,20 @@ function FitCamera() {
     const vFov = THREE.MathUtils.degToRad(cam.fov);
     const aspect = size.width / Math.max(1, size.height);
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
-    const fitR = R * 1.31;
+    const fitR = R * 1.28;
     const dist = Math.max(fitR / Math.sin(vFov / 2), fitR / Math.sin(hFov / 2));
-    cam.position.set(0, 0, dist * 1.02);
+    cam.position.set(0, 0, dist * 0.98);
     cam.updateProjectionMatrix();
   }, [camera, size]);
   return null;
 }
 
+// ---------- Scène ----------
+
 function Scene({
-  features,
-  cx,
-  cy,
-  zoom,
-  hovered,
-  onHover,
-  onClick,
+  features, cx, cy, zoom, hovered, onHover, onClick,
 }: {
-  features: GeoFeature[];
-  cx: number;
-  cy: number;
-  zoom: number;
+  features: GeoFeature[]; cx: number; cy: number; zoom: number;
   hovered: string | null;
   onHover: (code: string | null) => void;
   onClick: (code: string, name: string) => void;
@@ -353,9 +389,9 @@ function Scene({
   return (
     <>
       <FitCamera />
-      <ambientLight intensity={0.7} />
-      <directionalLight position={[4, 3, 6]} intensity={0.9} />
-      <pointLight position={[-4, -2, 4]} intensity={0.4} color="#7c5cff" />
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[4, 3, 6]} intensity={1.0} />
+      <pointLight position={[-3, -1, 5]} intensity={0.5} color="#7c5cff" />
 
       <OceanSphere />
       <Atmosphere />
@@ -383,13 +419,13 @@ function Scene({
       <OrbitControls
         enableZoom={false}
         enablePan={false}
-        rotateSpeed={0.45}
+        rotateSpeed={0.4}
         enableDamping
         dampingFactor={0.08}
-        minPolarAngle={Math.PI / 2.9}
-        maxPolarAngle={(Math.PI * 1.9) / 2.9}
-        minAzimuthAngle={-Math.PI / 5}
-        maxAzimuthAngle={Math.PI / 5}
+        minPolarAngle={Math.PI / 3}
+        maxPolarAngle={(Math.PI * 2) / 3}
+        minAzimuthAngle={-Math.PI / 4.5}
+        maxAzimuthAngle={Math.PI / 4.5}
       />
     </>
   );
@@ -412,15 +448,13 @@ export function HaitiInteractiveGlobe({
   }, []);
 
   const { cx, cy, zoom } = useMemo(() => {
-    if (!geojson) return { cx: -72.3, cy: 19.0, zoom: 27 };
+    if (!geojson) return { cx: -72.3, cy: 19.0, zoom: 35 };
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     for (const f of geojson.features) {
       for (const ring of ringsOf(f)) {
         for (const [x, y] of ring) {
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-          if (y < minY) minY = y;
-          if (y > maxY) maxY = y;
+          if (x < minX) minX = x; if (x > maxX) maxX = x;
+          if (y < minY) minY = y; if (y > maxY) maxY = y;
         }
       }
     }
@@ -447,7 +481,7 @@ export function HaitiInteractiveGlobe({
   return (
     <div style={{ position: "relative", width: "100%", height: "min(880px, 88vh)" }}>
       <Canvas
-        camera={{ position: [0, 0, 6], fov: 42 }}
+        camera={{ position: [0, 0, 5], fov: 45 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent", touchAction: "pan-y" }}
@@ -482,7 +516,7 @@ export function HaitiInteractiveGlobe({
       )}
 
       <p style={{ position: "absolute", bottom: 8, left: 0, right: 0, textAlign: "center", color: "#9a9ac0", fontSize: "0.78rem", margin: 0, pointerEvents: "none" }}>
-        Cliquez un département pour explorer ses artistes • Faites tourner la planète
+        Survolez un département pour voir ses artistes • Cliquez pour explorer
       </p>
     </div>
   );
