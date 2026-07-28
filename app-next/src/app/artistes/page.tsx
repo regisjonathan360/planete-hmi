@@ -196,7 +196,6 @@ async function buildCategories(): Promise<CategoryWithCount[]> {
     .from("artists")
     .select("artist_type")
     .eq("is_active", true)
-    .eq("is_auto_generated", false)
     .in("haitian_status", VERIFIED_STATUSES);
 
   const counts = new Map<string, number>();
@@ -213,11 +212,11 @@ async function buildCategories(): Promise<CategoryWithCount[]> {
     { ...CATEGORY_META[""], type: "", count: total },
   ];
 
-  // On n'affiche que les catégories qui ont au moins 1 artiste vérifié.
+  // Les options restent toujours visibles. Un filtre vide affiche simplement
+  // un compteur à zéro au lieu de faire disparaître la navigation latérale.
   const typeOrder = ["group", "producer", "musician", "dj", "singer", "rapper"];
   for (const type of typeOrder) {
     const cnt = type === "producer" ? producerCount : (counts.get(type) ?? 0);
-    if (cnt === 0) continue;
     const meta = CATEGORY_META[type];
     if (meta) categories.push({ ...meta, type, count: cnt });
   }
@@ -251,15 +250,15 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
       <SiteHeader />
 
       <main id="contenu">
-        <div className="wrap" style={{ paddingTop: "2rem", display: "flex", gap: "2rem", alignItems: "flex-start" }}>
+        <div className="wrap artistes-layout">
           {/* Sidebar : bouton carte + catégories */}
-          <aside style={{ position: "sticky", top: "5rem", flexShrink: 0, width: 200 }} className="artistes-sidebar">
+          <aside className="artistes-sidebar">
             {/* Bouton carte Haïti — silhouette générée depuis le GeoJSON GADM réel */}
             <HaitiShapeButton />
 
             {/* Catégories */}
             <nav
-              style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}
+              className="artistes-sidebar__nav"
               aria-label="Catégories d'artistes"
             >
               {categories.map((cat) => {

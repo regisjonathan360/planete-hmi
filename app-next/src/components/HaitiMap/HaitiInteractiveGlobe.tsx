@@ -46,6 +46,14 @@ function ringsOf(f: GeoFeature): GeoRing[] {
     : f.geometry.coordinates;
 }
 
+/** Returns groups of rings: each group is [outerRing, ...holes]. */
+function polygonsOf(f: GeoFeature): GeoRing[][] {
+  if (f.geometry.type === "MultiPolygon") {
+    return f.geometry.coordinates as GeoRing[][];
+  }
+  return [f.geometry.coordinates as GeoRing[]];
+}
+
 // ---------- Projection ----------
 
 /** Point 3D sur la sphère. cx/cy = centre géographique d'Haïti. */
@@ -60,43 +68,102 @@ function toSphere(lng: number, lat: number, cx: number, cy: number, zoom: number
   ];
 }
 
-/**
- * Construit la géométrie d'un département directement avec Earcut.
- * Plus fiable que ShapeGeometry pour les polygones concaves complexes.
- */
+/** Construit un polygone sans trou et le plaque réellement sur la sphère. */
 function buildDeptGeometry(
   rings: GeoRing[], cx: number, cy: number, zoom: number, radius: number,
 ): THREE.BufferGeometry {
-  // Flatten rings pour earcut : premier ring = contour, suivants = trous
+  const outer = rings[0];
   const flatCoords: number[] = [];
-  const holeIndices: number[] = [];
-
-  for (let r = 0; r < rings.length; r++) {
-    if (r > 0) holeIndices.push(flatCoords.length / 2);
-    for (const [lng, lat] of rings[r]) {
-      // Coordonnées 2D pour la triangulation (projection plate)
-      flatCoords.push((lng - cx) * zoom, (lat - cy) * zoom);
-    }
+  for (const [lng, lat] of outer) {
+    flatCoords.push((lng - cx) * zoom, (lat - cy) * zoom);
   }
 
-  const triangles = Earcut(flatCoords, holeIndices, 2);
+  const triangles = Earcut(flatCoords, undefined, 2);
 
-  // Construire les vertices 3D sur la sphère
+  if (triangles.length === 0) {
+    return buildFallbackGeometry([outer], cx, cy, zoom, radius);
+  }
+
   const vertexCount = flatCoords.length / 2;
-  const positions = new Float32Array(vertexCount * 3);
-
+  const vertices: THREE.Vector3[] = [];
   for (let i = 0; i < vertexCount; i++) {
     const lng2d = flatCoords[i * 2] / zoom + cx;
     const lat2d = flatCoords[i * 2 + 1] / zoom + cy;
     const [x, y, z] = toSphere(lng2d, lat2d, cx, cy, zoom, radius);
-    positions[i * 3] = x;
-    positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z;
+    vertices.push(new THREE.Vector3(x, y, z));
+  }
+
+  const positions: number[] = [];
+  const appendTriangle = (a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3, depth: number) => {
+    if (depth === 0) {
+      positions.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
+      return;
+    }
+    const ab = a.clone().add(b).normalize().multiplyScalar(radius);
+    const bc = b.clone().add(c).normalize().multiplyScalar(radius);
+    const ca = c.clone().add(a).normalize().multiplyScalar(radius);
+    appendTriangle(a, ab, ca, depth - 1);
+    appendTriangle(ab, b, bc, depth - 1);
+    appendTriangle(ca, bc, c, depth - 1);
+    appendTriangle(ab, bc, ca, depth - 1);
+  };
+
+  for (let i = 0; i < triangles.length; i += 3) {
+    appendTriangle(vertices[triangles[i]], vertices[triangles[i + 1]], vertices[triangles[i + 2]], 2);
   }
 
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geo.setIndex(Array.from(triangles));
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geo.computeVertexNormals();
+  return geo;
+}
+
+/** Fusionne séparément les îles d'un MultiPolygon au lieu d'en faire des trous. */
+function buildFeatureGeometry(
+  polygons: GeoRing[][], cx: number, cy: number, zoom: number, radius: number,
+): THREE.BufferGeometry {
+  const positions: number[] = [];
+  for (const polygon of polygons) {
+    if (!polygon[0]?.length) continue;
+    const part = buildDeptGeometry([polygon[0]], cx, cy, zoom, radius);
+    const attribute = part.getAttribute("position");
+    for (let i = 0; i < attribute.count; i++) {
+      positions.push(attribute.getX(i), attribute.getY(i), attribute.getZ(i));
+    }
+    part.dispose();
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+/** Fallback quand earcut échoue : triangle fan depuis le centroïde. */
+function buildFallbackGeometry(
+  rings: GeoRing[], cx: number, cy: number, zoom: number, radius: number,
+): THREE.BufferGeometry {
+  const outer = rings[0];
+  // Centroïde
+  let sx = 0, sy = 0;
+  for (const [lng, lat] of outer) { sx += lng; sy += lat; }
+  const clng = sx / outer.length;
+  const clat = sy / outer.length;
+
+  const positions: number[] = [];
+  const indices: number[] = [];
+  const [cx3, cy3, cz3] = toSphere(clng, clat, cx, cy, zoom, radius);
+  positions.push(cx3, cy3, cz3); // vertex 0 = centroïde
+
+  for (let i = 0; i < outer.length; i++) {
+    const [x, y, z] = toSphere(outer[i][0], outer[i][1], cx, cy, zoom, radius);
+    positions.push(x, y, z);
+    const next = (i + 1) % outer.length;
+    indices.push(0, i + 1, next + 1);
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geo.setIndex(indices);
   geo.computeVertexNormals();
   return geo;
 }
@@ -120,10 +187,10 @@ function buildOutline(
 // ---------- Shader pour le gradient animé bleu/rouge ----------
 
 const DEPT_VERTEX = /* glsl */ `
-  varying vec2 vUv;
+  varying vec3 vPosition;
   varying vec3 vNormal;
   void main() {
-    vUv = uv;
+    vPosition = position;
     vNormal = normalize(normalMatrix * normal);
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
@@ -132,7 +199,7 @@ const DEPT_VERTEX = /* glsl */ `
 const DEPT_FRAGMENT = /* glsl */ `
   uniform float uTime;
   uniform float uHover;
-  varying vec2 vUv;
+  varying vec3 vPosition;
   varying vec3 vNormal;
 
   void main() {
@@ -140,7 +207,8 @@ const DEPT_FRAGMENT = /* glsl */ `
     float t = sin(uTime * 1.5708) * 0.5 + 0.5; // 0→1→0 en 4s
     vec3 blue = vec3(0.106, 0.247, 0.659);   // #1b3fa8
     vec3 red = vec3(0.827, 0.184, 0.184);    // #d32f2f
-    vec3 baseColor = mix(blue, red, t * 0.5 + vUv.x * 0.5);
+    float longitudeMix = clamp(vPosition.x / 4.0 + 0.5, 0.0, 1.0);
+    vec3 baseColor = mix(blue, red, t * 0.5 + longitudeMix * 0.5);
 
     // Au hover : teinte plus vive + émission cyan
     vec3 hoverGlow = vec3(0.0, 0.83, 0.8); // #00d4cc
@@ -205,18 +273,21 @@ interface DeptProps {
 function DepartmentMesh({ feature, cx, cy, zoom, isHovered, onHover, onClick }: DeptProps) {
   const code = HASC_TO_CODE[feature.properties.HASC_1] ?? feature.properties.NAME_1;
   const name = feature.properties.NAME_1;
-  const rings = ringsOf(feature);
   const meshRef = useRef<THREE.Mesh>(null);
   const outlineRef = useRef<THREE.LineSegments>(null);
   const matRef = useRef<THREE.ShaderMaterial>(null);
 
-  const geometry = useMemo(() => buildDeptGeometry(rings, cx, cy, zoom, R * 1.003), [rings, cx, cy, zoom]);
+  const geometry = useMemo(
+    () => buildFeatureGeometry(polygonsOf(feature), cx, cy, zoom, R * 1.003),
+    [feature, cx, cy, zoom],
+  );
   const outlineGeo = useMemo(() => {
+    const rings = polygonsOf(feature).map((polygon) => polygon[0]).filter(Boolean);
     const positions = buildOutline(rings, cx, cy, zoom, R * 1.006);
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     return g;
-  }, [rings, cx, cy, zoom]);
+  }, [feature, cx, cy, zoom]);
 
   useEffect(() => () => { geometry.dispose(); outlineGeo.dispose(); }, [geometry, outlineGeo]);
 

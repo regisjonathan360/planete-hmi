@@ -40,7 +40,7 @@ function podiumCard(entry: HomepageChartEntry, rank: number): string {
   const btnClass = rank === 1 ? "btn btn-primary" : "btn btn-outline";
 
   return `
-<article class="podium__card podium__card--${variant}" data-preview-artist="${esc(entry.artistName)}">
+<article class="podium__card podium__card--${variant}" data-preview-artist="${esc(entry.artistName)}" data-preview-titre="${esc(entry.title)}">
   ${crown}
   <span class="podium__rank">${rank}</span>
   <div class="podium__media">
@@ -60,7 +60,7 @@ function podiumCard(entry: HomepageChartEntry, rank: number): string {
 
 function miniCard(entry: HomepageChartEntry, rank: number): string {
   return `
-<article class="mini" data-preview-artist="${esc(entry.artistName)}">
+<article class="mini" data-preview-artist="${esc(entry.artistName)}" data-preview-titre="${esc(entry.title)}">
   <span class="mini__rank">${rank}</span>
   <img src="${esc(imgSrc(entry))}" alt="${esc(entry.artistName)}" loading="lazy" width="72" height="72" />
   <div class="mini__meta"><span class="mini__name">${esc(entry.title)}</span><span class="mini__stat">${esc(entry.artistName)}</span></div>
