@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-03T08:35:36.620Z",
+    "genereLe": "2026-08-04T07:44:08.621Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Kevinna",
       "genre": "Pop",
-      "titre": "Só Eu Te Amei",
+      "titre": "Quando Você Some / Defensor",
       "score": 43.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg"
     },
@@ -29,14 +29,14 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "titre": "Sere'm",
-      "score": 27.4,
+      "score": 27.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "An Kachet",
+      "titre": "Fè Makak",
       "score": 25.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg"
     },
@@ -46,13 +46,13 @@
       "genre": "Konpa",
       "titre": "Ayo Girl (Haitian Konpa Remix)",
       "score": 24.2,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/cbffebb8039b49446b8aaadde84f15ac/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": "Kisa'm Te Fèw Ki Mal",
+      "titre": "Ti Miyo",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
@@ -76,7 +76,7 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "Manyen m la (feat. Kenny Haiti)",
+      "titre": "M Pa Kyè",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
     }
