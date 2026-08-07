@@ -1,9 +1,10 @@
 /* Entrée « Étoiles Éteintes » de la colonne de gauche (page artistes). */
 
 .link {
+  /* --wing-top place l'épaule : les plumes cascadent en dessous. */
   --wing-w: 104px;
   --wing-inset: -14px;
-  --wing-top: 60%;
+  --wing-top: 52%;
   --halo-w: 74px;
   --halo-top: 6px;
 

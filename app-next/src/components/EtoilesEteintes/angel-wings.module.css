@@ -8,8 +8,9 @@
      --halo-w      largeur de l'auréole       (défaut 78px)
      --halo-top    position verticale         (défaut 4px)
 
-   Ratio du viewBox : 210 × 150. L'épaule (pivot) est à 93.33 % / 34.67 %,
-   soit un décalage vertical de 0.2476 × largeur depuis le haut de la boîte.
+   Ratio du viewBox : 235 × 118. L'épaule (pivot) est à 92.34 % / 55.08 %,
+   soit un décalage vertical de 0.2766 × largeur depuis le haut de la boîte
+   (voir WING_PIVOT_Y_OVER_WIDTH dans angel-wing-geometry.ts).
    ============================================================ */
 
 .host {
@@ -31,7 +32,7 @@
   position: absolute;
   top: var(--wing-top, 56%);
   width: var(--wing-w, 104px);
-  transform: translateY(calc(var(--wing-w, 104px) * -0.2476));
+  transform: translateY(calc(var(--wing-w, 104px) * -0.2766));
 }
 
 .wingLeft {
@@ -42,13 +43,13 @@
    donc les deux ailes restent symétriques sans réglage supplémentaire. */
 .wingRight {
   right: var(--wing-inset, -16px);
-  transform: translateY(calc(var(--wing-w, 104px) * -0.2476)) scaleX(-1);
+  transform: translateY(calc(var(--wing-w, 104px) * -0.2766)) scaleX(-1);
 }
 
 /* Niveau dédié au pliage : pivote et se resserre sur l'épaule. */
 .wingFold {
   display: block;
-  transform-origin: 93.333% 50%;
+  transform-origin: 92.34% 55.08%;
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
@@ -58,7 +59,9 @@
   display: block;
   width: 100%;
   height: auto;
-  transform-origin: 93.333% 34.667%;
+  /* Les plumes débordent légèrement du viewBox : pas de rognage. */
+  overflow: visible;
+  transform-origin: 92.34% 55.08%;
   animation: wing-flap 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   filter: drop-shadow(0 0 10px rgba(255, 240, 205, 0.35))
           drop-shadow(0 6px 18px rgba(243, 18, 26, 0.18));
@@ -78,7 +81,7 @@
    et se propage jusqu'au bout des rémiges. */
 .svg [data-wing-ripple] {
   transform-box: view-box;
-  transform-origin: 196px 52px;
+  transform-origin: 217px 65px;
   animation: wing-ripple 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
@@ -101,7 +104,8 @@
 .svg [data-wing-row="coverts"] [data-wing-ripple] {
   animation-delay: -0.08s;
 }
-.svg [data-wing-row="scapular"] [data-wing-ripple] {
+/* Le bord d'attaque est de l'os : il ne doit quasiment pas onduler. */
+.svg [data-wing-row="arm"] [data-wing-ripple] {
   animation-duration: 7.2s;
   animation-name: wing-ripple-soft;
 }
@@ -119,7 +123,7 @@
 /* Rangs : niveau extérieur = pliage (transition, pas d'animation). */
 .svg [data-wing-row] {
   transform-box: view-box;
-  transform-origin: 196px 52px;
+  transform-origin: 217px 65px;
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
