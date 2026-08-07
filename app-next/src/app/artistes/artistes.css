@@ -232,9 +232,11 @@
 
 .etoiles-hero {
   /* Grandes ailes : le composant lit ces variables. */
+  /* --wing-top place l'ÉPAULE, pas le centre de l'aile : les plumes
+     retombent en dessous, donc l'épaule se cale sur le milieu du titre. */
   --wing-w: 300px;
   --wing-inset: -56px;
-  --wing-top: 56%;
+  --wing-top: 46%;
   --halo-w: 190px;
   --halo-top: -6px;
 

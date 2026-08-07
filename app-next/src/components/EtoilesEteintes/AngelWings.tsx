@@ -1,7 +1,7 @@
 import {
   COVERTS,
+  LEADING_EDGE,
   PRIMARIES,
-  SCAPULAR,
   SECONDARIES,
   WING_VIEWBOX,
   type Feather,
@@ -56,13 +56,15 @@ function AngelWing({ idPrefix }: AngelWingProps) {
         </linearGradient>
       </defs>
 
+      {/* Ordre de peinture : les rangs les plus longs derrière, le bord
+          d'attaque par-dessus pour masquer l'implantation des plumes. */}
       <g style={{ fill: `url(#${plumeGrad})` }}>
         <FeatherRow row={PRIMARIES} name="primaries" />
         <FeatherRow row={SECONDARIES} name="secondaries" />
         <FeatherRow row={COVERTS} name="coverts" />
-        <g data-wing-row="scapular">
+        <g data-wing-row="arm">
           <g data-wing-ripple="">
-            <path d={SCAPULAR} className={styles.plume} />
+            <path d={LEADING_EDGE} className={styles.plume} />
           </g>
         </g>
       </g>
