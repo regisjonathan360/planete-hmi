@@ -1,0 +1,109 @@
+/* Entrée « Étoiles Éteintes » de la colonne de gauche (page artistes). */
+
+.link {
+  --wing-w: 104px;
+  --wing-inset: -14px;
+  --wing-top: 60%;
+  --halo-w: 74px;
+  --halo-top: 6px;
+
+  display: block;
+  margin-top: 1.1rem;
+  padding: 2.5rem 0.55rem 0.95rem;
+  border-radius: 16px;
+  border: 1px solid rgba(244, 239, 228, 0.14);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 205, 90, 0.14) 0%, transparent 62%),
+    linear-gradient(160deg, rgba(28, 25, 41, 0.92) 0%, rgba(12, 10, 20, 0.92) 100%);
+  text-align: center;
+  text-decoration: none;
+  color: var(--cream);
+  /* Les ailes et l'auréole débordent du cadre. */
+  overflow: visible;
+  isolation: isolate;
+  transition:
+    border-color 0.35s var(--ease),
+    box-shadow 0.35s var(--ease),
+    transform 0.35s var(--ease);
+}
+
+.link:hover,
+.link:focus-visible,
+.link[data-active] {
+  border-color: rgba(255, 205, 90, 0.45);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.45),
+    0 0 34px rgba(255, 205, 90, 0.16);
+}
+
+.link:hover {
+  transform: translateY(-2px);
+}
+
+.link:focus-visible {
+  outline: 2px solid rgba(255, 215, 122, 0.8);
+  outline-offset: 3px;
+}
+
+/* Le libellé passe devant les ailes, avec un fond radial pour rester lisible. */
+.body {
+  position: relative;
+  z-index: 2;
+  display: block;
+}
+
+.body::before {
+  content: "";
+  position: absolute;
+  inset: -0.8rem -0.4rem;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 45%, rgba(10, 8, 16, 0.88) 0%, transparent 72%);
+}
+
+.title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  line-height: 1.06;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #fff6e2;
+  text-shadow:
+    0 0 14px rgba(255, 214, 150, 0.5),
+    0 0 34px rgba(243, 18, 26, 0.28);
+}
+
+.title > span {
+  display: block;
+}
+
+.sub {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  color: var(--cream-dim);
+}
+
+.count {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(255, 205, 90, 0.16);
+  border: 1px solid rgba(255, 205, 90, 0.35);
+  font-size: 0.62rem;
+  color: #ffd77a;
+}
+
+/* Sidebar horizontale en mobile : l'entrée reste pleine largeur, les ailes
+   disposent de plus de place. */
+@media (max-width: 720px) {
+  .link {
+    --wing-w: 120px;
+    --wing-inset: 4%;
+    margin-top: 0.9rem;
+  }
+}
