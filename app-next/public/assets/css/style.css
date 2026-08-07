@@ -925,3 +925,321 @@ a.section-link:hover { color: var(--flame-orange); }
   border-radius: 999px;
   background: rgba(255,255,255,0.045);
 }
+/* =========================================================
+   PODIUM EN FEU
+   ---------------------------------------------------------
+   Deux effets distincts :
+     1. Révélation par explosion, une seule fois, quand le
+        podium entre dans le viewport. Les flammes s'éteignent
+        ensuite d'elles-mêmes.
+     2. Embrasement au survol d'une carte (celle dont l'extrait
+        audio se lance). Le sélecteur porte sur la carte elle-
+        même : les voisines restent froides par construction.
+
+   Palette par place (demande DA) :
+     1re (--gold)   -> flamme bleutée
+     2e  (--silver) -> flamme blanche / jaunâtre
+     3e  (--bronze) -> flamme orange / rougeâtre
+
+   Le markup (.podium-fire, .podium-blast) est injecté par
+   /assets/js/podium-fire.js — rien en dur dans le HTML.
+   ========================================================= */
+.podium { position: relative; }
+
+/* `isolation` garantit le contexte d'empilement même si le navigateur
+   ne prend pas en charge backdrop-filter : la couche de flammes en
+   z-index -1 doit rester contenue dans la carte. */
+/* Palette de repli : une carte sans classe de variante garde un feu valide
+   plutôt qu'un dégradé invalide (donc invisible). */
+.podium__card {
+  isolation: isolate;
+  --fire-core: #ffe2a8;
+  --fire-mid: var(--flame-orange);
+  --fire-outer: var(--flame-red);
+  --fire-glow: rgba(255, 106, 0, 0.5);
+  --fire-halo: rgba(243, 18, 26, 0.32);
+}
+
+.podium__card--gold {
+  --fire-core: #f4fbff;
+  --fire-mid: #6cc8ff;
+  --fire-outer: #0a5cff;
+  --fire-glow: rgba(70, 183, 255, 0.5);
+  --fire-halo: rgba(0, 120, 255, 0.32);
+}
+.podium__card--silver {
+  --fire-core: #fffdf3;
+  --fire-mid: #fff0a6;
+  --fire-outer: #ffc033;
+  --fire-glow: rgba(255, 226, 138, 0.5);
+  --fire-halo: rgba(255, 178, 0, 0.3);
+}
+.podium__card--bronze {
+  --fire-core: #ffe2a8;
+  --fire-mid: #ff7a18;
+  --fire-outer: #dd0f17;
+  --fire-glow: rgba(255, 106, 0, 0.5);
+  --fire-halo: rgba(243, 18, 26, 0.32);
+}
+
+/* ---------- Couche de flammes (par carte) ---------- */
+/* z-index -1 : la flamme passe au-dessus du fond de la carte mais reste
+   sous le texte et la photo, qui restent donc parfaitement lisibles. */
+.podium-fire {
+  position: absolute;
+  z-index: -1;
+  /* Déborde surtout vers le haut : les flammes montent au-dessus de la carte. */
+  inset: -42% -16% -12% -16%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  will-change: opacity;
+}
+
+.podium-fire__glow {
+  position: absolute;
+  inset: 8% 0 0;
+  background: radial-gradient(58% 52% at 50% 78%, var(--fire-glow) 0%, var(--fire-halo) 42%, transparent 72%);
+  filter: blur(18px);
+  animation: fire-breathe 1.5s ease-in-out infinite;
+}
+
+@keyframes fire-breathe {
+  0%, 100% { opacity: 0.72; scale: 1; }
+  50% { opacity: 1; scale: 1.05; }
+}
+
+/* Le flou + le contraste fusionnent les neuf langues en une masse continue. */
+.podium-fire__body {
+  position: absolute;
+  inset: 0;
+  filter: blur(6px) contrast(1.75) saturate(1.15);
+  /* Centre dégagé : la photo de l'artiste ne doit pas être noyée. */
+  -webkit-mask-image: radial-gradient(70% 58% at 50% 70%, transparent 0%, rgba(0, 0, 0, 0.4) 52%, #000 80%);
+  mask-image: radial-gradient(70% 58% at 50% 70%, transparent 0%, rgba(0, 0, 0, 0.4) 52%, #000 80%);
+}
+
+.podium-fire__body i {
+  position: absolute;
+  left: var(--x);
+  bottom: 4%;
+  width: var(--w);
+  height: var(--h);
+  transform-origin: 50% 100%;
+  border-radius: 50% 50% 44% 44% / 66% 66% 34% 34%;
+  background: radial-gradient(58% 74% at 50% 84%, var(--fire-core) 0%, var(--fire-mid) 38%, var(--fire-outer) 68%, transparent 100%);
+  /* Additif : les langues s'additionnent au lieu de se masquer. */
+  mix-blend-mode: screen;
+  animation: fire-tongue var(--d) ease-in-out var(--dl) infinite;
+}
+
+/* `translate` / `scale` (propriétés individuelles) plutôt que `transform` :
+   elles se composent avec le `transform` d'un parent sans l'écraser. */
+@keyframes fire-tongue {
+  0%, 100% { translate: -50% 0; scale: 1 1; opacity: 0.82; }
+  22% { translate: -50% -4%; scale: 0.9 1.2; opacity: 1; }
+  48% { translate: -48% 2%; scale: 1.08 0.86; opacity: 0.76; }
+  74% { translate: -52% -2%; scale: 0.94 1.12; opacity: 0.96; }
+}
+
+.podium-fire__core {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  width: 62%;
+  height: 26%;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(50% 60% at 50% 70%, var(--fire-core) 0%, var(--fire-mid) 45%, transparent 78%);
+  filter: blur(10px);
+  animation: fire-core 780ms ease-in-out infinite;
+}
+
+@keyframes fire-core {
+  0%, 100% { opacity: 0.62; scale: 1 0.92; }
+  50% { opacity: 0.95; scale: 1.06 1.08; }
+}
+
+/* ---------- Embrasement au survol ---------- */
+.podium__card:hover > .podium-fire,
+.podium__card:focus-within > .podium-fire,
+.podium__card[data-preview-state="lecture"] > .podium-fire {
+  opacity: 1;
+}
+
+/* La carte en feu passe devant ses voisines. */
+.podium__card:hover,
+.podium__card:focus-within,
+.podium__card[data-preview-state="lecture"] {
+  z-index: 3;
+  border-color: var(--fire-mid);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09),
+              0 0 34px var(--fire-glow),
+              0 22px 70px var(--fire-halo);
+}
+
+.podium__card:hover .podium__media img,
+.podium__card[data-preview-state="lecture"] .podium__media img {
+  filter: saturate(1.15) contrast(1.05) brightness(1.04);
+}
+
+.podium__card .podium__media img { transition: filter 0.3s ease; }
+
+/* ---------- Explosion de révélation ---------- */
+.podium.fire-armed .podium__card { opacity: 0; }
+/* Neutralise le `.reveal` générique : c'est l'explosion qui révèle. */
+.podium.fire-armed,
+.podium.is-erupting {
+  opacity: 1;
+  transform: none;
+}
+
+.podium-blast {
+  position: absolute;
+  inset: -16% -8% -8%;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.podium-blast__flash {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  translate: -50% -50%;
+  width: 120%;
+  aspect-ratio: 1.6 / 1;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, #fffaf0 0%, #ffd27a 22%, rgba(255, 106, 0, 0.75) 44%, rgba(243, 18, 26, 0.28) 66%, transparent 82%);
+  filter: blur(14px);
+  opacity: 0;
+}
+
+.podium.is-erupting .podium-blast__flash {
+  animation: blast-flash 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes blast-flash {
+  0% { opacity: 0; scale: 0.24; }
+  9% { opacity: 1; scale: 0.9; }
+  38% { opacity: 0.72; scale: 1.16; }
+  100% { opacity: 0; scale: 1.4; }
+}
+
+.podium-blast__ring {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  translate: -50% -50%;
+  width: 34%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 196, 92, 0.85);
+  box-shadow: 0 0 26px rgba(255, 140, 0, 0.6), inset 0 0 26px rgba(255, 190, 80, 0.45);
+  opacity: 0;
+}
+
+.podium.is-erupting .podium-blast__ring {
+  animation: blast-ring 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Seconde onde, plus tardive et froide : donne de la profondeur au souffle. */
+.podium.is-erupting .podium-blast__ring--late {
+  animation-delay: 160ms;
+  border-color: rgba(150, 205, 255, 0.55);
+  box-shadow: 0 0 26px rgba(70, 183, 255, 0.45), inset 0 0 22px rgba(150, 205, 255, 0.3);
+}
+
+@keyframes blast-ring {
+  0% { opacity: 0; scale: 0.16; border-width: 6px; }
+  12% { opacity: 1; }
+  100% { opacity: 0; scale: 2.2; border-width: 1px; }
+}
+
+.podium-blast__mass {
+  position: absolute;
+  left: 50%;
+  bottom: -6%;
+  translate: -50% 0;
+  width: 92%;
+  height: 104%;
+  transform-origin: 50% 100%;
+  background:
+    radial-gradient(38% 52% at 28% 78%, rgba(255, 190, 70, 0.9) 0%, rgba(255, 106, 0, 0.5) 46%, transparent 76%),
+    radial-gradient(42% 60% at 72% 74%, rgba(255, 150, 40, 0.85) 0%, rgba(243, 18, 26, 0.45) 48%, transparent 78%),
+    radial-gradient(52% 66% at 50% 88%, #fff3d0 0%, rgba(255, 178, 0, 0.72) 34%, rgba(255, 60, 10, 0.34) 62%, transparent 84%);
+  filter: blur(12px) contrast(1.4);
+  opacity: 0;
+}
+
+.podium.is-erupting .podium-blast__mass {
+  animation: blast-mass 1700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes blast-mass {
+  0% { opacity: 0; scale: 0.5 0.16; }
+  10% { opacity: 1; scale: 1.02 0.96; }
+  28% { opacity: 0.95; scale: 1 1.14; }
+  62% { opacity: 0.5; scale: 0.9 0.7; }
+  100% { opacity: 0; scale: 0.8 0.22; }
+}
+
+.podium-blast__embers { position: absolute; inset: 0; }
+
+.podium-blast__embers i {
+  position: absolute;
+  left: 50%;
+  top: 64%;
+  width: var(--es);
+  height: var(--es);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6dc 0%, #ffb200 42%, rgba(243, 18, 26, 0.6) 72%, transparent 100%);
+  box-shadow: 0 0 10px rgba(255, 150, 0, 0.85);
+  opacity: 0;
+}
+
+.podium.is-erupting .podium-blast__embers i {
+  animation: blast-ember var(--ed) cubic-bezier(0.2, 0.7, 0.3, 1) var(--edl) both;
+}
+
+/* Trajectoire en arche : la braise dépasse sa cible puis retombe. */
+@keyframes blast-ember {
+  0% { opacity: 0; translate: -50% -50%; scale: 0.4; }
+  10% { opacity: 1; scale: 1; }
+  55% { opacity: 0.9; translate: calc(-50% + var(--ex) * 0.66) calc(-50% + var(--ey) * 1.06); scale: 0.8; }
+  100% { opacity: 0; translate: calc(-50% + var(--ex)) calc(-50% + var(--ey) * 0.72); scale: 0.25; }
+}
+
+/* Les cartes émergent du souffle, le vainqueur en premier (--fire-order). */
+.podium.is-erupting .podium__card {
+  animation: podium-emerge 640ms cubic-bezier(0.22, 1, 0.36, 1) calc(200ms + var(--fire-order, 0) * 90ms) both;
+}
+
+@keyframes podium-emerge {
+  0% { opacity: 0; scale: 0.88; translate: 0 26px; filter: brightness(3) blur(7px) saturate(1.5); }
+  45% { opacity: 1; filter: brightness(1.8) blur(1.5px) saturate(1.25); }
+  100% { opacity: 1; scale: 1; translate: 0 0; filter: none; }
+}
+
+/* Les trois cartes brûlent pendant le souffle, puis s'éteignent. */
+.podium.is-erupting .podium__card > .podium-fire {
+  animation: podium-fire-die 1600ms ease-out calc(240ms + var(--fire-order, 0) * 90ms) both;
+}
+
+@keyframes podium-fire-die {
+  0% { opacity: 0; }
+  14% { opacity: 1; }
+  46% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+@media (max-width: 860px) {
+  .podium-fire { inset: -30% -12% -10% -12%; }
+}
+
+/* Mouvement réduit : ni explosion ni flammes. Le JS n'arme pas l'explosion,
+   le CSS retire la couche de feu (sinon elle resterait figée, floue). */
+@media (prefers-reduced-motion: reduce) {
+  .podium-fire,
+  .podium-blast { display: none; }
+  .podium.fire-armed .podium__card { opacity: 1; }
+}

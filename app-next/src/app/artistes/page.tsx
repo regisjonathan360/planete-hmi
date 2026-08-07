@@ -3,6 +3,7 @@ import { ArtistesGrid } from "./ArtistesGrid";
 import { SiteHeader } from "@/components/SiteHeader";
 import Link from "next/link";
 import { HaitiShapeButton } from "@/components/HaitiMap/HaitiShapeButton";
+import { EtoilesEteintesLink } from "@/components/EtoilesEteintes/EtoilesEteintesLink";
 import { withFallbackAvatars } from "@/lib/artists/avatar";
 import { PRODUCER_ARTIST_TYPES, countProductionsByProducer } from "@/lib/producers/queries";
 import { canonicalizeArtistRoles } from "@/lib/artists/roles";
@@ -234,11 +235,25 @@ async function buildCategories(): Promise<CategoryWithCount[]> {
   return categories;
 }
 
+/** Compte les artistes en mémoire, pour la pastille de l'entrée « Étoiles éteintes ». */
+async function countDeceasedArtists(): Promise<number> {
+  const supabase = await createClient();
+
+  const { count } = await supabase
+    .from("artists")
+    .select("id", { count: "exact", head: true })
+    .eq("is_active", true)
+    .eq("is_deceased", true);
+
+  return count ?? 0;
+}
+
 export default async function ArtistesPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
   const { type } = await searchParams;
-  const [artists, categories] = await Promise.all([
+  const [artists, categories, deceasedCount] = await Promise.all([
     getVerifiedArtists(type),
     buildCategories(),
+    countDeceasedArtists(),
   ]);
   const activeType = type === "beatmaker" ? "producer" : type ?? "";
   const category = categories.find((c) => c.type === activeType) ?? categories[0];
@@ -309,6 +324,9 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
                 );
               })}
             </nav>
+
+            {/* Hommage aux artistes disparus, sous les options de filtre */}
+            <EtoilesEteintesLink count={deceasedCount} />
           </aside>
 
           {/* Contenu principal */}
