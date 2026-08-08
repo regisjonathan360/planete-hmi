@@ -136,6 +136,7 @@ export const metadata: Metadata = {
 };
 
 import { StageLightsLoader } from "@/components/StageLightsLoader";
+import { ShootingStars } from "@/components/ShootingStars";
 import { DonationPrompt } from "@/components/DonationPrompt";
 import Script from "next/script";
 import "./globals.css";
@@ -157,6 +158,7 @@ export default function RootLayout({
       </head>
       <body>
         <StageLightsLoader />
+        <ShootingStars />
         {children}
         <DonationPrompt />
         <Script src="/assets/js/main.js" strategy="afterInteractive" />
