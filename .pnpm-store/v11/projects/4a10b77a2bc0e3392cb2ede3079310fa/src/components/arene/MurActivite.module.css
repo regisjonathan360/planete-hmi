@@ -1,0 +1,207 @@
+/* Mur d'activité — flux chronologique des interactions récentes.
+   Affiché en sidebar desktop (320px) ou pleine largeur sur mobile. */
+
+.murActivite {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  top: 1.5rem;
+  max-height: calc(100vh - 3rem);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.connectionBadge {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.connectionBadge[data-status="connected"] {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+}
+
+.connectionBadge[data-status="reconnecting"] {
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.12);
+}
+
+.connectionBadge[data-status="disconnected"] {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
+}
+
+/* Scrollable list */
+.list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-right: 0.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+/* Activity item */
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.15s ease;
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Slide-in animation for new realtime items */
+.itemNew {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.actorPseudo {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.itemBody {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.35;
+}
+
+.targetLink {
+  color: rgba(173, 216, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.targetLink:hover {
+  text-decoration: underline;
+}
+
+.itemDate {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.1rem;
+}
+
+.groupCount {
+  font-size: 0.7rem;
+  color: rgba(180, 100, 255, 0.8);
+  font-weight: 500;
+}
+
+/* "Voir plus" button */
+.voirPlus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  min-height: 44px;
+  min-width: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.voirPlus:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.voirPlus:focus-visible {
+  outline: 2px solid rgba(173, 216, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.voirPlus:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+}
+
+/* Full-width mode (mobile or explicit) */
+.fullwidth {
+  position: static;
+  max-height: none;
+}
+
+.fullwidth .list {
+  max-height: 500px;
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .itemNew {
+    animation: none;
+  }
+
+  .item,
+  .voirPlus {
+    transition: none;
+  }
+}

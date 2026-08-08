@@ -1,0 +1,34 @@
+/* Countdown — Compte à rebours (standalone).
+   Requirements: 5.2, 5.5, 5.6 */
+
+.countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdownSegment {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.1rem;
+}
+
+.countdownValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cream, #f4efe4);
+}
+
+.countdownUnit {
+  font-size: 0.7rem;
+  color: var(--cream-dim, #b9b2a4);
+  text-transform: lowercase;
+}
+
+.countdownExpired {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--flame-orange, #ff6a00);
+}

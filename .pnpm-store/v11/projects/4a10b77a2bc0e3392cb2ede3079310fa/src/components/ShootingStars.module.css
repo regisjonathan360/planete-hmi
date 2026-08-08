@@ -1,0 +1,119 @@
+/* Étoiles filantes du fond de page.
+   Empilement existant : .cosmos (-3) < ce calque (-2) < .grain (-1) < contenu.
+   Le fond `.cosmos` étant une image fixe, ce calque est ce qui rend la page
+   vivante. */
+
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+  /* Contient les repeints : les étoiles n'invalident pas toute la page. */
+  contain: strict;
+
+  /*
+   * Trou dans le calque à l'emplacement de la planète (`.cosmos__planet`,
+   * page d'accueil uniquement). --mask-cx/cy/r sont posées en JS depuis
+   * `getBoundingClientRect()`, donc en coordonnées viewport — qui
+   * correspondent exactement au repère de ce calque puisqu'il est
+   * `position: fixed; inset: 0`.
+   *
+   * Avant la première mesure (--mask-r absent -> 0px), le halo va de
+   * transparent à -8px à blanc à 8px : un cercle de rayon quasi nul, donc le
+   * masque est blanc (visible) presque partout. Aucun clignotement au
+   * premier rendu.
+   *
+   * `blanc = étoiles visibles`, `transparent = étoiles masquées` (mask-image
+   * utilise le canal alpha). Le halo de 16px adoucit le bord du disque au
+   * lieu d'un cercle parfait, qui trahirait immédiatement le procédé.
+   */
+  --mask-r: 0px;
+  -webkit-mask-image: radial-gradient(
+    circle at var(--mask-cx, 50%) var(--mask-cy, 50%),
+    transparent 0,
+    transparent calc(var(--mask-r) - 8px),
+    white calc(var(--mask-r) + 8px),
+    white 100%
+  );
+  mask-image: radial-gradient(
+    circle at var(--mask-cx, 50%) var(--mask-cy, 50%),
+    transparent 0,
+    transparent calc(var(--mask-r) - 8px),
+    white calc(var(--mask-r) + 8px),
+    white 100%
+  );
+}
+
+/* Enveloppe : porte la POSITION et l'ANGLE, jamais l'animation.
+   La traînée est animée à l'intérieur, donc son déplacement se fait dans le
+   repère déjà pivoté — c'est ce qui la fait filer le long de son axe et non
+   horizontalement. */
+.star {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: 0;
+  height: 0;
+  transform: rotate(var(--angle));
+  transform-origin: 0 50%;
+}
+
+.trail {
+  display: block;
+  width: var(--len);
+  height: var(--thick);
+  border-radius: 999px;
+  /* Dégradé orienté : la tête est à l'avant (extrémité droite). */
+  background: linear-gradient(
+    90deg,
+    rgba(var(--teinte), 0) 0%,
+    rgba(var(--teinte), 0.18) 42%,
+    rgba(var(--teinte), 0.7) 84%,
+    rgb(var(--teinte)) 100%
+  );
+  opacity: 0;
+  will-change: translate, opacity;
+  animation: shooting-star var(--dur) cubic-bezier(0.22, 0.55, 0.35, 1) forwards;
+}
+
+/* Tête : petit point brillant en bout de traînée. */
+.trail::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: calc(var(--thick) * 1.9);
+  height: calc(var(--thick) * 1.9);
+  translate: 30% -50%;
+  border-radius: 50%;
+  background: rgb(var(--teinte));
+  box-shadow:
+    0 0 6px rgba(var(--teinte), 0.95),
+    0 0 14px rgba(var(--teinte), 0.5);
+}
+
+@keyframes shooting-star {
+  0% {
+    translate: -14% 0;
+    opacity: 0;
+  }
+  9% {
+    opacity: 1;
+  }
+  76% {
+    opacity: 1;
+  }
+  100% {
+    translate: var(--dist) 0;
+    opacity: 0;
+  }
+}
+
+/* Le composant ne monte rien en mouvement réduit ; ceci couvre le cas où le
+   réglage change après le montage. */
+@media (prefers-reduced-motion: reduce) {
+  .layer {
+    display: none;
+  }
+}

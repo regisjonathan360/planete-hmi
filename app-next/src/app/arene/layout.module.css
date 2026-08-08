@@ -1,0 +1,76 @@
+/* Arène — Layout cosmique avec fond immersif et disposition flex. */
+
+.arene {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Couches de fond cosmique (gérées par StageLightsBackground + ShootingStars
+   au niveau du root layout). Ce conteneur porte un scrim de lisibilité
+   propre à l'Arène par-dessus les couches globales. */
+.areneScrim {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 7, 13, 0.3) 0%,
+    rgba(8, 7, 13, 0.6) 40%,
+    rgba(8, 7, 13, 0.8) 100%
+  );
+}
+
+/* Conteneur principal de contenu */
+.areneContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Disposition flex : main content + sidebar desktop */
+.areneBody {
+  display: flex;
+  flex: 1;
+  gap: 2rem;
+  padding-top: 1.5rem;
+}
+
+.areneMain {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Sidebar mur d'activité — visible uniquement en desktop (≥768px) */
+.areneSidebar {
+  display: none;
+  width: 320px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .areneSidebar {
+    display: block;
+  }
+
+  .areneContent {
+    padding: 0 2rem;
+  }
+}
+
+/* Respect de prefers-reduced-motion : les animations cosmiques sont gérées
+   par les composants eux-mêmes (ShootingStars se cache automatiquement).
+   Cette règle supplémentaire désactive les transitions CSS du layout. */
+@media (prefers-reduced-motion: reduce) {
+  .arene,
+  .arene * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

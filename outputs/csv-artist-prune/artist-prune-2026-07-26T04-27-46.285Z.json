@@ -1,0 +1,617 @@
+{
+  "mode": "apply",
+  "generatedAt": "2026-07-26T04:27:46.287Z",
+  "sourceCsv": "C:\\Users\\regis\\Downloads\\planete-hmi-artists - planete-hmi-artists.csv (3).csv",
+  "csvRows": 397,
+  "databaseArtistsBefore": 591,
+  "keptArtists": 526,
+  "protectedArtistsInDatabase": 223,
+  "claimedArtistsPreserved": 1,
+  "ambiguousArtistsPreserved": 5,
+  "deleteCandidates": 65,
+  "claimedDeleteCandidates": 0,
+  "dependencyCounts": {
+    "artist_accounts": 0,
+    "artist_claim_audit": 0,
+    "artist_merge_candidates": 2,
+    "artist_merges": 0,
+    "artist_platform_identities": 0,
+    "artist_tiktok_connections": 0,
+    "artist_tiktok_videos": 0,
+    "tiktok_sounds": 0,
+    "track_artists": 50,
+    "user_favorites": 0,
+    "youtube_channel_artists": 0,
+    "youtube_channels": 0
+  },
+  "ambiguous": [
+    {
+      "id": "be7970bd-2a32-43ad-aefd-98959c6971f6",
+      "name": "Durkheimht",
+      "slug": "durkheimht",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved",
+        "audiomack_deezer_chart"
+      ],
+      "protectedSources": [
+        "audiomack_haiti_weekly100"
+      ]
+    },
+    {
+      "id": "79a797e4-dd1d-4244-bfba-99a4c3392a1f",
+      "name": "Fresh La",
+      "slug": "fresh-la",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved",
+        "csv_slug_conflict_preserved"
+      ],
+      "protectedSources": []
+    },
+    {
+      "id": "18dd1114-c612-4e4f-b912-08a41c8133af",
+      "name": "KiDi",
+      "slug": "kidi",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved"
+      ],
+      "protectedSources": []
+    },
+    {
+      "id": "e675d8f5-ba99-4582-a480-27ac76732961",
+      "name": "Niska",
+      "slug": "niska",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved"
+      ],
+      "protectedSources": []
+    },
+    {
+      "id": "0b473ad6-f99c-40a3-9eff-47cf08f7b40d",
+      "name": "Tony Mix",
+      "slug": "tony-mix",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved",
+        "csv_slug_conflict_preserved",
+        "audiomack_deezer_chart"
+      ],
+      "protectedSources": [
+        "audiomack_haiti_weekly100"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "id": "3e25d391-68c7-4826-8367-e3bc5a9ce67f",
+      "name": "21 Savage",
+      "slug": "21-savage",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "5f886391-4b9c-48ab-8b25-05eed0a8d2cf",
+      "name": "Aguero Banks",
+      "slug": "aguero-banks",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "22222222-0000-0000-0000-000000000002",
+      "name": "Artiste Test HMI Deux",
+      "slug": "artiste-test-hmi-deux",
+      "userId": null,
+      "haitianStatus": "verified_haitian_diaspora",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "22222222-0000-0000-0000-000000000001",
+      "name": "Artiste Test HMI Un",
+      "slug": "artiste-test-hmi-un",
+      "userId": null,
+      "haitianStatus": "verified_haitian",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "5d11fcd7-7396-4f96-87b8-e60797596bc3",
+      "name": "Atis Independan",
+      "slug": "atis-independan",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "6d61dae5-70e0-47ca-92d5-d691e8e4a500",
+      "name": "Ayizan",
+      "slug": "ayizan",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "8048cd4d-dd45-4e31-906c-4f6e9126c3f5",
+      "name": "Ayo",
+      "slug": "ayo-ht",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "8cee09a2-34ae-4255-a28b-c29ecf842ad8",
+      "name": "Badly",
+      "slug": "badly",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "235bfdcf-228b-4b83-a544-5af59aad3a7b",
+      "name": "Belly Gang Kushington",
+      "slug": "belly-gang-kushington",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "aa000000-0000-0000-0000-000000000008",
+      "name": "BIC",
+      "slug": "bic",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "b1a50565-bbc0-4938-a8b4-eff4a733e934",
+      "name": "BIC",
+      "slug": "bic-ht",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "4515fee1-e33f-49d8-b09c-2a9268ef87dc",
+      "name": "Black Coco",
+      "slug": "black-coco",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "7a87a2bc-901b-41a1-8a0d-572e1eecf2cf",
+      "name": "Bossa Nova (Haiti)",
+      "slug": "bossa-nova-haiti",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "b719b7ef-d957-4479-b477-2e342d1ff89c",
+      "name": "BoyPee",
+      "slug": "boypee",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "0ec7aab9-3eee-4fd4-a697-1d623a1518ca",
+      "name": "Brav",
+      "slug": "brav-ht",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "3d7bf040-618b-44b3-96b2-d742bceef662",
+      "name": "Carimi",
+      "slug": "carimi",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "39f36d28-4d13-41b0-b4c2-ab39bcbdb21b",
+      "name": "Cécile McLorin Salvant",
+      "slug": "cecile-mclorin-salvant",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "76d6e281-7ca7-4fa0-82af-9c6d6ce9dbde",
+      "name": "Chella",
+      "slug": "chella",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "75ad514c-6f0e-4e88-a181-7b9b0abeccf6",
+      "name": "Chuckyy",
+      "slug": "chuckyy",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "6fe4818d-638b-46bb-8569-ab75618b119f",
+      "name": "Cless",
+      "slug": "cless",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "f62f01d8-3273-4cc0-a5ff-a123e5b49dbc",
+      "name": "Davido",
+      "slug": "davido",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "c19bdad4-c5e4-43a6-be9c-8b3f8413fd3d",
+      "name": "Dellys",
+      "slug": "dellys",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "5f20d4c1-4899-478e-8a53-90096b300c88",
+      "name": "DJ Tunez",
+      "slug": "dj-tunez",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "5ef512a2-b302-40ad-b17a-ed221f90372a",
+      "name": "Fabe",
+      "slug": "fabe-ht",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "94fe91bf-2803-4399-94a8-dc5c28521898",
+      "name": "Faceless",
+      "slug": "faceless",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "20018044-f9db-4643-8869-c55e8fd764e9",
+      "name": "Fameye",
+      "slug": "fameye",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "3d940968-643a-4495-8014-833cc33735f9",
+      "name": "Fantana",
+      "slug": "fantana",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "8e5b5af5-6794-46d9-9213-6dc389aa4f16",
+      "name": "Hotkeed",
+      "slug": "hotkeed",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "0b06101c-3568-4f94-b3bb-892152b56076",
+      "name": "Ibo Combo",
+      "slug": "ibo-combo",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "79f2bbd9-bcbd-46c6-8b2b-9419034281f8",
+      "name": "Instinct Killer",
+      "slug": "instinct-killer",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "88fd86d5-370e-4599-97f2-403da3ca5a75",
+      "name": "Issa El Saieh",
+      "slug": "issa-el-saieh",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "adcaf6a8-1f78-413d-9b49-7f9a86258bb0",
+      "name": "Kenny (T-Vice)",
+      "slug": "kenny-t-vice",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "d0e54cc1-8842-4c17-a603-016572db39b9",
+      "name": "Kevinna",
+      "slug": "kevinna",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "211f2d63-feda-4de8-8a62-68c2edbd58d6",
+      "name": "King Paluta",
+      "slug": "king-paluta",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "4596758d-5c21-4ae4-8909-851a1cf60c7d",
+      "name": "King Promise",
+      "slug": "king-promise",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "6c0ad760-73e1-49fc-a43a-9722ba729a7a",
+      "name": "King Soundboi",
+      "slug": "king-soundboi",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "2fc2a59d-365f-4e25-9edd-e23e23e6a835",
+      "name": "Kodak Black",
+      "slug": "kodak-black",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "843de76c-023f-4fdc-be2e-d4f742f517d0",
+      "name": "Kofi Kinaata",
+      "slug": "kofi-kinaata",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "f0a88d00-a8d5-4565-bfb9-04bf439a22a3",
+      "name": "KOJO BLAK",
+      "slug": "kojo-blak",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "17d39406-d16e-4903-abfb-7f9c697f0859",
+      "name": "KOJO BLAK and Kelvyn Boy",
+      "slug": "kojo-blak-and-kelvyn-boy",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "dc22f868-0cdb-430f-b2c4-369bd28784db",
+      "name": "Kondela",
+      "slug": "kondela",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "c8d065ff-4054-4972-9e68-063d874fe306",
+      "name": "Kunmie",
+      "slug": "kunmie",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "3b656e49-08b3-4ee7-b491-a17b09f6044b",
+      "name": "Lyrical Joe",
+      "slug": "lyrical-joe",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "8bc0d6be-36fb-48b4-90bc-9a329d7e2deb",
+      "name": "Mach-Hommy",
+      "slug": "mach-hommy",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "37f27ed8-46b2-4b85-99af-d2e68a0fc74d",
+      "name": "MAF Teeski",
+      "slug": "maf-teeski",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "2a9bf481-648d-45ac-b629-1ed41dfc39b2",
+      "name": "Majeeed",
+      "slug": "majeeed",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "cf722dd1-f30f-4f7c-ad19-4232ba63ec74",
+      "name": "Milca",
+      "slug": "milca",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "c4a55d2c-3024-4287-b5c9-dc165036e1bf",
+      "name": "Missile 727",
+      "slug": "missile-727",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "99970017-82df-44a5-befc-84eed944c5c1",
+      "name": "Naira Marley",
+      "slug": "naira-marley",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "1c4ed73d-b7dc-4f1d-a7d4-35cf9df36a57",
+      "name": "NoCap",
+      "slug": "nocap",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "e681b74d-2f41-48a8-91be-86029d570400",
+      "name": "O'Kenneth",
+      "slug": "o-kenneth",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "1a92b56e-2551-4fd5-b413-c100517f7173",
+      "name": "Obed Calvaire",
+      "slug": "obed-calvaire",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "e3b5e3bb-7daa-435e-8c3e-79013080b540",
+      "name": "Oberz",
+      "slug": "oberz",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "67efba80-8e94-45f7-92bc-5345720689cf",
+      "name": "Occide Jeanty",
+      "slug": "occide-jeanty",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "d3ecd10b-40b8-45b2-9dcd-b645b8abcdc8",
+      "name": "Olivetheboy",
+      "slug": "olivetheboy",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "667e16b5-ab2b-40a7-aff2-b8dbd1cbaed5",
+      "name": "Princess Lover",
+      "slug": "princess-lover",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "677b6e9e-24de-4399-a424-33664a84883a",
+      "name": "Rema",
+      "slug": "rema",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "de272f94-48a3-49c6-96e4-354119cfd57a",
+      "name": "Rord Kelly",
+      "slug": "rord-kelly",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "7aca4807-7c49-4bbc-868c-f7ed74bca01d",
+      "name": "Rvssian",
+      "slug": "rvssian",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "3a7fe33b-b1ed-4cfb-8f03-1c85eafe3e91",
+      "name": "SAMAD",
+      "slug": "samad",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "5e852c71-0107-441e-96a8-1f4f56c528b6",
+      "name": "Shabba",
+      "slug": "shabba-ht",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "66dd902a-454a-4029-b5c0-2f2aa4f4e6f1",
+      "name": "Teee Dollar",
+      "slug": "teee-dollar",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "15706f88-d85d-4f2b-a043-b732652692fb",
+      "name": "Zagga",
+      "slug": "zagga",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "91252a58-7988-443a-984e-d3bddfc15b60",
+      "name": "Zobway Pamay",
+      "slug": "zobway-pamay",
+      "userId": null,
+      "haitianStatus": "verified_haitian",
+      "deletionReason": "absent_from_reference_csv"
+    },
+    {
+      "id": "8863a9e5-f9fa-4f78-ac9c-2c9f0ed6ee16",
+      "name": "Zuchu",
+      "slug": "zuchu",
+      "userId": null,
+      "haitianStatus": "pending_review",
+      "deletionReason": "absent_from_reference_csv"
+    }
+  ],
+  "databaseArtistsAfter": 526,
+  "deletedArtists": 65,
+  "verification": {
+    "targetedArtistsRemaining": 0,
+    "protectedArtistsMissing": 0,
+    "expectedDatabaseArtistsAfter": 526,
+    "actualDatabaseArtistsAfter": 526
+  }
+}
