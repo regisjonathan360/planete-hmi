@@ -168,8 +168,8 @@ async function scrapeMusicCategoryPage(sourceUrl: URL): Promise<ScrapedArticle[]
     const title = decodeHtmlEntities(stripHtml(match[2]));
     if (title.length <= 3) continue;
 
-    const contextStart = Math.max(0, (match.index ?? 0) - 600);
-    const contextEnd = Math.min(html.length, (match.index ?? 0) + match[0].length + 600);
+    const contextStart = Math.max(0, (match.index ?? 0) - 400);
+    const contextEnd = Math.min(html.length, (match.index ?? 0) + match[0].length + 300);
     const context = html.slice(contextStart, contextEnd);
 
     seen.add(articleUrl.href);
@@ -208,36 +208,60 @@ async function fetchWithTimeout(url: URL): Promise<Response> {
 }
 
 function extractImageFromHtml(html: string, sourceUrl: URL): string | null {
-  const matches = [
-    ...html.matchAll(/\b(?:data-lazy-src|data-src|src)=["']([^"']+)["']/gi),
-  ];
+  // Chercher les <img> complets avec leurs attributs pour pouvoir filtrer par class/size
+  const imgTagPattern = /<img\b[^>]*\b(?:data-lazy-src|data-src|src)=["']([^"']+)["'][^>]*>/gi;
+  const matches = [...html.matchAll(imgTagPattern)];
 
   // Patterns d'images à exclure (avatars, editeurs, gravatar, icônes)
-  const EXCLUDED_PATTERNS = [
+  const EXCLUDED_URL_PATTERNS = [
     /gravatar\.com/i,
     /\/author\//i,
     /\/avatar/i,
     /\/profile/i,
-    /\/wp-content\/uploads\/.*-\d{2,3}x\d{2,3}\./i, // thumbnails redimensionnées (ex: image-150x150.jpg)
     /\/favicon/i,
     /\/logo/i,
     /\bicon\b/i,
+    /secure\.gravatar/i,
+    /wp-content\/uploads\/\d{4}\/\d{2}\/[^/]*-\d{2,3}x\d{2,3}\./i, // thumbnails WP
+  ];
+
+  // Classes CSS d'avatars/auteurs à exclure
+  const EXCLUDED_CLASS_PATTERNS = [
+    /avatar/i,
+    /author/i,
+    /profile/i,
+    /user-photo/i,
+    /byline/i,
   ];
 
   // Itérer du premier au dernier (l'image la plus proche du lien article est la bonne)
   for (let index = 0; index < matches.length; index++) {
+    const fullTag = matches[index][0];
+    const rawUrl = matches[index][1];
+
     try {
-      const rawUrl = decodeHtmlEntities(matches[index][1]);
-      const imageUrl = new URL(rawUrl, sourceUrl);
+      const imageUrl = new URL(decodeHtmlEntities(rawUrl), sourceUrl);
 
       // Vérifier que c'est un host autorisé
       if (!ALLOWED_HOSTS.has(imageUrl.hostname.toLowerCase())) continue;
 
-      // Exclure les avatars/profils/icônes
-      if (EXCLUDED_PATTERNS.some((pattern) => pattern.test(imageUrl.href))) continue;
+      // Exclure par URL pattern
+      if (EXCLUDED_URL_PATTERNS.some((pattern) => pattern.test(imageUrl.href))) continue;
 
-      // Exclure les images trop petites (souvent dans l'attribut data-width ou le nom)
-      // Les images d'articles Chokarella font généralement > 300px
+      // Exclure par classe CSS du <img>
+      const classMatch = fullTag.match(/class=["']([^"']+)["']/i);
+      if (classMatch) {
+        const classes = classMatch[1];
+        if (EXCLUDED_CLASS_PATTERNS.some((pattern) => pattern.test(classes))) continue;
+      }
+
+      // Exclure les images avec width/height explicitement petits (< 100px)
+      const widthMatch = fullTag.match(/\bwidth=["']?(\d+)/i);
+      const heightMatch = fullTag.match(/\bheight=["']?(\d+)/i);
+      if (widthMatch && parseInt(widthMatch[1], 10) < 100) continue;
+      if (heightMatch && parseInt(heightMatch[1], 10) < 100) continue;
+
+      // Exclure les images trop petites par nom de fichier (WordPress resize suffix)
       const smallThumb = imageUrl.href.match(/-(\d+)x(\d+)\./);
       if (smallThumb) {
         const w = parseInt(smallThumb[1], 10);
