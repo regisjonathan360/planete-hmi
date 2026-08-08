@@ -62,8 +62,47 @@ export default function AdminBattlesPage() {
     fetchBattles();
   }, [fetchBattles]);
 
+  // Search state for sides
+  const [searchA, setSearchA] = useState("");
+  const [searchB, setSearchB] = useState("");
+  const [resultsA, setResultsA] = useState<Array<{ id: string; name?: string; title?: string; artistName?: string; imageUrl?: string; artworkUrl?: string; type: string }>>([]);
+  const [resultsB, setResultsB] = useState<Array<{ id: string; name?: string; title?: string; artistName?: string; imageUrl?: string; artworkUrl?: string; type: string }>>([]);
+  const [selectedA, setSelectedA] = useState<{ id: string; label: string; type: "artist" | "song"; imageUrl: string | null } | null>(null);
+  const [selectedB, setSelectedB] = useState<{ id: string; label: string; type: "artist" | "song"; imageUrl: string | null } | null>(null);
+
+  // Search handler
+  async function searchSide(query: string, side: "a" | "b") {
+    if (query.length < 2) {
+      if (side === "a") setResultsA([]);
+      else setResultsB([]);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admin/arene/battles/search?q=${encodeURIComponent(query)}&type=all`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const combined = [...(data.artists ?? []), ...(data.tracks ?? [])];
+      if (side === "a") setResultsA(combined);
+      else setResultsB(combined);
+    } catch { /* ignore */ }
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => searchSide(searchA, "a"), 300);
+    return () => clearTimeout(timer);
+  }, [searchA]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => searchSide(searchB, "b"), 300);
+    return () => clearTimeout(timer);
+  }, [searchB]);
+
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
+    if (!selectedA || !selectedB) {
+      setFormError("Sélectionnez un artiste ou une chanson pour chaque côté.");
+      return;
+    }
     setSubmitting(true);
     setFormError(null);
 
@@ -72,14 +111,14 @@ export default function AdminBattlesPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: formTitle,
+          title: formTitle || `${selectedA.label} vs ${selectedB.label}`,
           description: formDescription || undefined,
-          side_a_type: formSideAType,
-          side_a_id: crypto.randomUUID(), // placeholder — will be real IDs in production
-          side_a_label: formSideALabel,
-          side_b_type: formSideBType,
-          side_b_id: crypto.randomUUID(),
-          side_b_label: formSideBLabel,
+          side_a_type: selectedA.type,
+          side_a_id: selectedA.id,
+          side_a_label: selectedA.label,
+          side_b_type: selectedB.type,
+          side_b_id: selectedB.id,
+          side_b_label: selectedB.label,
           duration_hours: formDuration,
         }),
       });
@@ -89,11 +128,12 @@ export default function AdminBattlesPage() {
         throw new Error(data?.error?.message ?? "Erreur lors de la création");
       }
 
-      // Reset form and refresh list
       setFormTitle("");
       setFormDescription("");
-      setFormSideALabel("");
-      setFormSideBLabel("");
+      setSelectedA(null);
+      setSelectedB(null);
+      setSearchA("");
+      setSearchB("");
       setShowForm(false);
       fetchBattles();
     } catch (e) {
@@ -138,18 +178,18 @@ export default function AdminBattlesPage() {
           <h2 className="admin-card__title">Créer une battle</h2>
           <form onSubmit={handleCreate}>
             <div className="field">
-              <label htmlFor="battle-title">Titre (max 100 car.)</label>
+              <label htmlFor="battle-title">Titre (optionnel — généré auto si vide)</label>
               <input
                 id="battle-title"
                 type="text"
                 maxLength={100}
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
-                required
+                placeholder="Ex: Rutshelle vs Kai — laissez vide pour auto-générer"
               />
             </div>
             <div className="field">
-              <label htmlFor="battle-desc">Description (optionnel, max 500 car.)</label>
+              <label htmlFor="battle-desc">Description (optionnel)</label>
               <input
                 id="battle-desc"
                 type="text"
@@ -158,56 +198,130 @@ export default function AdminBattlesPage() {
                 onChange={(e) => setFormDescription(e.target.value)}
               />
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+
+            {/* Sélecteur côté A et B */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+              {/* Côté A */}
               <div>
-                <div className="field">
-                  <label htmlFor="side-a-label">Côté A — Nom</label>
-                  <input
-                    id="side-a-label"
-                    type="text"
-                    value={formSideALabel}
-                    onChange={(e) => setFormSideALabel(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="field">
-                  <label htmlFor="side-a-type">Côté A — Type</label>
-                  <select
-                    id="side-a-type"
-                    value={formSideAType}
-                    onChange={(e) => setFormSideAType(e.target.value as "artist" | "song")}
-                    style={{ background: "var(--admin-bg)", border: "1px solid var(--admin-border)", color: "var(--admin-text)", padding: "0.55rem 0.7rem", borderRadius: "8px" }}
-                  >
-                    <option value="artist">Artiste</option>
-                    <option value="song">Chanson</option>
-                  </select>
-                </div>
+                <label style={{ fontWeight: 600, fontSize: "0.85rem", marginBottom: "0.4rem", display: "block" }}>Côté A — Rechercher</label>
+                {selectedA ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem", border: "1px solid var(--admin-accent)", borderRadius: "8px", background: "rgba(101,166,255,0.08)" }}>
+                    {selectedA.imageUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={selectedA.imageUrl} alt="" style={{ width: 40, height: 40, borderRadius: "6px", objectFit: "cover" }} />
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: "0.85rem" }}>{selectedA.label}</div>
+                      <div style={{ fontSize: "0.72rem", color: "var(--admin-muted)" }}>{selectedA.type === "artist" ? "Artiste" : "Chanson"}</div>
+                    </div>
+                    <button type="button" className="btn btn--sm btn--ghost" onClick={() => { setSelectedA(null); setSearchA(""); }}>✕</button>
+                  </div>
+                ) : (
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      value={searchA}
+                      onChange={(e) => setSearchA(e.target.value)}
+                      placeholder="Tapez un nom d'artiste ou titre..."
+                      style={{ width: "100%" }}
+                    />
+                    {resultsA.length > 0 && (
+                      <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 10, background: "var(--admin-panel-2, #1a1a2e)", border: "1px solid var(--admin-border)", borderRadius: "8px", maxHeight: "200px", overflowY: "auto", marginTop: "4px" }}>
+                        {resultsA.map((r) => (
+                          <button
+                            key={r.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedA({
+                                id: r.id,
+                                label: r.name ?? r.title ?? "Sans nom",
+                                type: r.type as "artist" | "song",
+                                imageUrl: r.imageUrl ?? r.artworkUrl ?? null,
+                              });
+                              setResultsA([]);
+                              setSearchA("");
+                            }}
+                            style={{ display: "flex", alignItems: "center", gap: "0.5rem", width: "100%", padding: "0.5rem 0.7rem", border: "none", borderBottom: "1px solid var(--admin-border)", background: "transparent", color: "inherit", cursor: "pointer", textAlign: "left" }}
+                          >
+                            {(r.imageUrl || r.artworkUrl) && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={r.imageUrl ?? r.artworkUrl ?? ""} alt="" style={{ width: 32, height: 32, borderRadius: "4px", objectFit: "cover" }} />
+                            )}
+                            <div>
+                              <div style={{ fontWeight: 600, fontSize: "0.82rem" }}>{r.name ?? r.title}</div>
+                              <div style={{ fontSize: "0.7rem", color: "var(--admin-muted)" }}>
+                                {r.type === "artist" ? "Artiste" : `${r.artistName ?? ""} — Chanson`}
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
+
+              {/* Côté B */}
               <div>
-                <div className="field">
-                  <label htmlFor="side-b-label">Côté B — Nom</label>
-                  <input
-                    id="side-b-label"
-                    type="text"
-                    value={formSideBLabel}
-                    onChange={(e) => setFormSideBLabel(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="field">
-                  <label htmlFor="side-b-type">Côté B — Type</label>
-                  <select
-                    id="side-b-type"
-                    value={formSideBType}
-                    onChange={(e) => setFormSideBType(e.target.value as "artist" | "song")}
-                    style={{ background: "var(--admin-bg)", border: "1px solid var(--admin-border)", color: "var(--admin-text)", padding: "0.55rem 0.7rem", borderRadius: "8px" }}
-                  >
-                    <option value="artist">Artiste</option>
-                    <option value="song">Chanson</option>
-                  </select>
-                </div>
+                <label style={{ fontWeight: 600, fontSize: "0.85rem", marginBottom: "0.4rem", display: "block" }}>Côté B — Rechercher</label>
+                {selectedB ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem", border: "1px solid var(--admin-accent)", borderRadius: "8px", background: "rgba(101,166,255,0.08)" }}>
+                    {selectedB.imageUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={selectedB.imageUrl} alt="" style={{ width: 40, height: 40, borderRadius: "6px", objectFit: "cover" }} />
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: "0.85rem" }}>{selectedB.label}</div>
+                      <div style={{ fontSize: "0.72rem", color: "var(--admin-muted)" }}>{selectedB.type === "artist" ? "Artiste" : "Chanson"}</div>
+                    </div>
+                    <button type="button" className="btn btn--sm btn--ghost" onClick={() => { setSelectedB(null); setSearchB(""); }}>✕</button>
+                  </div>
+                ) : (
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      value={searchB}
+                      onChange={(e) => setSearchB(e.target.value)}
+                      placeholder="Tapez un nom d'artiste ou titre..."
+                      style={{ width: "100%" }}
+                    />
+                    {resultsB.length > 0 && (
+                      <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 10, background: "var(--admin-panel-2, #1a1a2e)", border: "1px solid var(--admin-border)", borderRadius: "8px", maxHeight: "200px", overflowY: "auto", marginTop: "4px" }}>
+                        {resultsB.map((r) => (
+                          <button
+                            key={r.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedB({
+                                id: r.id,
+                                label: r.name ?? r.title ?? "Sans nom",
+                                type: r.type as "artist" | "song",
+                                imageUrl: r.imageUrl ?? r.artworkUrl ?? null,
+                              });
+                              setResultsB([]);
+                              setSearchB("");
+                            }}
+                            style={{ display: "flex", alignItems: "center", gap: "0.5rem", width: "100%", padding: "0.5rem 0.7rem", border: "none", borderBottom: "1px solid var(--admin-border)", background: "transparent", color: "inherit", cursor: "pointer", textAlign: "left" }}
+                          >
+                            {(r.imageUrl || r.artworkUrl) && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={r.imageUrl ?? r.artworkUrl ?? ""} alt="" style={{ width: 32, height: 32, borderRadius: "4px", objectFit: "cover" }} />
+                            )}
+                            <div>
+                              <div style={{ fontWeight: 600, fontSize: "0.82rem" }}>{r.name ?? r.title}</div>
+                              <div style={{ fontSize: "0.7rem", color: "var(--admin-muted)" }}>
+                                {r.type === "artist" ? "Artiste" : `${r.artistName ?? ""} — Chanson`}
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
+
             <div className="field">
               <label htmlFor="battle-duration">Durée</label>
               <select
@@ -222,7 +336,7 @@ export default function AdminBattlesPage() {
               </select>
             </div>
             {formError && <p className="error-text">{formError}</p>}
-            <button type="submit" className="btn btn--primary" disabled={submitting}>
+            <button type="submit" className="btn btn--primary" disabled={submitting || !selectedA || !selectedB}>
               {submitting ? "Création..." : "Créer la battle"}
             </button>
           </form>
