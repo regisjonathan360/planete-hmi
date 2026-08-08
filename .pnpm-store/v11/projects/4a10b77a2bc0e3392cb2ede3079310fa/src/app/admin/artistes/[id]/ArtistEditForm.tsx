@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ARTIST_TAGS } from "@/lib/artists/tags";
-import { artistGenreOptions } from "@/lib/artists/genres";
+import { ARTIST_GENRES, artistGenreOptions } from "@/lib/artists/genres";
 import {
   roleTagForArtistType,
   synchronizeArtistRoleFields,
@@ -234,17 +234,35 @@ export function ArtistEditForm({
         <Row>
           <Field label="Label / Collectif" value={form.label} onChange={(v) => update("label", v)} />
           <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1 }}>
-            <span style={labelStyle}>Genre musical de prédilection</span>
-            <select
-              value={form.primary_genre}
-              onChange={(event) => update("primary_genre", event.target.value)}
-              style={inputStyle}
-            >
-              <option value="">— Choisir un genre —</option>
-              {artistGenreOptions(form.primary_genre).map((genre) => (
-                <option key={genre.value} value={genre.value}>{genre.label}</option>
-              ))}
-            </select>
+            <span style={labelStyle}>Genres musicaux</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", padding: "0.5rem", border: "1px solid var(--admin-border)", borderRadius: "8px", background: "var(--admin-panel-2)", maxHeight: "180px", overflowY: "auto" }}>
+              {ARTIST_GENRES.map((genre) => {
+                const selectedGenres = form.primary_genre ? form.primary_genre.split(",").map((g: string) => g.trim()) : [];
+                const isChecked = selectedGenres.includes(genre.value);
+                return (
+                  <label key={genre.value} style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.8rem", padding: "0.3rem 0.6rem", borderRadius: "6px", cursor: "pointer", border: isChecked ? "1px solid var(--admin-accent)" : "1px solid var(--admin-border)", background: isChecked ? "rgba(101, 166, 255, 0.12)" : "transparent", transition: "all 0.15s" }}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => {
+                        const current = form.primary_genre ? form.primary_genre.split(",").map((g: string) => g.trim()).filter(Boolean) : [];
+                        const updated = isChecked
+                          ? current.filter((g: string) => g !== genre.value)
+                          : [...current, genre.value];
+                        update("primary_genre", updated.join(", "));
+                      }}
+                      style={{ width: "14px", height: "14px", accentColor: "var(--admin-accent, #65a6ff)" }}
+                    />
+                    {genre.label}
+                  </label>
+                );
+              })}
+            </div>
+            {form.primary_genre && (
+              <span style={{ fontSize: "0.72rem", color: "var(--admin-muted)", marginTop: "0.2rem" }}>
+                Sélectionnés : {form.primary_genre}
+              </span>
+            )}
           </label>
         </Row>
         <Row>
