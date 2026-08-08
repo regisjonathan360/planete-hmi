@@ -44,6 +44,7 @@ body {
   font-family: var(--font-body); font-size: 16px; line-height: 1.6;
   -webkit-font-smoothing: antialiased; overflow-x: hidden;
 }
+html { overflow-x: hidden; }
 h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.01em; font-weight: 400; }
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
@@ -650,8 +651,10 @@ a.section-link:hover { color: var(--flame-orange); }
   .menu-mobile[hidden] { display: none; }
   .menu-mobile:not([hidden]) { display: flex; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
-  .podium { grid-template-columns: 1fr; gap: 1.2rem; }
+  .podium { grid-template-columns: 1fr; gap: 1.2rem; overflow: hidden; }
   .podium__card--gold { transform: none; order: -1; }
+  .podium-fire { display: none; }
+  .podium-blast { display: none; }
 }
 @media (max-width: 560px) {
   .shorts { grid-template-columns: 1fr 1fr; }
@@ -988,7 +991,7 @@ a.section-link:hover { color: var(--flame-orange); }
    Le markup (.podium-fire, .podium-blast) est injecté par
    /assets/js/podium-fire.js — rien en dur dans le HTML.
    ========================================================= */
-.podium { position: relative; }
+.podium { position: relative; overflow: hidden; }
 
 /* `isolation` garantit le contexte d'empilement même si le navigateur
    ne prend pas en charge backdrop-filter : la couche de flammes en
