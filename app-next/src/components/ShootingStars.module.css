@@ -11,6 +11,38 @@
   pointer-events: none;
   /* Contient les repeints : les étoiles n'invalident pas toute la page. */
   contain: strict;
+
+  /*
+   * Trou dans le calque à l'emplacement de la planète (`.cosmos__planet`,
+   * page d'accueil uniquement). --mask-cx/cy/r sont posées en JS depuis
+   * `getBoundingClientRect()`, donc en coordonnées viewport — qui
+   * correspondent exactement au repère de ce calque puisqu'il est
+   * `position: fixed; inset: 0`.
+   *
+   * Avant la première mesure (--mask-r absent -> 0px), le halo va de
+   * transparent à -8px à blanc à 8px : un cercle de rayon quasi nul, donc le
+   * masque est blanc (visible) presque partout. Aucun clignotement au
+   * premier rendu.
+   *
+   * `blanc = étoiles visibles`, `transparent = étoiles masquées` (mask-image
+   * utilise le canal alpha). Le halo de 16px adoucit le bord du disque au
+   * lieu d'un cercle parfait, qui trahirait immédiatement le procédé.
+   */
+  --mask-r: 0px;
+  -webkit-mask-image: radial-gradient(
+    circle at var(--mask-cx, 50%) var(--mask-cy, 50%),
+    transparent 0,
+    transparent calc(var(--mask-r) - 8px),
+    white calc(var(--mask-r) + 8px),
+    white 100%
+  );
+  mask-image: radial-gradient(
+    circle at var(--mask-cx, 50%) var(--mask-cy, 50%),
+    transparent 0,
+    transparent calc(var(--mask-r) - 8px),
+    white calc(var(--mask-r) + 8px),
+    white 100%
+  );
 }
 
 /* Enveloppe : porte la POSITION et l'ANGLE, jamais l'animation.

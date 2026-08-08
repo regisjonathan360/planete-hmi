@@ -41,6 +41,65 @@ function prochainDelai(): number {
 export function ShootingStars() {
   const calqueRef = useRef<HTMLDivElement | null>(null);
 
+  /**
+   * Découpe un trou dans le calque à l'emplacement réel de la planète
+   * (`.cosmos__planet`), pour qu'aucune étoile ne soit jamais dessinée
+   * devant elle. La planète n'existe que sur la page d'accueil : sur les
+   * autres pages, le trou reste hors-écran et n'a aucun effet.
+   *
+   * On mesure le DOM (`getBoundingClientRect`) plutôt que de recalculer la
+   * position en CSS : la planète a sa propre parallaxe au défilement
+   * (translateY piloté par `--py`) et une taille responsive
+   * (`min(640px, 56vw)`), la mesure réelle suit ça sans dupliquer la formule.
+   */
+  useEffect(() => {
+    const calque = calqueRef.current;
+    if (!calque) return;
+
+    let raf = 0;
+
+    const maj = () => {
+      raf = 0;
+      const planete = document.querySelector<HTMLElement>(".cosmos__planet");
+      if (!planete || !planete.isConnected) {
+        calque.style.setProperty("--mask-r", "0px");
+        return;
+      }
+      const r = planete.getBoundingClientRect();
+      calque.style.setProperty("--mask-cx", `${(r.left + r.width / 2).toFixed(1)}px`);
+      calque.style.setProperty("--mask-cy", `${(r.top + r.height / 2).toFixed(1)}px`);
+      calque.style.setProperty("--mask-r", `${(r.width / 2).toFixed(1)}px`);
+    };
+
+    const planifierMaj = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(maj);
+    };
+
+    // Au montage, la transform CSS de la planète (translateY parallaxe) peut
+    // ne pas être encore appliquée au premier paint — mesuré : jusqu'à ~300ms
+    // de décalage sur ce site. Sans rattrapage, le trou resterait mal placé
+    // jusqu'au premier scroll ou resize de l'utilisateur. On remesure donc
+    // sur quelques frames après le montage, puis on s'arrête et on ne suit
+    // plus que le scroll/resize.
+    let rattrapages = 15;
+    const bouclerRattrapage = () => {
+      maj();
+      if (--rattrapages > 0) raf = requestAnimationFrame(bouclerRattrapage);
+      else raf = 0;
+    };
+    raf = requestAnimationFrame(bouclerRattrapage);
+
+    window.addEventListener("scroll", planifierMaj, { passive: true });
+    window.addEventListener("resize", planifierMaj);
+
+    return () => {
+      window.removeEventListener("scroll", planifierMaj);
+      window.removeEventListener("resize", planifierMaj);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   useEffect(() => {
     const calque = calqueRef.current;
     if (!calque) return;
