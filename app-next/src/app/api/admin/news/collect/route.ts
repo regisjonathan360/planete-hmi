@@ -122,9 +122,21 @@ export async function POST(request: Request) {
                 source_section_verified_at: verifiedAt,
                 status: "draft",
               },
-              { onConflict: "source_url", ignoreDuplicates: true }
+              { onConflict: "source_url", ignoreDuplicates: false }
             )
             .select("id");
+
+          // Si l'article existait déjà mais n'avait pas d'image, mettre à jour l'image
+          if (!insertedRows?.length && article.imageUrl) {
+            const { data: updated } = await supabase
+              .from("news_articles")
+              .update({ source_image_url: article.imageUrl })
+              .eq("source_url", article.sourceUrl)
+              .is("source_image_url", null)
+              .select("id");
+            if (updated?.length) repaired++;
+            else skipped++;
+          }
 
           if (error) {
             failed++;
