@@ -107,12 +107,25 @@ export function NewsManager({
     }
   }
 
+  async function deleteArticle(id: string) {
+    if (!confirm("Supprimer définitivement cet article ? Cette action est irréversible.")) return;
+    const res = await fetch(`/api/admin/news/articles?id=${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setArticles((prev) => prev.filter((a) => a.id !== id));
+      setToast("✓ Article supprimé.");
+    } else {
+      setToast("✗ Erreur de suppression.");
+    }
+  }
+
   function flattenUpdates(updates: Record<string, unknown>) {
     const map: Record<string, string> = {
       displayTitle: "display_title",
+      displayImageUrl: "display_image_url",
       displayExcerpt: "display_excerpt",
       category: "category",
       isFeatured: "is_featured",
+      sortOrder: "sort_order",
     };
     const result: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(updates)) {
@@ -198,9 +211,17 @@ export function NewsManager({
                 </button>
               )}
               {article.status === "published" && (
-                <button className="btn btn--sm" onClick={() => updateArticle(article.id, { status: "archived" })}>
-                  Archiver
-                </button>
+                <>
+                  <button className="btn btn--sm" onClick={() => updateArticle(article.id, { status: "archived" })}>
+                    Archiver
+                  </button>
+                  <button className="btn btn--sm" onClick={() => updateArticle(article.id, { sortOrder: (article as unknown as Record<string, number>).sort_order ?? 0 - 1 })}>
+                    ↑
+                  </button>
+                  <button className="btn btn--sm" onClick={() => updateArticle(article.id, { sortOrder: (article as unknown as Record<string, number>).sort_order ?? 0 + 1 })}>
+                    ↓
+                  </button>
+                </>
               )}
               {article.status === "draft" && (
                 <button className="btn btn--danger btn--sm" onClick={() => updateArticle(article.id, { status: "rejected" })}>
@@ -209,6 +230,9 @@ export function NewsManager({
               )}
               <button className="btn btn--sm" onClick={() => setEditingId(editingId === article.id ? null : article.id)}>
                 {editingId === article.id ? "Fermer" : "Modifier"}
+              </button>
+              <button className="btn btn--danger btn--sm" onClick={() => deleteArticle(article.id)} title="Supprimer définitivement">
+                ✕
               </button>
               <a href={article.source_url} target="_blank" rel="noopener noreferrer" className="btn btn--ghost btn--sm">
                 Source ↗
@@ -233,11 +257,12 @@ function EditPanel({
   onSave,
   onClose,
 }: {
-  article: { id: string; source_title: string; display_title: string | null; display_excerpt: string | null; category: string; is_featured: boolean };
+  article: { id: string; source_title: string; display_title: string | null; display_image_url: string | null; source_image_url: string | null; display_excerpt: string | null; category: string; is_featured: boolean };
   onSave: (id: string, updates: Record<string, unknown>) => void;
   onClose: () => void;
 }) {
   const [title, setTitle] = useState(article.display_title || article.source_title);
+  const [imageUrl, setImageUrl] = useState(article.display_image_url || article.source_image_url || "");
   const [excerpt, setExcerpt] = useState(article.display_excerpt || "");
   const [category, setCategory] = useState(article.category);
   const [featured, setFeatured] = useState(article.is_featured);
@@ -255,8 +280,15 @@ function EditPanel({
         </div>
       </div>
       <div className="field">
+        <label>URL de l&apos;image</label>
+        <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://... (laisser vide pour l'image source)" />
+        {imageUrl && (
+          <img src={imageUrl} alt="Preview" style={{ width: 120, height: 80, objectFit: "cover", borderRadius: 6, marginTop: "0.4rem", border: "1px solid var(--admin-border)" }} />
+        )}
+      </div>
+      <div className="field">
         <label>Résumé personnalisé</label>
-        <input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Laisser vide pour utiliser le résumé source" />
+        <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Laisser vide pour utiliser le résumé source" rows={3} style={{ width: "100%", resize: "vertical" }} />
       </div>
       <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", marginBottom: "0.5rem" }}>
         <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
@@ -266,7 +298,7 @@ function EditPanel({
         <button
           className="btn btn--primary btn--sm"
           onClick={() => {
-            onSave(article.id, { displayTitle: title, displayExcerpt: excerpt || null, category, isFeatured: featured });
+            onSave(article.id, { displayTitle: title, displayImageUrl: imageUrl || null, displayExcerpt: excerpt || null, category, isFeatured: featured });
             onClose();
           }}
         >
