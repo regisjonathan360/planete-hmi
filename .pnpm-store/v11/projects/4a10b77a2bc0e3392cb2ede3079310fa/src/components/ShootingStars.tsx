@@ -109,6 +109,10 @@ export function ShootingStars() {
     // Désactiver les étoiles filantes sur mobile (< 768px)
     if (window.innerWidth < 768) return;
 
+    // Étoiles filantes uniquement sur la page d'accueil et la carte
+    const path = window.location.pathname;
+    if (path !== "/" && path !== "/carte") return;
+
     let timer = 0;
     let vivantes = 0;
     let arrete = false;
