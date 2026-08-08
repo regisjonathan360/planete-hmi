@@ -1,0 +1,140 @@
+/* eslint-disable @next/next/no-img-element */
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  min-height: 80vh;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-family: "Anton", Impact, sans-serif;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+}
+
+.accent { color: #7c5cff; }
+
+.subtitle {
+  color: #9a9ac0;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.backBtn {
+  background: none;
+  border: 1px solid #2a2a4a;
+  color: #9a9ac0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.backBtn:hover { border-color: #7c5cff; color: #f4efe4; }
+
+.sectionTitle {
+  font-size: 1.1rem;
+  margin: 2rem 0 1rem;
+  color: #f4efe4;
+}
+
+/* Communes grid */
+.communeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.communeCard {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: rgba(20, 20, 42, 0.46);
+  border: 1px solid rgba(255,255,255,0.13);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  color: #f4efe4;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: left;
+}
+.communeCard:hover {
+  border-color: #7c5cff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(124, 92, 255, 0.15);
+}
+
+.communeIcon { font-size: 1.1rem; }
+
+/* Artists grid */
+.artistGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1rem;
+}
+
+.artistCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  border-radius: 12px;
+  background: rgba(20, 20, 42, 0.46);
+  border: 1px solid rgba(255,255,255,0.13);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  text-decoration: none;
+  color: #f4efe4;
+  font-size: 0.8rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+.artistCard:hover {
+  border-color: #7c5cff;
+  transform: translateY(-3px);
+}
+
+.artistImg {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.artistImgPlaceholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1c1c38, #2a2a4a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.empty {
+  color: #9a9ac0;
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (max-width: 700px) {
+  .page { padding: 1.5rem 1rem 3rem; }
+  .artistGrid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+}

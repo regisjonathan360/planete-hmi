@@ -1,0 +1,297 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--badge-border, var(--admin-border, #2a2a4a));
+  border-radius: 999px;
+  background: var(--badge-bg, var(--admin-panel-2, #1c1c38));
+  color: var(--badge-color, var(--admin-text, #e8e8f5));
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.toneNeutral {
+  --badge-bg: color-mix(in srgb, var(--admin-muted, #9a9ac0) 13%, transparent);
+  --badge-border: color-mix(in srgb, var(--admin-muted, #9a9ac0) 42%, transparent);
+  --badge-color: var(--admin-muted, #9a9ac0);
+}
+
+.toneInfo {
+  --badge-bg: color-mix(in srgb, var(--admin-accent, #7c5cff) 15%, transparent);
+  --badge-border: color-mix(in srgb, var(--admin-accent, #7c5cff) 46%, transparent);
+  --badge-color: color-mix(in srgb, var(--admin-accent, #7c5cff) 55%, white);
+}
+
+.toneSuccess {
+  --badge-bg: color-mix(in srgb, var(--admin-ok, #3ddc84) 12%, transparent);
+  --badge-border: color-mix(in srgb, var(--admin-ok, #3ddc84) 42%, transparent);
+  --badge-color: var(--admin-ok, #3ddc84);
+}
+
+.toneWarning {
+  --badge-bg: color-mix(in srgb, var(--admin-warn, #ffb347) 12%, transparent);
+  --badge-border: color-mix(in srgb, var(--admin-warn, #ffb347) 42%, transparent);
+  --badge-color: var(--admin-warn, #ffb347);
+}
+
+.toneDanger {
+  --badge-bg: color-mix(in srgb, var(--admin-danger, #ff5c7c) 12%, transparent);
+  --badge-border: color-mix(in srgb, var(--admin-danger, #ff5c7c) 42%, transparent);
+  --badge-color: var(--admin-danger, #ff5c7c);
+}
+
+.emptyState {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  min-height: 13rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px dashed var(--admin-border, #2a2a4a);
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--admin-accent, #7c5cff) 13%, transparent),
+      transparent 58%
+    ),
+    var(--admin-panel, #14142a);
+  text-align: center;
+}
+
+.emptyEyebrow {
+  margin: 0;
+  color: var(--admin-accent-2, #00d4b8);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.emptyTitle {
+  margin: 0;
+  color: var(--admin-text, #e8e8f5);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  line-height: 1.15;
+}
+
+.emptyDescription {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--admin-muted, #9a9ac0);
+  line-height: 1.6;
+}
+
+.emptyAction {
+  margin-top: 0.4rem;
+}
+
+.alert {
+  display: grid;
+  grid-template-columns: 0.35rem minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--alert-border);
+  background: var(--alert-bg);
+  color: var(--admin-text, #e8e8f5);
+}
+
+.alert::before {
+  content: "";
+  background: var(--alert-accent);
+}
+
+.alertContent {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+}
+
+.alertTitle {
+  margin: 0;
+  color: var(--alert-accent);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.alertMessage {
+  margin: 0;
+  color: var(--admin-text, #e8e8f5);
+  line-height: 1.5;
+}
+
+.alertDetails {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.3rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--admin-muted, #9a9ac0);
+}
+
+.alertInfo {
+  --alert-accent: var(--admin-accent, #7c5cff);
+  --alert-border: color-mix(in srgb, var(--admin-accent, #7c5cff) 45%, transparent);
+  --alert-bg: color-mix(in srgb, var(--admin-accent, #7c5cff) 9%, var(--admin-panel, #14142a));
+}
+
+.alertSuccess {
+  --alert-accent: var(--admin-ok, #3ddc84);
+  --alert-border: color-mix(in srgb, var(--admin-ok, #3ddc84) 42%, transparent);
+  --alert-bg: color-mix(in srgb, var(--admin-ok, #3ddc84) 8%, var(--admin-panel, #14142a));
+}
+
+.alertWarning {
+  --alert-accent: var(--admin-warn, #ffb347);
+  --alert-border: color-mix(in srgb, var(--admin-warn, #ffb347) 42%, transparent);
+  --alert-bg: color-mix(in srgb, var(--admin-warn, #ffb347) 8%, var(--admin-panel, #14142a));
+}
+
+.alertError {
+  --alert-accent: var(--admin-danger, #ff5c7c);
+  --alert-border: color-mix(in srgb, var(--admin-danger, #ff5c7c) 42%, transparent);
+  --alert-bg: color-mix(in srgb, var(--admin-danger, #ff5c7c) 8%, var(--admin-panel, #14142a));
+}
+
+.progressPanel {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+  border: 1px solid var(--admin-border, #2a2a4a);
+  background: var(--admin-panel, #14142a);
+}
+
+.progressHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.progressHeading {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.progressTitle {
+  margin: 0;
+  color: var(--admin-text, #e8e8f5);
+  font-size: 1.05rem;
+}
+
+.progressStep {
+  margin: 0;
+  color: var(--admin-muted, #9a9ac0);
+  font-size: 0.88rem;
+}
+
+.progressValue {
+  color: var(--admin-accent-2, #00d4b8);
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.progressGroup {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: 0.55rem;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: var(--admin-panel-2, #1c1c38);
+  accent-color: var(--admin-accent-2, #00d4b8);
+}
+
+.progressBar::-webkit-progress-bar {
+  border-radius: 999px;
+  background: var(--admin-panel-2, #1c1c38);
+}
+
+.progressBar::-webkit-progress-value {
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--admin-accent, #7c5cff),
+    var(--admin-accent-2, #00d4b8)
+  );
+}
+
+.progressBar::-moz-progress-bar {
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--admin-accent, #7c5cff),
+    var(--admin-accent-2, #00d4b8)
+  );
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--admin-border, #2a2a4a);
+  border-left: 1px solid var(--admin-border, #2a2a4a);
+}
+
+.metric {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.8rem;
+  border-right: 1px solid var(--admin-border, #2a2a4a);
+  border-bottom: 1px solid var(--admin-border, #2a2a4a);
+}
+
+.metric dt {
+  color: var(--admin-muted, #9a9ac0);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.metric dd {
+  margin: 0;
+  color: var(--admin-text, #e8e8f5);
+  font-size: 1.12rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.metricWarning dd {
+  color: var(--admin-warn, #ffb347);
+}
+
+.metricError dd {
+  color: var(--admin-danger, #ff5c7c);
+}
+
+.progressTimes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+  color: var(--admin-muted, #9a9ac0);
+  font-size: 0.78rem;
+}
+
+@media (max-width: 760px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (forced-colors: active) {
+  .badge,
+  .alert,
+  .progressPanel,
+  .metrics,
+  .metric {
+    border-color: CanvasText;
+  }
+}

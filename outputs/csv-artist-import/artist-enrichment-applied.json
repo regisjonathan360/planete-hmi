@@ -1,0 +1,1442 @@
+{
+  "mode": "apply",
+  "generatedAt": "2026-07-26T04:07:20.803Z",
+  "csvRows": 397,
+  "verifiedRows": 126,
+  "databaseArtists": 591,
+  "matched": 121,
+  "changed": 98,
+  "unchanged": 23,
+  "failed": 0,
+  "conflicts": {
+    "id_name_conflict": 5
+  },
+  "fieldsFilled": {
+    "url_youtube": 51,
+    "url_spotify": 17,
+    "url_apple_music": 16,
+    "tags": 21,
+    "haitian_status": 68,
+    "url_audiomack": 8,
+    "url_deezer": 12,
+    "url_tiktok": 8,
+    "url_instagram": 12,
+    "bio": 2,
+    "url_soundcloud": 2,
+    "verified_at": 1
+  },
+  "details": [
+    {
+      "csvId": "50929995-48db-45cb-aacf-70093343a421",
+      "artistId": "50929995-48db-45cb-aacf-70093343a421",
+      "name": "509",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "87efb1dc-9d96-4a0e-8000-f38e6f2c47c6",
+      "artistId": "87efb1dc-9d96-4a0e-8000-f38e6f2c47c6",
+      "name": "5Lan",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_audiomack",
+        "url_deezer",
+        "url_tiktok",
+        "url_instagram",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "a488a5a6-0c9c-4840-a44f-519611d23884",
+      "artistId": "a488a5a6-0c9c-4840-a44f-519611d23884",
+      "name": "Accolade de New York",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "bd672361-ab4e-4ee1-9911-e8903d5e6783",
+      "artistId": "bd672361-ab4e-4ee1-9911-e8903d5e6783",
+      "name": "Alan Cavé",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_deezer",
+        "url_instagram",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "01c593fd-49c9-42ac-a81c-1416ec1eb121",
+      "artistId": "01c593fd-49c9-42ac-a81c-1416ec1eb121",
+      "name": "Amos Coulanges",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_instagram",
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "f4278217-97b9-4ea4-852e-03b9693a5977",
+      "artistId": "f4278217-97b9-4ea4-852e-03b9693a5977",
+      "name": "André Déjean",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_spotify",
+        "url_deezer",
+        "bio",
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "78758699-0da8-4f92-9b25-e22483e965d2",
+      "artistId": "78758699-0da8-4f92-9b25-e22483e965d2",
+      "name": "Anie Alèrte",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_audiomack",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "454f2909-ce54-466e-8c36-f3cc24782429",
+      "artistId": "454f2909-ce54-466e-8c36-f3cc24782429",
+      "name": "Arly Larivière",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_deezer",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "cf8bf102-8911-4cba-87d0-3f0ff8d143dc",
+      "artistId": "cf8bf102-8911-4cba-87d0-3f0ff8d143dc",
+      "name": "Astros (Haiti)",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_audiomack",
+        "url_deezer",
+        "url_tiktok",
+        "url_instagram",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "aa000000-0000-0000-0000-000000000005",
+      "artistId": "aa000000-0000-0000-0000-000000000005",
+      "name": "Baky",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_deezer",
+        "url_soundcloud",
+        "url_tiktok",
+        "url_instagram"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "2bd10558-ea44-4c11-bc82-75b96efd8da2",
+      "artistId": "2bd10558-ea44-4c11-bc82-75b96efd8da2",
+      "name": "bedjine",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "9e8b71d0-7f35-4b9a-b9ef-1ebfdfd087b6",
+      "artistId": "9e8b71d0-7f35-4b9a-b9ef-1ebfdfd087b6",
+      "name": "Beken",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "dfcb1a70-4ed7-47e3-b9b9-2c758a9228f0",
+      "artistId": "dfcb1a70-4ed7-47e3-b9b9-2c758a9228f0",
+      "name": "BelO",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "201ffe69-e90c-4ceb-8fae-9f7d30c934b6",
+      "artistId": "201ffe69-e90c-4ceb-8fae-9f7d30c934b6",
+      "name": "Bic Tizon Dife",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "9c3273b9-e0f7-4c5a-9ff6-7f63897d3f71",
+      "artistId": "9c3273b9-e0f7-4c5a-9ff6-7f63897d3f71",
+      "name": "Bigga Haitian",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "1c9dcd67-4783-4a3f-9f8d-747cef5b0d71",
+      "artistId": "1c9dcd67-4783-4a3f-9f8d-747cef5b0d71",
+      "name": "Black Alex",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "7b812662-eb98-416c-bd92-87632c0c7271",
+      "artistId": "7b812662-eb98-416c-bd92-87632c0c7271",
+      "name": "Black Parents",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "d313316b-b6b4-4f5d-a6e1-d96f2e2982a7",
+      "artistId": "d313316b-b6b4-4f5d-a6e1-d96f2e2982a7",
+      "name": "BOBY STYLE",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "06dcb9e1-fcf8-4dc1-9664-c1214e51e217",
+      "artistId": "06dcb9e1-fcf8-4dc1-9664-c1214e51e217",
+      "name": "Boukman Eksperyans",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "6d4b55d4-ecf3-4eb9-92c0-d6a6a587229d",
+      "artistId": "6d4b55d4-ecf3-4eb9-92c0-d6a6a587229d",
+      "name": "Brothers Posse",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "6ed06702-f321-4223-94c6-f9ea81f8ab67",
+      "artistId": "6ed06702-f321-4223-94c6-f9ea81f8ab67",
+      "name": "Charlin Bato",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "92b9ee21-5339-4c82-8013-8c21e7573f99",
+      "artistId": "92b9ee21-5339-4c82-8013-8c21e7573f99",
+      "name": "Coupé Cloué",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "d80d271f-b5c7-4372-9223-7fb7e010c393",
+      "artistId": "d80d271f-b5c7-4372-9223-7fb7e010c393",
+      "name": "CRAZY DJEGA",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "b3acf61b-859b-4bd8-9040-7f5124919b95",
+      "artistId": "b3acf61b-859b-4bd8-9040-7f5124919b95",
+      "name": "Ded Kra-Z",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "c5cff213-cc4b-4c62-b426-caa3f17a4797",
+      "artistId": "c5cff213-cc4b-4c62-b426-caa3f17a4797",
+      "name": "Delly Benson",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "798763b3-4319-440d-ad6d-cd91e438afe5",
+      "artistId": "798763b3-4319-440d-ad6d-cd91e438afe5",
+      "name": "Dëna Babe",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "f9f97a91-a261-4eb5-bb34-e60fc6193483",
+      "artistId": "f9f97a91-a261-4eb5-bb34-e60fc6193483",
+      "name": "Dener Ceide",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "43521789-f664-421d-b002-a6d74b279718",
+      "artistId": "43521789-f664-421d-b002-a6d74b279718",
+      "name": "Disip",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "b0d96043-a68e-4919-be16-178c45c5769b",
+      "artistId": "b0d96043-a68e-4919-be16-178c45c5769b",
+      "name": "DJ Bullet",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "a8287f1e-580f-471b-bd9a-0f8af71d606e",
+      "artistId": "a8287f1e-580f-471b-bd9a-0f8af71d606e",
+      "name": "DJ FENDJI SOUND",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "be7970bd-2a32-43ad-aefd-98959c6971f6",
+      "name": "Durkheim",
+      "action": "skipped",
+      "reason": "id_name_conflict"
+    },
+    {
+      "csvId": "919d1b20-9d14-4138-bfbf-c5719576c008",
+      "artistId": "919d1b20-9d14-4138-bfbf-c5719576c008",
+      "name": "EKIP",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "d5ae1205-edc5-45ba-8705-0d18e08f8d70",
+      "artistId": "d5ae1205-edc5-45ba-8705-0d18e08f8d70",
+      "name": "Emeline Michel",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "ab8ed840-8c78-4d04-8193-aedbdc248cee",
+      "artistId": "ab8ed840-8c78-4d04-8193-aedbdc248cee",
+      "name": "Enposib",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "75f0d5cd-e788-4290-b9e5-41082e1ce083",
+      "artistId": "75f0d5cd-e788-4290-b9e5-41082e1ce083",
+      "name": "Fantom",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "89c532ae-8cee-4b71-9fbc-0f1702150af6",
+      "artistId": "89c532ae-8cee-4b71-9fbc-0f1702150af6",
+      "name": "Fatima Altieri",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "c6c68ea1-488f-4302-98a1-dd086f4b3c35",
+      "artistId": "c6c68ea1-488f-4302-98a1-dd086f4b3c35",
+      "name": "FIP PREZIDAN",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "ce14f3fb-e41e-4039-b9ce-58b788e8a778",
+      "artistId": "ce14f3fb-e41e-4039-b9ce-58b788e8a778",
+      "name": "FLACO 🧟",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "79a797e4-dd1d-4244-bfba-99a4c3392a1f",
+      "name": "Freshla King Raboday",
+      "action": "skipped",
+      "reason": "id_name_conflict"
+    },
+    {
+      "csvId": "370fc23b-1f8f-4608-afbb-b7f1a26e5d24",
+      "artistId": "370fc23b-1f8f-4608-afbb-b7f1a26e5d24",
+      "name": "Fresha Gang",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "87aa9718-e591-4c7f-a34d-ef48dd977704",
+      "artistId": "87aa9718-e591-4c7f-a34d-ef48dd977704",
+      "name": "Gabel",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "571ce9a8-9512-4ec2-bed3-e0066461f50e",
+      "artistId": "571ce9a8-9512-4ec2-bed3-e0066461f50e",
+      "name": "Gael",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "c645f2e7-0fb9-4184-a543-2476df8795c4",
+      "artistId": "c645f2e7-0fb9-4184-a543-2476df8795c4",
+      "name": "Gaëlle",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "57ef5b85-5bda-4d8a-8b17-f07ab8018864",
+      "artistId": "57ef5b85-5bda-4d8a-8b17-f07ab8018864",
+      "name": "Gazzman Couleur",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "521a48ba-9e4f-463f-99cf-2a56a019cec3",
+      "artistId": "521a48ba-9e4f-463f-99cf-2a56a019cec3",
+      "name": "Gio K",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "4305574c-d2b4-4edb-b93f-f49e30ee8b65",
+      "artistId": "4305574c-d2b4-4edb-b93f-f49e30ee8b65",
+      "name": "Godson",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "e8a562e3-562c-4570-8d2f-9d593e4db551",
+      "artistId": "e8a562e3-562c-4570-8d2f-9d593e4db551",
+      "name": "Gracia Delva",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "a6894f19-78b8-442a-b3f1-444d4e9e001c",
+      "artistId": "a6894f19-78b8-442a-b3f1-444d4e9e001c",
+      "name": "Graphly 3.0",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "f16d4ef5-a91e-4383-b2b5-90141886b2a6",
+      "artistId": "f16d4ef5-a91e-4383-b2b5-90141886b2a6",
+      "name": "Gskinnyy Foreigner",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "f51ff425-8e91-4ee2-aba8-9ad31ad85e71",
+      "artistId": "f51ff425-8e91-4ee2-aba8-9ad31ad85e71",
+      "name": "Harmonik",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "ba0e85a3-60c4-4457-8f22-7ff640326686",
+      "artistId": "ba0e85a3-60c4-4457-8f22-7ff640326686",
+      "name": "Izolan",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "ad819e26-46ec-4a83-ac4d-ae743f1031f8",
+      "artistId": "ad819e26-46ec-4a83-ac4d-ae743f1031f8",
+      "name": "J. Perry",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "ee0fd680-223e-4439-9bb4-10fcaaa71d75",
+      "artistId": "ee0fd680-223e-4439-9bb4-10fcaaa71d75",
+      "name": "Jacques Sauveur Jean",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "40979cea-c93d-4438-bd48-5048d396d9e2",
+      "artistId": "40979cea-c93d-4438-bd48-5048d396d9e2",
+      "name": "Jbeatz",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "61cdf676-2cfb-4662-9c6f-add5d743f4ce",
+      "artistId": "61cdf676-2cfb-4662-9c6f-add5d743f4ce",
+      "name": "Jean Jean Roosevelt",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "a95cc92f-a24f-4dbd-a0e7-079d7c2c6990",
+      "artistId": "a95cc92f-a24f-4dbd-a0e7-079d7c2c6990",
+      "name": "Jean-Claude Martineau",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "bio",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "3129c884-7710-4c66-bb4c-69570bd8ce47",
+      "artistId": "3129c884-7710-4c66-bb4c-69570bd8ce47",
+      "name": "Jerry Wonda",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "aa000000-0000-0000-0000-000000000001",
+      "artistId": "aa000000-0000-0000-0000-000000000001",
+      "name": "Joé Dwèt Filé",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_audiomack",
+        "url_tiktok",
+        "url_instagram"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "9fe76b72-136c-4947-a1c9-4fc096b54841",
+      "artistId": "9fe76b72-136c-4947-a1c9-4fc096b54841",
+      "name": "K-dilak",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "5eee5a03-0f80-4dec-ac2d-8491aa736e8f",
+      "artistId": "5eee5a03-0f80-4dec-ac2d-8491aa736e8f",
+      "name": "KAI",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "1fd87090-8b5f-4605-bad4-7d67ce0ef4d5",
+      "artistId": "1fd87090-8b5f-4605-bad4-7d67ce0ef4d5",
+      "name": "kelly rap alelouya",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "0b5a8fc7-20d7-492f-aa3c-9fd19285828d",
+      "artistId": "0b5a8fc7-20d7-492f-aa3c-9fd19285828d",
+      "name": "Kenny Desmangles",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_deezer",
+        "url_instagram",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "fb24c8e0-726c-495e-8844-a75ac25c4ae7",
+      "artistId": "fb24c8e0-726c-495e-8844-a75ac25c4ae7",
+      "name": "Kenny Haiti",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "18dd1114-c612-4e4f-b912-08a41c8133af",
+      "name": "Kid Kiddy",
+      "action": "skipped",
+      "reason": "id_name_conflict"
+    },
+    {
+      "csvId": "56ee4ec8-3b9c-4d33-9820-6b1f3e0b3eb3",
+      "artistId": "56ee4ec8-3b9c-4d33-9820-6b1f3e0b3eb3",
+      "name": "KidnelyRz",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_audiomack",
+        "url_deezer",
+        "url_tiktok",
+        "url_instagram"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "e31af2bf-b27e-40b9-9411-afbb269ff09b",
+      "artistId": "e31af2bf-b27e-40b9-9411-afbb269ff09b",
+      "name": "King Posse",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "ac38c07a-3b93-4e85-bfc2-6a3aca8f965c",
+      "artistId": "ac38c07a-3b93-4e85-bfc2-6a3aca8f965c",
+      "name": "King Street",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "cc2cf601-06ec-4ab2-aec0-8896f1455bb5",
+      "artistId": "cc2cf601-06ec-4ab2-aec0-8896f1455bb5",
+      "name": "Klass",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "1b5e5d11-b3d7-4cfc-b918-121e8250686b",
+      "artistId": "1b5e5d11-b3d7-4cfc-b918-121e8250686b",
+      "name": "Koudjay",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "d66d2d86-3408-4a05-becc-705401df9af4",
+      "artistId": "d66d2d86-3408-4a05-becc-705401df9af4",
+      "name": "Kreyol La",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "9020626e-adf2-41af-bde8-efc9030ac251",
+      "artistId": "9020626e-adf2-41af-bde8-efc9030ac251",
+      "name": "Krezi Mizik",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "28e5ad2c-d3ee-42d1-bdca-baab7b20f821",
+      "artistId": "28e5ad2c-d3ee-42d1-bdca-baab7b20f821",
+      "name": "L-won",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "2b1a5706-b4da-4e96-baff-65f80543db77",
+      "artistId": "2b1a5706-b4da-4e96-baff-65f80543db77",
+      "name": "Lakol",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "60ff12e9-0cda-4a34-a023-44e303577541",
+      "artistId": "60ff12e9-0cda-4a34-a023-44e303577541",
+      "name": "Lionel Benjamin",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "46f2d5d7-4555-42ea-899f-6c2952b705f3",
+      "artistId": "46f2d5d7-4555-42ea-899f-6c2952b705f3",
+      "name": "Lleghal_Rz",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "b89a7df1-b567-4620-96b9-492dd71186ce",
+      "artistId": "b89a7df1-b567-4620-96b9-492dd71186ce",
+      "name": "LPA papa Drip",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "0acc10ad-e6f5-424b-83c9-b0516bcef593",
+      "artistId": "0acc10ad-e6f5-424b-83c9-b0516bcef593",
+      "name": "Mada Mada",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "15387c59-0a20-43f1-8d3e-f41ebfd905d7",
+      "artistId": "15387c59-0a20-43f1-8d3e-f41ebfd905d7",
+      "name": "Mebel Brun",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_audiomack",
+        "url_deezer",
+        "url_tiktok",
+        "url_instagram"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "1feb9d3a-d949-469b-8c7b-51cece8030db",
+      "artistId": "1feb9d3a-d949-469b-8c7b-51cece8030db",
+      "name": "MGCK",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "aa000000-0000-0000-0000-000000000006",
+      "artistId": "aa000000-0000-0000-0000-000000000006",
+      "name": "Naïka",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "bfc035d7-4e6e-43b8-9cb7-4601313c1528",
+      "artistId": "bfc035d7-4e6e-43b8-9cb7-4601313c1528",
+      "name": "Nickenson Prud'homme",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "e675d8f5-ba99-4582-a480-27ac76732961",
+      "name": "Kanis",
+      "action": "skipped",
+      "reason": "id_name_conflict"
+    },
+    {
+      "csvId": "9ce50f8d-cfb3-474c-9874-2846a27be249",
+      "artistId": "9ce50f8d-cfb3-474c-9874-2846a27be249",
+      "name": "OG Fresh Zz",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "50fe5d2c-ddc8-4e81-b02e-fec1fa60b21d",
+      "artistId": "50fe5d2c-ddc8-4e81-b02e-fec1fa60b21d",
+      "name": "Oklo True",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "0def99ce-641f-4043-8f1c-dee5dbb4c3c5",
+      "artistId": "0def99ce-641f-4043-8f1c-dee5dbb4c3c5",
+      "name": "Olivier Martelly",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "1183d127-21c7-48e0-aa78-5a9ac6f5eca3",
+      "artistId": "1183d127-21c7-48e0-aa78-5a9ac6f5eca3",
+      "name": "P_A_P is the pope",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "0be05ef6-14ff-4981-8648-e183e709f3e0",
+      "artistId": "0be05ef6-14ff-4981-8648-e183e709f3e0",
+      "name": "Pierre Jean",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "a738158b-943d-4e93-ab13-8304b8b5966a",
+      "artistId": "a738158b-943d-4e93-ab13-8304b8b5966a",
+      "name": "Pitch00mix",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "64a43b19-0b44-4480-85cb-013c51f37649",
+      "artistId": "64a43b19-0b44-4480-85cb-013c51f37649",
+      "name": "Ralph Conde",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "f358e062-b44d-4179-9a38-22e1b3d4f661",
+      "artistId": "f358e062-b44d-4179-9a38-22e1b3d4f661",
+      "name": "Richard Cavé",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "dd1c4268-6305-4641-9e66-99859764db28",
+      "artistId": "dd1c4268-6305-4641-9e66-99859764db28",
+      "name": "Roberto Martino",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "ad7fff65-8c09-4da4-830c-851106c737f0",
+      "artistId": "ad7fff65-8c09-4da4-830c-851106c737f0",
+      "name": "Rockfam",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "aa000000-0000-0000-0000-000000000003",
+      "artistId": "aa000000-0000-0000-0000-000000000003",
+      "name": "Roody Roodboy",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "aa000000-0000-0000-0000-000000000002",
+      "artistId": "aa000000-0000-0000-0000-000000000002",
+      "name": "Rutshelle Guillaume",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "fddecc2d-9e78-4136-ba20-b70145328149",
+      "artistId": "fddecc2d-9e78-4136-ba20-b70145328149",
+      "name": "Sarodj",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "2763186b-3492-4ce0-9fc5-1c76283377f3",
+      "artistId": "2763186b-3492-4ce0-9fc5-1c76283377f3",
+      "name": "Shabba Djakout",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_deezer",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "cec0b6f6-b905-48dc-8700-d1502b720b47",
+      "artistId": "cec0b6f6-b905-48dc-8700-d1502b720b47",
+      "name": "SmartDave",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "3c3397b5-16e0-4861-86b8-0aeaf7191853",
+      "artistId": "3c3397b5-16e0-4861-86b8-0aeaf7191853",
+      "name": "Steevy Boy",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "d338771f-15f0-4d43-b30e-a23fc409d803",
+      "artistId": "d338771f-15f0-4d43-b30e-a23fc409d803",
+      "name": "Steves J. Bryan",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "46f21fb5-d548-4e23-ae9b-78a8c5852e38",
+      "artistId": "46f21fb5-d548-4e23-ae9b-78a8c5852e38",
+      "name": "T-Jo Zenny",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "5354408c-a5de-492f-8840-2255f5d5f5ee",
+      "artistId": "5354408c-a5de-492f-8840-2255f5d5f5ee",
+      "name": "T-Vice",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "e195325d-cdc0-4e77-83b2-51df9476d763",
+      "artistId": "e195325d-cdc0-4e77-83b2-51df9476d763",
+      "name": "Tafa Mi Soleil",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "f6649d99-7afa-4c89-8cf2-63f29d8ee232",
+      "artistId": "f6649d99-7afa-4c89-8cf2-63f29d8ee232",
+      "name": "Teddy Hashtag",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "334e9042-3386-45ee-b3d8-ec193c466124",
+      "artistId": "334e9042-3386-45ee-b3d8-ec193c466124",
+      "name": "THE PLUG",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "161200bf-8aeb-4b5d-9437-0adb82683780",
+      "artistId": "161200bf-8aeb-4b5d-9437-0adb82683780",
+      "name": "Thelo",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "5ace8515-6b5d-417b-a745-0aa66d7460d8",
+      "artistId": "5ace8515-6b5d-417b-a745-0aa66d7460d8",
+      "name": "Tifane",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "0c5194b8-ec97-4f10-bbe6-35c8e5fff243",
+      "artistId": "0c5194b8-ec97-4f10-bbe6-35c8e5fff243",
+      "name": "Tikawo Trafik",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "df096c68-e62d-405d-b3fc-f15ba7538b6a",
+      "artistId": "df096c68-e62d-405d-b3fc-f15ba7538b6a",
+      "name": "Toby Anbake",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "1d0a66ad-61f6-4490-be0f-a156a204ff71",
+      "artistId": "1d0a66ad-61f6-4490-be0f-a156a204ff71",
+      "name": "Tonton Bicha",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "0b473ad6-f99c-40a3-9eff-47cf08f7b40d",
+      "name": "TonyMix",
+      "action": "skipped",
+      "reason": "id_name_conflict"
+    },
+    {
+      "csvId": "bac28904-a1ca-4a99-b435-3cbfce081be2",
+      "artistId": "bac28904-a1ca-4a99-b435-3cbfce081be2",
+      "name": "Vanessa Désiré",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "21896a2e-39db-48f5-905a-5cb1a6a1a941",
+      "artistId": "21896a2e-39db-48f5-905a-5cb1a6a1a941",
+      "name": "Vibe SaDrol",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "aa000000-0000-0000-0000-000000000009",
+      "artistId": "aa000000-0000-0000-0000-000000000009",
+      "name": "Vwadèzil",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "8f21faaa-b88f-4699-8bf8-f59d5d7ec48c",
+      "artistId": "8f21faaa-b88f-4699-8bf8-f59d5d7ec48c",
+      "name": "Vybz Kartel",
+      "matchMethod": "id",
+      "action": "unchanged",
+      "invalidUrls": []
+    },
+    {
+      "csvId": "aa000000-0000-0000-0000-000000000007",
+      "artistId": "aa000000-0000-0000-0000-000000000007",
+      "name": "Wanito",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "9c79ab00-4d87-491b-af08-e01179de9d50",
+      "artistId": "9c79ab00-4d87-491b-af08-e01179de9d50",
+      "name": "Watson G",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_audiomack",
+        "url_deezer",
+        "url_tiktok",
+        "url_instagram"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "82c1da17-0d69-4c64-b517-33bedcdf7409",
+      "artistId": "82c1da17-0d69-4c64-b517-33bedcdf7409",
+      "name": "Wendyyy",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_instagram"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "85eaf21f-35e3-4f2d-a9d7-9dd09d1492e6",
+      "artistId": "85eaf21f-35e3-4f2d-a9d7-9dd09d1492e6",
+      "name": "Wid",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_spotify",
+        "url_apple_music",
+        "url_audiomack",
+        "url_deezer",
+        "url_tiktok",
+        "url_instagram",
+        "haitian_status",
+        "verified_at"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "91bd9967-0906-4e6e-b621-188969b2524a",
+      "artistId": "91bd9967-0906-4e6e-b621-188969b2524a",
+      "name": "Wyclef Jean",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "c56c3c78-46f0-43db-96a0-d886c784d6c0",
+      "artistId": "c56c3c78-46f0-43db-96a0-d886c784d6c0",
+      "name": "X9 Daddy Lova",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "00d9c50e-ec38-436b-a05d-163af855755c",
+      "artistId": "00d9c50e-ec38-436b-a05d-163af855755c",
+      "name": "XorXor 4K",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "274bd0ce-f34f-4da5-a09f-cc84c28e7c14",
+      "artistId": "274bd0ce-f34f-4da5-a09f-cc84c28e7c14",
+      "name": "Yani Martelly",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "c1e09ad1-6466-405b-b14f-c44e7dd88e80",
+      "artistId": "c1e09ad1-6466-405b-b14f-c44e7dd88e80",
+      "name": "Yole Dérose",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "9632a8ba-800d-4a4c-be8c-7842fc265c6f",
+      "artistId": "9632a8ba-800d-4a4c-be8c-7842fc265c6f",
+      "name": "ZiLE",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "e363c59e-2991-400a-a1d9-8a104ed11bc4",
+      "artistId": "e363c59e-2991-400a-a1d9-8a104ed11bc4",
+      "name": "Zin",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "tags",
+        "haitian_status"
+      ],
+      "invalidUrls": []
+    },
+    {
+      "csvId": "c4e3ac5c-3e07-4241-87ce-ee698d95b03a",
+      "artistId": "c4e3ac5c-3e07-4241-87ce-ee698d95b03a",
+      "name": "Zobway Pa May",
+      "matchMethod": "id",
+      "action": "updated",
+      "fields": [
+        "url_youtube",
+        "url_soundcloud"
+      ],
+      "invalidUrls": []
+    }
+  ]
+}

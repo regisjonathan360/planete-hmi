@@ -1,0 +1,300 @@
+/* BattleCard — Carte de battle communautaire.
+   Responsive : côte à côte ≥768px, empilée sur mobile.
+   Requirements: 5.2, 11.1, 11.3, 11.4 */
+
+.battleCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line, rgba(244, 239, 228, 0.1));
+  border-radius: 16px;
+  background: rgba(244, 239, 228, 0.03);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* --- Header --- */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cream, #f4efe4);
+  margin: 0;
+}
+
+.description {
+  font-size: 0.85rem;
+  color: var(--cream-dim, #b9b2a4);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* --- Countdown --- */
+
+.countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdownSegment {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.1rem;
+}
+
+.countdownValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cream, #f4efe4);
+}
+
+.countdownUnit {
+  font-size: 0.7rem;
+  color: var(--cream-dim, #b9b2a4);
+  text-transform: lowercase;
+}
+
+.countdownExpired {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--flame-orange, #ff6a00);
+}
+
+/* --- Sides --- */
+
+.sides {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--line, rgba(244, 239, 228, 0.08));
+  border-radius: 12px;
+  background: rgba(244, 239, 228, 0.02);
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.side.sideSelected {
+  border-color: var(--flame-orange, #ff6a00);
+  box-shadow: 0 0 12px rgba(255, 106, 0, 0.15);
+}
+
+.sideImageWrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--line, rgba(244, 239, 228, 0.15));
+  flex-shrink: 0;
+}
+
+.sideImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sideLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cream, #f4efe4);
+  text-align: center;
+}
+
+/* --- VS separator --- */
+
+.vs {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--flame-orange, #ff6a00);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+/* --- Vote buttons --- */
+
+.voteBtn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.6rem 1.5rem;
+  border: 1px solid var(--line, rgba(244, 239, 228, 0.15));
+  border-radius: 10px;
+  background: rgba(244, 239, 228, 0.05);
+  color: var(--cream, #f4efe4);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.voteBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.voteBtn:focus-visible {
+  outline: 2px solid var(--flame-orange, #ff6a00);
+  outline-offset: 2px;
+}
+
+.voteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.voteBtnA:hover:not(:disabled) {
+  border-color: #6ea8ff;
+  background: rgba(110, 168, 255, 0.12);
+}
+
+.voteBtnB:hover:not(:disabled) {
+  border-color: #c87dff;
+  background: rgba(200, 125, 255, 0.12);
+}
+
+.voteBtnSelected {
+  border-color: var(--flame-orange, #ff6a00);
+  background: rgba(255, 106, 0, 0.15);
+  box-shadow: 0 0 10px rgba(255, 106, 0, 0.2);
+}
+
+.voteBtnSelected:disabled {
+  opacity: 0.85;
+}
+
+/* --- Progress bar --- */
+
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.progressBar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(244, 239, 228, 0.06);
+}
+
+.progressFillA {
+  height: 100%;
+  background: linear-gradient(90deg, #4a7dff, #6ea8ff);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 4px 0 0 4px;
+}
+
+.progressFillB {
+  height: 100%;
+  background: linear-gradient(90deg, #a855f7, #c87dff);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0 4px 4px 0;
+}
+
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--cream-dim, #b9b2a4);
+  font-variant-numeric: tabular-nums;
+}
+
+.progressLabelA {
+  color: #6ea8ff;
+}
+
+.progressLabelB {
+  color: #c87dff;
+}
+
+/* --- Error --- */
+
+.error {
+  font-size: 0.8rem;
+  color: #ff6b6b;
+  text-align: center;
+  margin: 0;
+}
+
+/* --- Auth hint --- */
+
+.authHint {
+  font-size: 0.8rem;
+  color: var(--cream-dim, #b9b2a4);
+  text-align: center;
+  margin: 0;
+}
+
+.authLink {
+  color: var(--flame-orange, #ff6a00);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.authLink:hover {
+  color: #ff8a33;
+}
+
+.authLink:focus-visible {
+  outline: 2px solid var(--flame-orange, #ff6a00);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* --- Desktop: side-by-side layout (≥768px) --- */
+
+@media (min-width: 768px) {
+  .sides {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .side {
+    flex: 1;
+  }
+
+  .vs {
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+  }
+
+  .sideImageWrap {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* --- Reduced motion --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .voteBtn,
+  .side,
+  .progressFillA,
+  .progressFillB {
+    transition: none;
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "_comment": "Liste canonique des artistes suivis par Planète HMI. Sert de source au collecteur (scripts/collect-data.mjs). Ajoute/retire des entrées ici. Le champ 'nom' sert de requête aux APIs (correspondance exacte du nom, normalisée sans accents).",
+  "artistes": [
+    { "nom": "Roody Roodboy", "genre": "Konpa" },
+    { "nom": "Joé Dwèt Filé", "genre": "Konpa" },
+    { "nom": "Mikaben", "genre": "Konpa" },
+    { "nom": "Rutshelle Guillaume", "genre": "Konpa" },
+    { "nom": "Naïka", "genre": "Pop / R&B" },
+    { "nom": "Wanito", "genre": "Konpa" },
+    { "nom": "Emeline Michel", "genre": "Racine" },
+    { "nom": "Baky", "genre": "Rap kreyòl" },
+    { "nom": "Belo", "genre": "Reggae" },
+    { "nom": "BIC", "genre": "Rap kreyòl" },
+    { "nom": "Vwadèzil", "genre": "Rabòday" },
+    { "nom": "Darline Desca", "genre": "Pop" },
+    { "nom": "Kevinna", "genre": "Pop" }
+  ]
+}
