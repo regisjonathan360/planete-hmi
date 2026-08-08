@@ -19,3 +19,6 @@ build/
 npm-debug.log*
 .vercel
 .env*
+
+# PNPM store (local cache, should not be committed)
+.pnpm-store/
