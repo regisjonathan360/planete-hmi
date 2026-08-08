@@ -168,8 +168,8 @@ async function scrapeMusicCategoryPage(sourceUrl: URL): Promise<ScrapedArticle[]
     const title = decodeHtmlEntities(stripHtml(match[2]));
     if (title.length <= 3) continue;
 
-    const contextStart = Math.max(0, (match.index ?? 0) - 1_500);
-    const contextEnd = Math.min(html.length, (match.index ?? 0) + match[0].length + 1_500);
+    const contextStart = Math.max(0, (match.index ?? 0) - 600);
+    const contextEnd = Math.min(html.length, (match.index ?? 0) + match[0].length + 600);
     const context = html.slice(contextStart, contextEnd);
 
     seen.add(articleUrl.href);
@@ -212,10 +212,40 @@ function extractImageFromHtml(html: string, sourceUrl: URL): string | null {
     ...html.matchAll(/\b(?:data-lazy-src|data-src|src)=["']([^"']+)["']/gi),
   ];
 
-  for (let index = matches.length - 1; index >= 0; index--) {
+  // Patterns d'images à exclure (avatars, editeurs, gravatar, icônes)
+  const EXCLUDED_PATTERNS = [
+    /gravatar\.com/i,
+    /\/author\//i,
+    /\/avatar/i,
+    /\/profile/i,
+    /\/wp-content\/uploads\/.*-\d{2,3}x\d{2,3}\./i, // thumbnails redimensionnées (ex: image-150x150.jpg)
+    /\/favicon/i,
+    /\/logo/i,
+    /\bicon\b/i,
+  ];
+
+  // Itérer du premier au dernier (l'image la plus proche du lien article est la bonne)
+  for (let index = 0; index < matches.length; index++) {
     try {
-      const imageUrl = new URL(decodeHtmlEntities(matches[index][1]), sourceUrl);
-      if (ALLOWED_HOSTS.has(imageUrl.hostname.toLowerCase())) return imageUrl.href;
+      const rawUrl = decodeHtmlEntities(matches[index][1]);
+      const imageUrl = new URL(rawUrl, sourceUrl);
+
+      // Vérifier que c'est un host autorisé
+      if (!ALLOWED_HOSTS.has(imageUrl.hostname.toLowerCase())) continue;
+
+      // Exclure les avatars/profils/icônes
+      if (EXCLUDED_PATTERNS.some((pattern) => pattern.test(imageUrl.href))) continue;
+
+      // Exclure les images trop petites (souvent dans l'attribut data-width ou le nom)
+      // Les images d'articles Chokarella font généralement > 300px
+      const smallThumb = imageUrl.href.match(/-(\d+)x(\d+)\./);
+      if (smallThumb) {
+        const w = parseInt(smallThumb[1], 10);
+        const h = parseInt(smallThumb[2], 10);
+        if (w < 200 || h < 100) continue;
+      }
+
+      return imageUrl.href;
     } catch {
       // Ignore les attributs qui ne sont pas des URL valides.
     }
