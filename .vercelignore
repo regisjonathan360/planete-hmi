@@ -1,0 +1,10 @@
+/*
+!app-next
+!app-next/**
+
+app-next/.env*
+app-next/.next/
+app-next/.vercel/
+app-next/node_modules/
+app-next/supabase/.temp/
+app-next/test-results/

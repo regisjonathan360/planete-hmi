@@ -1,0 +1,198 @@
+/* ClassementPage — Leaderboard des membres.
+   Requirements: 7.3, 13.4 */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cream, #f4efe4);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: var(--cream-dim, #b9b2a4);
+  margin: 0;
+}
+
+.emptyMessage {
+  font-size: 0.9rem;
+  color: var(--cream-dim, #b9b2a4);
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+/* Table */
+.tableWrapper {
+  border: 1px solid var(--line, rgba(244, 239, 228, 0.08));
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(244, 239, 228, 0.02);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.tableHeadRow {
+  border-bottom: 1px solid var(--line, rgba(244, 239, 228, 0.08));
+}
+
+.table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--cream-dim, #b9b2a4);
+}
+
+.thRank {
+  width: 50px;
+  text-align: center !important;
+}
+
+.thMember {
+  /* flex */
+}
+
+.thNiveau {
+  width: 120px;
+}
+
+.thPoints {
+  width: 100px;
+  text-align: right !important;
+}
+
+/* Rows */
+.row {
+  border-bottom: 1px solid var(--line, rgba(244, 239, 228, 0.04));
+  transition: background 0.15s;
+}
+
+.row:hover {
+  background: rgba(244, 239, 228, 0.04);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowHighlighted {
+  background: rgba(255, 106, 0, 0.06);
+  border-left: 3px solid var(--flame-orange, #ff6a00);
+}
+
+.rowHighlighted:hover {
+  background: rgba(255, 106, 0, 0.1);
+}
+
+.table td {
+  padding: 0.65rem 1rem;
+  color: var(--cream, #f4efe4);
+}
+
+/* Rank cell */
+.cellRank {
+  text-align: center;
+}
+
+.rank {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+  color: var(--cream-dim, #b9b2a4);
+}
+
+.rankTop {
+  color: var(--flame-orange, #ff6a00);
+}
+
+/* Member cell */
+.cellMember {
+  /* default */
+}
+
+.memberInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--line, rgba(244, 239, 228, 0.12));
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(244, 239, 228, 0.06);
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cream-dim, #b9b2a4);
+}
+
+.pseudo {
+  font-weight: 500;
+  color: var(--cream, #f4efe4);
+}
+
+/* Niveau cell */
+.cellNiveau {
+  /* handled by NiveauBadge */
+}
+
+/* Points cell */
+.cellPoints {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--flame-orange, #ff6a00);
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .table th,
+  .table td {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .thNiveau,
+  .cellNiveau {
+    display: none;
+  }
+
+  .avatar {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}

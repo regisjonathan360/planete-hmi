@@ -1,0 +1,75 @@
+{
+  "mode": "dry-run",
+  "generatedAt": "2026-07-26T04:28:20.290Z",
+  "sourceCsv": "C:\\Users\\regis\\Downloads\\planete-hmi-artists - planete-hmi-artists.csv (3).csv",
+  "csvRows": 397,
+  "databaseArtistsBefore": 526,
+  "keptArtists": 526,
+  "protectedArtistsInDatabase": 223,
+  "claimedArtistsPreserved": 1,
+  "ambiguousArtistsPreserved": 5,
+  "deleteCandidates": 0,
+  "claimedDeleteCandidates": 0,
+  "dependencyCounts": {},
+  "ambiguous": [
+    {
+      "id": "be7970bd-2a32-43ad-aefd-98959c6971f6",
+      "name": "Durkheimht",
+      "slug": "durkheimht",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved",
+        "audiomack_deezer_chart"
+      ],
+      "protectedSources": [
+        "audiomack_haiti_weekly100"
+      ]
+    },
+    {
+      "id": "79a797e4-dd1d-4244-bfba-99a4c3392a1f",
+      "name": "Fresh La",
+      "slug": "fresh-la",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved",
+        "csv_slug_conflict_preserved"
+      ],
+      "protectedSources": []
+    },
+    {
+      "id": "18dd1114-c612-4e4f-b912-08a41c8133af",
+      "name": "KiDi",
+      "slug": "kidi",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved"
+      ],
+      "protectedSources": []
+    },
+    {
+      "id": "e675d8f5-ba99-4582-a480-27ac76732961",
+      "name": "Niska",
+      "slug": "niska",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved"
+      ],
+      "protectedSources": []
+    },
+    {
+      "id": "0b473ad6-f99c-40a3-9eff-47cf08f7b40d",
+      "name": "Tony Mix",
+      "slug": "tony-mix",
+      "userId": null,
+      "reasons": [
+        "csv_id_conflict_preserved",
+        "csv_slug_conflict_preserved",
+        "audiomack_deezer_chart"
+      ],
+      "protectedSources": [
+        "audiomack_haiti_weekly100"
+      ]
+    }
+  ],
+  "candidates": []
+}

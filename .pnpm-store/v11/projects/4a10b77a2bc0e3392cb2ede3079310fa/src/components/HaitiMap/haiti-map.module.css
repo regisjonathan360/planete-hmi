@@ -1,0 +1,179 @@
+/* Carte Haïti — Style cosmique Planète HMI avec effet néon */
+.mapContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  min-height: 460px;
+}
+
+.globeContainer {
+  position: relative;
+  width: min(100%, 820px);
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+.globeHitArea {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  clip-path: circle(49% at 50% 50%);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.gyroButton {
+  position: absolute;
+  left: 50%;
+  bottom: 2.25rem;
+  z-index: 25;
+  transform: translateX(-50%);
+  border: 1px solid rgba(0, 255, 204, 0.45);
+  border-radius: 999px;
+  background: rgba(8, 10, 25, 0.76);
+  color: #f4efe4;
+  padding: 0.6rem 0.9rem;
+  font: inherit;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.globeHint {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  margin: 0;
+  color: #9a9ac0;
+  font-size: 0.78rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.mapSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Départements */
+.deptPath {
+  fill: rgba(20, 20, 42, 0.85);
+  stroke: rgba(124, 92, 255, 0.4);
+  stroke-width: 0.005;
+  cursor: pointer;
+  transition: fill 0.3s ease, stroke 0.3s ease, stroke-width 0.3s ease;
+}
+
+.deptPath:hover,
+.deptHovered {
+  fill: rgba(124, 92, 255, 0.18);
+  stroke: rgba(124, 92, 255, 1);
+  stroke-width: 0.012;
+}
+
+.glowPath {
+  fill: none;
+  stroke: rgba(124, 92, 255, 0.9);
+  stroke-width: 0.015;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: neon-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes neon-pulse {
+  from { stroke: rgba(124, 92, 255, 0.7); stroke-width: 0.012; }
+  to { stroke: rgba(0, 212, 184, 1); stroke-width: 0.02; }
+}
+
+.deptLabel {
+  fill: rgba(244, 239, 228, 0.7);
+  font-size: 0.035px;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+/* Artist preview au hover */
+.artistPreview {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90%, 400px);
+  background: rgba(10, 10, 20, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(124, 92, 255, 0.4);
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  z-index: 20;
+  animation: fade-up 0.25s ease;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.artistScroll {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0.2rem 0;
+}
+
+.artistScroll::-webkit-scrollbar { display: none; }
+
+.artistChip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  padding: 0.3rem 0.6rem 0.3rem 0.3rem;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.12);
+  border: 1px solid rgba(124, 92, 255, 0.3);
+  font-size: 0.72rem;
+  color: #f4efe4;
+  white-space: nowrap;
+}
+
+.artistAvatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.artistAvatarPlaceholder {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(124, 92, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+/* Focus keyboard */
+.deptPath:focus-visible {
+  outline: 2px solid #00d4b8;
+  outline-offset: 2px;
+}
