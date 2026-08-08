@@ -1009,14 +1009,16 @@ a.section-link:hover { color: var(--flame-orange); }
   50% { opacity: 1; scale: 1.05; }
 }
 
-/* Le flou + le contraste fusionnent les neuf langues en une masse continue. */
+/* Le flou + le contraste fusionnent les langues en une masse continue.
+   PAS de `mask-image` ici : un masque est rogné à la border-box
+   (`mask-clip: border-box` par défaut), or les langues et leur flou débordent
+   volontairement de la boîte. Le masque coupait donc le feu net sur les côtés.
+   Le centre n'a de toute façon pas besoin d'être dégagé : la couche de feu est
+   en z-index -1, donc la photo et le texte se peignent par-dessus. */
 .podium-fire__body {
   position: absolute;
   inset: 0;
-  filter: blur(6px) contrast(1.75) saturate(1.15);
-  /* Centre dégagé : la photo de l'artiste ne doit pas être noyée. */
-  -webkit-mask-image: radial-gradient(70% 58% at 50% 70%, transparent 0%, rgba(0, 0, 0, 0.4) 52%, #000 80%);
-  mask-image: radial-gradient(70% 58% at 50% 70%, transparent 0%, rgba(0, 0, 0, 0.4) 52%, #000 80%);
+  filter: blur(6px) contrast(1.45) saturate(1.15);
 }
 
 .podium-fire__body i {
