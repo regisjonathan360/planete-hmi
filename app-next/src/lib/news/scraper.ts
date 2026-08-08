@@ -215,14 +215,13 @@ function extractImageFromHtml(html: string, sourceUrl: URL): string | null {
   // Patterns d'images à exclure (avatars, editeurs, gravatar, icônes)
   const EXCLUDED_URL_PATTERNS = [
     /gravatar\.com/i,
+    /secure\.gravatar/i,
     /\/author\//i,
     /\/avatar/i,
     /\/profile/i,
     /\/favicon/i,
     /\/logo/i,
     /\bicon\b/i,
-    /secure\.gravatar/i,
-    /wp-content\/uploads\/\d{4}\/\d{2}\/[^/]*-\d{2,3}x\d{2,3}\./i, // thumbnails WP
   ];
 
   // Classes CSS d'avatars/auteurs à exclure

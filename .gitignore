@@ -8,11 +8,13 @@ desktop.ini
 *~
 .idea/
 
-# Dépendances / build (si un jour ajoutés)
+# Dépendances / build
 node_modules/
 dist/
 build/
 .cache/
+.next/
+*.sst
 
 # Logs
 *.log
