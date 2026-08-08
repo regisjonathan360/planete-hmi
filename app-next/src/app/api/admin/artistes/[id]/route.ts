@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 const TEXT_FIELDS = [
   "name", "slug", "bio", "city", "birth_place", "birth_city", "label", "primary_genre", "real_name",
-  "birth_date", "haitian_status", "image_url", "banner_url",
+  "birth_date", "death_date", "haitian_status", "image_url", "banner_url",
   "url_spotify", "url_apple_music", "url_youtube_music", "url_audiomack",
   "url_deezer", "url_soundcloud", "url_tidal",
   "url_instagram", "url_tiktok", "url_twitter", "url_facebook",
@@ -74,6 +74,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if ("is_active" in body) {
     patch.is_active = !!body.is_active;
+  }
+
+  if ("is_deceased" in body) {
+    patch.is_deceased = !!body.is_deceased;
   }
 
   if ("gender" in body) {
