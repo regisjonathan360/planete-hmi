@@ -4,23 +4,6 @@ import { useState, useMemo } from "react";
 import { ChartEntryView } from "@/lib/charts/queries/types";
 import { ChartTop20Table } from "./ChartTop20Table";
 
-const GENRE_FILTERS = [
-  { id: "all", label: "Tous" },
-  { id: "konpa", label: "Konpa" },
-  { id: "raboday", label: "Raboday" },
-  { id: "hip-hop-rap", label: "Hip-Hop/Rap" },
-  { id: "afrosounds", label: "Afrosounds" },
-  { id: "dancehall", label: "Dancehall" },
-  { id: "pop", label: "Pop" },
-  { id: "r-b", label: "R&B" },
-  { id: "latin", label: "Latin" },
-  { id: "caribbean", label: "Caribbean" },
-  { id: "gospel", label: "Gospel" },
-  { id: "electronic", label: "Electronic" },
-  { id: "rock", label: "Rock" },
-  { id: "jazz-blues", label: "Jazz/Blues" },
-];
-
 interface Props {
   entries: ChartEntryView[];
   platform: string;
@@ -28,11 +11,10 @@ interface Props {
 }
 
 export function ChartFilterableList({ entries, platform, initialCount = 20 }: Props) {
-  const [genre, setGenre] = useState("all");
   const [search, setSearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(initialCount);
 
-  // Reset visible count when filters change.
+  // Reset visible count when search changes.
   const filtered = useMemo(() => {
     let result = entries;
 
@@ -45,18 +27,11 @@ export function ChartFilterableList({ entries, platform, initialCount = 20 }: Pr
       );
     }
 
-    // Genre filter — pour l'instant pas de champ genre dans ChartEntryView,
-    // donc on ne filtre pas par genre. Les filtres servent de repère visuel
-    // pour quand l'admin aura attribué les genres et qu'ils seront publiés.
-
     return result;
   }, [entries, search]);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
-
-  // Show genre tabs only for audiomack
-  const showGenres = platform === "audiomack";
 
   return (
     <>
@@ -75,22 +50,6 @@ export function ChartFilterableList({ entries, platform, initialCount = 20 }: Pr
         />
       </div>
 
-      {/* Filtres genre */}
-      {showGenres && (
-        <nav className="genre-tabs" aria-label="Filtrer par genre">
-          {GENRE_FILTERS.map((g) => (
-            <button
-              key={g.id}
-              type="button"
-              className={genre === g.id ? "genre-tabs__item is-active" : "genre-tabs__item"}
-              onClick={() => { setGenre(g.id); setVisibleCount(initialCount); }}
-            >
-              {g.label}
-            </button>
-          ))}
-        </nav>
-      )}
-
       {/* Liste */}
       <ChartTop20Table entries={visible} platform={platform} />
 
@@ -106,7 +65,7 @@ export function ChartFilterableList({ entries, platform, initialCount = 20 }: Pr
       )}
 
       <p className="row__ctx" style={{ marginTop: "0.75rem" }}>
-        {filtered.length} {platform === "youtube" ? "vidéo(s)" : "chanson(s)"} {genre !== "all" ? `(${genre})` : ""} cette semaine.
+        {filtered.length} {platform === "youtube" ? "vidéo(s)" : "chanson(s)"} cette semaine.
       </p>
     </>
   );

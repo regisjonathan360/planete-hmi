@@ -21,7 +21,7 @@ export function PlatformChartRow({ row }: { row: ChartOverviewRow }) {
         {row.period_end && <ChartUpdatedAt iso={row.published_at ?? row.source_updated_at} />}
         <span className="row__spacer" />
         <Link className="row__top20" href={`/charts/${slug}`}>
-          Voir le Top 20 →
+          {row.platform === "audiomack" ? "Voir plus →" : "Voir le Top 20 →"}
         </Link>
       </div>
 
