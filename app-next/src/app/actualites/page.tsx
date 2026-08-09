@@ -52,7 +52,7 @@ export default async function ActualitesPage() {
         isDeceased: !!a.is_deceased,
       };
     })
-    .filter((a) => a.daysUntil <= 7)
+    .filter((a) => a.daysUntil <= 30)
     .sort((a, b) => a.daysUntil - b.daysUntil);
 
   // Séparer vivants et décédés

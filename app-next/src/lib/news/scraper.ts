@@ -24,10 +24,11 @@ interface WPPost {
   categories: number[];
   title?: { rendered: string };
   excerpt?: { rendered: string };
+  content?: { rendered: string };
   date: string;
   _embedded?: {
     author?: Array<{ name: string }>;
-    "wp:featuredmedia"?: Array<{ source_url: string }>;
+    "wp:featuredmedia"?: Array<{ source_url: string; media_details?: { sizes?: Record<string, { source_url: string }> } }>;
   };
 }
 
@@ -109,6 +110,7 @@ async function scrapeWordPress(sourceUrl: URL): Promise<ScrapedArticle[]> {
   const postsUrl = new URL("posts", wpBase);
   postsUrl.searchParams.set("per_page", "20");
   postsUrl.searchParams.set("_embed", "1");
+  postsUrl.searchParams.set("_fields", "id,link,title,excerpt,date,categories,content,_links,_embedded");
   postsUrl.searchParams.set("categories", String(musicCategory.id));
 
   const postsResponse = await fetchWithTimeout(postsUrl);
@@ -316,9 +318,31 @@ function safeHostname(value: string): string {
 
 function extractFeaturedImage(post: WPPost): string | null {
   const media = post._embedded?.["wp:featuredmedia"];
+  
   if (Array.isArray(media) && media.length > 0) {
-    return media[0].source_url ?? null;
+    const m = media[0];
+    // Préférer la taille "large" ou "full" si disponible
+    const sizes = m.media_details?.sizes;
+    if (sizes) {
+      const preferred = sizes["large"]?.source_url ?? sizes["medium_large"]?.source_url ?? sizes["full"]?.source_url;
+      if (preferred) return preferred;
+    }
+    if (m.source_url) return m.source_url;
   }
+  
+  // Fallback : extraire la première image du contenu HTML de l'article
+  const content = post.content?.rendered ?? "";
+  if (content) {
+    const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i);
+    if (imgMatch?.[1]) {
+      const url = imgMatch[1];
+      // Vérifier que c'est bien une image de Chokarella, pas un emoji/icon
+      if (ALLOWED_HOSTS.has(new URL(url, "https://chokarella.com").hostname.toLowerCase())) {
+        return url;
+      }
+    }
+  }
+  
   return null;
 }
 
