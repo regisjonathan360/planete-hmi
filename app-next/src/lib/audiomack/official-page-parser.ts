@@ -155,6 +155,10 @@ function extractTrackArrays(text: string): AudiomackRawTrack[][] {
 }
 
 export function extractAudiomackTracksFromHtml(html: string): AudiomackRawTrack[] {
+  // Format 3 : pages /top/songs (SSR actuel avec <article class="ChartsItem">)
+  const chartsItemTracks = extractFromChartsItemPage(html);
+  if (chartsItemTracks.length > 0) return chartsItemTracks;
+
   // Format 1 : page /charts?country=haiti (HTML classique avec ChartCard)
   const chartCardTracks = extractFromChartsPage(html);
   if (chartCardTracks.length > 0) return chartCardTracks;
@@ -163,6 +167,51 @@ export function extractAudiomackTracksFromHtml(html: string): AudiomackRawTrack[
   const flightText = extractFlightText(html);
   const candidates = extractTrackArrays(flightText).sort((a, b) => b.length - a.length);
   return candidates[0] ?? [];
+}
+
+/** Extraction depuis /top/songs (SSR actuel) : <article class="ChartsItem"> avec
+ *  data-testid="ChartRank", .ChartsItem-artist a et .ChartsItem-title a. */
+function extractFromChartsItemPage(html: string): AudiomackRawTrack[] {
+  const tracks: AudiomackRawTrack[] = [];
+  const itemPattern = /<article class="ChartsItem">([\s\S]*?)<\/article>/gi;
+  let itemMatch;
+
+  while ((itemMatch = itemPattern.exec(html)) !== null) {
+    const item = itemMatch[1];
+
+    // Rang : <div class="ChartRank ChartsItem-rank" data-testid="ChartRank">1.…
+    const rankMatch = item.match(/data-testid="ChartRank"[^>]*>\s*(\d+)\./);
+    const rank = rankMatch ? parseInt(rankMatch[1], 10) : tracks.length + 1;
+
+    // Artiste : <h2 class="ChartsItem-artist"><a href="/slug">ARTISTE</a></h2>
+    const artistMatch = item.match(/<h2 class="ChartsItem-artist"><a[^>]*>([^<]+)<\/a>/);
+    const artist = artistMatch ? htmlDecode(artistMatch[1].trim()) : null;
+
+    // Titre : <h2 class="ChartsItem-title"><a href="/slug">TITRE (le svg explicit en suit)</a></h2>
+    const titleMatch = item.match(/<h2 class="ChartsItem-title">[\s\S]*?<a[^>]*>([^<]+)</);
+    const title = titleMatch ? htmlDecode(titleMatch[1].trim()) : null;
+
+    // URL slug : href du lien artiste
+    const hrefMatch = item.match(/<h2 class="ChartsItem-artist"><a[^>]*href="([^"]+)"/);
+    const urlSlug = hrefMatch ? hrefMatch[1] : null;
+
+    // Artwork : <img data-testid="ChartImage" … src="https://i.audiomack.com/…"/>
+    const artworkMatch = item.match(/data-testid="ChartImage"[^>]*src="([^"]+)"/);
+    const artwork = artworkMatch ? artworkMatch[1] : null;
+
+    if (title && artist) {
+      tracks.push({
+        title,
+        artist,
+        id: urlSlug ?? `chart-${rank}`,
+        image: artwork ?? undefined,
+        url_slug: urlSlug ?? undefined,
+        type: "song",
+      });
+    }
+  }
+
+  return tracks;
 }
 
 /** Extraction depuis la page /charts (HTML avec ChartCard, MusicCard-artist, MusicCard-title) */

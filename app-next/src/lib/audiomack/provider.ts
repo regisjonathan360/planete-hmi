@@ -1,16 +1,20 @@
 /**
- * Provider selection for Audiomack.
+ * Provider Audiomack.
  *
- * Priority:
- * 1. Official OAuth API, when keys are configured.
- * 2. Official public Audiomack Haiti page.
- * 3. Optional mock data only when AUDIOMACK_USE_MOCK=true.
+ * Priorité :
+ * 1. API publique Audiomack (api.audiomack.com/v1) — classements officiels
+ *    Haïti (Top Songs 100 + charts genre), signés OAuth1 avec les
+ *    identifiants publics de l'appli web.
+ * 2. Page officielle audiomack.com/top/songs (SSR) — repli si l'API échoue.
+ * 3. Mock uniquement si AUDIOMACK_USE_MOCK=true.
  */
 import "server-only";
 import type { AudiomackNormalizedEntry, AudiomackRawPlaylist } from "./types";
 import { normalizeAudiomackResponse } from "./normalize";
 import { fetchAudiomackHaitiChart, hasAudiomackKeys } from "./oauth-client";
-import { fetchAudiomackOfficialHaitiChart } from "./official-page";
+import { fetchAudiomackOfficialPage } from "./official-page";
+import { fetchAudiomackApiChart } from "./public-api";
+import { audiomackGenreSourceUrl } from "@/lib/charts/audiomack-sources";
 
 export interface AudiomackProviderResult {
   ok: boolean;
@@ -25,6 +29,38 @@ export interface AudiomackProvider {
   fetchChart(): Promise<AudiomackProviderResult>;
 }
 
+/**
+ * Collecte le classement Audiomack Haïti (100 titres via l'API officielle).
+ * @param genreId slug genre (ex. "gospel") — undefined = Top Songs global Haïti.
+ * @param sourceUrl URL de la page SSR correspondante (repli).
+ */
+export async function fetchAudiomackChart(options: { genreId?: string | null; sourceUrl?: string } = {}): Promise<AudiomackProviderResult> {
+  const { genreId = null, sourceUrl } = options;
+
+  // 1. API publique officielle (source primaire)
+  const api = await fetchAudiomackApiChart({ genre: genreId ?? undefined });
+  if (api.ok && api.entries.length > 0) {
+    return { ok: true, entries: api.entries, sourceUpdatedAt: api.sourceUpdatedAt ?? null };
+  }
+
+  // 2. Repli : page SSR officielle
+  const page = await fetchAudiomackOfficialPage(
+    sourceUrl ?? (genreId ? audiomackGenreSourceUrl(genreId) : "https://audiomack.com/top/songs?country=haiti")
+  );
+  if (page.ok && page.entries.length > 0) {
+    return { ok: true, entries: page.entries, sourceUpdatedAt: page.sourceUpdatedAt };
+  }
+
+  // 3. Erreur : on rapporte le message de la source la plus parlante
+  return {
+    ok: false,
+    entries: [],
+    error: api.entries.length === 0 && api.error
+      ? api.error
+      : page.error ?? "Aucune donnee Audiomack recuperable.",
+  };
+}
+
 export const oauthProvider: AudiomackProvider = {
   name: "oauth",
   isAvailable: () => hasAudiomackKeys(),
@@ -33,18 +69,29 @@ export const oauthProvider: AudiomackProvider = {
     if (!result) return { ok: false, entries: [], error: "Cles Audiomack non configurees." };
     if (!result.ok) return { ok: false, entries: [], error: result.error };
 
-    const entries = normalizeAudiomackResponse(result.data as AudiomackRawPlaylist);
-    if (!entries.length) return { ok: false, entries: [], error: "Reponse vide." };
+    const data = result.data as AudiomackRawPlaylist;
+    // L'endpoint playlist renvoie l'objet playlist ; la liste est dans
+    // data.results.tracks (Weekly 100: Haiti — 99/100 titres).
+    const playlist = (data.results ?? null) as (AudiomackRawPlaylist & { tracks?: unknown }) | null;
+    const tracks =
+      Array.isArray(data.results)
+        ? (data.results as unknown as AudiomackRawPlaylist["results"])
+        : Array.isArray(playlist?.tracks)
+          ? (playlist?.tracks as AudiomackRawPlaylist["results"])
+          : [];
 
+    if (!tracks?.length) return { ok: false, entries: [], error: "Reponse vide." };
+    const entries = normalizeAudiomackResponse({ tracks });
     return { ok: true, entries, sourceUpdatedAt: null };
   },
 };
 
 export const officialPageProvider: AudiomackProvider = {
-  name: "official_page",
+  name: "public_api",
   isAvailable: () => true,
   async fetchChart() {
-    return fetchAudiomackOfficialHaitiChart();
+    // Chaîne complète : API publique (100 titres) puis repli SSR.
+    return fetchAudiomackChart({});
   },
 };
 
@@ -81,7 +128,9 @@ export const mockProvider: AudiomackProvider = {
 };
 
 export function getProvider(): AudiomackProvider {
-  if (oauthProvider.isAvailable()) return oauthProvider;
   if (mockProvider.isAvailable()) return mockProvider;
+  // Toujours utiliser la chaîne API → SSR : les clés OAuth privées
+  // (env) pointent vers un endpoint obsolète et sont de toute façon
+  // supplantées par l'API publique.
   return officialPageProvider;
 }

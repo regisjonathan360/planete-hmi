@@ -17,8 +17,13 @@ export interface AudiomackOfficialPageResult {
 }
 
 export async function fetchAudiomackOfficialHaitiChart(): Promise<AudiomackOfficialPageResult> {
+  return fetchAudiomackOfficialPage(AUDIOMACK_HAITI_SOURCE_URL);
+}
+
+/** Scrape une page Audiomack (top/songs) en SSR. Utilisé en repli si l'API échoue. */
+export async function fetchAudiomackOfficialPage(sourceUrl: string): Promise<AudiomackOfficialPageResult> {
   try {
-    const response = await fetch(AUDIOMACK_HAITI_SOURCE_URL, {
+    const response = await fetch(sourceUrl, {
       cache: "no-store",
       headers: {
         Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",

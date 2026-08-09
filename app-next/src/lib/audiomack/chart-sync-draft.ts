@@ -10,6 +10,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { normalizeTitle } from "@/lib/charts/normalization/normalize-title";
 import { normalizeArtists } from "@/lib/charts/normalization/normalize-artists";
+import { AUDIOMACK_HAITI_CHART_SOURCES } from "@/lib/charts/audiomack-sources";
 import type { AudiomackNormalizedEntry } from "./types";
 
 const DEFAULT_SOURCE_KEY = "audiomack_haiti_weekly100";
@@ -55,6 +56,7 @@ interface SourceConfig {
   chartContext: string;
   sourceUrl: string;
   ingestionMode: string;
+  genreId?: string;
 }
 
 const SOURCE_CONFIGS: Record<string, SourceConfig> = {
@@ -90,6 +92,21 @@ const SOURCE_CONFIGS: Record<string, SourceConfig> = {
   },
 };
 
+// Sources genre Audiomack — configurations créées depuis la liste officielle.
+// Elles ne servent qu'à créer une source inexistante ; une source déjà en base
+// n'est jamais réécrite (ensureSource).
+for (const source of AUDIOMACK_HAITI_CHART_SOURCES) {
+  if (source.genreId === "all") continue;
+  SOURCE_CONFIGS[source.sourceKey] = {
+    platform: "audiomack",
+    displayName: source.displayName,
+    chartContext: source.chartContext,
+    sourceUrl: source.sourceUrl,
+    ingestionMode: "OFFICIAL_EXPORT",
+    genreId: source.genreId,
+  };
+}
+
 /**
  * Garantit l'existence de la source.
  *
@@ -123,7 +140,7 @@ async function ensureSource(supabase: SupabaseClient, sourceKey: string): Promis
       display_name: config.displayName,
       chart_context: config.chartContext,
       market_code: "HT",
-      genre_id: "all",
+      genre_id: config.genreId ?? "all",
       ingestion_mode: config.ingestionMode,
       source_url: config.sourceUrl,
       is_enabled: true,

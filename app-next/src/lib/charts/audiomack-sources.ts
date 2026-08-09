@@ -9,6 +9,12 @@ export interface AudiomackHaitiChartSource {
 
 export const AUDIOMACK_HAITI_SOURCE_URL = "https://audiomack.com/top/songs?country=haiti";
 export const AUDIOMACK_CHARTS_URL = "https://audiomack.com/charts";
+export const AUDIOMACK_TOP_SONGS_URL = "https://audiomack.com/top/songs";
+
+/** Les classements hebdomadaires genre d'Audiomack vivent sur /top/songs/<genre>?country=haiti. */
+export function audiomackGenreSourceUrl(genreId: string): string {
+  return `${AUDIOMACK_TOP_SONGS_URL}/${encodeURIComponent(genreId)}?country=haiti`;
+}
 
 export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
   {
@@ -25,7 +31,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Afrosounds",
     displayName: "Audiomack - Haiti Afrosounds",
     chartContext: "Top Songs Haiti - Afrosounds",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("afrosounds"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_hip_hop_rap",
@@ -33,7 +39,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Hip-Hop/Rap",
     displayName: "Audiomack - Haiti Hip-Hop/Rap",
     chartContext: "Top Songs Haiti - Hip-Hop/Rap",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("hip-hop-rap"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_latin",
@@ -41,7 +47,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Latin",
     displayName: "Audiomack - Haiti Latin",
     chartContext: "Top Songs Haiti - Latin",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("latin"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_jazz_blues",
@@ -49,7 +55,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Jazz/Blues",
     displayName: "Audiomack - Haiti Jazz/Blues",
     chartContext: "Top Songs Haiti - Jazz/Blues",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("jazz-blues"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_caribbean",
@@ -57,7 +63,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Caribbean",
     displayName: "Audiomack - Haiti Caribbean",
     chartContext: "Top Songs Haiti - Caribbean",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("caribbean"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_pop",
@@ -65,7 +71,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Pop",
     displayName: "Audiomack - Haiti Pop",
     chartContext: "Top Songs Haiti - Pop",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("pop"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_r_b",
@@ -73,7 +79,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "R&B",
     displayName: "Audiomack - Haiti R&B",
     chartContext: "Top Songs Haiti - R&B",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("r-b"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_gospel",
@@ -81,7 +87,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Gospel",
     displayName: "Audiomack - Haiti Gospel",
     chartContext: "Top Songs Haiti - Gospel",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("gospel"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_electronic",
@@ -89,7 +95,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Electronic",
     displayName: "Audiomack - Haiti Electronic",
     chartContext: "Top Songs Haiti - Electronic",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("electronic"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_rock",
@@ -97,7 +103,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Rock",
     displayName: "Audiomack - Haiti Rock",
     chartContext: "Top Songs Haiti - Rock",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("rock"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_punjabi",
@@ -105,7 +111,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Punjabi",
     displayName: "Audiomack - Haiti Punjabi",
     chartContext: "Top Songs Haiti - Punjabi",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("punjabi"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_country",
@@ -113,7 +119,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Country",
     displayName: "Audiomack - Haiti Country",
     chartContext: "Top Songs Haiti - Country",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("country"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_instrumental",
@@ -121,7 +127,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Instrumental",
     displayName: "Audiomack - Haiti Instrumental",
     chartContext: "Top Songs Haiti - Instrumental",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("instrumental"),
   },
   {
     sourceKey: "audiomack_haiti_top_songs_podcast",
@@ -129,7 +135,7 @@ export const AUDIOMACK_HAITI_CHART_SOURCES: AudiomackHaitiChartSource[] = [
     genreLabel: "Podcast",
     displayName: "Audiomack - Haiti Podcast",
     chartContext: "Top Haiti - Podcast",
-    sourceUrl: AUDIOMACK_CHARTS_URL,
+    sourceUrl: audiomackGenreSourceUrl("podcast"),
   },
 ];
 
