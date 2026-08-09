@@ -110,7 +110,6 @@ async function scrapeWordPress(sourceUrl: URL): Promise<ScrapedArticle[]> {
   const postsUrl = new URL("posts", wpBase);
   postsUrl.searchParams.set("per_page", "20");
   postsUrl.searchParams.set("_embed", "1");
-  postsUrl.searchParams.set("_fields", "id,link,title,excerpt,date,categories,content,_links,_embedded");
   postsUrl.searchParams.set("categories", String(musicCategory.id));
 
   const postsResponse = await fetchWithTimeout(postsUrl);
