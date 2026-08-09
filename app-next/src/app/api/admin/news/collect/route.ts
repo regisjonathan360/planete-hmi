@@ -126,16 +126,15 @@ export async function POST(request: Request) {
             )
             .select("id");
 
-          // Si l'article existait déjà mais n'avait pas d'image, mettre à jour l'image
-          if (!insertedRows?.length && article.imageUrl) {
-            const { data: updated } = await supabase
+          // Toujours forcer la mise à jour de l'image si on en a une
+          // (couvre le cas où l'upsert a ignoré la mise à jour)
+          if (article.imageUrl) {
+            await supabase
               .from("news_articles")
               .update({ source_image_url: article.imageUrl })
               .eq("source_url", article.sourceUrl)
-              .is("source_image_url", null)
-              .select("id");
-            if (updated?.length) repaired++;
-            else skipped++;
+              .or("source_image_url.is.null,source_image_url.eq.");
+            repaired++;
           }
 
           if (error) {
