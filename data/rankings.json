@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-08T05:47:54.703Z",
+    "genereLe": "2026-08-09T05:51:39.050Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -44,7 +44,7 @@
       "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Ayo Girl (Haitian Konpa Remix)",
+      "titre": "Kenbe M'",
       "score": 24.2,
       "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
     },
@@ -52,7 +52,7 @@
       "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": "Ti Miyo",
+      "titre": "Viens avec moi",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Lotto",
+      "titre": "24/7",
       "score": 18.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
@@ -79,14 +79,6 @@
       "titre": "Drive",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Lakou trankil",
-      "score": 2.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
