@@ -394,7 +394,7 @@ a.section-link:hover { color: var(--flame-orange); }
 .podium__card--gold { border-color: var(--flame-gold); box-shadow: 0 0 44px rgba(255, 178, 0, 0.22); transform: translateY(-22px); }
 .podium__card--silver { border-color: rgba(244, 239, 228, 0.4); }
 .podium__card--bronze { border-color: var(--flame-orange); }
-.podium__crown { position: absolute; top: -22px; font-size: 1.8rem; color: var(--flame-gold); }
+.podium__crown { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 1.8rem; line-height: 1; color: var(--flame-gold); pointer-events: none; text-shadow: 0 0 14px rgba(255, 178, 0, 0.55); }
 .podium__rank { font-family: var(--font-display); font-size: 2.4rem; line-height: 1; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
 .podium__card--gold .podium__rank { color: var(--flame-gold); font-size: 3rem; }
 .podium__card--silver .podium__rank { color: #d8d2c4; }
@@ -651,8 +651,9 @@ a.section-link:hover { color: var(--flame-orange); }
   .menu-mobile[hidden] { display: none; }
   .menu-mobile:not([hidden]) { display: flex; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
-  .podium { grid-template-columns: 1fr; gap: 1.2rem; overflow: hidden; }
+  .podium { grid-template-columns: 1fr; gap: 1.2rem; overflow: hidden; padding-top: 42px; }
   .podium__card--gold { transform: none; order: -1; }
+  .podium__crown { font-size: 2.9rem; top: -30px; }
   .podium-fire { display: none; }
   .podium-blast { display: none; }
 }
@@ -991,7 +992,10 @@ a.section-link:hover { color: var(--flame-orange); }
    Le markup (.podium-fire, .podium-blast) est injecté par
    /assets/js/podium-fire.js — rien en dur dans le HTML.
    ========================================================= */
-.podium { position: relative; overflow: hidden; }
+/* `overflow: hidden` contient l'explosion (.podium-blast) ; le padding-top
+   laisse la carte #1 surélevée et sa couronne déborder à l'intérieur du cadre
+   au lieu d'être rognées. */
+.podium { position: relative; overflow: hidden; padding-top: 48px; }
 
 /* `isolation` garantit le contexte d'empilement même si le navigateur
    ne prend pas en charge backdrop-filter : la couche de flammes en
