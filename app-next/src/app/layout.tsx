@@ -114,6 +114,7 @@ import { DonationPrompt } from "@/components/DonationPrompt";
 import { CookieConsent } from "@/components/CookieConsent";
 import { Analytics } from "@/components/Analytics";
 import { StructuredData } from "@/components/StructuredData";
+import { PageLoader } from "@/components/PageLoader";
 import Script from "next/script";
 import "./globals.css";
 import "../../public/assets/css/style.css";
@@ -130,6 +131,7 @@ export default function RootLayout({
         <meta name="google-site-verification" content="google6d44388fef967718" />
       </head>
       <body>
+        <PageLoader />
         <StructuredData />
         <Analytics />
         <StageLightsLoader />
