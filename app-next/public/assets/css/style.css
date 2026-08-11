@@ -992,10 +992,13 @@ a.section-link:hover { color: var(--flame-orange); }
    Le markup (.podium-fire, .podium-blast) est injecté par
    /assets/js/podium-fire.js — rien en dur dans le HTML.
    ========================================================= */
-/* `overflow: hidden` contient l'explosion (.podium-blast) ; le padding-top
-   laisse la carte #1 surélevée et sa couronne déborder à l'intérieur du cadre
-   au lieu d'être rognées. */
-.podium { position: relative; overflow: hidden; padding-top: 48px; }
+/* Pendant l'explosion de révélation uniquement, `overflow: hidden` contient
+   le souffle (.podium-blast). Au repos et au survol, les flammes des cartes
+   débordent volontairement (blur, z-index -1) : aucun clip, sinon elles sont
+   rognées en haut et sur les côtés du podium. Le padding-top laisse la
+   couronne visible. */
+.podium { position: relative; padding-top: 48px; }
+.podium.is-erupting { overflow: hidden; }
 
 /* `isolation` garantit le contexte d'empilement même si le navigateur
    ne prend pas en charge backdrop-filter : la couche de flammes en
