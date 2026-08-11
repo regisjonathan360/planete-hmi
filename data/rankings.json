@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-10T06:16:04.467Z",
+    "genereLe": "2026-08-11T05:57:38.774Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Can't Get over you",
+      "titre": "Tag li",
       "score": 27.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -36,7 +36,7 @@
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Fè Makak",
+      "titre": "Apiye (feat. Zile)",
       "score": 25.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg"
     },
@@ -44,7 +44,7 @@
       "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Kenbe M'",
+      "titre": "Fè Lapli",
       "score": 24.2,
       "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
     },
@@ -52,7 +52,7 @@
       "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": "Viens avec moi",
+      "titre": "Gason Malen",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
@@ -79,14 +79,6 @@
       "titre": "Drive",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Lakou trankil",
-      "score": 2.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
