@@ -1,0 +1,34 @@
+.topBar__bar {
+  width: 100%;
+  height: 30px;
+  background: linear-gradient(96deg, #2de2ff 0%, #8b2fff 55%, #ff2bd6 100%);
+  display: flex;
+  padding: 9px;
+  justify-content: space-between;
+  align-items: center;
+
+  &--title {
+    color: #05081a;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 11px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+  }
+
+  &--grey {
+    background: linear-gradient(96deg, #1a2a5e 0%, #25206b 55%, #551a5e 100%);
+
+    & .topBar__bar--title {
+      color: #9db4e8;
+      text-shadow: none;
+    }
+  }
+}
+
+.leftSide,
+.rightSide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

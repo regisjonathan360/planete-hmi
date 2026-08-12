@@ -126,6 +126,36 @@ describe("scrapeChokarella", () => {
     );
   });
 
+  it("récupère l'image quand le visuel est dans une ancre distincte de l'ancre titre", async () => {
+    const imageAnchor =
+      '<a class="p-flink" href="https://www.chokarella.com/2026/07/30/nete-album/">' +
+      '<img loading="lazy" width="615" height="410" src="https://www.chokarella.com/wp-content/uploads/2026/07/hero-615x410.jpg" ' +
+      'class="featured-img wp-post-image" alt="hero" decoding="async" /></a>';
+    const categoriesAnchor =
+      '<div class="overlay-wrap"><div class="overlay-inner p-content light-scheme">' +
+      '<div class="p-categories p-top">' +
+      '<a class="p-category" href="https://www.chokarella.com/category/actualites/" rel="category">Actualités</a>' +
+      '<a class="p-category" href="https://www.chokarella.com/category/musique/" rel="category">Musique</a>' +
+      "</div>";
+    const titleAnchor =
+      '<h2 class="entry-title">' +
+      '<a class="p-url" href="https://www.chokarella.com/2026/07/30/nete-album/" rel="bookmark">' +
+      "Nèt : un album qui fait parler de lui</a></h2></div>";
+
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(response([]))
+      .mockResolvedValueOnce(htmlResponse(`<article>${imageAnchor}${categoriesAnchor}${titleAnchor}</article>`));
+
+    const articles = await scrapeChokarella(SOURCE_URL);
+
+    expect(articles).toHaveLength(1);
+    expect(articles[0].imageUrl).toBe(
+      "https://www.chokarella.com/wp-content/uploads/2026/07/hero-615x410.jpg"
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it("refuse une URL de source qui ne cible pas la catégorie Musique", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
 

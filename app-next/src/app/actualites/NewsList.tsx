@@ -1,11 +1,28 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BirthdayPlanet } from "@/components/BirthdayPlanet";
 import "./actualites.css";
+
+const NewsCosmosHero = dynamic(
+  () =>
+    import("@/components/news/NewsCosmosHero").then((m) => m.NewsCosmosHero),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="news-cosmos-hero__fallback" role="status">
+        <p className="section-tag">{"// Actualités — Planète HMI"}</p>
+        <h1 className="news-cosmos-hero__title">
+          Actualités <span className="fx-o">HMI</span>
+        </h1>
+      </div>
+    ),
+  }
+);
 
 interface Article {
   id: string;
@@ -136,6 +153,11 @@ export function NewsList({
     ? visibleArticles.filter((article) => article.id !== featured.id)
     : [];
 
+  const heroImages = useMemo(
+    () => articles.map((article) => articleImage(article)).filter(Boolean).slice(0, 24),
+    [articles]
+  );
+
   return (
     <>
       <div className="grain" aria-hidden="true" />
@@ -203,21 +225,8 @@ export function NewsList({
           </section>
         )}
 
-        <section className="page-hero news-page__hero">
-          <div className="wrap">
-            <p className="breadcrumb">
-              {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
-              <a href="/">Accueil</a> / Actualités
-            </p>
-            <p className="section-tag">{"// La musique haïtienne en mouvement"}</p>
-            <h1 className="page-title">
-              Actualités <span className="fx-o">HMI</span>
-            </h1>
-            <p className="page-lead">
-              Sorties, interviews, records et coulisses. Tout ce qui fait vibrer la planète.
-            </p>
-          </div>
-        </section>
+        {/* Hero cosmos pleine page — sphère de particules + couvertures en orbite (design 21st) */}
+        <NewsCosmosHero images={heroImages} />
 
         <div className="wrap news-page__content">
           {categories.length > 1 && (

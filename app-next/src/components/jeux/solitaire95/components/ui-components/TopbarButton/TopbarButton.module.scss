@@ -1,0 +1,28 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px;
+  box-sizing: border-box;
+  background-clip: content-box;
+  font-size: 18px;
+  letter-spacing: 1px;
+  cursor: default;
+
+  &:focus-visible {
+    background: linear-gradient(96deg, rgba(45, 226, 255, 0.25), rgba(139, 47, 255, 0.35));
+    color: #eafcff;
+    outline: none;
+  }
+}
+
+.active {
+  background: linear-gradient(96deg, rgba(45, 226, 255, 0.25), rgba(139, 47, 255, 0.35));
+  color: #eafcff;
+}
+
+.container span {
+  text-decoration: underline;
+}

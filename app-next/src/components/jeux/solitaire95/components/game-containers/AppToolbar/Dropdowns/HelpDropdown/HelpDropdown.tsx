@@ -1,0 +1,51 @@
+﻿import React from "react";
+import { connect } from "react-redux";
+import { toggleWindow } from "../../../../../store/actions/";
+import { ToggleWindowType } from "../../../../../store/actions/actionTypes";
+import { ToolButton, Separator } from "../../../../ui-components";
+
+type HelpDropdownDispatchTypes = {
+  toggleAboutWindow: ToggleWindowType;
+};
+
+type HelpDropdownPropTypes = {
+  setHelpVisible: (prevState: boolean) => void;
+  setBottomBarText: (text: string) => void;
+};
+
+const HelpDropdownInternal: React.FC<
+  HelpDropdownDispatchTypes & HelpDropdownPropTypes
+> = ({ toggleAboutWindow, setHelpVisible, setBottomBarText }) => (
+  <>
+    <ToolButton
+      onMouseOver={() => setBottomBarText("Index of Solitaire help topics")}
+      onMouseLeave={() => setBottomBarText("")}
+      onClick={() => {
+        toggleAboutWindow(true, "helpTopicsWindow");
+        setHelpVisible(false);
+      }}
+      underscoredLetter={0}
+      label="Help Topics"
+    />
+    <Separator />
+    <ToolButton
+      onMouseOver={() => setBottomBarText("About Solitaire")}
+      onMouseLeave={() => setBottomBarText("")}
+      onClick={() => {
+        toggleAboutWindow(true, "aboutWindow");
+        setHelpVisible(false);
+      }}
+      underscoredLetter={0}
+      label="About"
+    />
+  </>
+);
+
+const mapDispatchToProps = {
+  toggleAboutWindow: toggleWindow,
+};
+
+export const HelpDropdown = connect(
+  undefined,
+  mapDispatchToProps
+)(HelpDropdownInternal);

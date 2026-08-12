@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { href: "/admin/arene/defis", label: "Défis" },
   { href: "/admin/arene/moderation", label: "Modération" },
   { href: "/admin/arene/badges", label: "Badges" },
+  { href: "/admin/arene/solitaire", label: "Solitaire" },
   { href: "/admin/arene/termes-interdits", label: "Termes interdits" },
 ];
 

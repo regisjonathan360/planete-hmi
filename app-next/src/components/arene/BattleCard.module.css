@@ -99,18 +99,103 @@
 }
 
 .sideImageWrap {
+  position: relative;
   width: 80px;
   height: 80px;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--line, rgba(244, 239, 228, 0.15));
   flex-shrink: 0;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.side:hover .sideImageWrap {
+  border-color: var(--flame-orange, #ff6a00);
+  box-shadow: 0 0 20px rgba(255, 106, 0, 0.3);
 }
 
 .sideImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Placeholder pour les images manquantes */
+.sidePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(110, 168, 255, 0.2) 0%, rgba(200, 125, 255, 0.2) 100%);
+}
+
+.sidePlaceholderIcon {
+  font-size: 2rem;
+}
+
+/* Indicateur de preview audio */
+.audioIndicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.side:hover .audioIndicator {
+  opacity: 1;
+}
+
+.audioIndicatorPlaying {
+  background: rgba(255, 106, 0, 0.8);
+  box-shadow: 0 0 12px rgba(255, 106, 0, 0.5);
+  opacity: 1 !important;
+}
+
+.audioIcon {
+  font-size: 0.875rem;
+}
+
+/* Animation des vagues sonores */
+.audioWave {
+  width: 3px;
+  height: 12px;
+  background: white;
+  border-radius: 2px;
+  margin: 0 1px;
+  animation: audioWave 0.8s ease-in-out infinite;
+}
+
+.audioWave:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.audioWave:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.audioWave:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes audioWave {
+  0%, 100% {
+    height: 6px;
+    opacity: 0.6;
+  }
+  50% {
+    height: 14px;
+    opacity: 1;
+  }
 }
 
 .sideLabel {

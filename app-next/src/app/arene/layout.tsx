@@ -1,18 +1,29 @@
 import type { Metadata } from "next";
-import { Orbitron, Exo_2 } from "next/font/google";
+import { Zen_Dots, Silkscreen, Chakra_Petch } from "next/font/google";
 import { AreneTabNav } from "@/components/arene/AreneTabNav";
 import { MurActivite } from "@/components/arene/MurActivite";
 import { RealtimeProvider } from "@/components/arene/RealtimeProvider";
 import styles from "./layout.module.css";
 
-const orbitron = Orbitron({
+/* Polices rares de l'Arène (cosmic / cyberpunk / rétro gaming) :
+   - Zen Dots : titres cosmiques futuristes
+   - Silkscreen : accents arcade (pixel rétro)
+   - Chakra Petch : corps technique, formes originales */
+const zenDots = Zen_Dots({
   subsets: ["latin"],
+  weight: "400",
   variable: "--font-arene-display",
-  weight: ["400", "700", "900"],
 });
 
-const exo2 = Exo_2({
+const silkscreen = Silkscreen({
   subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-arene-arcade",
+});
+
+const chakraPetch = Chakra_Petch({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-arene-body",
 });
 
@@ -36,7 +47,9 @@ export default function AreneLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${styles.arene} ${orbitron.variable} ${exo2.variable}`}>
+    <div
+      className={`${styles.arene} ${zenDots.variable} ${silkscreen.variable} ${chakraPetch.variable}`}
+    >
       {/* Scrim de lisibilité propre à l'Arène */}
       <div className={styles.areneScrim} aria-hidden="true" />
 

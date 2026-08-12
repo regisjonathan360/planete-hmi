@@ -115,6 +115,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { Analytics } from "@/components/Analytics";
 import { StructuredData } from "@/components/StructuredData";
 import { PageLoader } from "@/components/PageLoader";
+import { RadioPlayer } from "@/components/radio/RadioPlayer";
 import Script from "next/script";
 import "./globals.css";
 import "../../public/assets/css/style.css";
@@ -139,6 +140,7 @@ export default function RootLayout({
         {children}
         <DonationPrompt />
         <CookieConsent />
+        <RadioPlayer />
         <Script src="/assets/js/main.js" strategy="afterInteractive" />
         <Script src="/assets/js/features.js" strategy="afterInteractive" />
       </body>

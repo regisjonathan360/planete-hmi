@@ -1,0 +1,196 @@
+/* JeuxPage — Grille des mini-jeux de l'Arène.
+   Cartes néon arcade cohérentes avec l'univers cyberpunk de l'Arène :
+   visuel en dégradé cyan → violet → magenta, lettrage Silkscreen. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 2rem;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: linear-gradient(96deg, var(--arene-cyan, #2de2ff) 0%, var(--arene-purple, #8b2fff) 50%, var(--arene-magenta, #ff2bd6) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgba(45, 226, 255, 0.35));
+}
+
+.pageLead {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(148, 169, 208, 0.9);
+  max-width: 72ch;
+}
+
+/* Grille : 1 carte pleine largeur seule, plusieurs cartes en rangées */
+.jeuxGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Carte jeu — néon arcade */
+.jeuCard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(45, 226, 255, 0.22);
+  background: rgba(16, 8, 44, 0.72);
+  color: var(--cream, #eaf6ff);
+  text-decoration: none;
+  box-shadow: 0 18px 50px rgba(8, 7, 13, 0.35);
+  transition: transform 0.22s var(--ease, ease), border-color 0.22s, box-shadow 0.22s;
+}
+
+.jeuCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--arene-magenta, #ff2bd6);
+  box-shadow:
+    0 24px 60px rgba(8, 7, 13, 0.5),
+    0 0 30px rgba(255, 43, 214, 0.28);
+}
+
+.jeuCard:focus-visible {
+  outline: 2px solid var(--arene-cyan, #2de2ff);
+  outline-offset: 3px;
+}
+
+/* Visuel arcade de la carte */
+.jeuCard__art {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 170px;
+  padding: 1.4rem 1.2rem;
+  background:
+    /* scanlines rétro */
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.16) 0px,
+      rgba(0, 0, 0, 0.16) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    linear-gradient(135deg, rgba(45, 226, 255, 0.9), rgba(139, 47, 255, 0.85) 48%, rgba(255, 43, 214, 0.9));
+  text-align: center;
+}
+
+.jeuCard__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(90% 70% at 50% 20%, rgba(255, 255, 255, 0.18), transparent 62%);
+  pointer-events: none;
+}
+
+.jeuCard__badge {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  padding: 0.26rem 0.6rem;
+  background: rgba(10, 4, 32, 0.55);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace)), monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.jeuCard__artTitle {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace)), monospace;
+  font-size: clamp(1.7rem, 4.5vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  text-shadow:
+    0 0 16px rgba(10, 4, 32, 0.65),
+    0 4px 18px rgba(10, 4, 32, 0.45);
+}
+
+.jeuCard__artTagline {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace)), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 2px 10px rgba(10, 4, 32, 0.6);
+}
+
+/* Corps de la carte */
+.jeuCard__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.1rem 1.15rem 1.15rem;
+}
+
+.jeuCard__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cream, #eaf6ff);
+}
+
+.jeuCard__desc {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: rgba(148, 169, 208, 0.92);
+}
+
+.jeuCard__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.jeuCard__meta {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 169, 208, 0.7);
+}
+
+.jeuCard__play {
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace)), monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arene-lime, #b6ff2e);
+  text-shadow: 0 0 12px rgba(182, 255, 46, 0.55);
+  transition: transform 0.2s;
+}
+
+.jeuCard:hover .jeuCard__play {
+  transform: translateX(3px);
+}

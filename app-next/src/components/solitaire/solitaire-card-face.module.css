@@ -1,0 +1,104 @@
+.face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  container-type: inline-size;
+  isolation: isolate;
+  background:
+    radial-gradient(130% 90% at 18% 8%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(160deg, #ffffff 0%, #f7f3e9 45%, #ede6d4 100%);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px rgba(22, 28, 44, 0.55);
+  color: #171c28;
+  user-select: none;
+}
+
+.face[data-color="red"] {
+  color: #d4202a;
+}
+
+.face[data-color="black"] {
+  color: #14181f;
+}
+
+.face__base {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.face__mask {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  box-shadow:
+    0 1px 5px rgba(20, 25, 40, 0.35),
+    inset 0 0 0 1.5px rgba(20, 25, 40, 0.28),
+    inset 0 0 0 4px rgba(255, 255, 255, 0.65);
+  pointer-events: none;
+}
+
+.face__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.face__gloss {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0) 72%,
+    rgba(255, 255, 255, 0.14) 100%
+  );
+}
+
+.face__pip {
+  position: absolute;
+  z-index: 3;
+  font-size: 16cqi;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.face__corner {
+  position: absolute;
+  top: 5cqi;
+  left: 6cqi;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2cqi;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+}
+
+.face__cornerBottom {
+  top: auto;
+  bottom: 5cqi;
+  left: auto;
+  right: 6cqi;
+  transform: rotate(180deg);
+}
+
+.face__rank {
+  font-size: 15cqi;
+}
+
+.face__suit {
+  font-size: 14cqi;
+  line-height: 0.9;
+}

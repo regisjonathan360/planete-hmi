@@ -9,11 +9,14 @@
  * - Compte à rebours avec callback onExpired
  * - Boutons de vote désactivés si : déjà voté, battle terminée, ou non authentifié
  * - Mise à jour optimiste lors du vote
+ * - Preview audio au survol avec Howler.js
+ * - Affichage des covers de musique
  *
  * Requirements: 5.2, 5.3, 5.4, 5.5, 11.1, 11.3, 13.1, 13.5
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Howl } from "howler";
 import { useRealtime } from "./RealtimeProvider";
 import styles from "./BattleCard.module.css";
 
@@ -25,8 +28,10 @@ export interface BattleData {
   description?: string;
   side_a_label: string;
   side_a_image_url?: string;
+  side_a_audio_url?: string;
   side_b_label: string;
   side_b_image_url?: string;
+  side_b_audio_url?: string;
   votes_a: number;
   votes_b: number;
   ends_at: string;
@@ -42,6 +47,132 @@ export interface BattleCardProps {
 type VoteSide = "side_a" | "side_b";
 
 // --- Sub-components ---
+
+/** Composant pour une side de battle avec preview audio */
+function BattleSide({
+  label,
+  imageUrl,
+  audioUrl,
+  isSelected,
+  onVote,
+  disabled,
+  buttonLabel,
+  side,
+}: {
+  label: string;
+  imageUrl?: string;
+  audioUrl?: string;
+  isSelected: boolean;
+  onVote: () => void;
+  disabled: boolean;
+  buttonLabel: string;
+  side: "A" | "B";
+}) {
+  const [isHovering, setIsHovering] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const howlRef = useRef<Howl | null>(null);
+
+  // Nettoyer l'audio au démontage
+  useEffect(() => {
+    return () => {
+      if (howlRef.current) {
+        howlRef.current.unload();
+        howlRef.current = null;
+      }
+    };
+  }, []);
+
+  // Gérer le preview audio
+  const handleMouseEnter = useCallback(() => {
+    setIsHovering(true);
+
+    if (audioUrl && !howlRef.current) {
+      // Créer le Howl pour la preview
+      howlRef.current = new Howl({
+        src: [audioUrl],
+        html5: true,
+        volume: 0.5,
+        onplay: () => setIsPlaying(true),
+        onend: () => setIsPlaying(false),
+        onstop: () => setIsPlaying(false),
+        onloaderror: (id, error) => {
+          console.error(`Error loading audio for ${label}:`, error);
+          setIsPlaying(false);
+        },
+      });
+    }
+
+    // Jouer un extrait de 10 secondes
+    if (howlRef.current) {
+      howlRef.current.play();
+      // Arrêter après 10 secondes
+      setTimeout(() => {
+        if (howlRef.current) {
+          howlRef.current.stop();
+        }
+      }, 10000);
+    }
+  }, [audioUrl, label]);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovering(false);
+    
+    if (howlRef.current) {
+      howlRef.current.stop();
+    }
+  }, []);
+
+  return (
+    <div
+      className={`${styles.side} ${isSelected ? styles.sideSelected : ""}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className={styles.sideImageWrap}>
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={label}
+            className={styles.sideImage}
+            loading="lazy"
+          />
+        ) : (
+          <div className={styles.sidePlaceholder}>
+            <span className={styles.sidePlaceholderIcon}>🎵</span>
+          </div>
+        )}
+        
+        {/* Indicateur de preview audio */}
+        {audioUrl && (
+          <div className={`${styles.audioIndicator} ${isPlaying ? styles.audioIndicatorPlaying : ""}`}>
+            {isPlaying ? (
+              <>
+                <span className={styles.audioWave}></span>
+                <span className={styles.audioWave}></span>
+                <span className={styles.audioWave}></span>
+              </>
+            ) : (
+              <span className={styles.audioIcon}>🎧</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <span className={styles.sideLabel}>{label}</span>
+
+      <button
+        type="button"
+        className={`${styles.voteBtn} ${side === "A" ? styles.voteBtnA : styles.voteBtnB} ${isSelected ? styles.voteBtnSelected : ""}`}
+        onClick={onVote}
+        disabled={disabled}
+        aria-label={`Voter pour ${label} — ${buttonLabel}`}
+        title={buttonLabel}
+      >
+        {isSelected ? "✓ Voté" : "Voter"}
+      </button>
+    </div>
+  );
+}
 
 /** Barre de progression animée montrant la répartition des votes */
 function VoteProgressBar({
@@ -291,31 +422,16 @@ export function BattleCard({ battle, userVote, isAuthenticated }: BattleCardProp
       {/* Sides */}
       <div className={styles.sides}>
         {/* Side A */}
-        <div
-          className={`${styles.side} ${currentVote === "side_a" ? styles.sideSelected : ""}`}
-        >
-          {battle.side_a_image_url && (
-            <div className={styles.sideImageWrap}>
-              <img
-                src={battle.side_a_image_url}
-                alt={battle.side_a_label}
-                className={styles.sideImage}
-                loading="lazy"
-              />
-            </div>
-          )}
-          <span className={styles.sideLabel}>{battle.side_a_label}</span>
-          <button
-            type="button"
-            className={`${styles.voteBtn} ${styles.voteBtnA} ${currentVote === "side_a" ? styles.voteBtnSelected : ""}`}
-            onClick={() => handleVote("side_a")}
-            disabled={votingDisabled}
-            aria-label={`Voter pour ${battle.side_a_label} — ${getVoteButtonLabel("side_a")}`}
-            title={getVoteButtonLabel("side_a")}
-          >
-            {currentVote === "side_a" ? "✓ Voté" : "Voter"}
-          </button>
-        </div>
+        <BattleSide
+          label={battle.side_a_label}
+          imageUrl={battle.side_a_image_url}
+          audioUrl={battle.side_a_audio_url}
+          isSelected={currentVote === "side_a"}
+          onVote={() => handleVote("side_a")}
+          disabled={votingDisabled}
+          buttonLabel={getVoteButtonLabel("side_a")}
+          side="A"
+        />
 
         {/* VS separator */}
         <div className={styles.vs} aria-hidden="true">
@@ -323,31 +439,16 @@ export function BattleCard({ battle, userVote, isAuthenticated }: BattleCardProp
         </div>
 
         {/* Side B */}
-        <div
-          className={`${styles.side} ${currentVote === "side_b" ? styles.sideSelected : ""}`}
-        >
-          {battle.side_b_image_url && (
-            <div className={styles.sideImageWrap}>
-              <img
-                src={battle.side_b_image_url}
-                alt={battle.side_b_label}
-                className={styles.sideImage}
-                loading="lazy"
-              />
-            </div>
-          )}
-          <span className={styles.sideLabel}>{battle.side_b_label}</span>
-          <button
-            type="button"
-            className={`${styles.voteBtn} ${styles.voteBtnB} ${currentVote === "side_b" ? styles.voteBtnSelected : ""}`}
-            onClick={() => handleVote("side_b")}
-            disabled={votingDisabled}
-            aria-label={`Voter pour ${battle.side_b_label} — ${getVoteButtonLabel("side_b")}`}
-            title={getVoteButtonLabel("side_b")}
-          >
-            {currentVote === "side_b" ? "✓ Voté" : "Voter"}
-          </button>
-        </div>
+        <BattleSide
+          label={battle.side_b_label}
+          imageUrl={battle.side_b_image_url}
+          audioUrl={battle.side_b_audio_url}
+          isSelected={currentVote === "side_b"}
+          onVote={() => handleVote("side_b")}
+          disabled={votingDisabled}
+          buttonLabel={getVoteButtonLabel("side_b")}
+          side="B"
+        />
       </div>
 
       {/* Progress Bar */}

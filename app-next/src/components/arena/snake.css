@@ -1,0 +1,660 @@
+/* Koulèv — Arène Planète HMI
+   Univers néon cyberpunk / rétro gaming : cyan électrique, magenta,
+   vert acide, violet spatial. Polices arcade (Silkscreen) pour le HUD. */
+
+.snake-stage {
+  position: relative;
+  width: 100%;
+  height: min(72vh, 640px);
+  border-radius: 16px;
+  border: 1px solid rgba(45, 226, 255, 0.28);
+  overflow: hidden;
+  background: #0a0420;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(139, 47, 255, 0.18),
+    inset 0 0 60px rgba(45, 226, 255, 0.05);
+  isolation: isolate;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+
+/* Plein écran : la scène couvre tout l'écran */
+.snake-stage:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  border-radius: 0;
+  border: 0;
+}
+
+.snake-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Vignette de lisibilité HUD + scanlines discrètes */
+.snake-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.08) 0px,
+      rgba(0, 0, 0, 0.08) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    linear-gradient(180deg, rgba(10, 4, 32, 0.4) 0%, transparent 22%, transparent 78%, rgba(10, 4, 32, 0.4) 100%),
+    radial-gradient(120% 90% at 50% 50%, transparent 62%, rgba(10, 4, 32, 0.55) 100%);
+}
+
+/* ------------------------------------------------------------
+   HUD
+   ------------------------------------------------------------ */
+.snake-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem 1.1rem;
+  pointer-events: none;
+}
+
+.snake-hud__left,
+.snake-hud__right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.snake-hud__right {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.snake-hud__best {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 0.25rem;
+}
+
+.snake-hud__label {
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(45, 226, 255, 0.75);
+}
+
+.snake-hud__value {
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--arene-cyan, #2de2ff);
+  text-shadow:
+    0 0 14px rgba(45, 226, 255, 0.7),
+    0 0 34px rgba(45, 226, 255, 0.35);
+}
+
+.snake-icon-btn {
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(45, 226, 255, 0.3);
+  background: rgba(10, 4, 32, 0.6);
+  backdrop-filter: blur(8px);
+  color: var(--cream, #eaf6ff);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.snake-icon-btn:hover {
+  border-color: var(--arene-magenta, #ff2bd6);
+  background: rgba(255, 43, 214, 0.14);
+  box-shadow: 0 0 18px rgba(255, 43, 214, 0.35);
+}
+
+.snake-icon-btn:active {
+  transform: scale(0.94);
+}
+
+.snake-icon-btn:focus-visible {
+  outline: 2px solid var(--arene-cyan, #2de2ff);
+  outline-offset: 2px;
+}
+
+/* Bouton Tactile Boost pour Mobile — vert acide arcade */
+.snk-boost-btn {
+  position: absolute;
+  right: 1.2rem;
+  bottom: 1.4rem;
+  z-index: 4;
+  pointer-events: auto;
+  min-width: 90px;
+  height: 52px;
+  padding: 0 1rem;
+  border-radius: 26px;
+  border: 1.5px solid rgba(182, 255, 46, 0.7);
+  background: radial-gradient(circle at 30% 30%, rgba(182, 255, 46, 0.4) 0%, rgba(10, 4, 32, 0.8) 100%);
+  backdrop-filter: blur(8px);
+  color: var(--arene-lime, #b6ff2e);
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px rgba(182, 255, 46, 0.6);
+  box-shadow: 0 8px 24px rgba(182, 255, 46, 0.28);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition: transform 0.1s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.snk-boost-btn:active {
+  transform: scale(0.92);
+  border-color: #ffffff;
+  box-shadow: 0 12px 34px rgba(182, 255, 46, 0.6);
+}
+
+/* Compte à rebours — chiffres arcade géants */
+.snake-countdown {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.snake-countdown span {
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: clamp(4.5rem, 14vw, 8rem);
+  font-weight: 700;
+  color: var(--arene-cyan, #2de2ff);
+  text-shadow:
+    0 0 24px rgba(45, 226, 255, 0.9),
+    0 0 70px rgba(255, 43, 214, 0.55);
+  animation: snake-pop 0.8s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
+@keyframes snake-pop {
+  0% { opacity: 0; scale: 0.4; }
+  45% { opacity: 1; scale: 1.12; }
+  100% { opacity: 1; scale: 1; }
+}
+
+/* ------------------------------------------------------------
+   Overlays (menu, pause, game over)
+   ------------------------------------------------------------ */
+.snake-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  background: radial-gradient(120% 100% at 50% 12%, rgba(16, 6, 44, 0.6) 0%, rgba(10, 4, 32, 0.9) 100%);
+  backdrop-filter: blur(5px);
+}
+
+.snake-overlay--menu {
+  background: radial-gradient(120% 100% at 50% 10%, rgba(16, 6, 44, 0.5) 0%, rgba(10, 4, 32, 0.85) 100%);
+}
+
+.snake-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  width: min(460px, 92%);
+  padding: 1.6rem 1.6rem 1.7rem;
+  border-radius: 18px;
+  border: 1px solid rgba(45, 226, 255, 0.24);
+  background: rgba(16, 8, 44, 0.85);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.55),
+    0 0 34px rgba(139, 47, 255, 0.22),
+    inset 0 1px 0 rgba(45, 226, 255, 0.12);
+  text-align: center;
+  animation: snake-panel-in 0.45s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
+@keyframes snake-panel-in {
+  0% { opacity: 0; translate: 0 22px; scale: 0.96; }
+  100% { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+.snake-panel__tag {
+  margin: 0;
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--arene-magenta, #ff2bd6);
+  text-shadow: 0 0 10px rgba(255, 43, 214, 0.5);
+}
+
+.snake-panel__title {
+  margin: 0;
+  font-family: var(--font-arene-display, var(--font-display, sans-serif));
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  background: linear-gradient(96deg, var(--arene-cyan, #2de2ff), var(--arene-purple, #8b2fff) 50%, var(--arene-magenta, #ff2bd6));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 16px rgba(45, 226, 255, 0.4));
+}
+
+.snake-panel__desc {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--cream-dim, #94a9d0);
+}
+
+.snake-rules {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--cream-dim, #94a9d0);
+}
+
+.snake-rules li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.snake-rules__ico {
+  font-size: 1.05rem;
+}
+
+.snake-rules kbd {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid rgba(45, 226, 255, 0.4);
+  background: rgba(45, 226, 255, 0.08);
+  color: var(--arene-cyan, #2de2ff);
+}
+
+.snake-panel__best,
+.snake-panel__score {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--cream-dim, #94a9d0);
+}
+
+.snake-panel__best strong,
+.snake-panel__score strong {
+  color: var(--arene-cyan, #2de2ff);
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(45, 226, 255, 0.5);
+}
+
+.snake-panel__record {
+  margin: 0;
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--arene-lime, #b6ff2e);
+  text-shadow: 0 0 14px rgba(182, 255, 46, 0.6);
+  animation: snake-record 0.6s ease both;
+}
+
+@keyframes snake-record {
+  0% { scale: 0.6; opacity: 0; }
+  60% { scale: 1.15; }
+  100% { scale: 1; opacity: 1; }
+}
+
+.snake-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 0.3rem;
+}
+
+.snake-btn {
+  min-height: 48px;
+  padding: 0.7rem 1.6rem;
+  border-radius: 12px;
+  border: 1px solid rgba(45, 226, 255, 0.3);
+  background: rgba(45, 226, 255, 0.06);
+  color: var(--cream, #eaf6ff);
+  font-family: var(--font-arene-body, var(--font-body, sans-serif));
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.snake-btn:hover {
+  border-color: var(--arene-magenta, #ff2bd6);
+  background: rgba(255, 43, 214, 0.12);
+  box-shadow: 0 0 18px rgba(255, 43, 214, 0.3);
+}
+
+.snake-btn:active {
+  transform: scale(0.96);
+}
+
+.snake-btn:focus-visible {
+  outline: 2px solid var(--arene-cyan, #2de2ff);
+  outline-offset: 2px;
+}
+
+.snake-btn--play {
+  min-width: 190px;
+  border: 0;
+  background: linear-gradient(110deg, var(--arene-magenta, #ff2bd6), var(--arene-purple, #8b2fff) 50%, var(--arene-cyan, #2de2ff));
+  color: #0a0420;
+  font-weight: 700;
+  box-shadow: 0 10px 34px rgba(255, 43, 214, 0.4);
+}
+
+.snake-btn--play:hover {
+  background: linear-gradient(110deg, #ff55e0, #a14dff 50%, #5ceaff);
+  box-shadow: 0 12px 42px rgba(255, 43, 214, 0.55);
+}
+
+/* ------------------------------------------------------------
+   Menu principal (style arcade)
+   ------------------------------------------------------------ */
+.snake-menu {
+  width: min(480px, 94%);
+  max-height: calc(100% - 2.4rem);
+  overflow-y: auto;
+  gap: 0.8rem;
+}
+
+.snake-menu__title {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.55rem;
+  line-height: 1;
+}
+
+.snake-menu__title-main {
+  font-family: var(--font-arene-display, var(--font-display, sans-serif));
+  font-size: clamp(2.4rem, 9vw, 3.9rem);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  background: linear-gradient(100deg, var(--arene-cyan, #2de2ff) 0%, var(--arene-purple, #8b2fff) 45%, var(--arene-magenta, #ff2bd6) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 22px rgba(45, 226, 255, 0.45));
+  animation: snake-title-breathe 3.2s ease-in-out infinite;
+}
+
+.snake-menu__title-3d {
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: clamp(0.85rem, 3vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--arene-cyan, #2de2ff);
+  border: 1px solid rgba(45, 226, 255, 0.6);
+  border-radius: 8px;
+  padding: 0.28em 0.5em;
+  background: rgba(45, 226, 255, 0.1);
+  text-shadow: 0 0 10px rgba(45, 226, 255, 0.6);
+}
+
+@keyframes snake-title-breathe {
+  0%, 100% { filter: drop-shadow(0 0 14px rgba(45, 226, 255, 0.35)); }
+  50% { filter: drop-shadow(0 0 30px rgba(255, 43, 214, 0.55)); }
+}
+
+.snake-menu__field,
+.snake-menu__skins {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.snake-menu__field-label {
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(45, 226, 255, 0.75);
+}
+
+.snake-menu__input {
+  width: min(250px, 100%);
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(45, 226, 255, 0.35);
+  background: rgba(10, 4, 32, 0.65);
+  color: var(--cream, #eaf6ff);
+  font-family: var(--font-arene-body, var(--font-body, sans-serif));
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  touch-action: auto;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.snake-menu__input::placeholder {
+  color: rgba(148, 169, 208, 0.4);
+}
+
+.snake-menu__input:focus {
+  border-color: var(--arene-cyan, #2de2ff);
+  box-shadow: 0 0 0 3px rgba(45, 226, 255, 0.2), 0 0 18px rgba(45, 226, 255, 0.3);
+}
+
+.snake-menu__swatches {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.snake-menu__swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid rgba(45, 226, 255, 0.35);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.snake-menu__swatch:hover {
+  transform: scale(1.12);
+}
+
+.snake-menu__swatch--on {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(45, 226, 255, 0.6), 0 0 16px rgba(45, 226, 255, 0.6);
+  transform: scale(1.12);
+}
+
+.snake-menu__best {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--cream-dim, #94a9d0);
+}
+
+.snake-menu__best strong {
+  color: var(--arene-amber, #ffb020);
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(255, 176, 32, 0.5);
+}
+
+.snake-menu__play {
+  min-width: 220px;
+  min-height: 56px;
+  font-size: 1.05rem;
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+}
+
+/* ------------------------------------------------------------
+   Leaderboard
+   ------------------------------------------------------------ */
+.snk-board {
+  position: absolute;
+  top: 5.4rem;
+  right: 1.1rem;
+  z-index: 3;
+  width: 172px;
+  padding: 0.6rem 0.75rem 0.65rem;
+  border-radius: 14px;
+  border: 1px solid rgba(45, 226, 255, 0.3);
+  background: rgba(12, 5, 36, 0.62);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  box-shadow: 0 0 24px rgba(45, 226, 255, 0.12);
+  animation: snake-panel-in 0.4s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
+.snk-board__title {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: 0.54rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(45, 226, 255, 0.75);
+}
+
+.snk-board__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.snk-board__row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  color: rgba(234, 246, 255, 0.85);
+}
+
+.snk-board__row--first {
+  font-weight: 700;
+  color: var(--arene-amber, #ffb020);
+  text-shadow: 0 0 10px rgba(255, 176, 32, 0.45);
+}
+
+.snk-board__dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.snk-board__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.snk-board__pts {
+  font-family: var(--font-arene-arcade, var(--font-mono, monospace));
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------------
+   Joystick virtuel (mobile)
+   ------------------------------------------------------------ */
+.snk-joy {
+  position: absolute;
+  z-index: 4;
+  width: 112px;
+  height: 112px;
+  margin: -56px 0 0 -56px;
+  border-radius: 50%;
+  border: 1px solid rgba(45, 226, 255, 0.45);
+  background: radial-gradient(circle, rgba(45, 226, 255, 0.18) 0%, rgba(10, 4, 32, 0.4) 70%);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.snk-joy__knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 43, 214, 0.7);
+  background: radial-gradient(circle at 35% 30%, rgba(45, 226, 255, 0.95) 0%, rgba(255, 43, 214, 0.8) 100%);
+  box-shadow: 0 6px 22px rgba(255, 43, 214, 0.5);
+}
+
+/* ------------------------------------------------------------
+   Minimap (radar planète)
+   ------------------------------------------------------------ */
+.snk-minimap {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1.2rem;
+  z-index: 3;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.5));
+}
+
+/* Sur écran tactile, le bouton BOOST occupe le coin → radar au-dessus */
+@media (pointer: coarse) {
+  .snk-minimap {
+    bottom: 6.2rem;
+  }
+}
+
+/* ------------------------------------------------------------
+   Réduction du mouvement
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .snake-countdown span,
+  .snake-panel,
+  .snake-menu__title-main {
+    animation: none;
+  }
+}

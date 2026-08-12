@@ -1,33 +1,77 @@
-/* Arène — Layout cosmique avec fond immersif et disposition flex. */
+/* Arène — Univers cosmique / cyberpunk / rétro gaming.
+   Palette néon : violet spatial profond, cyan électrique, magenta,
+   vert acide arcade. Grille cyberpunk + scanlines en fond. */
 
 .arene {
   position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* Polices dédiées à l'arène : Orbitron (titres) + Exo 2 (corps) */
+  /* Polices dédiées à l'arène : Zen Dots (titres), Silkscreen (arcade),
+     Chakra Petch (corps) */
   font-family: var(--font-arene-body), var(--font-body), system-ui, sans-serif;
+
+  /* Palette néon scopée à l'Arène — les composants enfants utilisent
+     ces variables (avec fallbacks) et basculent automatiquement. */
+  --arene-cyan: #2de2ff;
+  --arene-magenta: #ff2bd6;
+  --arene-purple: #8b2fff;
+  --arene-deep: #1a0b3b;
+  --arene-amber: #ffb020;
+  --arene-lime: #b6ff2e;
+
+  /* Surcouche du thème global (cream/orange) → version froide néon */
+  --cream: #eaf6ff;
+  --cream-dim: #94a9d0;
+  --line: rgba(45, 226, 255, 0.16);
+  --flame-orange: #ff2bd6;
+  --flame-gold: #2de2ff;
 }
 
 .arene h1, .arene h2, .arene h3 {
   font-family: var(--font-arene-display), var(--font-display), system-ui, sans-serif;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
 }
 
 /* Couches de fond cosmique (gérées par StageLightsBackground + ShootingStars
    au niveau du root layout). Ce conteneur porte un scrim de lisibilité
-   propre à l'Arène par-dessus les couches globales. */
+   propre à l'Arène : violet spatial, grille cyberpunk et scanlines. */
 .areneScrim {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(8, 7, 13, 0.3) 0%,
-    rgba(8, 7, 13, 0.6) 40%,
-    rgba(8, 7, 13, 0.8) 100%
-  );
+  background:
+    /* scanlines rétro */
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.12) 0px,
+      rgba(0, 0, 0, 0.12) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    /* grille cyberpunk */
+    linear-gradient(rgba(45, 226, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 226, 255, 0.045) 1px, transparent 1px),
+    /* halos néon */
+    radial-gradient(52% 42% at 18% 8%, rgba(139, 47, 255, 0.22) 0%, transparent 70%),
+    radial-gradient(46% 38% at 84% 22%, rgba(45, 226, 255, 0.14) 0%, transparent 70%),
+    radial-gradient(60% 50% at 62% 96%, rgba(255, 43, 214, 0.12) 0%, transparent 70%),
+    /* profondeur spatiale */
+    linear-gradient(
+      180deg,
+      rgba(12, 4, 32, 0.55) 0%,
+      rgba(16, 6, 44, 0.72) 45%,
+      rgba(26, 11, 59, 0.88) 100%
+    );
+  background-size:
+    4px 4px,
+    44px 44px,
+    44px 44px,
+    auto,
+    auto,
+    auto,
+    auto;
 }
 
 /* Conteneur principal de contenu */
@@ -56,36 +100,46 @@
   min-width: 44px;
   min-height: 44px;
   padding: 0.5rem;
-  border: 1px solid rgba(244, 239, 228, 0.12);
+  border: 1px solid rgba(45, 226, 255, 0.4);
   border-radius: 10px;
-  background: rgba(244, 239, 228, 0.04);
-  color: rgba(244, 239, 228, 0.8);
+  background: rgba(45, 226, 255, 0.06);
+  color: var(--arene-cyan);
   font-size: 1.1rem;
   text-decoration: none;
-  transition: border-color 0.2s, background 0.2s;
+  box-shadow: 0 0 14px rgba(45, 226, 255, 0.18);
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
 }
 
 .areneBackBtn:hover {
-  border-color: rgba(101, 166, 255, 0.5);
-  background: rgba(101, 166, 255, 0.08);
+  border-color: var(--arene-magenta);
+  background: rgba(255, 43, 214, 0.12);
+  color: var(--arene-magenta);
+  box-shadow: 0 0 20px rgba(255, 43, 214, 0.35);
 }
 
 .areneBackBtn:focus-visible {
-  outline: 2px solid #65a6ff;
+  outline: 2px solid var(--arene-cyan);
   outline-offset: 2px;
 }
 
 .areneTitle {
   margin: 0;
-  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
   line-height: 1.1;
-  color: #f4efe4;
+  background: linear-gradient(96deg, var(--arene-cyan) 0%, var(--arene-purple) 50%, var(--arene-magenta) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 16px rgba(45, 226, 255, 0.35));
 }
 
 .areneSubtitle {
   margin: 0;
-  font-size: 0.85rem;
-  color: rgba(244, 239, 228, 0.6);
+  font-family: var(--font-arene-arcade), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(45, 226, 255, 0.75);
 }
 
 /* Disposition flex : main content + sidebar desktop */

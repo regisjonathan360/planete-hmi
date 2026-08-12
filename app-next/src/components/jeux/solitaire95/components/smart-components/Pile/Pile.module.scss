@@ -1,0 +1,13 @@
+.pile {
+  &__container {
+    position: relative;
+    width: 130px;
+    height: 175px;
+  }
+
+  @for $i from 0 through 19 {
+    &__#{$i} {
+      position: absolute;
+    }
+  }
+}

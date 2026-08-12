@@ -121,7 +121,7 @@
 }
 
 .targetLink {
-  color: rgba(173, 216, 255, 0.9);
+  color: rgba(45, 226, 255, 0.9);
   text-decoration: none;
   font-weight: 500;
 }
@@ -138,7 +138,7 @@
 
 .groupCount {
   font-size: 0.7rem;
-  color: rgba(180, 100, 255, 0.8);
+  color: rgba(255, 43, 214, 0.85);
   font-weight: 500;
 }
 
@@ -167,7 +167,7 @@
 }
 
 .voirPlus:focus-visible {
-  outline: 2px solid rgba(173, 216, 255, 0.8);
+  outline: 2px solid rgba(45, 226, 255, 0.8);
   outline-offset: 2px;
 }
 

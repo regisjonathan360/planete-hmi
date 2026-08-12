@@ -60,3 +60,15 @@ export async function requireAdmin(): Promise<
   if (!role) return { ok: false, status: 403, error: "Accès réservé aux administrateurs." };
   return { ok: true, user: { id: user.id, email: user.email ?? null } };
 }
+
+/**
+ * Variante qui lève une erreur HTTP si l'utilisateur n'est pas admin,
+ * et retourne l'utilisateur admin sinon (pour les Route Handlers).
+ */
+export async function ensureAdmin(): Promise<AdminUser> {
+  const result = await requireAdmin();
+  if (!result.ok) {
+    throw new Error(result.error, { cause: result.status });
+  }
+  return result.user;
+}

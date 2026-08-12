@@ -1,0 +1,127 @@
+.cardStock {
+  &__container {
+    padding: 0 19px;
+    display: flex;
+  }
+
+  &:focus-visible {
+    box-shadow: 0px 0px 0px 5px rgba(255, 0, 0, 1);
+  }
+
+  width: 130px;
+  height: 175px;
+  border: 2px solid black;
+  border-radius: 7px;
+  margin: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  &__cardHolder {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & .circleHolder {
+      border: 14px solid rgba(45, 226, 255, 0.9);
+      border-radius: 130px;
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      box-shadow: 0 0 14px rgba(45, 226, 255, 0.45);
+    }
+
+    & .vegasHolder {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      transform: rotate(Xdeg);
+
+      &:before,
+      &:after {
+        content: "";
+        position: absolute;
+        width: 118px;
+        height: 12px;
+        background-color: rgba(255, 43, 214, 0.95);
+        box-shadow: 0 0 10px rgba(255, 43, 214, 0.55);
+        top: 55px;
+      }
+
+      &:before {
+        transform: rotate(45deg);
+        left: 2px;
+      }
+      &:after {
+        transform: rotate(-45deg);
+        right: 2px;
+      }
+    }
+
+    div.cardContainer {
+      @for $i from 0 through 7 {
+        &.card_#{$i} {
+          position: absolute;
+          left: -65px;
+        }
+      }
+      @for $i from 8 through 16 {
+        &.card_#{$i} {
+          position: absolute;
+          left: -61px;
+          top: -86px;
+        }
+      }
+      @for $i from 17 through 23 {
+        &.card_#{$i} {
+          position: absolute;
+          left: -57px;
+          top: -84px;
+        }
+      }
+    }
+  }
+}
+
+.cardsOnTable {
+  position: relative;
+  width: 130px;
+  height: 175px;
+  margin: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  div.card {
+    @for $i from 0 through 7 {
+      &.card_#{$i} {
+        position: absolute;
+        left: 0px;
+      }
+    }
+    @for $i from 8 through 15 {
+      &.card_#{$i} {
+        position: absolute;
+        left: 4px;
+        top: 2px;
+      }
+    }
+    @for $i from 16 through 23 {
+      &.card_#{$i} {
+        position: absolute;
+        left: 8px;
+        top: 4px;
+      }
+    }
+  }
+}
+
+.threeCardShifter {
+  width: 130px;
+  height: 175px;
+  background-color: #ffffff;
+  border: 2px solid black;
+  border-radius: 7px;
+}

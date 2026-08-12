@@ -180,3 +180,52 @@ export const badgeSchema = z.object({
     .optional(),
   is_special: z.boolean().optional(),
 });
+
+// ---------------------------------------------------------------------------
+// Solitaire de l'Arène — cartes personnalisables par artiste
+// ---------------------------------------------------------------------------
+
+/** Clé de carte : rang + enseigne, ex. "KH" (roi de cœur). */
+export const solitaireCardKeySchema = z
+  .string()
+  .regex(/^(A|2|3|4|5|6|7|8|9|10|J|Q|K)(H|D|C|S)$/, "Clé de carte invalide.");
+
+export const SOLITAIRE_RANKS = [
+  "ace", "two", "three", "four", "five",
+  "six", "seven", "eight", "nine", "ten",
+  "jack", "queen", "king",
+] as const;
+
+export const solitaireRankSchema = z.enum(SOLITAIRE_RANKS);
+
+export const solitaireMaskTypeSchema = z.enum([
+  "circle",
+  "square",
+  "rounded-square",
+]);
+
+/**
+ * Personnalisation d'une carte (POST /api/admin/arene/solitaire/cards/[key]).
+ * Les overrides de masque/cadrage sont facultatifs (null = suivre le preset du rang).
+ */
+export const solitaireCardSchema = z.object({
+  artist_id: z.string().uuid().nullable(),
+  mask_type: solitaireMaskTypeSchema.nullable().optional(),
+  mask_scale: z.number().min(0).max(2).nullable().optional(),
+  mask_pos_x: z.number().min(0).max(1).nullable().optional(),
+  mask_pos_y: z.number().min(0).max(1).nullable().optional(),
+  image_zoom: z.number().min(0.1).max(5).nullable().optional(),
+  image_pos_x: z.number().min(0).max(1).nullable().optional(),
+  image_pos_y: z.number().min(0).max(1).nullable().optional(),
+});
+
+/** Géométrie par rang (PUT /api/admin/arene/solitaire/presets/[rank]). */
+export const solitairePresetSchema = z.object({
+  mask_type: solitaireMaskTypeSchema,
+  mask_scale: z.number().min(0).max(2),
+  mask_pos_x: z.number().min(0).max(1),
+  mask_pos_y: z.number().min(0).max(1),
+  image_zoom: z.number().min(0.1).max(5),
+  image_pos_x: z.number().min(0).max(1),
+  image_pos_y: z.number().min(0).max(1),
+});

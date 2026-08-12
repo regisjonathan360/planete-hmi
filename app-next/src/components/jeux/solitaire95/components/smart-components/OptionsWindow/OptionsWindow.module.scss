@@ -1,0 +1,89 @@
+.radioWrapper {
+  &__outer {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+  }
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 110px;
+  }
+}
+
+.checkboxWrapper {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.backgroundSection {
+  margin: 0 14px 14px;
+
+  &__label {
+    margin: 0 0 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #d9e6ff;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  &__item,
+  &__itemSelected {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px;
+    border: 2px solid rgba(45, 226, 255, 0.4);
+    border-radius: 4px;
+    background: rgba(13, 21, 52, 0.9);
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  &__itemSelected {
+    border: 2px solid #2de2ff;
+    outline: 1px solid #2de2ff;
+    box-shadow: 0 0 10px rgba(45, 226, 255, 0.35);
+    background: rgba(45, 226, 255, 0.14);
+  }
+
+  &__thumb {
+    width: 92px;
+    height: 62px;
+    object-fit: cover;
+    border: 1px solid rgba(122, 162, 255, 0.35);
+    background: linear-gradient(135deg, #0e1538, #060a1f);
+  }
+
+  &__classic {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    height: 62px;
+    border: 1px solid rgba(122, 162, 255, 0.35);
+    background: linear-gradient(135deg, #0e1538, #060a1f);
+    color: #eafcff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  &__name {
+    max-width: 92px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.68rem;
+    color: #b9cdf2;
+  }
+}

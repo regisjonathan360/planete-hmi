@@ -148,6 +148,9 @@ async function scrapeMusicCategoryPage(sourceUrl: URL): Promise<ScrapedArticle[]
   const html = await response.text();
   const articles: ScrapedArticle[] = [];
   const seen = new Set<string>();
+  // Images d'articles rencontrées dans une ancre « visuel » (image seule,
+  // sans texte) et à replacer sur l'ancre titre correspondante.
+  const pendingImages = new Map<string, string>();
   const anchorPattern = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
 
   for (const match of html.matchAll(anchorPattern)) {
@@ -167,7 +170,16 @@ async function scrapeMusicCategoryPage(sourceUrl: URL): Promise<ScrapedArticle[]
     }
 
     const title = decodeHtmlEntities(stripHtml(match[2]));
-    if (title.length <= 3) continue;
+    const anchorImage = extractImageFromHtml(match[0], sourceUrl);
+
+    // Ancre « visuel » : l'image de l'article est ici, mais pas le titre.
+    // On la mémorise par URL d'article pour l'ancre titre qui suit.
+    if (title.length <= 3) {
+      if (anchorImage && !pendingImages.has(articleUrl.href)) {
+        pendingImages.set(articleUrl.href, anchorImage);
+      }
+      continue;
+    }
 
     const contextStart = Math.max(0, (match.index ?? 0) - 400);
     const contextEnd = Math.min(html.length, (match.index ?? 0) + match[0].length + 300);
@@ -177,7 +189,10 @@ async function scrapeMusicCategoryPage(sourceUrl: URL): Promise<ScrapedArticle[]
     articles.push({
       sourceUrl: articleUrl.href,
       title,
-      imageUrl: extractImageFromHtml(context, sourceUrl),
+      imageUrl:
+        pendingImages.get(articleUrl.href) ??
+        anchorImage ??
+        extractImageFromHtml(context, sourceUrl),
       excerpt: null,
       author: "Chokarella",
       date: formatDateFromArticleUrl(articleUrl),
@@ -193,7 +208,7 @@ async function scrapeMusicCategoryPage(sourceUrl: URL): Promise<ScrapedArticle[]
 async function fetchWithTimeout(url: URL): Promise<Response> {
   try {
     return await fetch(url, {
-      headers: REQUEST_HEADERS,
+      headers: { ...REQUEST_HEADERS, Accept: "application/json" },
       cache: "no-store",
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });

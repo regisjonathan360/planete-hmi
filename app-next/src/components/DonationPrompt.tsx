@@ -9,13 +9,15 @@ import styles from "./DonationPrompt.module.css";
 const LEGACY_STORAGE_KEY = "planete-hmi-donation-prompt-dismissed-at";
 const OPT_OUT_STORAGE_KEY = "planete-hmi-donation-prompt-opt-out";
 const INITIAL_DELAY_MS = 20_000;  // Temps avant la première affichage
-const REAPPEAR_DELAY_MS = 10_000; // Temps avant réapparition après fermeture temporaire
+const VISIBLE_DURATION_MS = 8_000; // Durée d'affichage avant disparition automatique
+const REAPPEAR_DELAY_MS = 30_000; // Temps masqué avant réapparition
 
 export function DonationPrompt() {
   const pathname = usePathname();
   const [visible, setVisible] = useState(false);
   const initialTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const returnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const excludedRoute =
     pathname.startsWith("/admin") ||
@@ -51,8 +53,26 @@ export function DonationPrompt() {
       window.cancelAnimationFrame(frame);
       if (returnTimer.current) clearTimeout(returnTimer.current);
       if (initialTimer.current) clearTimeout(initialTimer.current);
+      if (hideTimer.current) clearTimeout(hideTimer.current);
     };
   }, [excludedRoute]);
+
+  // À chaque apparition : disparition automatique après 8 s, puis
+  // réapparition après 30 s (cycle répété tant que la page reste ouverte).
+  useEffect(() => {
+    if (!visible) return;
+
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    hideTimer.current = setTimeout(() => {
+      setVisible(false);
+      if (returnTimer.current) clearTimeout(returnTimer.current);
+      returnTimer.current = setTimeout(() => setVisible(true), REAPPEAR_DELAY_MS);
+    }, VISIBLE_DURATION_MS);
+
+    return () => {
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    };
+  }, [visible]);
 
   function dismissTemporarily() {
     setVisible(false);
@@ -82,7 +102,7 @@ export function DonationPrompt() {
         className={styles.close}
         type="button"
         onClick={dismissTemporarily}
-        aria-label="Fermer, l’appel au soutien réapparaîtra dans 20 secondes"
+        aria-label="Fermer, l’appel au soutien réapparaîtra dans 30 secondes"
       >
         <RiCloseLine aria-hidden="true" />
       </button>

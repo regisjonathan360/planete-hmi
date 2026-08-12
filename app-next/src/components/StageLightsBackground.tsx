@@ -189,6 +189,7 @@ export function StageLightsBackground() {
   const [isMobile, setIsMobile] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -200,14 +201,21 @@ export function StageLightsBackground() {
 
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     const handleMotionChange = () => setReducedMotion(motionPreference.matches);
+    const handlePause = (e: Event) =>
+      setPaused((e as CustomEvent<{ paused: boolean }>).detail?.paused ?? false);
     const frame = window.requestAnimationFrame(initialize);
     window.addEventListener("resize", handleResize);
     motionPreference.addEventListener("change", handleMotionChange);
+    window.addEventListener("stage-lights:pause", handlePause);
+    /* un jeu peut dispatcher la pause avant ce montage (imports dynamiques) :
+       on relit la valeur persistée pour ne jamais rater l'ordre de montage */
+    setPaused(Boolean((window as any).__sphereStageLightsPaused));
 
     return () => {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", handleResize);
       motionPreference.removeEventListener("change", handleMotionChange);
+      window.removeEventListener("stage-lights:pause", handlePause);
     };
   }, []);
 
@@ -228,6 +236,7 @@ export function StageLightsBackground() {
       aria-hidden="true"
     >
       <Canvas
+        frameloop={paused ? "never" : "always"}
         camera={{ position: [0, 0, 8], fov: 55 }}
         dpr={isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5)}
         gl={{ antialias: !isMobile, alpha: true, powerPreference: "low-power" }}

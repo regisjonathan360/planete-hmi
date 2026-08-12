@@ -1,0 +1,33 @@
+@font-face {
+  font-family: "MS-Sans-Serif";
+  src: url("./static/fonts/MS-Sans-Serif.woff") format("woff"),
+    url("./static/fonts/MS-Sans-Serif.woff2") format("woff2");
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "MS-Sans-Serif";
+  image-rendering: pixelated;
+  outline: none;
+}
+
+/* Barres de défilement néon cosmiques (fenêtres du jeu). */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2de2ff #060a1f;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060a1f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #2de2ff, #8b2fff);
+  border-radius: 5px;
+  border: 2px solid #060a1f;
+}

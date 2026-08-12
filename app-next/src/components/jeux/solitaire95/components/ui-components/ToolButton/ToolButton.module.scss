@@ -1,0 +1,25 @@
+.toolElement {
+  padding: 7px 35px;
+  cursor: pointer;
+
+  &:focus {
+    background: linear-gradient(96deg, rgba(45, 226, 255, 0.25), rgba(139, 47, 255, 0.35));
+    color: #eafcff;
+    outline: none;
+  }
+}
+
+.disabled {
+  color: rgba(148, 169, 208, 0.4);
+  cursor: not-allowed;
+
+  &:focus {
+    background-color: transparent;
+    color: rgba(148, 169, 208, 0.4);
+    cursor: not-allowed;
+  }
+}
+
+.toolElement span {
+  text-decoration: underline;
+}

@@ -1,0 +1,23 @@
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  color: #d7e6ff;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  background: radial-gradient(120% 120% at 50% 0%, #0b1226 0%, #05070f 70%);
+  border: 1px solid rgba(122, 162, 255, 0.18);
+  border-radius: 14px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}

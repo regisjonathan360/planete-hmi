@@ -1,5 +1,5 @@
--- =========================================================
--- Planète HMI — ALL MIGRATIONS COMBINED (Idempotent)
+﻿-- =========================================================
+-- PlanÃ¨te HMI â€” ALL MIGRATIONS COMBINED (Idempotent)
 -- Safe to run on hosted Supabase that already has some tables.
 -- Generated from 15 migration files in order.
 -- =========================================================
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS artists (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-COMMENT ON COLUMN artists.haitian_status IS 'Statut vérifié d''appartenance haïtienne (base de l''éligibilité).';
+COMMENT ON COLUMN artists.haitian_status IS 'Statut vÃ©rifiÃ© d''appartenance haÃ¯tienne (base de l''Ã©ligibilitÃ©).';
 
 -- ---------- Chansons ----------
 CREATE TABLE IF NOT EXISTS tracks (
@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS tracks (
 CREATE UNIQUE INDEX IF NOT EXISTS tracks_isrc_uidx ON tracks (isrc) WHERE isrc IS NOT NULL;
 CREATE INDEX IF NOT EXISTS tracks_normalized_title_idx ON tracks (normalized_title);
 CREATE INDEX IF NOT EXISTS tracks_release_date_idx ON tracks (release_date);
-COMMENT ON COLUMN tracks.track_family_id IS 'Regroupe les versions équivalentes (single/album, audio/vidéo, clean/explicit confirmés).';
+COMMENT ON COLUMN tracks.track_family_id IS 'Regroupe les versions Ã©quivalentes (single/album, audio/vidÃ©o, clean/explicit confirmÃ©s).';
 
--- ---------- Chanson ↔ Artistes ----------
+-- ---------- Chanson â†” Artistes ----------
 CREATE TABLE IF NOT EXISTS track_artists (
   track_id uuid not null references tracks (id) on delete cascade,
   artist_id uuid not null references artists (id) on delete cascade,
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS chart_sources (
   updated_at timestamptz not null default now()
 );
 
--- ---------- Éditions hebdomadaires ----------
+-- ---------- Ã‰ditions hebdomadaires ----------
 CREATE TABLE IF NOT EXISTS chart_editions (
   id uuid primary key default gen_random_uuid(),
   chart_source_id uuid not null references chart_sources (id) on delete cascade,
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS chart_editions (
 CREATE INDEX IF NOT EXISTS chart_editions_status_idx ON chart_editions (status);
 CREATE INDEX IF NOT EXISTS chart_editions_source_period_idx ON chart_editions (chart_source_id, period_start desc);
 
--- ---------- Entrées d'une édition ----------
+-- ---------- EntrÃ©es d'une Ã©dition ----------
 CREATE TABLE IF NOT EXISTS chart_entries (
   id uuid primary key default gen_random_uuid(),
   chart_edition_id uuid not null references chart_editions (id) on delete cascade,
@@ -151,8 +151,8 @@ CREATE TABLE IF NOT EXISTS chart_entries (
   unique (chart_edition_id, track_id),
   unique (chart_edition_id, filtered_position)
 );
-COMMENT ON COLUMN chart_entries.source_position IS 'Position d''origine sur la plateforme — jamais modifiée.';
-COMMENT ON COLUMN chart_entries.filtered_position IS 'Position Planète HMI (1..20) après filtrage haïtien.';
+COMMENT ON COLUMN chart_entries.source_position IS 'Position d''origine sur la plateforme â€” jamais modifiÃ©e.';
+COMMENT ON COLUMN chart_entries.filtered_position IS 'Position PlanÃ¨te HMI (1..20) aprÃ¨s filtrage haÃ¯tien.';
 
 -- ---------- Imports administratifs ----------
 CREATE TABLE IF NOT EXISTS chart_imports (
@@ -184,7 +184,7 @@ CREATE TABLE IF NOT EXISTS chart_match_queue (
   created_at timestamptz not null default now()
 );
 
--- ---------- Journal des exécutions de synchronisation ----------
+-- ---------- Journal des exÃ©cutions de synchronisation ----------
 CREATE TABLE IF NOT EXISTS sync_runs (
   id uuid primary key default gen_random_uuid(),
   chart_source_id uuid references chart_sources (id) on delete set null,
@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS chart_audit_logs (
   created_at timestamptz not null default now()
 );
 
--- ---------- Déclencheur updated_at ----------
+-- ---------- DÃ©clencheur updated_at ----------
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -255,13 +255,13 @@ CREATE TRIGGER trg_chart_entries_updated BEFORE UPDATE ON chart_entries
 -- Migration 2: 20260706173846_create_charts_rls.sql
 -- =========================================================
 
--- ---------- Rôles applicatifs ----------
+-- ---------- RÃ´les applicatifs ----------
 CREATE TABLE IF NOT EXISTS user_roles (
   user_id uuid primary key references auth.users (id) on delete cascade,
   role text not null default 'admin',
   created_at timestamptz not null default now()
 );
-COMMENT ON TABLE user_roles IS 'Attribution de rôles applicatifs (ex. admin) aux utilisateurs Supabase Auth.';
+COMMENT ON TABLE user_roles IS 'Attribution de rÃ´les applicatifs (ex. admin) aux utilisateurs Supabase Auth.';
 
 -- Fonctions helper RLS
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -305,7 +305,7 @@ ALTER TABLE chart_audit_logs   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_roles         ENABLE ROW LEVEL SECURITY;
 
 -- =========================================================
--- LECTURE PUBLIQUE — données publiées (safe: DROP + CREATE)
+-- LECTURE PUBLIQUE â€” donnÃ©es publiÃ©es (safe: DROP + CREATE)
 -- =========================================================
 
 DROP POLICY IF EXISTS "public read published editions" ON chart_editions;
@@ -362,7 +362,7 @@ CREATE POLICY "public read platform_tracks in published entries"
   ));
 
 -- =========================================================
--- ÉCRITURE / LECTURE COMPLÈTE — ADMINISTRATEURS
+-- Ã‰CRITURE / LECTURE COMPLÃˆTE â€” ADMINISTRATEURS
 -- =========================================================
 DO $$
 DECLARE t text;
@@ -447,9 +447,9 @@ JOIN chart_sources cs ON cs.id = e.chart_source_id
 JOIN tracks t ON t.id = ce.track_id
 LEFT JOIN platform_tracks pt ON pt.id = ce.platform_track_id;
 
-COMMENT ON VIEW chart_public_entries IS 'Entrées de classements publiées, enrichies. security_invoker => RLS des tables de base appliquée.';
+COMMENT ON VIEW chart_public_entries IS 'EntrÃ©es de classements publiÃ©es, enrichies. security_invoker => RLS des tables de base appliquÃ©e.';
 
--- Dernière édition publiée par source
+-- DerniÃ¨re Ã©dition publiÃ©e par source
 CREATE OR REPLACE FUNCTION latest_published_edition(p_source_id uuid)
 RETURNS uuid
 LANGUAGE sql
@@ -464,7 +464,7 @@ AS $$
   LIMIT 1;
 $$;
 
--- Aperçu multi-source
+-- AperÃ§u multi-source
 CREATE OR REPLACE FUNCTION get_chart_overview(p_limit int default 10)
 RETURNS jsonb
 LANGUAGE sql
@@ -784,7 +784,7 @@ ALTER TABLE artists ADD COLUMN IF NOT EXISTS confidence_score integer;
 -- Migration 10: 20260708090000_admin_charts_control.sql
 -- =========================================================
 
--- ---------- Colonnes d'édition manuelle sur chart_entries ----------
+-- ---------- Colonnes d'Ã©dition manuelle sur chart_entries ----------
 ALTER TABLE chart_entries ADD COLUMN IF NOT EXISTS is_hidden boolean NOT NULL DEFAULT false;
 ALTER TABLE chart_entries ADD COLUMN IF NOT EXISTS is_excluded boolean NOT NULL DEFAULT false;
 ALTER TABLE chart_entries ADD COLUMN IF NOT EXISTS admin_position integer;
@@ -794,19 +794,19 @@ ALTER TABLE chart_entries ADD COLUMN IF NOT EXISTS display_artwork_url text;
 ALTER TABLE chart_entries ADD COLUMN IF NOT EXISTS display_url text;
 ALTER TABLE chart_entries ADD COLUMN IF NOT EXISTS exclusion_reason text;
 
-COMMENT ON COLUMN chart_entries.is_hidden IS 'Masqué par l''admin : conservé mais absent du classement public.';
-COMMENT ON COLUMN chart_entries.is_excluded IS 'Retiré par l''admin (ex. artiste non haïtien) : ne compte pas dans les positions.';
-COMMENT ON COLUMN chart_entries.admin_position IS 'Ordre manuel imposé par l''admin (null = ordre source Audiomack).';
-COMMENT ON COLUMN chart_entries.display_title IS 'Titre corrigé par l''admin (override de tracks.title).';
-COMMENT ON COLUMN chart_entries.display_artist IS 'Nom d''artiste corrigé par l''admin (override).';
-COMMENT ON COLUMN chart_entries.display_artwork_url IS 'Cover corrigée par l''admin (override).';
-COMMENT ON COLUMN chart_entries.display_url IS 'Lien Audiomack corrigé par l''admin (override).';
+COMMENT ON COLUMN chart_entries.is_hidden IS 'MasquÃ© par l''admin : conservÃ© mais absent du classement public.';
+COMMENT ON COLUMN chart_entries.is_excluded IS 'RetirÃ© par l''admin (ex. artiste non haÃ¯tien) : ne compte pas dans les positions.';
+COMMENT ON COLUMN chart_entries.admin_position IS 'Ordre manuel imposÃ© par l''admin (null = ordre source Audiomack).';
+COMMENT ON COLUMN chart_entries.display_title IS 'Titre corrigÃ© par l''admin (override de tracks.title).';
+COMMENT ON COLUMN chart_entries.display_artist IS 'Nom d''artiste corrigÃ© par l''admin (override).';
+COMMENT ON COLUMN chart_entries.display_artwork_url IS 'Cover corrigÃ©e par l''admin (override).';
+COMMENT ON COLUMN chart_entries.display_url IS 'Lien Audiomack corrigÃ© par l''admin (override).';
 
--- ---------- État de publication sur chart_editions ----------
+-- ---------- Ã‰tat de publication sur chart_editions ----------
 ALTER TABLE chart_editions ADD COLUMN IF NOT EXISTS has_unpublished_changes boolean NOT NULL DEFAULT true;
 ALTER TABLE chart_editions ADD COLUMN IF NOT EXISTS last_published_at timestamptz;
 
-COMMENT ON COLUMN chart_editions.has_unpublished_changes IS 'Vrai si des modifications brouillon ne sont pas encore publiées.';
+COMMENT ON COLUMN chart_editions.has_unpublished_changes IS 'Vrai si des modifications brouillon ne sont pas encore publiÃ©es.';
 
 -- ---------- Historique simple des positions ----------
 CREATE TABLE IF NOT EXISTS chart_entry_history (
@@ -828,7 +828,7 @@ CREATE INDEX IF NOT EXISTS chart_entry_history_edition_idx
 
 COMMENT ON TABLE chart_entry_history IS 'Journal simple : ancienne position, nouvelle position, date, source, manuel.';
 
--- ---------- Snapshots publiés ----------
+-- ---------- Snapshots publiÃ©s ----------
 CREATE TABLE IF NOT EXISTS chart_published_snapshots (
   id uuid primary key default gen_random_uuid(),
   chart_source_id uuid not null references chart_sources (id) on delete cascade,
@@ -847,9 +847,9 @@ CREATE TABLE IF NOT EXISTS chart_published_snapshots (
 CREATE INDEX IF NOT EXISTS chart_published_snapshots_source_idx
   ON chart_published_snapshots (source_key);
 
-COMMENT ON TABLE chart_published_snapshots IS 'Dernière version publiée par source. Le site public lit uniquement ceci.';
+COMMENT ON TABLE chart_published_snapshots IS 'DerniÃ¨re version publiÃ©e par source. Le site public lit uniquement ceci.';
 
--- ---------- Trigger : marquer l'édition comme modifiée ----------
+-- ---------- Trigger : marquer l'Ã©dition comme modifiÃ©e ----------
 CREATE OR REPLACE FUNCTION mark_edition_dirty()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -892,7 +892,7 @@ CREATE POLICY "admin manage published snapshots"
 
 GRANT SELECT ON chart_published_snapshots TO anon, authenticated;
 
--- ---------- API de lecture publique basée snapshot ----------
+-- ---------- API de lecture publique basÃ©e snapshot ----------
 
 CREATE OR REPLACE FUNCTION get_published_platform_chart(p_source_key text, p_limit int default 20)
 RETURNS jsonb
@@ -975,7 +975,7 @@ ALTER TABLE chart_snapshot_entries ADD COLUMN IF NOT EXISTS artist_image_url tex
 -- =========================================================
 
 ALTER TABLE chart_entries ADD COLUMN IF NOT EXISTS genre text;
-COMMENT ON COLUMN chart_entries.genre IS 'Étiquette de genre attribuée par l''admin (ex: afrosounds, pop, hip-hop-rap, konpa, raboday).';
+COMMENT ON COLUMN chart_entries.genre IS 'Ã‰tiquette de genre attribuÃ©e par l''admin (ex: afrosounds, pop, hip-hop-rap, konpa, raboday).';
 
 
 -- =========================================================
@@ -983,7 +983,7 @@ COMMENT ON COLUMN chart_entries.genre IS 'Étiquette de genre attribuée par l''
 -- =========================================================
 
 ALTER TABLE artists ADD COLUMN IF NOT EXISTS tags text[] NOT NULL DEFAULT '{}';
-COMMENT ON COLUMN artists.tags IS 'Étiquettes de rôle (chanteur, rappeur, beatmaker, auteur_compositeur). Un artiste peut en avoir plusieurs.';
+COMMENT ON COLUMN artists.tags IS 'Ã‰tiquettes de rÃ´le (chanteur, rappeur, beatmaker, auteur_compositeur). Un artiste peut en avoir plusieurs.';
 
 
 -- =========================================================
@@ -1013,10 +1013,10 @@ CREATE TABLE IF NOT EXISTS tiktok_sounds (
   artist_id uuid references artists (id) on delete set null
 );
 
-COMMENT ON TABLE tiktok_sounds IS 'Sons TikTok agrégés avec métriques et score composite pour les classements.';
+COMMENT ON TABLE tiktok_sounds IS 'Sons TikTok agrÃ©gÃ©s avec mÃ©triques et score composite pour les classements.';
 COMMENT ON COLUMN tiktok_sounds.music_id IS 'Identifiant unique du son sur TikTok.';
-COMMENT ON COLUMN tiktok_sounds.validation_status IS 'Statut de validation admin : a_verifier (défaut), valide, refuse.';
-COMMENT ON COLUMN tiktok_sounds.score IS 'Score composite calculé par le Score Engine (pondéré, normalisé).';
+COMMENT ON COLUMN tiktok_sounds.validation_status IS 'Statut de validation admin : a_verifier (dÃ©faut), valide, refuse.';
+COMMENT ON COLUMN tiktok_sounds.score IS 'Score composite calculÃ© par le Score Engine (pondÃ©rÃ©, normalisÃ©).';
 COMMENT ON COLUMN tiktok_sounds.growth_7d IS 'Croissance en pourcentage sur 7 jours du nombre de publications.';
 COMMENT ON COLUMN tiktok_sounds.previous_total_videos IS 'Snapshot du total_videos il y a 7 jours pour calcul de croissance.';
 
@@ -1045,9 +1045,9 @@ CREATE TABLE IF NOT EXISTS tiktok_videos (
   updated_at timestamptz not null default now()
 );
 
-COMMENT ON TABLE tiktok_videos IS 'Données brutes des vidéos TikTok collectées via l''API Research.';
-COMMENT ON COLUMN tiktok_videos.video_id IS 'Identifiant unique de la vidéo sur TikTok.';
-COMMENT ON COLUMN tiktok_videos.music_id IS 'Référence au son utilisé dans la vidéo (FK → tiktok_sounds.music_id).';
+COMMENT ON TABLE tiktok_videos IS 'DonnÃ©es brutes des vidÃ©os TikTok collectÃ©es via l''API Research.';
+COMMENT ON COLUMN tiktok_videos.video_id IS 'Identifiant unique de la vidÃ©o sur TikTok.';
+COMMENT ON COLUMN tiktok_videos.music_id IS 'RÃ©fÃ©rence au son utilisÃ© dans la vidÃ©o (FK â†’ tiktok_sounds.music_id).';
 
 -- Index sur tiktok_videos
 CREATE INDEX IF NOT EXISTS tiktok_videos_music_id_idx ON tiktok_videos (music_id);
@@ -1066,7 +1066,7 @@ CREATE TABLE IF NOT EXISTS tiktok_featured_shorts (
   selected_by uuid references auth.users (id) on delete set null
 );
 
-COMMENT ON TABLE tiktok_featured_shorts IS 'Vidéos TikTok mises en avant sur la homepage (section HMI Shorts, max 10).';
+COMMENT ON TABLE tiktok_featured_shorts IS 'VidÃ©os TikTok mises en avant sur la homepage (section HMI Shorts, max 10).';
 COMMENT ON COLUMN tiktok_featured_shorts.display_order IS 'Ordre d''affichage sur la homepage (1 = premier).';
 
 -- Index sur tiktok_featured_shorts
@@ -1131,7 +1131,7 @@ VALUES
     'tiktok',
     'tiktok_haiti_global',
     'Top TikTok Haiti - Global',
-    'Sons populaires en Haïti — Score global',
+    'Sons populaires en HaÃ¯ti â€” Score global',
     'HT',
     'OFFICIAL_API',
     true,
@@ -1140,8 +1140,8 @@ VALUES
   (
     'tiktok',
     'tiktok_haiti_en_montee',
-    'Top TikTok Haiti - En montée',
-    'Sons populaires en Haïti — Croissance 7 jours',
+    'Top TikTok Haiti - En montÃ©e',
+    'Sons populaires en HaÃ¯ti â€” Croissance 7 jours',
     'HT',
     'OFFICIAL_API',
     true,
@@ -1150,8 +1150,8 @@ VALUES
   (
     'tiktok',
     'tiktok_haiti_nouveautes',
-    'Top TikTok Haiti - Nouveautés',
-    'Sons populaires en Haïti — Découvertes récentes (14 jours)',
+    'Top TikTok Haiti - NouveautÃ©s',
+    'Sons populaires en HaÃ¯ti â€” DÃ©couvertes rÃ©centes (14 jours)',
     'HT',
     'OFFICIAL_API',
     true,
@@ -1167,5 +1167,134 @@ ON CONFLICT (source_key) DO UPDATE SET
   is_automatic   = EXCLUDED.is_automatic;
 
 -- =========================================================
--- FIN — Toutes les migrations ont été appliquées.
+-- =========================================================
+-- PlanÃ¨te HMI â€” Solitaire de l'ArÃ¨ne : cartes personnalisables par artiste
+--
+-- 1. `solitaire_rank_presets` : gÃ©omÃ©trie du masque par rang (13 lignes,
+--    seed conforme Ã  src/lib/solitaire/cards.ts CARD_MASK_PRESETS).
+-- 2. `solitaire_cards` : personnalisation par carte (52 clÃ©s "KH"â€¦) :
+--    artiste + Ã©ventuels overrides de masque/cadrage.
+-- Valeurs relatives (0â†’1) : la composition est proportionnelle quelle que
+-- soit la taille de la carte. RLS : lecture publique, Ã©criture admin.
+-- =========================================================
+
+-- ---------- Presets par rang ----------
+
+CREATE TABLE IF NOT EXISTS public.solitaire_rank_presets (
+  rank text PRIMARY KEY
+    CHECK (rank IN ('ace','two','three','four','five','six','seven','eight','nine','ten','jack','queen','king')),
+  mask_type text NOT NULL
+    CHECK (mask_type IN ('circle','square','rounded-square')),
+  mask_scale numeric(5,3) NOT NULL CHECK (mask_scale > 0 AND mask_scale <= 2),
+  mask_pos_x numeric(5,3) NOT NULL DEFAULT 0.5 CHECK (mask_pos_x >= 0 AND mask_pos_x <= 1),
+  mask_pos_y numeric(5,3) NOT NULL DEFAULT 0.5 CHECK (mask_pos_y >= 0 AND mask_pos_y <= 1),
+  image_zoom numeric(5,3) NOT NULL DEFAULT 1 CHECK (image_zoom > 0 AND image_zoom <= 5),
+  image_pos_x numeric(5,3) NOT NULL DEFAULT 0.5 CHECK (image_pos_x >= 0 AND image_pos_x <= 1),
+  image_pos_y numeric(5,3) NOT NULL DEFAULT 0.35 CHECK (image_pos_y >= 0 AND image_pos_y <= 1),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+COMMENT ON TABLE public.solitaire_rank_presets IS
+  'GÃ©omÃ©trie du masque photo par rang du Solitaire de l''ArÃ¨ne (valeurs relatives 0â†’1).';
+COMMENT ON COLUMN public.solitaire_rank_presets.mask_type IS
+  'Forme du masque : circle (Aâ€“5), rounded-square (6â€“10), square (J/Q/K).';
+
+GRANT SELECT ON public.solitaire_rank_presets TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.solitaire_rank_presets TO authenticated;
+
+CREATE POLICY "public read solitaire rank presets"
+  ON public.solitaire_rank_presets
+  FOR SELECT USING (true);
+CREATE POLICY "admin manage solitaire rank presets"
+  ON public.solitaire_rank_presets
+  FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+-- Seed des presets (spÃ©cification Â§21 : Aâ€“5 cercle, 6â€“10 carrÃ© arrondi,
+-- J/Q/K carrÃ©). Modifiables en admin sans toucher au code.
+INSERT INTO public.solitaire_rank_presets
+  (rank, mask_type, mask_scale, mask_pos_x, mask_pos_y, image_zoom, image_pos_x, image_pos_y)
+VALUES
+  ('ace',   'circle',        0.72, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('two',   'circle',        0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('three', 'circle',        0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('four',  'circle',        0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('five',  'circle',        0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('six',   'rounded-square',0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('seven', 'rounded-square',0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('eight', 'rounded-square',0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('nine',  'rounded-square',0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('ten',   'rounded-square',0.42, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('jack',  'square',        0.82, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('queen', 'square',        0.82, 0.5, 0.5, 1.1, 0.5, 0.35),
+  ('king',  'square',        0.82, 0.5, 0.5, 1.1, 0.5, 0.35)
+ON CONFLICT (rank) DO UPDATE SET
+  mask_type    = EXCLUDED.mask_type,
+  mask_scale   = EXCLUDED.mask_scale,
+  mask_pos_x   = EXCLUDED.mask_pos_x,
+  mask_pos_y   = EXCLUDED.mask_pos_y,
+  image_zoom   = EXCLUDED.image_zoom,
+  image_pos_x  = EXCLUDED.image_pos_x,
+  image_pos_y  = EXCLUDED.image_pos_y,
+  updated_at   = now();
+
+-- ---------- Cartes personnalisÃ©es ----------
+
+CREATE TABLE IF NOT EXISTS public.solitaire_cards (
+  card_key text PRIMARY KEY
+    CHECK (card_key ~ '^(A|2|3|4|5|6|7|8|9|10|J|Q|K)(H|D|C|S)$'),
+  artist_id uuid REFERENCES public.artists (id) ON DELETE SET NULL,
+  -- Overrides facultatifs du preset du rang (NULL = suivre le preset).
+  mask_type text CHECK (mask_type IN ('circle','square','rounded-square')),
+  mask_scale numeric(5,3) CHECK (mask_scale > 0 AND mask_scale <= 2),
+  mask_pos_x numeric(5,3) CHECK (mask_pos_x >= 0 AND mask_pos_x <= 1),
+  mask_pos_y numeric(5,3) CHECK (mask_pos_y >= 0 AND mask_pos_y <= 1),
+  image_zoom numeric(5,3) CHECK (image_zoom > 0 AND image_zoom <= 5),
+  image_pos_x numeric(5,3) CHECK (image_pos_x >= 0 AND image_pos_x <= 1),
+  image_pos_y numeric(5,3) CHECK (image_pos_y >= 0 AND image_pos_y <= 1),
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+COMMENT ON TABLE public.solitaire_cards IS
+  'Personnalisation par carte du Solitaire de l''ArÃ¨ne (clÃ© "KH" = roi de cÅ“ur).';
+COMMENT ON COLUMN public.solitaire_cards.artist_id IS
+  'Artiste illustrant la carte. Suppression d''artiste â†’ carte sans artiste (rendu classique).';
+
+CREATE INDEX IF NOT EXISTS solitaire_cards_artist_idx
+  ON public.solitaire_cards (artist_id);
+
+GRANT SELECT ON public.solitaire_cards TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.solitaire_cards TO authenticated;
+
+CREATE POLICY "public read solitaire cards"
+  ON public.solitaire_cards
+  FOR SELECT USING (true);
+CREATE POLICY "admin manage solitaire cards"
+  ON public.solitaire_cards
+  FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+-- ---------- Trigger updated_at ----------
+
+CREATE OR REPLACE FUNCTION public.solitaire_touch_updated_at()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$;
+REVOKE EXECUTE ON FUNCTION public.solitaire_touch_updated_at() FROM PUBLIC, anon, authenticated;
+
+DROP TRIGGER IF EXISTS solitaire_cards_touch_updated_at ON public.solitaire_cards;
+CREATE TRIGGER solitaire_cards_touch_updated_at
+  BEFORE UPDATE ON public.solitaire_cards
+  FOR EACH ROW EXECUTE FUNCTION public.solitaire_touch_updated_at();
+
+DROP TRIGGER IF EXISTS solitaire_rank_presets_touch_updated_at ON public.solitaire_rank_presets;
+CREATE TRIGGER solitaire_rank_presets_touch_updated_at
+  BEFORE UPDATE ON public.solitaire_rank_presets
+  FOR EACH ROW EXECUTE FUNCTION public.solitaire_touch_updated_at();
+
+
+-- FIN â€” Toutes les migrations ont Ã©tÃ© appliquÃ©es.
 -- =========================================================

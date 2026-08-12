@@ -7,16 +7,86 @@
   opacity: 0.72;
 }
 
-.news-page__hero {
+/* ============ HERO COSMOS PLEIN ÉCRAN (design 21st) ============ */
+.news-cosmos-hero {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 620px;
+  overflow: hidden;
+  background: #000;
   border-bottom: 1px solid var(--line);
 }
 
-.news-page__hero::after {
-  background:
-    radial-gradient(70% 120% at 82% 18%, rgba(255, 106, 0, 0.13), transparent 62%),
-    linear-gradient(180deg, rgba(8, 7, 13, 0.12), rgba(8, 7, 13, 0.78));
+.news-cosmos-hero__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
 }
 
+/* Titre poétique superposé en haut, comme la démo (top ~ 20%) */
+.news-cosmos-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  padding: clamp(4.5rem, 14vh, 7rem) 1.5rem 0;
+  text-align: center;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.62),
+    rgba(0, 0, 0, 0) 32%,
+    rgba(0, 0, 0, 0) 68%,
+    rgba(0, 0, 0, 0.5)
+  );
+}
+
+.news-cosmos-hero__title {
+  max-width: 750px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5.5vw, 4.4rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+  color: var(--cream);
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.85);
+}
+
+.news-cosmos-hero__fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.1rem;
+  width: 100%;
+  height: 100svh;
+  min-height: 620px;
+  padding: clamp(4.5rem, 14vh, 7rem) 1.5rem 0;
+  text-align: center;
+  background:
+    radial-gradient(90% 70% at 50% 34%, rgba(255, 106, 0, 0.16), transparent 62%),
+    #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-cosmos-hero__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.35) 45%,
+      rgba(0, 0, 0, 0.6)
+    );
+  }
+}
+
+/* ============ CONTENU ACTUALITÉS ============ */
 .news-page__content {
   padding-bottom: clamp(2rem, 6vw, 4rem);
 }
@@ -173,10 +243,6 @@
 }
 
 @media (max-width: 720px) {
-  .news-page__hero {
-    padding-top: 2.5rem;
-  }
-
   .news-page__section-heading {
     align-items: flex-start;
     flex-direction: column;
@@ -429,7 +495,7 @@
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .deceased-list {
     grid-template-columns: 1fr;
   }
