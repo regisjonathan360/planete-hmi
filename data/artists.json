@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-11T05:57:38.774Z",
+    "genereLe": "2026-08-12T06:20:00.375Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
       "topTitre": "Apiye (feat. Zile)",
       "metriques": {
-        "deezerFans": 8955,
+        "deezerFans": 8956,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 490830,
+        "deezerFans": 491045,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -44,15 +44,15 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 72.7
+      "scoreHMI": 72.8
     },
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg",
       "topTitre": "Fè Lapli",
       "metriques": {
-        "deezerFans": 7888,
+        "deezerFans": 7893,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -63,7 +63,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 24.2
+      "scoreHMI": 24.3
     },
     {
       "nom": "Rutshelle Guillaume",
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Tag li",
       "metriques": {
-        "deezerFans": 10381,
+        "deezerFans": 10382,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,17 +163,17 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/5145d55a5cea70f024fc6e7cfc538cdd/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 14,
+        "deezerFans": 26,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/220083935",
+        "deezer": "https://www.deezer.com/artist/262215991",
         "spotify": null,
         "youtube": null
       },
@@ -223,7 +223,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
       "topTitre": "Drive",
       "metriques": {
-        "deezerFans": 2211,
+        "deezerFans": 2212,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
-      "topTitre": "Quando Você Some / Defensor",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
+      "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 41412,
+        "deezerFans": 3783618,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/132091652",
+        "deezer": "https://www.deezer.com/artist/5237400",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 43.7
+      "scoreHMI": 96.7
     }
   ]
 }

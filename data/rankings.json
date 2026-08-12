@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-11T05:57:38.774Z",
+    "genereLe": "2026-08-12T06:20:00.375Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,19 +10,19 @@
   "classement": [
     {
       "rang": 1,
-      "nom": "Joé Dwèt Filé",
-      "genre": "Konpa",
-      "titre": "4 Kampé",
-      "score": 72.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Olha a Explosão",
+      "score": 96.7,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 2,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "Quando Você Some / Defensor",
-      "score": 43.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg"
+      "nom": "Joé Dwèt Filé",
+      "genre": "Konpa",
+      "titre": "4 Kampé",
+      "score": 72.8,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 3,
@@ -45,8 +45,8 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "titre": "Fè Lapli",
-      "score": 24.2,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
+      "score": 24.3,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
