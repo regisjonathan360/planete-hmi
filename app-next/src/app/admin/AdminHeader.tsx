@@ -62,6 +62,9 @@ export function AdminHeader({ email, active }: { email: string | null; active?: 
         <Link href="/admin/youtube" className={active === "youtube" ? "is-active" : ""}>
           YouTube
         </Link>
+        <Link href="/admin/radio" className={active === "radio" ? "is-active" : ""}>
+          Radio
+        </Link>
         <Link href="/admin/actualites" className={active === "actualites" ? "is-active" : ""}>
           Actualités
         </Link>

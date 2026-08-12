@@ -225,73 +225,75 @@ export function NewsList({
           </section>
         )}
 
-        {/* Hero cosmos pleine page — sphère de particules + couvertures en orbite (design 21st) */}
-        <NewsCosmosHero images={heroImages} />
-
-        <div className="wrap news-page__content">
-          {categories.length > 1 && (
-            <div
-              className="pill-row news-page__filters"
-              role="group"
-              aria-label="Filtrer les actualités par rubrique"
-            >
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  className={`pill${activeCategory === category ? " is-active" : ""}`}
-                  aria-pressed={activeCategory === category}
-                  onClick={() => setActiveCategory(category)}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <section className="section section--tight" aria-live="polite">
-            {featured ? (
-              <>
-                <div className="news-page__section-heading">
-                  <div>
-                    <span className="section-tag">
-                      {`// ${activeCategory === ALL_CATEGORIES ? "Dernières publications" : activeCategory}`}
-                    </span>
-                    <h2>À lire maintenant</h2>
-                  </div>
-                  <span className="news-page__count">
-                    {visibleArticles.length} article{visibleArticles.length > 1 ? "s" : ""}
-                  </span>
-                </div>
-
-                <div className="news-grid">
-                  <ArticleCard article={featured} featured />
-                  {rest.map((article) => (
-                    <ArticleCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="news-page__empty">
-                <span className="section-tag">{"// Actualités HMI"}</span>
-                <h2>Aucune publication disponible</h2>
-                <p>
-                  Les prochaines nouvelles de la musique haïtienne apparaîtront ici dès leur
-                  publication.
-                </p>
-                {activeCategory !== ALL_CATEGORIES && (
+        {/* Hero cosmos pleine page — les actualités tourbillonnent au milieu
+            des étoiles : sphère de particules + couvertures en orbite,
+            cartes des articles superposées au centre de la scène (design 21st) */}
+        <NewsCosmosHero images={heroImages}>
+          <div className="wrap news-page__content">
+            {categories.length > 1 && (
+              <div
+                className="pill-row news-page__filters"
+                role="group"
+                aria-label="Filtrer les actualités par rubrique"
+              >
+                {categories.map((category) => (
                   <button
+                    key={category}
                     type="button"
-                    className="btn btn-ghost"
-                    onClick={() => setActiveCategory(ALL_CATEGORIES)}
+                    className={`pill${activeCategory === category ? " is-active" : ""}`}
+                    aria-pressed={activeCategory === category}
+                    onClick={() => setActiveCategory(category)}
                   >
-                    Voir toutes les actualités
+                    {category}
                   </button>
-                )}
+                ))}
               </div>
             )}
-          </section>
-        </div>
+
+            <section className="section section--tight" aria-live="polite">
+              {featured ? (
+                <>
+                  <div className="news-page__section-heading">
+                    <div>
+                      <span className="section-tag">
+                        {`// ${activeCategory === ALL_CATEGORIES ? "Dernières publications" : activeCategory}`}
+                      </span>
+                      <h2>À lire maintenant</h2>
+                    </div>
+                    <span className="news-page__count">
+                      {visibleArticles.length} article{visibleArticles.length > 1 ? "s" : ""}
+                    </span>
+                  </div>
+
+                  <div className="news-grid">
+                    <ArticleCard article={featured} featured />
+                    {rest.map((article) => (
+                      <ArticleCard key={article.id} article={article} />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="news-page__empty">
+                  <span className="section-tag">{"// Actualités HMI"}</span>
+                  <h2>Aucune publication disponible</h2>
+                  <p>
+                    Les prochaines nouvelles de la musique haïtienne apparaîtront ici dès leur
+                    publication.
+                  </p>
+                  {activeCategory !== ALL_CATEGORIES && (
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={() => setActiveCategory(ALL_CATEGORIES)}
+                    >
+                      Voir toutes les actualités
+                    </button>
+                  )}
+                </div>
+              )}
+            </section>
+          </div>
+        </NewsCosmosHero>
       </main>
 
       <SiteFooter />

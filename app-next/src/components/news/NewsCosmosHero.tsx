@@ -14,6 +14,8 @@ interface NewsCosmosHeroProps {
   images: string[];
   tag?: string;
   statement?: React.ReactNode;
+  /** Contenu superposé au milieu des étoiles (cartes d'actualités). */
+  children?: React.ReactNode;
 }
 
 export function NewsCosmosHero({
@@ -24,6 +26,7 @@ export function NewsCosmosHero({
       Actualités <span className="fx-o">HMI</span>
     </>
   ),
+  children,
 }: NewsCosmosHeroProps) {
   const [reduced, setReduced] = useState(false);
 
@@ -62,6 +65,8 @@ export function NewsCosmosHero({
         <p className="section-tag">{tag}</p>
         <h1 className="news-cosmos-hero__title">{statement}</h1>
       </div>
+
+      {children && <div className="news-cosmos-hero__content">{children}</div>}
     </section>
   );
 }
