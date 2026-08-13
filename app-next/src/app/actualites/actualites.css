@@ -8,19 +8,6 @@
 }
 
 /* ============ HERO COSMOS PLEIN ÉCRAN (design 21st) ============ */
-/* Rouleau piloté par le scroll de la page : la scène reste collée à
-   l'écran (sticky) pendant que le défilement fait tourner le cercle. */
-.news-gallery-scroll {
-  position: relative;
-  height: 240vh;
-}
-
-.news-gallery-sticky {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-}
-
 .news-cosmos-hero {
   position: relative;
   width: 100%;
@@ -143,6 +130,13 @@
   flex: 1;
   min-height: 0;
   width: 100%;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.circular-news-gallery--dragging {
+  cursor: grabbing;
 }
 
 .circular-news-gallery__rotator {
@@ -243,6 +237,25 @@
   font-size: 0.7rem;
   color: var(--cream-dim);
   pointer-events: none;
+}
+
+/* Bouton d'activation du gyroscope — même style que le globe d'Haïti */
+.circular-news-gallery__gyro {
+  position: absolute;
+  left: 50%;
+  bottom: 3.2rem;
+  z-index: 25;
+  transform: translateX(-50%);
+  border: 1px solid rgba(0, 255, 204, 0.45);
+  border-radius: 999px;
+  background: rgba(8, 10, 25, 0.76);
+  color: #f4efe4;
+  padding: 0.6rem 0.9rem;
+  font: inherit;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  backdrop-filter: blur(14px);
+  cursor: pointer;
 }
 
 .news-cosmos-hero__content .news-card {

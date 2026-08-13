@@ -180,11 +180,9 @@ export function NewsList({
         )}
 
         {/* Hero cosmos pleine page — les actualités tournent en cercle 3D au
-            milieu des étoiles : la scène reste collée (sticky) pendant que le
-            défilement de la page pilote la rotation (design 21st) */}
-        <section className="news-gallery-scroll">
-          <div className="news-gallery-sticky">
-            <NewsCosmosHero images={[]}>
+            milieu des étoiles ; on fait tourner le cercle à la main (drag)
+            ou avec le gyroscope du téléphone (design 21st) */}
+        <NewsCosmosHero images={[]}>
               <div className="wrap news-page__content">
                 {categories.length > 1 && (
                   <div
@@ -223,7 +221,7 @@ export function NewsList({
 
                       <CircularNewsGallery items={circleItems} />
                       <p className="news-gallery-hint">
-                        Faites défiler la page pour faire tourner le cercle
+                        Faites glisser pour faire tourner le cercle — ou activez le gyroscope
                       </p>
                     </>
                   ) : (
@@ -248,9 +246,7 @@ export function NewsList({
                 </section>
               </div>
             </NewsCosmosHero>
-          </div>
-        </section>
-      </main>
+        </main>
 
       <SiteFooter />
     </>
