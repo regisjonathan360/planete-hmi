@@ -15,6 +15,8 @@ export interface CircularNewsItem {
   url: string;
   tag?: string;
   date?: string | null;
+  /** Cadrage de l'image (object-position), ex. "47% 35%" — comme le modèle. */
+  pos?: string;
 }
 
 interface CircularNewsGalleryProps {
@@ -31,7 +33,7 @@ const SCROLL_TURNS = 2;
 export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState(() => Math.random() * 360);
-  const [dims, setDims] = useState({ radius: 320, cardW: 240, cardH: 336 });
+  const [dims, setDims] = useState({ radius: 340, cardW: 260, cardH: 377 });
   const [reduced, setReduced] = useState(false);
 
   /* prefers-reduced-motion : on coupe l'auto-rotation (le scroll reste). */
@@ -43,7 +45,9 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => query.removeEventListener("change", onChange);
   }, []);
 
-  /* Taille réactive : rayon du cercle + dimensions des cartes selon l'écran. */
+  /* Taille réactive : rayon du cercle + dimensions des cartes selon l'écran.
+     La largeur du conteneur pilote le rayon (comme la démo) et la hauteur
+     disponible borne la taille des cartes — cartes volontairement grandes. */
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
@@ -51,11 +55,11 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       const w = host.clientWidth;
       const h = host.clientHeight;
       if (!w || !h) return;
-      const cardW = Math.round(Math.min(w * 0.35, h * 0.45, 260));
-      const cardH = Math.round(cardW * 1.4);
+      const cardW = Math.round(Math.min(w * 0.38, h * 0.5, 380));
+      const cardH = Math.round(cardW * 1.45);
       const radius = Math.max(
-        180,
-        Math.round(Math.min((Math.min(w, h) - cardW) / 2 - 6, 560))
+        200,
+        Math.round(Math.min((w - cardW) / 2 - 14, 800))
       );
       setDims((prev) =>
         Math.abs(prev.radius - radius) < 2 && Math.abs(prev.cardW - cardW) < 2
@@ -142,7 +146,12 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
               }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.image} alt="" loading="lazy" />
+              <img
+                src={item.image}
+                alt=""
+                loading="lazy"
+                style={item.pos ? { objectPosition: item.pos } : undefined}
+              />
               {item.tag && (
                 <span className="circular-news-gallery__tag">{item.tag}</span>
               )}
