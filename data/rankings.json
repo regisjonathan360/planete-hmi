@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-12T06:20:00.375Z",
+    "genereLe": "2026-08-13T06:21:48.500Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "4 Kampé",
+      "titre": "Rihanna",
       "score": 72.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -79,6 +79,14 @@
       "titre": "Drive",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 10,
+      "nom": "Belo",
+      "genre": "Reggae",
+      "titre": "Lakou trankil",
+      "score": 2.4,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
