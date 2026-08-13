@@ -1,11 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BirthdayPlanet } from "@/components/BirthdayPlanet";
+import {
+  CircularNewsGallery,
+  type CircularNewsItem,
+} from "@/components/news/CircularNewsGallery";
 import "./actualites.css";
 
 const NewsCosmosHero = dynamic(
@@ -46,18 +49,12 @@ function articleTitle(article: Article) {
   return article.display_title || article.source_title;
 }
 
-function articleImage(article: Article, featured = false) {
+function articleImage(article: Article) {
   return (
     article.display_image_url ||
     article.source_image_url ||
-    (featured
-      ? "/image/covers/planet-hmi-cover-placeholder-banner.webp.webp"
-      : "/image/covers/planet-hmi-cover-placeholder-square.webp.webp")
+    "/image/covers/planet-hmi-cover-placeholder-square.webp.webp"
   );
-}
-
-function articleExcerpt(article: Article) {
-  return article.display_excerpt || article.source_excerpt;
 }
 
 function formatDate(article: Article) {
@@ -72,51 +69,6 @@ function formatDate(article: Article) {
     month: "long",
     year: "numeric",
   }).format(date);
-}
-
-function ArticleCard({
-  article,
-  featured = false,
-}: {
-  article: Article;
-  featured?: boolean;
-}) {
-  const title = articleTitle(article);
-  const excerpt = articleExcerpt(article);
-  const date = formatDate(article);
-
-  return (
-    <a
-      href={article.source_url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`news-card${featured ? " news-card--feature" : ""}`}
-      aria-label={`Lire « ${title} »`}
-    >
-      <div className="news-card__media">
-        <Image
-          unoptimized
-          src={articleImage(article, featured)}
-          alt={title}
-          width={featured ? 800 : 480}
-          height={featured ? 400 : 300}
-          sizes={featured ? "(max-width: 720px) 100vw, 66vw" : "(max-width: 720px) 100vw, 33vw"}
-        />
-        {featured && <span className="news-card__feature-badge">À la une</span>}
-      </div>
-      <div className="news-card__body">
-        <span className="news-card__tag">{article.category}</span>
-        <h2 className="news-card__title">{title}</h2>
-        {excerpt && <p className="news-card__excerpt">{excerpt}</p>}
-        <div className="news-card__meta">
-          {date && <time className="news-card__date">{date}</time>}
-          {article.source_author && (
-            <span className="news-card__source">{article.source_author}</span>
-          )}
-        </div>
-      </div>
-    </a>
-  );
 }
 
 export function NewsList({ 
@@ -147,15 +99,17 @@ export function NewsList({
     [activeCategory, articles]
   );
 
-  const featured =
-    visibleArticles.find((article) => article.is_featured) ?? visibleArticles[0] ?? null;
-  const rest = featured
-    ? visibleArticles.filter((article) => article.id !== featured.id)
-    : [];
-
-  const heroImages = useMemo(
-    () => articles.map((article) => articleImage(article)).filter(Boolean).slice(0, 24),
-    [articles]
+  const circleItems = useMemo<CircularNewsItem[]>(
+    () =>
+      visibleArticles.map((article) => ({
+        id: article.id,
+        title: articleTitle(article),
+        image: articleImage(article),
+        url: article.source_url,
+        tag: article.category,
+        date: formatDate(article),
+      })),
+    [visibleArticles]
   );
 
   return (
@@ -225,75 +179,77 @@ export function NewsList({
           </section>
         )}
 
-        {/* Hero cosmos pleine page — les actualités tourbillonnent au milieu
-            des étoiles : sphère de particules + couvertures en orbite,
-            cartes des articles superposées au centre de la scène (design 21st) */}
-        <NewsCosmosHero images={heroImages}>
-          <div className="wrap news-page__content">
-            {categories.length > 1 && (
-              <div
-                className="pill-row news-page__filters"
-                role="group"
-                aria-label="Filtrer les actualités par rubrique"
-              >
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    className={`pill${activeCategory === category ? " is-active" : ""}`}
-                    aria-pressed={activeCategory === category}
-                    onClick={() => setActiveCategory(category)}
+        {/* Hero cosmos pleine page — les actualités tournent en cercle 3D au
+            milieu des étoiles : la scène reste collée (sticky) pendant que le
+            défilement de la page pilote la rotation (design 21st) */}
+        <section className="news-gallery-scroll">
+          <div className="news-gallery-sticky">
+            <NewsCosmosHero images={[]}>
+              <div className="wrap news-page__content">
+                {categories.length > 1 && (
+                  <div
+                    className="pill-row news-page__filters"
+                    role="group"
+                    aria-label="Filtrer les actualités par rubrique"
                   >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <section className="section section--tight" aria-live="polite">
-              {featured ? (
-                <>
-                  <div className="news-page__section-heading">
-                    <div>
-                      <span className="section-tag">
-                        {`// ${activeCategory === ALL_CATEGORIES ? "Dernières publications" : activeCategory}`}
-                      </span>
-                      <h2>À lire maintenant</h2>
-                    </div>
-                    <span className="news-page__count">
-                      {visibleArticles.length} article{visibleArticles.length > 1 ? "s" : ""}
-                    </span>
-                  </div>
-
-                  <div className="news-grid">
-                    <ArticleCard article={featured} featured />
-                    {rest.map((article) => (
-                      <ArticleCard key={article.id} article={article} />
+                    {categories.map((category) => (
+                      <button
+                        key={category}
+                        type="button"
+                        className={`pill${activeCategory === category ? " is-active" : ""}`}
+                        aria-pressed={activeCategory === category}
+                        onClick={() => setActiveCategory(category)}
+                      >
+                        {category}
+                      </button>
                     ))}
                   </div>
-                </>
-              ) : (
-                <div className="news-page__empty">
-                  <span className="section-tag">{"// Actualités HMI"}</span>
-                  <h2>Aucune publication disponible</h2>
-                  <p>
-                    Les prochaines nouvelles de la musique haïtienne apparaîtront ici dès leur
-                    publication.
-                  </p>
-                  {activeCategory !== ALL_CATEGORIES && (
-                    <button
-                      type="button"
-                      className="btn btn-ghost"
-                      onClick={() => setActiveCategory(ALL_CATEGORIES)}
-                    >
-                      Voir toutes les actualités
-                    </button>
+                )}
+
+                <section className="section section--grow" aria-live="polite">
+                  {circleItems.length > 0 ? (
+                    <>
+                      <div className="news-page__section-heading">
+                        <div>
+                          <span className="section-tag">
+                            {`// ${activeCategory === ALL_CATEGORIES ? "Dernières publications" : activeCategory}`}
+                          </span>
+                          <h2>L'actualité tourne autour de vous</h2>
+                        </div>
+                        <span className="news-page__count">
+                          {visibleArticles.length} article{visibleArticles.length > 1 ? "s" : ""}
+                        </span>
+                      </div>
+
+                      <CircularNewsGallery items={circleItems} />
+                      <p className="news-gallery-hint">
+                        Faites défiler la page pour faire tourner le cercle
+                      </p>
+                    </>
+                  ) : (
+                    <div className="news-page__empty">
+                      <span className="section-tag">{"// Actualités HMI"}</span>
+                      <h2>Aucune publication disponible</h2>
+                      <p>
+                        Les prochaines nouvelles de la musique haïtienne apparaîtront ici dès leur
+                        publication.
+                      </p>
+                      {activeCategory !== ALL_CATEGORIES && (
+                        <button
+                          type="button"
+                          className="btn btn-ghost"
+                          onClick={() => setActiveCategory(ALL_CATEGORIES)}
+                        >
+                          Voir toutes les actualités
+                        </button>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-            </section>
+                </section>
+              </div>
+            </NewsCosmosHero>
           </div>
-        </NewsCosmosHero>
+        </section>
       </main>
 
       <SiteFooter />

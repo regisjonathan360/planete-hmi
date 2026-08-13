@@ -8,6 +8,19 @@
 }
 
 /* ============ HERO COSMOS PLEIN ÉCRAN (design 21st) ============ */
+/* Rouleau piloté par le scroll de la page : la scène reste collée à
+   l'écran (sticky) pendant que le défilement fait tourner le cercle. */
+.news-gallery-scroll {
+  position: relative;
+  height: 240vh;
+}
+
+.news-gallery-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+}
+
 .news-cosmos-hero {
   position: relative;
   width: 100%;
@@ -86,21 +99,18 @@
   }
 }
 
-/* Contenu superposé AU MILIEU des étoiles : cartes d'actualités au
-   centre de la sphère, défilement interne au hero (plein écran fixe). */
+/* Contenu superposé AU MILIEU des étoiles : le cercle 3D des actualités
+   tourne au centre de la sphère, la page défile pour le faire pivoter. */
 .news-cosmos-hero__content {
   position: absolute;
   inset: 0;
   z-index: 3;
   pointer-events: auto;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  overflow-y: auto;
-  padding:
-    clamp(9rem, 22vh, 13rem)
-    clamp(1rem, 3vw, 2rem)
-    2.5rem;
-  scrollbar-width: thin;
+  overflow: hidden;
+  padding: 0;
 }
 
 .news-cosmos-hero__content .wrap {
@@ -108,12 +118,126 @@
 }
 
 .news-cosmos-hero__content .news-page__content {
-  padding-bottom: clamp(2rem, 6vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  height: 100%;
+  padding: clamp(7rem, 17vh, 10.5rem) clamp(1rem, 3vw, 2rem) 1.6rem;
 }
 
-/* Le filtre et le titre « À lire maintenant » restent lisibles sur le fond étoilé */
+.news-cosmos-hero__content .section--grow {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Le filtre et le titre restent lisibles sur le fond étoilé */
 .news-cosmos-hero__content .news-page__section-heading h2 {
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
+}
+
+/* ============ GALERIE CIRCULAIRE 3D ============ */
+.circular-news-gallery {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.circular-news-gallery__rotator {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-news-gallery__card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(243, 18, 26, 0.22), rgba(0, 120, 255, 0.18)),
+    var(--panel-2);
+  box-shadow: 0 24px 64px rgba(5, 4, 9, 0.6);
+  color: var(--cream);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.circular-news-gallery__card:focus-visible {
+  outline: 2px solid var(--fire);
+  outline-offset: 4px;
+}
+
+.circular-news-gallery__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.circular-news-gallery__card::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 55%;
+  background: linear-gradient(180deg, transparent, rgba(5, 4, 9, 0.88));
+  pointer-events: none;
+}
+
+.circular-news-gallery__tag {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.55rem;
+  z-index: 2;
+  border-radius: 999px;
+  padding: 0.28rem 0.62rem;
+  background: rgba(11, 9, 17, 0.72);
+  color: var(--cream-dim);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(4px);
+}
+
+.circular-news-gallery__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem 0.85rem 0.9rem;
+}
+
+.circular-news-gallery__caption strong {
+  font-size: 0.98rem;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+}
+
+.circular-news-gallery__caption time {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--cream-dim);
+}
+
+.news-gallery-hint {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--cream-dim);
 }
 
 .news-cosmos-hero__content .news-card {
