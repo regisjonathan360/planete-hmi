@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-13T06:21:48.500Z",
+    "genereLe": "2026-08-14T06:19:48.067Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
       "topTitre": "Apiye (feat. Zile)",
       "metriques": {
-        "deezerFans": 8956,
+        "deezerFans": 8957,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "Rihanna",
+      "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 491281,
+        "deezerFans": 491498,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -52,7 +52,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg",
       "topTitre": "Fè Lapli",
       "metriques": {
-        "deezerFans": 7894,
+        "deezerFans": 7896,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Tag li",
+      "topTitre": "Rete La",
       "metriques": {
-        "deezerFans": 10383,
+        "deezerFans": 10386,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -87,17 +87,17 @@
     {
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/d41d8cd98f00b204e9800998ecf8427e/250x250-000000-80-0-0.jpg",
+      "topTitre": "Messi (Sunset Mix)",
       "metriques": {
-        "deezerFans": 6,
+        "deezerFans": 15,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/59634622",
+        "deezer": "https://www.deezer.com/artist/254822142",
         "spotify": null,
         "youtube": null
       },
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Pran San'w",
+      "topTitre": "Timoun",
       "metriques": {
         "deezerFans": 6714,
         "spotifyFollowers": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "24/7",
+      "topTitre": "Si Yo Vle",
       "metriques": {
-        "deezerFans": 4917,
+        "deezerFans": 4918,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,21 +163,21 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
-      "topTitre": "Lakou trankil",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 1228,
+        "deezerFans": 15,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5858154",
+        "deezer": "https://www.deezer.com/artist/220083935",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 2.4
+      "scoreHMI": 0
     },
     {
       "nom": "BIC",
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3783650,
+        "deezerFans": 3783669,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,

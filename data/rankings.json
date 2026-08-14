@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-13T06:21:48.500Z",
+    "genereLe": "2026-08-14T06:19:48.067Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "Rihanna",
+      "titre": "4 Kampé",
       "score": 72.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Tag li",
+      "titre": "Rete La",
       "score": 27.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "Pran San'w",
+      "titre": "Timoun",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "24/7",
+      "titre": "Si Yo Vle",
       "score": 18.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
@@ -79,14 +79,6 @@
       "titre": "Drive",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Lakou trankil",
-      "score": 2.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
