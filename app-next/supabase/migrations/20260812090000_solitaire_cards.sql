@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.solitaire_rank_presets (
     CHECK (rank IN ('ace','two','three','four','five','six','seven','eight','nine','ten','jack','queen','king')),
   mask_type text NOT NULL
     CHECK (mask_type IN ('circle','square','rounded-square')),
-  mask_scale numeric(5,3) NOT NULL CHECK (mask_scale > 0 AND mask_scale <= 2),
+  mask_scale numeric(5,3) NOT NULL CHECK (mask_scale > 0 AND mask_scale <= 10),
   mask_pos_x numeric(5,3) NOT NULL DEFAULT 0.5 CHECK (mask_pos_x >= 0 AND mask_pos_x <= 1),
   mask_pos_y numeric(5,3) NOT NULL DEFAULT 0.5 CHECK (mask_pos_y >= 0 AND mask_pos_y <= 1),
   image_zoom numeric(5,3) NOT NULL DEFAULT 1 CHECK (image_zoom > 0 AND image_zoom <= 5),

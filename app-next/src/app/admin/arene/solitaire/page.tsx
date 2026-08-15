@@ -45,7 +45,7 @@ const FIELD_DEFS: {
   max: number;
   step: number;
 }[] = [
-  { key: "maskScale", label: "Taille du masque", min: 0.2, max: 1.6, step: 0.01 },
+  { key: "maskScale", label: "Taille du masque", min: 0.1, max: 10, step: 0.01 },
   { key: "maskPositionX", label: "Centre X du masque", min: 0, max: 1, step: 0.01 },
   { key: "maskPositionY", label: "Centre Y du masque", min: 0, max: 1, step: 0.01 },
   { key: "imageZoom", label: "Zoom image", min: 1, max: 2.5, step: 0.05 },

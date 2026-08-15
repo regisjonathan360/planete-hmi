@@ -211,7 +211,7 @@ export const solitaireMaskTypeSchema = z.enum([
 export const solitaireCardSchema = z.object({
   artist_id: z.string().uuid().nullable(),
   mask_type: solitaireMaskTypeSchema.nullable().optional(),
-  mask_scale: z.number().min(0).max(2).nullable().optional(),
+  mask_scale: z.number().min(0).max(10).nullable().optional(),
   mask_pos_x: z.number().min(0).max(1).nullable().optional(),
   mask_pos_y: z.number().min(0).max(1).nullable().optional(),
   image_zoom: z.number().min(0.1).max(5).nullable().optional(),
@@ -222,7 +222,7 @@ export const solitaireCardSchema = z.object({
 /** Géométrie par rang (PUT /api/admin/arene/solitaire/presets/[rank]). */
 export const solitairePresetSchema = z.object({
   mask_type: solitaireMaskTypeSchema,
-  mask_scale: z.number().min(0).max(2),
+  mask_scale: z.number().min(0).max(10),
   mask_pos_x: z.number().min(0).max(1),
   mask_pos_y: z.number().min(0).max(1),
   image_zoom: z.number().min(0.1).max(5),
