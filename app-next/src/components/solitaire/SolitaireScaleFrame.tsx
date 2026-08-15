@@ -73,6 +73,7 @@ export function SolitaireScaleFrame({
   const [transform, setTransform] = useState<FrameTransform | null>(null);
   const [frameHeight, setFrameHeight] = useState<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const isFullscreenRef = useRef(false);
 
   const setOuterNode = useCallback((node: HTMLDivElement | null) => {
     outerRef.current = node;
@@ -85,14 +86,22 @@ export function SolitaireScaleFrame({
     const availableWidth = outer.clientWidth;
     const availableHeight = outer.clientHeight;
     if (!availableWidth || !availableHeight) return;
+
+    const viewportW = window.innerWidth;
+    const viewportH = window.innerHeight;
+
     if (!fluid) {
       // Taille de design FIXE : le jeu est conçu en 1020×775 (+ barres).
       // On ne mesure pas le contenu (scrollWidth/scrollHeight) : il s'étire
       // à 100 % et rendrait la mesure dépendante de la largeur du cadre.
+      // En plein écran, on clamp au viewport pour éviter tout débordement.
+      const maxScale = isFullscreenRef.current
+        ? Math.min(viewportW / DESIGN_WIDTH, viewportH / DESIGN_HEIGHT)
+        : 1.35;
       const scale = Math.min(
         availableWidth / DESIGN_WIDTH,
         availableHeight / DESIGN_HEIGHT,
-        1.35
+        maxScale
       );
       setTransform((prev) => {
         if (prev && Math.abs(prev.scale - scale) < 0.001) {
@@ -108,9 +117,11 @@ export function SolitaireScaleFrame({
 
     // Hauteur du cadre = tout l'espace visible restant sous l'en-tête de
     // la page (bornée au viewport si la page est défilée).
+    // En plein écran, on utilise la hauteur du viewport.
     const rect = outer.getBoundingClientRect();
-    const availableHeightPx =
-      window.innerHeight - Math.max(rect.top, 0) - 14;
+    const availableHeightPx = isFullscreenRef.current
+      ? viewportH
+      : window.innerHeight - Math.max(rect.top, 0) - 14;
     setFrameHeight((prev) =>
       prev !== null && Math.abs(prev - availableHeightPx) < 2
         ? prev
@@ -166,12 +177,16 @@ export function SolitaireScaleFrame({
 
   useEffect(() => {
     const onChange = () => {
-      setIsFullscreen(document.fullscreenElement === outerRef.current);
+      const nowFullscreen = document.fullscreenElement === outerRef.current;
+      isFullscreenRef.current = nowFullscreen;
+      setIsFullscreen(nowFullscreen);
       // Recalcule l'échelle APRÈS que React a appliqué le nouveau style
       // (hauteur inline retirée en plein écran) : sans cela, le fantôme
       // du drag garde l'échelle précédente pendant un instant
       // (« gros fantôme »).
-      requestAnimationFrame(() => measure());
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => measure());
+      });
     };
     document.addEventListener("fullscreenchange", onChange);
     document.addEventListener("webkitfullscreenchange", onChange as EventListener);
