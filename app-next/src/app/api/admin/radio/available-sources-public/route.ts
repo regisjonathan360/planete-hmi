@@ -49,7 +49,10 @@ export async function GET(): Promise<NextResponse> {
     }
 
     const charts = (chartsData || [])
-      .filter((edition: any) => edition.chart_sources && edition.chart_sources.length > 0)
+      .filter((edition: any) => {
+        const cs = edition.chart_sources;
+        return cs && (Array.isArray(cs) ? cs.length > 0 : true);
+      })
       .map((edition: any) => {
         const chartSource = Array.isArray(edition.chart_sources) 
           ? edition.chart_sources[0] 

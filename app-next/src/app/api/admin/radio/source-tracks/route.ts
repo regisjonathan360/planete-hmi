@@ -114,9 +114,10 @@ export async function GET(request: Request): Promise<NextResponse> {
       }
 
       sourceId = chartId;
-      sourceName = Array.isArray(chartData.chart_sources) && chartData.chart_sources[0]
-        ? chartData.chart_sources[0].display_name
-        : "Classement";
+      const chartSource = Array.isArray(chartData.chart_sources)
+        ? chartData.chart_sources[0]
+        : chartData.chart_sources;
+      sourceName = chartSource?.display_name || "Classement";
 
       // Récupérer les tracks via les entries
       const trackIds = (chartData.chart_entries || []).map((entry: any) => entry.track_id);

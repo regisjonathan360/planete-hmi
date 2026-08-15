@@ -86,7 +86,10 @@ export async function GET(): Promise<NextResponse> {
 
     // Transformer les données des classements
     const charts: ChartResponse[] = (chartsData || [])
-      .filter((edition: any) => edition.chart_sources && edition.chart_sources.length > 0)
+      .filter((edition: any) => {
+        const cs = edition.chart_sources;
+        return cs && (Array.isArray(cs) ? cs.length > 0 : true);
+      })
       .map((edition: any) => {
         const chartSource = Array.isArray(edition.chart_sources) 
           ? edition.chart_sources[0] 
@@ -100,35 +103,7 @@ export async function GET(): Promise<NextResponse> {
         };
       });
 
-    // 2. Récupérer les sources de collecte (chart_sources)
-    const { data: sourcesData, error: sourcesError } = await supabase
-      .from("chart_sources")
-      .select(
-        `
-        id,
-        source_key,
-        display_name,
-        platform,
-        is_enabled
-        `
-      )
-      .eq("is_enabled", true)
-      .order("display_name", { ascending: true });
-
-    if (sourcesError) {
-      console.error("Erreur lors de la récupération des sources:", sourcesError);
-      return NextResponse.json(
-        { 
-          error: { 
-            code: "database_error", 
-            message: "Impossible de récupérer les sources de collecte" 
-          } 
-        },
-        { status: 500 }
-      );
-    }
-
-    // 3. Récupérer les playlists manuelles
+    // 2. Récupérer les playlists manuelles
     const { data: playlistsData, error: playlistsError } = await supabase
       .from("radio_playlists")
       .select(
@@ -154,7 +129,7 @@ export async function GET(): Promise<NextResponse> {
       );
     }
 
-    // 4. Récupérer le nombre de chansons par playlist
+    // 3. Récupérer le nombre de chansons par playlist
     const playlistIds = (playlistsData || []).map((p: any) => p.id);
     
     const playlistTrackCounts: Record<string, number> = {};
@@ -173,20 +148,10 @@ export async function GET(): Promise<NextResponse> {
       }
     }
 
-    // Transformer les sources (chart_sources + playlists)
+    // Transformer les sources (uniquement les playlists manuelles)
+    // NB : les chart_sources (plateformes) ne sont PAS des sources jouables
+    // directement — seule la relation playlist -> source-tracks existe.
     const sources: SourceResponse[] = [];
-
-    // Ajouter les sources de collecte (chart_sources)
-    if (sourcesData) {
-      for (const source of sourcesData as any[]) {
-        sources.push({
-          id: source.id,
-          name: source.display_name,
-          track_count: 0, // Les chart_sources ne stockent pas directement le nombre de pistes
-          type: source.platform,
-        });
-      }
-    }
 
     // Ajouter les playlists manuelles
     if (playlistsData) {
