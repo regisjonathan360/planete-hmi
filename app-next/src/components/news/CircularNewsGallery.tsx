@@ -104,9 +104,9 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   }, []);
 
   /* Taille réactive : le rayon du cercle + dimensions des cartes sont calculés
-     pour que les cartes pavent **exactement** le cercle (bords collés),
-     peu importe la taille/orientation de l'écran.
-     Formule : cardWidth = 2 * radius * tan(π / N)  →  angle par carte = 360°/N. */
+     pour que les cartes pavent le cercle avec un **petit gap angulaire**
+     (pour voir les cartes qui passent derrière). Les cartes s'étirent pour
+     remplir l'espace disponible, mais gardent un espace visuel constant. */
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
@@ -116,34 +116,40 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       if (!w || !h) return;
 
       const n = Math.min(gallery.length, MAX_ITEMS);
-      const anglePerItemRad = (2 * Math.PI) / n;
 
       // Rayon max possible : limité par la largeur et la hauteur dispo
-      // On laisse une marge de 16px de chaque côté pour l'overflow visuel.
-      const maxRadiusByWidth = Math.max(0, (w - 32) / 2);
-      const maxRadiusByHeight = Math.max(0, (h - 32) / 2);
-      let radius = Math.min(maxRadiusByWidth, maxRadiusByHeight, 900);
+      // Marge de 24px de chaque côté pour l'overflow visuel.
+      const maxRadiusByWidth = Math.max(0, (w - 48) / 2);
+      const maxRadiusByHeight = Math.max(0, (h - 48) / 2);
+      let radius = Math.min(maxRadiusByWidth, maxRadiusByHeight, 950);
 
-      // Largeur de carte qui fait que les bords se touchent parfaitement
-      let cardW = 2 * radius * Math.tan(anglePerItemRad / 2);
+      // Gap angulaire fixe (degrés) entre les cartes — assez petit pour que
+      // les cartes s'étirent, mais suffisant pour voir celles derrière.
+      const GAP_DEG = 3.5; // ← ajuste ici si tu veux plus/moins d'espace
+      const gapRad = (GAP_DEG * Math.PI) / 180;
+      const anglePerItemRad = (2 * Math.PI) / n;
+      const cardAngleRad = anglePerItemRad - gapRad;
+
+      // Largeur de carte qui laisse le gap angulaire
+      let cardW = 2 * radius * Math.tan(cardAngleRad / 2);
 
       // Contraintes : largeur max raisonnable, proportion hauteur/largeur
       const maxCardW = Math.min(w * 0.7, 560);
       if (cardW > maxCardW) {
         cardW = maxCardW;
-        // Recalcule le rayon pour garder les bords collés
-        radius = cardW / (2 * Math.tan(anglePerItemRad / 2));
+        // Recalcule le rayon pour garder le gap constant
+        radius = cardW / (2 * Math.tan(cardAngleRad / 2));
       }
 
       // Hauteur = largeur * ratio (1.35 = bon compromis photo + titre)
       const cardH = Math.round(cardW * 1.35);
 
       // Vérifie que la carte ne dépasse pas la hauteur dispo
-      const maxCardH = h - 48; // marge haut/bas
+      const maxCardH = h - 48;
       if (cardH > maxCardH) {
         const scaledCardW = Math.round(maxCardH / 1.35);
         cardW = Math.min(cardW, scaledCardW);
-        radius = cardW / (2 * Math.tan(anglePerItemRad / 2));
+        radius = cardW / (2 * Math.tan(cardAngleRad / 2));
       }
 
       setDims((prev) =>
