@@ -103,10 +103,8 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => observer.disconnect();
   }, []);
 
-  /* Taille réactive : le rayon du cercle + dimensions des cartes sont calculés
-     pour que les cartes pavent le cercle avec un **petit gap angulaire**
-     (pour voir les cartes qui passent derrière). Les cartes s'étirent pour
-     remplir l'espace disponible, mais gardent un espace visuel constant. */
+/* Taille réactive : le carrousel remplit la largeur disponible,
+     les cartes s'élargissent proportionnellement, gap angulaire constant. */
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
@@ -115,49 +113,52 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       const h = host.clientHeight;
       if (!w || !h) return;
 
-      const n = Math.min(gallery.length, MAX_ITEMS);
-
-      // Rayon max possible : limité par la largeur et la hauteur dispo
-      // Marge de 24px de chaque côté pour l'overflow visuel.
-      const maxRadiusByWidth = Math.max(0, (w - 48) / 2);
-      const maxRadiusByHeight = Math.max(0, (h - 48) / 2);
-      let radius = Math.min(maxRadiusByWidth, maxRadiusByHeight, 950);
-
-      // Gap angulaire fixe (degrés) entre les cartes — assez petit pour que
-      // les cartes s'étirent, mais suffisant pour voir celles derrière.
-      const GAP_DEG = 3.5; // ← ajuste ici si tu veux plus/moins d'espace
-      const gapRad = (GAP_DEG * Math.PI) / 180;
+      const n = Math.min(items.length, MAX_ITEMS);
       const anglePerItemRad = (2 * Math.PI) / n;
-      const cardAngleRad = anglePerItemRad - gapRad;
 
-      // Largeur de carte qui laisse le gap angulaire
+      // Rayon = moitié de la largeur dispo (le cercle remplit la largeur du conteneur)
+      // Marge de 32px pour l'overflow visuel
+      let radius = Math.max(220, Math.min((w - 64) / 2, (h - 64) / 2, 1500));
+
+      // Gap angulaire fixe entre les cartes (3.5° = petit espace visible)
+      const GAP_DEG = 3.5;
+      const gapRad = (GAP_DEG * Math.PI) / 180;
+      const anglePerItemRad2 = (2 * Math.PI) / n;
+      const cardAngleRad = anglePerItemRad2 - gapRad;
+
+      // Largeur de carte calculée géométriquement pour remplir l'angle (bords presque collés)
       let cardW = 2 * radius * Math.tan(cardAngleRad / 2);
 
-      // Contraintes : largeur max raisonnable, proportion hauteur/largeur
-      const maxCardW = Math.min(w * 0.7, 560);
+      // Largeur max : 70% de la largeur conteneur, mais pas de cap arbitraire bas
+      const maxCardW = w * 0.75;
       if (cardW > maxCardW) {
         cardW = maxCardW;
         // Recalcule le rayon pour garder le gap constant
         radius = cardW / (2 * Math.tan(cardAngleRad / 2));
       }
 
-      // Hauteur = largeur * ratio (1.35 = bon compromis photo + titre)
+      // Proportion hauteur/largeur (1.35 = photo + 3 lignes titre)
       const cardH = Math.round(cardW * 1.35);
 
-      // Vérifie que la carte ne dépasse pas la hauteur dispo
-      const maxCardH = h - 48;
+      // Limite par la hauteur dispo
+      const maxCardH = h - 64;
       if (cardH > maxCardH) {
         const scaledCardW = Math.round(maxCardH / 1.35);
-        cardW = Math.min(cardW, scaledCardW);
-        radius = cardW / (2 * Math.tan(cardAngleRad / 2));
+        if (scaledCardW < cardW) {
+          cardW = scaledCardW;
+          // Recalcule rayon pour garder le gap
+        }
       }
+
+      // Largeur minimum pour lisibilité
+      cardW = Math.max(cardW, 240);
 
       setDims((prev) =>
         Math.abs(prev.radius - radius) < 1 &&
         Math.abs(prev.cardW - cardW) < 1 &&
-        Math.abs(prev.cardH - Math.round(cardW * 1.35)) < 1
+        Math.abs(prev.cardH - cardH) < 1
           ? prev
-          : { radius, cardW: Math.round(cardW), cardH: Math.round(cardW * 1.35) }
+          : { radius, cardW: Math.round(cardW), cardH }
       );
     };
     resize();

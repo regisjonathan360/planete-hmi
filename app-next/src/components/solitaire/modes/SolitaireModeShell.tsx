@@ -22,6 +22,7 @@ import { PyramidGame } from "./PyramidGame";
 import { SpiderGame } from "./SpiderGame";
 import type { SpiderSuits } from "@/lib/solitaire/spiderEngine";
 import { useExitSolitaire } from "@/components/solitaire/useExitSolitaire";
+import { useSolitaireGameMenu } from "@/components/solitaire/SolitaireGameMenuContext";
 import { WindowControls } from "@/components/solitaire/WindowControls";
 import styles from "./solitaire-mode-shell.module.css";
 
@@ -97,7 +98,8 @@ export function SolitaireModeShell({
   onSwitchMode,
 }: SolitaireModeShellProps) {
   const gameRef = useRef<ModeGameHandle>(null);
-  const exitSolitaire = useExitSolitaire();
+  const { openMenu, closeMenu } = useSolitaireGameMenu();
+  const switchToKlondike = useExitSolitaire(); // réutilise le hook pour switcher vers klondike
   const [settings, setSettings] = useState<SettingsState>(() => loadSettings());
   const [status, setStatus] = useState<ModeStatus>({ moves: 0, left: 52, done: 0, total: 52 });
   const [seconds, setSeconds] = useState(0);
@@ -246,7 +248,7 @@ export function SolitaireModeShell({
         {/* Barre de titre (même chrome que le Solitaire 95 classique) */}
         <div className={styles.captionBar}>
           <span className={styles.captionTitle}>Solitaire — {modeLabel}</span>
-          <WindowControls onClose={exitSolitaire} />
+          <WindowControls onClose={switchToKlondike} />
         </div>
 
         {/* Menu principal */}
@@ -280,7 +282,7 @@ export function SolitaireModeShell({
                 </button>
               ))}
               <div className={styles.dropdownSeparator} />
-              <button type="button" className={styles.dropdownItem} onClick={exitSolitaire}>
+              <button type="button" className={styles.dropdownItem} onClick={() => { switchToKlondike(); setMenu(null); }}>
                 Quitter
               </button>
             </div>

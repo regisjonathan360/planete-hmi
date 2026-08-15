@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface DragGhost {
-  /** Charge utile du drag (pile, stock…) — définie par chaque moteur. */
   payload: unknown;
   x: number;
   y: number;
@@ -14,80 +13,106 @@ export interface DragGhost {
 interface DragSession {
   payload: unknown;
   id: number;
-  x: number;
-  y: number;
+  startX: number;
+  startY: number;
   lastX: number;
   lastY: number;
   moved: number;
+  frameRect: DOMRect | null;
 }
 
 interface TableDragOptions {
-  /**
-   * Zone de dépôt : valeur de data-drop sous le pointeur (null si nulle part).
-   * moved = distance parcourue pour distinguer clic/drag.
-   * element = élément sous le pointeur (lecture data-position, etc.).
-   */
   onDrop: (
     payload: unknown,
     zone: string | null,
     moved: number,
     element: HTMLElement | null
   ) => void;
-  /** Désactivé ? */
   enabled?: boolean;
+  /** Conteneur du tableau (pour calculer les coords relatives) */
+  frameRef?: React.RefObject<HTMLElement | null>;
 }
 
 /**
- * Drag souris/tactile générique pour les modes de solitaire :
- * pointeur pressé sur une carte → fantôme qui suit le curseur, relâché
- * sur une zone marquée data-drop → onDrop. Sélection au clic ensuite
- * gérée par les moteurs (moved ≤ seuil = clic).
+ * Drag souris/tactile robuste pour les modes de solitaire.
+ * - Pas de setPointerCapture (peu fiable mobile)
+ * - Écouteurs sur `document` pour suivre le curseur partout
+ * - Ghost positionné dans le repère du cadre (supporte scale/transform)
+ * - touch-action: none géré via style sur le cadre
  */
-export function useTableDrag({ onDrop, enabled = true }: TableDragOptions) {
+export function useTableDrag({
+  onDrop,
+  enabled = true,
+  frameRef,
+}: TableDragOptions) {
   const session = useRef<DragSession | null>(null);
   const onDropRef = useRef(onDrop);
   useEffect(() => {
     onDropRef.current = onDrop;
-  });
+  }, [onDrop]);
+
   const [ghost, setGhost] = useState<DragGhost | null>(null);
+  const frameRectRef = useRef<DOMRect | null>(null);
+
+  // Met à jour le rect du cadre au resize/scroll
+  useEffect(() => {
+    const frame = frameRef?.current;
+    if (!frame) return;
+    const updateRect = () => {
+      frameRectRef.current = frame.getBoundingClientRect();
+    };
+    updateRect();
+    const ro = new ResizeObserver(updateRect);
+    ro.observe(frame);
+    window.addEventListener("scroll", updateRect, true);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("scroll", updateRect, true);
+    };
+  }, [frameRef]);
 
   const beginDrag = useCallback(
     (payload: unknown) => (event: React.PointerEvent<HTMLElement>) => {
       if (!enabled) return;
       if (event.button !== 0 && event.pointerType === "mouse") return;
       event.preventDefault();
-      // Capture du pointeur : les événements suivants (même hors du cadre)
-      // remontent au tableau via le bubbling → le fantôme suit le curseur
-      // partout et le relâchement est toujours détecté.
-      try {
-        event.currentTarget.setPointerCapture(event.pointerId);
-      } catch {
-        /* capture indisponible (souris) : le bubbling du tableau suffit */
-      }
-      const rect = event.currentTarget.getBoundingClientRect();
+
+      const frameRect = frameRectRef.current ?? frameRef?.current?.getBoundingClientRect() ?? null;
+      const target = event.currentTarget;
+      const targetRect = target.getBoundingClientRect();
+
       session.current = {
         payload,
         id: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
+        startX: event.clientX,
+        startY: event.clientY,
         lastX: event.clientX,
         lastY: event.clientY,
         moved: 0,
+        frameRect,
       };
+
+      // Position du ghost relative au viewport (sera convertie en relative au cadre dans le render)
       setGhost({
         payload,
-        x: event.clientX - rect.width / 2,
-        y: event.clientY - rect.height / 2,
-        w: rect.width,
-        h: rect.height,
+        x: event.clientX - targetRect.width / 2,
+        y: event.clientY - targetRect.height / 2,
+        w: targetRect.width,
+        h: targetRect.height,
       });
+
+      // Écouteurs document-level pour suivre partout
+      document.addEventListener("pointermove", handlePointerMove, { passive: false });
+      document.addEventListener("pointerup", handlePointerUp);
+      document.addEventListener("pointercancel", handlePointerCancel);
     },
     [enabled]
   );
 
-  const moveDrag = useCallback((event: React.PointerEvent<HTMLElement>) => {
+  const handlePointerMove = useCallback((event: PointerEvent) => {
     const s = session.current;
     if (!s || s.id !== event.pointerId) return;
+    event.preventDefault();
     s.moved += Math.abs(event.clientX - s.lastX) + Math.abs(event.clientY - s.lastY);
     s.lastX = event.clientX;
     s.lastY = event.clientY;
@@ -98,27 +123,92 @@ export function useTableDrag({ onDrop, enabled = true }: TableDragOptions) {
     );
   }, []);
 
-  const finishDrag = useCallback((event: React.PointerEvent<HTMLElement>) => {
+  const handlePointerUp = useCallback((event: PointerEvent) => {
     const s = session.current;
     if (!s || s.id !== event.pointerId) return;
-    const el = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null;
-    const zoneEl = el?.closest?.("[data-drop]") as HTMLElement | null;
+    event.preventDefault();
+
+    // Nettoyage écouteurs
+    document.removeEventListener("pointermove", handlePointerMove);
+    document.removeEventListener("pointerup", handlePointerUp);
+    document.removeEventListener("pointercancel", handlePointerCancel);
+
+    // Zone de drop : élément sous le curseur (dans le cadre si possible)
+    let dropEl: HTMLElement | null = null;
+    if (s.frameRect) {
+      // Vérifie si le curseur est dans le cadre
+      const inFrame =
+        event.clientX >= s.frameRect.left &&
+        event.clientX <= s.frameRect.right &&
+        event.clientY >= s.frameRect.top &&
+        event.clientY <= s.frameRect.bottom;
+      if (inFrame) {
+        dropEl = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null;
+      }
+    }
+    if (!dropEl) {
+      dropEl = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null;
+    }
+    const zoneEl = dropEl?.closest?.("[data-drop]") as HTMLElement | null;
     const zone = zoneEl?.getAttribute("data-drop") ?? null;
+
     session.current = null;
     setGhost(null);
-    onDropRef.current(s.payload, zone, s.moved, el);
+    onDropRef.current(s.payload, zone, s.moved, dropEl);
   }, []);
 
-  const cancelDrag = useCallback(() => {
+  const handlePointerCancel = useCallback(() => {
+    const s = session.current;
+    if (!s) return;
+    document.removeEventListener("pointermove", handlePointerMove);
+    document.removeEventListener("pointerup", handlePointerUp);
+    document.removeEventListener("pointercancel", handlePointerCancel);
     session.current = null;
     setGhost(null);
   }, []);
+
+  // Nettoyage si composant démonté pendant un drag
+  useEffect(() => {
+    return () => {
+      if (session.current) {
+        document.removeEventListener("pointermove", handlePointerMove);
+        document.removeEventListener("pointerup", handlePointerUp);
+        document.removeEventListener("pointercancel", handlePointerCancel);
+        session.current = null;
+      }
+    };
+  }, [handlePointerMove, handlePointerUp, handlePointerCancel]);
+
+  // Aide pour le render du ghost : convertit coords viewport → coords cadre
+  const getGhostStyle = useCallback(() => {
+    if (!ghost || !frameRef?.current) return null;
+    const frameRect = frameRef.current.getBoundingClientRect();
+    return {
+      x: ghost.x - frameRect.left,
+      y: ghost.y - frameRect.top,
+      w: ghost.w,
+      h: ghost.h,
+    };
+  }, [ghost, frameRef]);
+
+  // État dérivé pour le ghost style (mis à jour à chaque render)
+  const ghostStyle = getGhostStyle();
 
   return {
     ghost,
+    ghostStyle,
     beginDrag,
-    moveDrag,
-    finishDrag,
-    cancelDrag,
+    // moveDrag/finishDrag/cancelDrag gardés pour compat mais non utilisés (document-level)
+    moveDrag: () => {},
+    finishDrag: () => {},
+    cancelDrag: () => {
+      const s = session.current;
+      if (!s) return;
+      document.removeEventListener("pointermove", handlePointerMove);
+      document.removeEventListener("pointerup", handlePointerUp);
+      document.removeEventListener("pointercancel", handlePointerCancel);
+      session.current = null;
+      setGhost(null);
+    },
   };
 }

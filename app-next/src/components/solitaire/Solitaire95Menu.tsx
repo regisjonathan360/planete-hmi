@@ -9,6 +9,7 @@ import {
   SOLITAIRE_START_DIRECT_KEY,
 } from "@/lib/solitaire/modes";
 import { useSolitaireFullscreen } from "./SolitaireScaleFrame";
+import { useSolitaireGameMenu } from "./SolitaireGameMenuContext";
 import styles from "./solitaire95-menu.module.css";
 
 /**
@@ -37,6 +38,7 @@ export function Solitaire95Menu() {
   const [modesOpen, setModesOpen] = useState(false);
   const dispatch = useDispatch();
   const { enterFullscreen } = useSolitaireFullscreen();
+  const { closeMenu } = useSolitaireGameMenu();
 
   /* Consomme le signal et lance une nouvelle donne (l'écran d'accueil est
      déjà masqué par l'état initial ci-dessus). */
@@ -133,6 +135,11 @@ export function Solitaire95Menu() {
           Les options du jeu (répartition, score, fond de table) sont aussi
           dans le menu « Game » de la fenêtre.
         </p>
+
+        <button type="button" className={styles.menu__back} onClick={closeMenu}>
+          <span aria-hidden="true">←</span>
+          Fermer
+        </button>
       </div>
     </div>
   );

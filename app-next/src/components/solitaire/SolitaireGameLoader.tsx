@@ -12,6 +12,7 @@ import {
 import { SolitaireCardsProvider } from "./SolitaireCardsProvider";
 import { SolitaireScaleFrame } from "./SolitaireScaleFrame";
 import { SolitaireModeShell } from "./modes/SolitaireModeShell";
+import { SolitaireGameMenuProvider } from "./SolitaireGameMenuContext";
 import styles from "./solitaire-game-loader.module.css";
 
 const SolitaireGame = dynamic(
@@ -80,13 +81,15 @@ export function SolitaireGameLoader() {
 
   return (
     <SolitaireCardsProvider>
-      <SolitaireScaleFrame fluid={mode !== "klondike"}>
-        {mode !== "klondike" ? (
-          <SolitaireModeShell mode={mode} onSwitchMode={switchMode} />
-        ) : (
-          <SolitaireGame />
-        )}
-      </SolitaireScaleFrame>
+      <SolitaireGameMenuProvider>
+        <SolitaireScaleFrame fluid={mode !== "klondike"}>
+          {mode !== "klondike" ? (
+            <SolitaireModeShell mode={mode} onSwitchMode={switchMode} />
+          ) : (
+            <SolitaireGame />
+          )}
+        </SolitaireScaleFrame>
+      </SolitaireGameMenuProvider>
     </SolitaireCardsProvider>
   );
 }

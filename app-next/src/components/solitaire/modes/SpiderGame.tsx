@@ -86,10 +86,11 @@ function GhostStack({
   run,
   backKey,
 }: {
-  ghost: { x: number; y: number; w: number; h: number };
+  ghost: { x: number; y: number; w: number; h: number } | null;
   run: GameCard[];
   backKey: string;
 }) {
+  if (!ghost) return null;
   return (
     <div
       className={styles.ghostStack}
@@ -123,11 +124,12 @@ export const SpiderGame = forwardRef<ModeGameHandle, SpiderGameProps>(
     const historyRef = useRef<SpiderState[]>([]);
     const wonRef = useRef(false);
 
-    const { ghost, beginDrag, moveDrag, finishDrag, cancelDrag } = useTableDrag({
+    const tableRef = useRef<HTMLDivElement>(null);
+    const { ghost, ghostStyle, beginDrag } = useTableDrag({
       onDrop: handleDrop,
+      frameRef: tableRef,
     });
     const {
-      tableRef,
       style: geometryStyle,
       overlap,
     } = useTableGeometry({ columns: 10, maxStack: 22 });
@@ -262,14 +264,13 @@ export const SpiderGame = forwardRef<ModeGameHandle, SpiderGameProps>(
         })()
       : [];
 
+    const gs = ghostStyle;
+
     return (
       <div
         ref={tableRef}
         className={styles.table}
-        style={geometryStyle}
-        onPointerMove={moveDrag}
-        onPointerUp={finishDrag}
-        onPointerCancel={cancelDrag}
+        style={{ ...geometryStyle, touchAction: "none" }}
       >
         <div className={styles.topRow}>
           <div className={styles.stock}>
@@ -349,9 +350,9 @@ export const SpiderGame = forwardRef<ModeGameHandle, SpiderGameProps>(
           ))}
         </div>
 
-        {ghost && (
-          <GhostStack ghost={ghost} run={ghostRun} backKey={settings.backKey} />
-        )}
+{gs && ghost && (
+              <GhostStack ghost={gs} run={ghostRun} backKey={settings.backKey} />
+            )}
       </div>
     );
   }

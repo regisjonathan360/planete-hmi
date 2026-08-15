@@ -97,11 +97,12 @@ export const FreeCellGame = forwardRef<ModeGameHandle, FreeCellGameProps>(
     const historyRef = useRef<FreeCellState[]>([]);
     const wonRef = useRef(false);
 
-    const { ghost, beginDrag, moveDrag, finishDrag, cancelDrag } = useTableDrag({
+    const tableRef = useRef<HTMLDivElement>(null);
+    const { ghost, ghostStyle, beginDrag } = useTableDrag({
       onDrop: handleDrop,
+      frameRef: tableRef,
     });
     const {
-      tableRef,
       style: geometryStyle,
       overlap,
     } = useTableGeometry({ columns: 8, maxStack: 24 });
@@ -286,14 +287,36 @@ export const FreeCellGame = forwardRef<ModeGameHandle, FreeCellGameProps>(
         })()
       : [];
 
+    const gs = ghostStyle;
+
+    const ghostNode = gs && ghost ? (
+      <div
+        className={styles.ghostStack}
+        style={{
+          left: gs.x,
+          top: gs.y,
+          width: gs.w,
+          height: gs.h,
+        }}
+        aria-hidden="true"
+      >
+        {ghostRun.slice(0, 3).map((card, i) => (
+          <div
+            key={i}
+            className={styles.ghostCard}
+            style={{ transform: `translateY(${i * 4}px)` }}
+          >
+            <SolitairePlayingCard card={card} backKey={settings.backKey} />
+          </div>
+        ))}
+      </div>
+    ) : null;
+
     return (
       <div
         ref={tableRef}
         className={styles.table}
-        style={geometryStyle}
-        onPointerMove={moveDrag}
-        onPointerUp={finishDrag}
-        onPointerCancel={cancelDrag}
+        style={{ ...geometryStyle, touchAction: "none" }}
       >
         {/* Rangée du haut : 4 cellules, 4 fondations */}
         <div className={styles.topRow}>
@@ -377,32 +400,7 @@ export const FreeCellGame = forwardRef<ModeGameHandle, FreeCellGameProps>(
             </div>
           ))}
         </div>
-
-        {ghost && (
-          <div
-            className={styles.ghostStack}
-            style={{
-              left: ghost.x,
-              top: ghost.y,
-              width: ghost.w,
-              height: ghost.h,
-            }}
-            aria-hidden="true"
-          >
-            {ghostRun.slice(0, 3).map((card, i) => (
-              <div
-                key={i}
-                className={styles.ghostCard}
-                style={{ transform: `translateY(${i * 4}px)` }}
-              >
-                <SolitairePlayingCard card={card} backKey={settings.backKey} />
-              </div>
-            ))}
-            {ghostRun.length > 3 && (
-              <span className={styles.ghostBadge}>+{ghostRun.length - 3}</span>
-            )}
-          </div>
-        )}
+        {ghostNode}
       </div>
     );
   }
