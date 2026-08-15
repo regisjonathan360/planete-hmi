@@ -103,10 +103,10 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => observer.disconnect();
   }, []);
 
-  /* Taille réactive : rayon du cercle + dimensions des cartes selon l'écran.
-     La largeur du conteneur pilote le rayon (comme la démo) et la hauteur
-     disponible borne la taille des cartes — cartes plus larges pour réduire
-     l'espace entre elles et mieux afficher photo + titre. */
+  /* Taille réactive : le rayon du cercle + dimensions des cartes sont calculés
+     pour que les cartes pavent **exactement** le cercle (bords collés),
+     peu importe la taille/orientation de l'écran.
+     Formule : cardWidth = 2 * radius * tan(π / N)  →  angle par carte = 360°/N. */
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
@@ -114,23 +114,51 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       const w = host.clientWidth;
       const h = host.clientHeight;
       if (!w || !h) return;
-      const cardW = Math.round(Math.min(w * 0.52, h * 0.68, 520));
+
+      const n = Math.min(gallery.length, MAX_ITEMS);
+      const anglePerItemRad = (2 * Math.PI) / n;
+
+      // Rayon max possible : limité par la largeur et la hauteur dispo
+      // On laisse une marge de 16px de chaque côté pour l'overflow visuel.
+      const maxRadiusByWidth = Math.max(0, (w - 32) / 2);
+      const maxRadiusByHeight = Math.max(0, (h - 32) / 2);
+      let radius = Math.min(maxRadiusByWidth, maxRadiusByHeight, 900);
+
+      // Largeur de carte qui fait que les bords se touchent parfaitement
+      let cardW = 2 * radius * Math.tan(anglePerItemRad / 2);
+
+      // Contraintes : largeur max raisonnable, proportion hauteur/largeur
+      const maxCardW = Math.min(w * 0.7, 560);
+      if (cardW > maxCardW) {
+        cardW = maxCardW;
+        // Recalcule le rayon pour garder les bords collés
+        radius = cardW / (2 * Math.tan(anglePerItemRad / 2));
+      }
+
+      // Hauteur = largeur * ratio (1.35 = bon compromis photo + titre)
       const cardH = Math.round(cardW * 1.35);
-      const radius = Math.max(
-        180,
-        Math.round(Math.min((w - cardW) / 2 - 8, 850))
-      );
+
+      // Vérifie que la carte ne dépasse pas la hauteur dispo
+      const maxCardH = h - 48; // marge haut/bas
+      if (cardH > maxCardH) {
+        const scaledCardW = Math.round(maxCardH / 1.35);
+        cardW = Math.min(cardW, scaledCardW);
+        radius = cardW / (2 * Math.tan(anglePerItemRad / 2));
+      }
+
       setDims((prev) =>
-        Math.abs(prev.radius - radius) < 2 && Math.abs(prev.cardW - cardW) < 2
+        Math.abs(prev.radius - radius) < 1 &&
+        Math.abs(prev.cardW - cardW) < 1 &&
+        Math.abs(prev.cardH - Math.round(cardW * 1.35)) < 1
           ? prev
-          : { radius, cardW, cardH }
+          : { radius, cardW: Math.round(cardW), cardH: Math.round(cardW * 1.35) }
       );
     };
     resize();
     const observer = new ResizeObserver(resize);
     observer.observe(host);
     return () => observer.disconnect();
-  }, []);
+  }, [items.length]);
 
   /* Gyroscope (mobile) : origine capturée au premier événement, deltas beta/
      gamma clampés en degrés — même mécanique que HaitiInteractiveGlobe. */
