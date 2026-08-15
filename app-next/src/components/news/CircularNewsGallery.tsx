@@ -256,6 +256,16 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   const gallery = useMemo(() => items.slice(0, MAX_ITEMS), [items]);
   if (gallery.length === 0) return null;
 
+  // Hauteur du hôte : le cercle est horizontal (rotateY), toutes les cartes
+  // restent à l'ordonnée du centre. La seule hauteur visible est la carte de
+  // face, agrandie par la perspective : 2×rayon + hauteur de carte serait la
+  // hauteur d'un cercle VERTICAL (rotateX) — beaucoup trop, ce qui laissait
+  // un vide énorme entre le titre et le carrousel. On dimensionne donc le
+  // hôte à la hauteur projetée de la carte de face, centrée.
+  const PERSPECTIVE = 2000;
+  const frontCardScale = PERSPECTIVE / Math.max(PERSPECTIVE - dims.radius, 1);
+  const hostHeight = Math.round(dims.cardH * frontCardScale);
+
   const anglePerItem = 360 / gallery.length;
   const totalRotation = ((rotation % 360) + 360) % 360;
 
@@ -268,7 +278,7 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       style={{
         perspective: "2000px",
         touchAction: "none",
-        height: 2 * dims.radius + dims.cardH,
+        height: hostHeight,
         ["--gallery-card-w" as string]: `${dims.cardW}px`,
       }}
       onPointerDown={onPointerDown}

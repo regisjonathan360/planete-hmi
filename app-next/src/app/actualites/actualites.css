@@ -242,11 +242,11 @@
 }
 
 .news-gallery-hint {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 1.1rem;
-  margin: 0;
+  /* Dans le flux, juste sous le carrousel : le hôte n'a plus de hauteur
+     résiduelle (hauteur = carte de face projetée), un positionnement
+     absolu le ferait chevaucher les cartes. */
+  position: relative;
+  margin: 0.9rem auto 0;
   text-align: center;
   font-family: var(--font-mono);
   font-size: 0.7rem;

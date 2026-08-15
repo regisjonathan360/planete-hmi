@@ -190,6 +190,27 @@ img { display: block; max-width: 100%; }
 .btn:active { transform: translateY(1px) scale(0.99); }
 .btn-primary { background: var(--grad-fire); color: #160500; box-shadow: 0 10px 34px rgba(255, 106, 0, 0.32); }
 .btn-primary:hover { transform: translateY(-2px) scale(1.02); }
+
+/* Bouton « Découvrir la planète » (hero de l'accueil) : la partie jaune-orange
+   du dégradé (fin du --grad-fire) reçoit un flou transparent (verre dépoli) —
+   on voit le fond étoilé flouté à travers, sans masquer le texte. */
+.hero__cta .btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+.hero__cta .btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 45%;
+  background: linear-gradient(90deg, rgba(255, 178, 0, 0.18), rgba(255, 214, 130, 0.42));
+  -webkit-backdrop-filter: blur(6px) saturate(1.25);
+  backdrop-filter: blur(6px) saturate(1.25);
+  border-left: 1px solid rgba(255, 255, 255, 0.28);
+  pointer-events: none;
+}
 .btn-ghost { background: rgba(244, 239, 228, 0.06); border-color: var(--line-2); color: var(--cream); }
 .btn-ghost:hover { border-color: var(--cream); background: rgba(244, 239, 228, 0.1); }
 .btn-outline { background: transparent; border-color: var(--line-2); color: var(--cream); font-size: 0.82rem; padding: 0.7rem 1.2rem; }

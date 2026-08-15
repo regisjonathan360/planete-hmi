@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import styles from "./ShootingStars.module.css";
 
 /**
@@ -40,6 +41,10 @@ function prochainDelai(): number {
 
 export function ShootingStars() {
   const calqueRef = useRef<HTMLDivElement | null>(null);
+
+  // Réactif à la navigation côté client : si l'utilisateur arrive sur une
+  // page depuis l'accueil (ou l'inverse), le calque s'arrête/redémarre.
+  const pathname = usePathname();
 
   /**
    * Découpe un trou dans le calque à l'emplacement réel de la planète
@@ -110,8 +115,7 @@ export function ShootingStars() {
     if (window.innerWidth < 768) return;
 
     // Étoiles filantes uniquement sur la page d'accueil et la carte
-    const path = window.location.pathname;
-    if (path !== "/" && path !== "/carte") return;
+    if (pathname !== "/" && pathname !== "/carte") return;
 
     let timer = 0;
     let vivantes = 0;
@@ -175,7 +179,7 @@ export function ShootingStars() {
       window.clearTimeout(timer);
       calque.replaceChildren();
     };
-  }, []);
+  }, [pathname]);
 
   return <div ref={calqueRef} className={styles.layer} aria-hidden="true" />;
 }
