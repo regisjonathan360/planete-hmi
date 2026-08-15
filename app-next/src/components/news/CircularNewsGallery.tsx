@@ -103,8 +103,8 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => observer.disconnect();
   }, []);
 
-/* Taille réactive : le carrousel remplit la largeur disponible,
-     les cartes s'élargissent proportionnellement, gap angulaire constant. */
+/* Taille réactive : le carrousel suit la LARGEUR de la page (portrait/mobile =
+   taille de base actuelle ; en paysage les cartes s'élargissent avec le cercle). */
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
@@ -116,9 +116,10 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       const n = Math.min(items.length, MAX_ITEMS);
       const anglePerItemRad = (2 * Math.PI) / n;
 
-      // Rayon = moitié de la largeur dispo (le cercle remplit la largeur du conteneur)
-      // Marge de 32px pour l'overflow visuel
-      let radius = Math.max(220, Math.min((w - 64) / 2, (h - 64) / 2, 1500));
+      // Rayon = moitié de la largeur dispo : le cercle remplit la largeur du
+      // conteneur. En portrait/mobile (w petit), le minimum 220px conserve la
+      // taille de base actuelle ; en paysage le cercle s'élargit avec la page.
+      let radius = Math.max(220, Math.min((w - 64) / 2, 1500));
 
       // Gap angulaire fixe entre les cartes (3.5° = petit espace visible)
       const GAP_DEG = 3.5;
@@ -140,17 +141,7 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       // Proportion hauteur/largeur (1.35 = photo + 3 lignes titre)
       const cardH = Math.round(cardW * 1.35);
 
-      // Limite par la hauteur dispo
-      const maxCardH = h - 64;
-      if (cardH > maxCardH) {
-        const scaledCardW = Math.round(maxCardH / 1.35);
-        if (scaledCardW < cardW) {
-          cardW = scaledCardW;
-          // Recalcule rayon pour garder le gap
-        }
-      }
-
-      // Largeur minimum pour lisibilité
+      // Largeur minimum pour lisibilité (base mobile)
       cardW = Math.max(cardW, 240);
 
       setDims((prev) =>
@@ -272,7 +263,12 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       className={`circular-news-gallery${dragging ? " circular-news-gallery--dragging" : ""}`}
       role="region"
       aria-label="Actualités en cercle — glissez avec la souris pour faire tourner"
-      style={{ perspective: "2000px", touchAction: "none" }}
+      style={{
+        perspective: "2000px",
+        touchAction: "none",
+        height: 2 * dims.radius + dims.cardH,
+        ["--gallery-card-w" as string]: `${dims.cardW}px`,
+      }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

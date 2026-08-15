@@ -11,8 +11,9 @@
 .news-cosmos-hero {
   position: relative;
   width: 100%;
-  height: 100svh;
-  min-height: 620px;
+  /* min-height au lieu de height fixe : le hero grandit quand le cercle
+     d'actualités s'élargit (paysage) pour ne jamais couper les cartes. */
+  min-height: max(100svh, 620px);
   overflow: hidden;
   background: #000;
   border-bottom: 1px solid var(--line);
@@ -89,13 +90,11 @@
 /* Contenu superposé AU MILIEU des étoiles : le cercle 3D des actualités
    tourne au centre de la sphère, la page défile pour le faire pivoter. */
 .news-cosmos-hero__content {
-  position: absolute;
-  inset: 0;
+  position: relative;
   z-index: 3;
   pointer-events: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   overflow: hidden;
   padding: 0;
 }
@@ -108,7 +107,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  height: 100%;
+  min-height: 100svh;
+  /* Centrage vertical doux : les marges auto se réduisent à 0 quand le
+     contenu (cercle élargi en paysage) dépasse 100svh — pas de coupure. */
+  margin-block: auto;
   padding: clamp(7rem, 17vh, 10.5rem) clamp(1rem, 3vw, 2rem) 1.4rem;
 }
 
@@ -127,8 +129,9 @@
 /* ============ GALERIE CIRCULAIRE 3D ============ */
 .circular-news-gallery {
   position: relative;
-  flex: 1;
-  min-height: 0;
+  /* Hauteur pilotée par le composant (2×rayon + hauteur de carte) : la
+     galerie grandit avec le cercle au lieu de se faire couper. */
+  flex: 0 0 auto;
   width: 100%;
   cursor: grab;
   user-select: none;
@@ -211,7 +214,13 @@
 }
 
 .circular-news-gallery__caption strong {
-  font-size: 0.98rem;
+  /* Titre proportionnel à la largeur de la carte : sur mobile il garde la
+     taille de base, en paysage il grandit avec les cases d'images. */
+  font-size: clamp(
+    0.98rem,
+    calc(var(--gallery-card-w, 240px) / 240 * 0.98rem),
+    1.5rem
+  );
   line-height: 1.25;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -222,7 +231,7 @@
 
 .circular-news-gallery__caption time {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: clamp(0.66rem, calc(var(--gallery-card-w, 240px) / 240 * 0.66rem), 0.85rem);
   color: var(--cream-dim);
 }
 
