@@ -1,12 +1,8 @@
 -- Clean Dummy Data - PostgreSQL Version
 -- Removes all test/dummy radio data
+-- Note: Removed DISABLE TRIGGER ALL - causes permission error on system triggers
 
--- 1. Disable triggers temporarily (optional but safer)
-ALTER TABLE radio_playlist_tracks DISABLE TRIGGER ALL;
-ALTER TABLE radio_play_history DISABLE TRIGGER ALL;
-ALTER TABLE radio_stats DISABLE TRIGGER ALL;
-
--- 2. Delete test tracks
+-- 1. Delete test tracks (this cascade deletes related records)
 DELETE FROM radio_tracks 
 WHERE 
   source = 'manual'
@@ -42,11 +38,6 @@ SET
   preload_count = 3,
   crossfade_duration_ms = 2000,
   is_live = TRUE;
-
--- Re-enable triggers
-ALTER TABLE radio_playlist_tracks ENABLE TRIGGER ALL;
-ALTER TABLE radio_play_history ENABLE TRIGGER ALL;
-ALTER TABLE radio_stats ENABLE TRIGGER ALL;
 
 -- Verification
 SELECT 
