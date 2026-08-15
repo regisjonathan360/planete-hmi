@@ -175,6 +175,12 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  /* Le drag long-press / slide ne doit PAS déplacer l'image (seul le
+     carrousel tourne) : on coupe le drag-and-drop natif du navigateur. */
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
 }
 
 .circular-news-gallery__card::after {

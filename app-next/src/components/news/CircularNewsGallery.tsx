@@ -301,6 +301,8 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
               role="group"
               aria-label={`Lire « ${item.title} »`}
               className="circular-news-gallery__card"
+              draggable={false}
+              onDragStart={(e) => e.preventDefault()}
               style={{
                 transform: `rotateY(${itemAngle}deg) translateZ(${dims.radius}px)`,
                 width: dims.cardW,

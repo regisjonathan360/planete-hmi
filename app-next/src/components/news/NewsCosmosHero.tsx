@@ -45,6 +45,7 @@ export function NewsCosmosHero({
         dpr={[1, 2]}
         gl={{ antialias: true }}
         className="news-cosmos-hero__canvas"
+        style={{ position: "absolute", inset: 0 }}
       >
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
