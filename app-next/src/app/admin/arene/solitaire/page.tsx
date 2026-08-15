@@ -59,6 +59,16 @@ const MASK_TYPE_LABELS: Record<MaskType, string> = {
   square: "Carré (J/Q/K)",
 };
 
+const STYLE_TO_API_KEY: Record<keyof CardStyleConfig, string> = {
+  maskType: "mask_type",
+  maskScale: "mask_scale",
+  maskPositionX: "mask_pos_x",
+  maskPositionY: "mask_pos_y",
+  imageZoom: "image_zoom",
+  imagePositionX: "image_pos_x",
+  imagePositionY: "image_pos_y",
+};
+
 function emptyRowFor(rank: Rank, style: CardStyleConfig): AdminPresetRow {
   return {
     rank,
@@ -240,7 +250,7 @@ export default function AdminSolitairePage() {
       const payload: Record<string, unknown> = { artist_id: draft.artistId };
       for (const field of FIELD_DEFS) {
         if (touched.has(field.key as keyof CardStyleConfig)) {
-          payload[field.key] = draft[field.key];
+          payload[STYLE_TO_API_KEY[field.key]] = draft[field.key];
         }
       }
       if (touched.has("maskType")) payload.mask_type = draft.maskType;

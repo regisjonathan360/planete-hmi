@@ -31,6 +31,7 @@ COMMENT ON COLUMN public.solitaire_rank_presets.mask_type IS
 
 GRANT SELECT ON public.solitaire_rank_presets TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.solitaire_rank_presets TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.solitaire_rank_presets TO service_role;
 
 CREATE POLICY "public read solitaire rank presets"
   ON public.solitaire_rank_presets
@@ -94,6 +95,7 @@ CREATE INDEX IF NOT EXISTS solitaire_cards_artist_idx
 
 GRANT SELECT ON public.solitaire_cards TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.solitaire_cards TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.solitaire_cards TO service_role;
 
 CREATE POLICY "public read solitaire cards"
   ON public.solitaire_cards
