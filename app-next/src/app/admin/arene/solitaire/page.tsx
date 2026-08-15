@@ -243,7 +243,7 @@ export default function AdminSolitairePage() {
           payload[field.key] = draft[field.key];
         }
       }
-      if (touched.has("maskType")) payload.maskType = draft.maskType;
+      if (touched.has("maskType")) payload.mask_type = draft.maskType;
 
       const res = await fetch(
         `/api/admin/arene/solitaire/cards/${draft.cardKey}`,
