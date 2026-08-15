@@ -68,35 +68,7 @@ export async function GET(): Promise<NextResponse> {
 
     console.log("[DEBUG] Fetching sources...");
 
-    // 2. Récupérer les sources de collecte
-    const { data: sourcesData, error: sourcesError } = await supabase
-      .from("chart_sources")
-      .select(
-        `
-        id,
-        source_key,
-        display_name,
-        platform,
-        is_enabled
-        `
-      )
-      .eq("is_enabled", true)
-      .order("display_name", { ascending: true });
-
-    console.log("[DEBUG] Sources error:", sourcesError?.message ?? "none");
-    console.log("[DEBUG] Sources count:", sourcesData?.length ?? 0);
-
-    if (sourcesError) {
-      return NextResponse.json(
-        { 
-          error: `Sources error: ${sourcesError.message}`,
-          details: sourcesError
-        },
-        { status: 500 }
-      );
-    }
-
-    // 3. Récupérer les playlists
+    // 2. Récupérer les playlists (les chart_sources ne sont pas des sources jouables)
     const { data: playlistsData, error: playlistsError } = await supabase
       .from("radio_playlists")
       .select(
@@ -123,17 +95,6 @@ export async function GET(): Promise<NextResponse> {
     }
 
     const sources = [];
-
-    if (sourcesData) {
-      for (const source of sourcesData as any[]) {
-        sources.push({
-          id: source.id,
-          name: source.display_name,
-          track_count: 0,
-          type: source.platform,
-        });
-      }
-    }
 
     if (playlistsData) {
       for (const playlist of playlistsData as any[]) {
