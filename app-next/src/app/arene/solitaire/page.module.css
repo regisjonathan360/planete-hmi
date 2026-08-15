@@ -33,3 +33,16 @@
   margin: 0;
   max-width: 72ch;
 }
+
+/* Fenêtre du jeu : plein cadre. Sur desktop, elle sort de la colonne
+   principale et recouvre la barre latérale de l'Arène (320 px + écart
+   de 2rem du layout) pour offrir toute la place au jeu. */
+.gameWindow {
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .gameWindow {
+    margin-right: calc(-1 * (320px + 2rem));
+  }
+}

@@ -1,0 +1,182 @@
+.table {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  padding: 12px 14px 8px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ===== Rangée du haut : talon + emplacements des suites ===== */
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.stock {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  flex-shrink: 0;
+}
+
+.stockButton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.stockBack {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  background-size: cover;
+  background-position: center;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 10px 24px rgba(5, 4, 9, 0.45);
+}
+
+.stockCount {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1.45rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--cream-dim);
+}
+
+.stockEmpty {
+  width: var(--card-w);
+  height: var(--card-h);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 7px;
+}
+
+.foundations {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 2px;
+}
+
+.foundationSlot,
+.foundationDone {
+  width: var(--card-w);
+  height: var(--found-h, 44px);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.foundationSlot {
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.16);
+}
+
+.foundationDone {
+  border: 1px solid rgba(0, 213, 255, 0.55);
+  background: rgba(0, 213, 255, 0.1);
+  box-shadow: 0 0 16px rgba(0, 213, 255, 0.35);
+}
+
+.foundationMark {
+  color: #00d5ff;
+  font-size: 1rem;
+  text-shadow: 0 0 10px rgba(0, 213, 255, 0.8);
+}
+
+/* ===== Les 10 colonnes du tableau ===== */
+.columns {
+  display: flex;
+  gap: var(--gap-x, 10px);
+  flex: 1;
+  min-height: 0;
+}
+
+.column {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  touch-action: none;
+}
+
+.emptySlot {
+  position: absolute;
+  left: 50%;
+  margin-left: calc(var(--card-w) / -2);
+  top: 0;
+  width: var(--card-w);
+  height: var(--card-h);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 7px;
+}
+
+.cardSlot {
+  position: absolute;
+  left: 50%;
+  margin-left: calc(var(--card-w) / -2);
+  width: var(--card-w);
+  height: var(--card-h);
+  touch-action: none;
+}
+
+.hintTarget {
+  position: absolute;
+  left: 50%;
+  margin-left: calc(var(--card-w) / -2);
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: 7px;
+  pointer-events: none;
+}
+
+.hintTarget::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(255, 196, 0, 0.85);
+  border-radius: 7px;
+  box-shadow: 0 0 18px rgba(255, 196, 0, 0.5);
+}
+
+/* ===== Fantôme de drag ===== */
+.ghostStack {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  transform: rotate(2deg) scale(1.04);
+}
+
+.ghostCard {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.ghostBadge {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  border-radius: 999px;
+  padding: 3px 7px;
+  background: #ffc400;
+  color: #160500;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}

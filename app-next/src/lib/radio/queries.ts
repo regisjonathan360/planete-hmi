@@ -11,6 +11,7 @@ import type {
   RadioPlayHistory,
   RadioPlaylistTrack,
 } from "./types";
+import { normalizePlaylistTrackCount } from "./types";
 
 /**
  * Récupère la configuration globale de la radio
@@ -121,7 +122,10 @@ export async function getAllPlaylists(): Promise<RadioPlaylist[]> {
     return [];
   }
 
-  return data || [];
+  return (data || []).map((playlist) => ({
+    ...playlist,
+    track_count: normalizePlaylistTrackCount(playlist.track_count),
+  }));
 }
 
 /**

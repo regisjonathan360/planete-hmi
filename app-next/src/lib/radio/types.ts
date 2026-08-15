@@ -2,6 +2,22 @@
  * Types TypeScript pour le système de radio de Planète HMI
  */
 
+/**
+ * Normalise le `track_count` renvoyé par PostgREST.
+ *
+ * Un agrégat embarqué (`radio_playlist_tracks(count)`) est toujours enveloppé
+ * dans un tableau : `[{ "count": 3 }]` (ou `[]` si aucune piste). Sans cela,
+ * React plante sur « Objects are not valid as a React child ». Module sans
+ * dépendance serveur : utilisable côté client comme côté serveur.
+ */
+export function normalizePlaylistTrackCount(trackCount: unknown): number {
+  if (Array.isArray(trackCount)) {
+    const first = trackCount[0] as { count?: number } | undefined;
+    return typeof first?.count === "number" ? first.count : 0;
+  }
+  return typeof trackCount === "number" ? trackCount : 0;
+}
+
 export interface RadioTrack {
   id: string;
   title: string;

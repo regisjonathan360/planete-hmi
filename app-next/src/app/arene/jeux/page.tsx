@@ -24,7 +24,7 @@ interface Jeu {
 const JEUX: Jeu[] = [
   {
     id: "solitaire",
-    title: "Solitaire 95",
+    title: "Solitaire",
     tagline: "Le classique Windows 95",
     description:
       "Repose les cartes sur les fondations par couleur, de l'as au roi. Dans l'Arène, les cartes sont illustrées par les artistes : visages des artistes de la planète en pleine carte.",

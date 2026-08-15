@@ -3,7 +3,7 @@
   height: 30px;
   background: linear-gradient(96deg, #2de2ff 0%, #8b2fff 55%, #ff2bd6 100%);
   display: flex;
-  padding: 9px;
+  padding: 4px 8px;
   justify-content: space-between;
   align-items: center;
 
@@ -31,4 +31,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Note : le composant utilise la classe « rightide » (orthographe du
+   slot enfants du TopBar) — centré à droite par la barre elle-même. */
+.rightide {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
 }

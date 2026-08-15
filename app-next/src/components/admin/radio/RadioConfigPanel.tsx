@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import type { RadioConfig, RadioPlaylist } from "@/lib/radio/types";
+import { normalizePlaylistTrackCount } from "@/lib/radio/types";
 import styles from "./RadioConfigPanel.module.css";
 
 interface RadioConfigPanelProps {
@@ -147,7 +148,8 @@ export function RadioConfigPanel({
                 <option value="">-- Sélectionner une playlist --</option>
                 {playlists.map((playlist) => (
                   <option key={playlist.id} value={playlist.id}>
-                    {playlist.name} ({playlist.track_count || 0} pistes)
+                    {playlist.name} (
+                    {normalizePlaylistTrackCount(playlist.track_count)} pistes)
                   </option>
                 ))}
               </select>

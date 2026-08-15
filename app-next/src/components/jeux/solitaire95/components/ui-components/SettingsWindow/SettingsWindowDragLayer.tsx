@@ -18,7 +18,12 @@ export const SettingsWindowDragLayer: React.FC<
     currentOffset: monitor.getSourceClientOffset(),
     isDragging: monitor.isDragging(),
   }));
-  const { scale } = useSolitaireFullscreen();
+  const { scale, isFullscreen, frameHost } = useSolitaireFullscreen();
+
+  /* Même règle que le fantôme des cartes : en plein écran, se portaliser
+     dans le cadre (top layer), sinon le calque disparaît sous la table. */
+  const portalTarget =
+    isFullscreen && frameHost ? frameHost : document.body;
 
   const layerStyles: CSS.Properties = {
     position: "fixed",
@@ -71,6 +76,6 @@ export const SettingsWindowDragLayer: React.FC<
         </div>
       </div>
     </div>,
-    document.body
+    portalTarget
   );
 };

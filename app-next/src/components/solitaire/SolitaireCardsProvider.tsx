@@ -115,7 +115,7 @@ const CARD_FALLBACK_CONFIGS = new Map<string, CardFaceConfig>();
     K: "king",
   };
   for (const suit of SUITS) {
-    for (const [label, rank] of Object.entries(ranks)) {
+    for (const rank of Object.values(ranks)) {
       const key = cardKeyOf(rank, suit);
       CARD_FALLBACK_CONFIGS.set(key, {
         cardKey: key,

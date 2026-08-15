@@ -1,0 +1,170 @@
+.table {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 12px 14px 8px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ===== Rangée du haut : talon + déchet + compteur ===== */
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 22px;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.stock {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  flex-shrink: 0;
+}
+
+.stockButton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.stockBack {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  background-size: cover;
+  background-position: center;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 10px 24px rgba(5, 4, 9, 0.45);
+}
+
+.stockRecycle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 7px;
+  color: var(--cream-dim);
+  font-size: 1.6rem;
+}
+
+.stockCount {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1.45rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--cream-dim);
+}
+
+.waste {
+  width: var(--card-w);
+  height: var(--card-h);
+  flex-shrink: 0;
+}
+
+.wasteCard,
+.wasteEmpty {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.wasteEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.25);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-top: 0.4rem;
+}
+
+.infoValue {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--cream);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+.infoHint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--cream-dim);
+}
+
+/* ===== La pyramide (7 rangées centrées) ===== */
+.pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-x, 6px);
+  flex: 1;
+  min-height: 0;
+  justify-content: center;
+}
+
+.pyramidRow {
+  display: flex;
+  justify-content: center;
+  gap: var(--gap-x, 6px);
+}
+
+.pyramidCard,
+.pyramidCardBlind {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+}
+
+.pyramidCard {
+  cursor: pointer;
+}
+
+.pyramidCardBlind {
+  cursor: default;
+}
+
+.pyramidCardBlind > * {
+  filter: brightness(0.55) saturate(0.6);
+}
+
+/* ===== Indice ===== */
+.hintLabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.5rem;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #ffc400;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+}

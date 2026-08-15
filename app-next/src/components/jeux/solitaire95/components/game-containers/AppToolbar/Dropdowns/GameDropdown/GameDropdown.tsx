@@ -10,6 +10,11 @@ import {
 import { ToolButton, Separator } from "../../../../ui-components";
 import { dealCardsAllSteps } from "../../../../../helpers/dealCardsAllSteps";
 import { UndoButton } from "./UndoButton";
+import {
+  SOLITAIRE_MODES,
+  SOLITAIRE_MODE_SWITCH_EVENT,
+} from "@/lib/solitaire/modes";
+import { useExitSolitaire } from "@/components/solitaire/useExitSolitaire";
 import { Dispatch } from "redux";
 
 type GameDropdownDispatchTypes = {
@@ -25,6 +30,12 @@ type GameDropdownPropTypes = {
   setHelpVisible: (prevState: boolean) => void;
 };
 
+const switchMode = (mode: string) => {
+  window.dispatchEvent(
+    new CustomEvent(SOLITAIRE_MODE_SWITCH_EVENT, { detail: { mode } })
+  );
+};
+
 export const GameDropdownInternal: React.FC<
   GameDropdownPropTypes & GameDropdownDispatchTypes
 > = ({
@@ -37,6 +48,7 @@ export const GameDropdownInternal: React.FC<
   setHelpVisible,
 }) => {
   const { isVegas, keepVegasScore } = useContext(VegasContext);
+  const exitSolitaire = useExitSolitaire();
   return (
     <>
       <ToolButton
@@ -78,11 +90,25 @@ export const GameDropdownInternal: React.FC<
         label="Options"
       />
       <Separator />
+      {SOLITAIRE_MODES.map((m) => (
+        <ToolButton
+          key={m.id}
+          onClick={() => {
+            setGameVisible(false);
+            switchMode(m.id);
+          }}
+          onMouseOver={() => setBottomBarText(m.label)}
+          onMouseLeave={() => setBottomBarText("")}
+          underscoredLetter={0}
+          label={`  ${m.label}`}
+        />
+      ))}
+      <Separator />
       <ToolButton
+        onClick={exitSolitaire}
         onMouseOver={() => setBottomBarText("Exit Solitaire")}
         onMouseLeave={() => setBottomBarText("")}
         underscoredLetter={1}
-        disabled
         label="Exit"
       />
     </>

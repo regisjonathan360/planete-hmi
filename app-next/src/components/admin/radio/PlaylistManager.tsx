@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import type { RadioPlaylist, RadioTrack } from "@/lib/radio/types";
+import { normalizePlaylistTrackCount } from "@/lib/radio/types";
 import styles from "./PlaylistManager.module.css";
 
 interface PlaylistManagerProps {
@@ -23,6 +24,7 @@ export function PlaylistManager({
   const [isCreating, setIsCreating] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [newPlaylistDescription, setNewPlaylistDescription] = useState("");
+  const safePlaylists = Array.isArray(playlists) ? playlists : [];
 
   const handleCreatePlaylist = async () => {
     if (!newPlaylistName.trim()) return;
@@ -42,7 +44,7 @@ export function PlaylistManager({
       if (!response.ok) throw new Error("Erreur lors de la création");
 
       const newPlaylist = await response.json();
-      onPlaylistsUpdate([...playlists, newPlaylist]);
+      onPlaylistsUpdate([...safePlaylists, newPlaylist]);
       
       setIsCreating(false);
       setNewPlaylistName("");
@@ -97,14 +99,14 @@ export function PlaylistManager({
       )}
 
       <div className={styles.playlists}>
-        {playlists.length === 0 ? (
+        {safePlaylists.length === 0 ? (
           <div className={styles.empty}>
             <p>Aucune playlist créée</p>
             <p>Créez votre première playlist pour commencer</p>
           </div>
         ) : (
           <div className={styles.playlistGrid}>
-            {playlists.map((playlist) => (
+            {safePlaylists.map((playlist) => (
               <div
                 key={playlist.id}
                 className={`${styles.playlistCard} ${
@@ -121,7 +123,9 @@ export function PlaylistManager({
                     </p>
                   )}
                   <div className={styles.playlistMeta}>
-                    <span>{playlist.track_count || 0} pistes</span>
+                    <span>
+                      {normalizePlaylistTrackCount(playlist.track_count)} pistes
+                    </span>
                     {playlist.is_default && (
                       <span className={styles.defaultBadge}>Par défaut</span>
                     )}

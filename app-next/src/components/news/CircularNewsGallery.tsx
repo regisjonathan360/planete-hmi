@@ -44,7 +44,6 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   const [dims, setDims] = useState({ radius: 340, cardW: 260, cardH: 377 });
   const [reduced, setReduced] = useState(false);
   const [gyroEnabled, setGyroEnabled] = useState(false);
-  const [gyroAvailable, setGyroAvailable] = useState(false);
   const [dragging, setDragging] = useState(false);
   const dragState = useRef({ active: false, id: -1, lastX: 0, lastY: 0, moved: 0, lastMoveAt: 0 });
   const gyroOrigin = useRef<{ beta: number; gamma: number } | null>(null);
@@ -59,12 +58,50 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => query.removeEventListener("change", onChange);
   }, []);
 
-  /* Détection gyroscope disponible (après montage, comme le globe). */
+  /* Détection + activation automatique du gyroscope : la mécanique se lance
+     dès que la section des actualités entre dans le champ de vision. Sur iOS
+     la permission exige un geste utilisateur : on la demande au premier
+     toucher/clic sur la galerie (et seulement si la section est visible). */
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setGyroAvailable("DeviceOrientationEvent" in window);
-    }, 0);
-    return () => window.clearTimeout(timer);
+    const host = hostRef.current;
+    if (!host) return;
+    if (!("DeviceOrientationEvent" in window)) return;
+
+    type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
+      requestPermission?: () => Promise<"granted" | "denied">;
+    };
+    const orientation = DeviceOrientationEvent as DeviceOrientationWithPermission;
+
+    const activate = () => {
+      gyroOrigin.current = null;
+      setGyroEnabled(true);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        if (orientation.requestPermission) {
+          host.addEventListener(
+            "pointerdown",
+            () => {
+              orientation
+                .requestPermission?.()
+                .then((result) => {
+                  if (result === "granted") activate();
+                })
+                .catch(() => {});
+            },
+            { once: true, capture: true }
+          );
+        } else {
+          activate();
+        }
+      },
+      { threshold: 0.35 }
+    );
+    observer.observe(host);
+    return () => observer.disconnect();
   }, []);
 
   /* Taille réactive : rayon du cercle + dimensions des cartes selon l'écran.
@@ -77,11 +114,11 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       const w = host.clientWidth;
       const h = host.clientHeight;
       if (!w || !h) return;
-      const cardW = Math.round(Math.min(w * 0.38, h * 0.5, 380));
-      const cardH = Math.round(cardW * 1.45);
+      const cardW = Math.round(Math.min(w * 0.42, h * 0.62, 440));
+      const cardH = Math.round(cardW * 1.4);
       const radius = Math.max(
-        200,
-        Math.round(Math.min((w - cardW) / 2 - 14, 800))
+        210,
+        Math.round(Math.min((w - cardW) / 2 - 12, 900))
       );
       setDims((prev) =>
         Math.abs(prev.radius - radius) < 2 && Math.abs(prev.cardW - cardW) < 2
@@ -112,21 +149,6 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     window.addEventListener("deviceorientation", handleOrientation, true);
     return () => window.removeEventListener("deviceorientation", handleOrientation, true);
   }, [gyroEnabled]);
-
-  const enableGyroscope = useCallback(async () => {
-    type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
-      requestPermission?: () => Promise<"granted" | "denied">;
-    };
-    const orientation = DeviceOrientationEvent as DeviceOrientationWithPermission;
-    if (orientation.requestPermission) {
-      const permission = await orientation.requestPermission();
-      if (permission !== "granted") return;
-    }
-    gyroOrigin.current = null;
-    setGyroEnabled(true);
-    dragState.current.active = false;
-    setDragging(false);
-  }, []);
 
   /* Rotation : l'auto-rotation tourne au repos, le drag (souris ou doigt)
      fait tourner le cercle à la main, le gyroscope ajoute un léger
@@ -274,16 +296,6 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
           );
         })}
       </div>
-
-      {gyroAvailable && !gyroEnabled ? (
-        <button
-          type="button"
-          className="circular-news-gallery__gyro"
-          onClick={enableGyroscope}
-        >
-          Activer le mouvement du téléphone
-        </button>
-      ) : null}
     </div>
   );
 }

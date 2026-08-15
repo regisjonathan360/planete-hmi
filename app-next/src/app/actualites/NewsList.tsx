@@ -221,7 +221,7 @@ export function NewsList({
 
                       <CircularNewsGallery items={circleItems} />
                       <p className="news-gallery-hint">
-                        Faites glisser pour faire tourner le cercle — ou activez le gyroscope
+                        Faites glisser pour faire tourner le cercle
                       </p>
                     </>
                   ) : (

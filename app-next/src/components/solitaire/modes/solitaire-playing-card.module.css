@@ -1,0 +1,63 @@
+.card {
+  position: relative;
+  width: var(--card-w, 96px);
+  height: var(--card-h, 139px);
+  border-radius: 7px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 10px 24px rgba(5, 4, 9, 0.45);
+  background: #fff;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.front,
+.back {
+  position: absolute;
+  inset: 0;
+}
+
+.front {
+  background-color: #fdfdfb;
+  background-size: cover;
+  background-position: center;
+}
+
+.back {
+  background-size: cover;
+  background-position: center;
+  background-color: #b4234f;
+}
+
+.selected {
+  outline: 2px solid rgba(0, 213, 255, 0.95);
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 1px rgba(0, 213, 255, 0.4),
+    0 0 22px rgba(0, 213, 255, 0.55),
+    0 10px 24px rgba(5, 4, 9, 0.45);
+}
+
+.hinted {
+  outline: 2px solid rgba(255, 196, 0, 0.95);
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 1px rgba(255, 196, 0, 0.4),
+    0 0 22px rgba(255, 196, 0, 0.55);
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.92;
+  transform: rotate(2deg) scale(1.04);
+  box-shadow: 0 22px 50px rgba(5, 4, 9, 0.7);
+}

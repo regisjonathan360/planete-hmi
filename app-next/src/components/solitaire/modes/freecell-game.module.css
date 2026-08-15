@@ -1,0 +1,132 @@
+.table {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  padding: 12px 14px 8px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ===== Rangée du haut : 4 cellules + 4 fondations ===== */
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.cells {
+  display: flex;
+  gap: 10px;
+}
+
+.cellSlot {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  touch-action: none;
+}
+
+.cellEmpty {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 7px;
+}
+
+.foundations {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.foundationSlot {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  touch-action: none;
+}
+
+.foundationEmpty {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 7px;
+}
+
+.foundationCount {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1.35rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--cream-dim);
+}
+
+/* ===== Les 8 colonnes ===== */
+.columns {
+  display: flex;
+  gap: var(--gap-x, 10px);
+  flex: 1;
+  min-height: 0;
+}
+
+.column {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  touch-action: none;
+}
+
+.emptySlot {
+  position: absolute;
+  left: 50%;
+  margin-left: calc(var(--card-w) / -2);
+  top: 0;
+  width: var(--card-w);
+  height: var(--card-h);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 7px;
+}
+
+.cardSlot {
+  position: absolute;
+  left: 50%;
+  margin-left: calc(var(--card-w) / -2);
+  width: var(--card-w);
+  height: var(--card-h);
+  touch-action: none;
+}
+
+/* ===== Fantôme de drag ===== */
+.ghostStack {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  transform: rotate(2deg) scale(1.04);
+}
+
+.ghostCard {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.ghostBadge {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  border-radius: 999px;
+  padding: 3px 7px;
+  background: #ffc400;
+  color: #160500;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}

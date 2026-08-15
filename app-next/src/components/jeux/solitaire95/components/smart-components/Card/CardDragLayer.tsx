@@ -129,7 +129,14 @@ const CardDragLayerInternal: React.FC<
   };
 
   const { getConfig } = useSolitaireCards();
-  const { scale } = useSolitaireFullscreen();
+  const { scale, isFullscreen, frameHost } = useSolitaireFullscreen();
+
+  /* En plein écran, l'élément du cadre est dans la top layer du navigateur :
+     un portal vers document.body rendrait le fantôme invisible (derrière la
+     table). On se portalise dans le cadre lui-même ; les coordonnées fixed
+     restent celles du viewport. */
+  const portalTarget =
+    isFullscreen && frameHost ? frameHost : document.body;
 
   const cardFace = (frontImageCard: string) => {
     const [rank, suit] = frontImageCard.split("_");
@@ -261,7 +268,7 @@ const CardDragLayerInternal: React.FC<
             </div>
           </div>
         </div>,
-        document.body
+        portalTarget
       )
     : null;
 };

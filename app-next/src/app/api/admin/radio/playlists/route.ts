@@ -5,6 +5,7 @@
  */
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin-guard";
+import { getAllPlaylists } from "@/lib/radio/queries";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
@@ -56,19 +57,7 @@ export async function GET() {
   if (!auth.ok) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
-  const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("radio_playlists")
-    .select(`
-      *,
-      track_count:radio_playlist_tracks(count)
-    `)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data || []);
+  const playlists = await getAllPlaylists();
+  return NextResponse.json(playlists);
 }
