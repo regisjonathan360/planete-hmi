@@ -61,7 +61,7 @@ export async function GET(): Promise<NextResponse> {
         status,
         period_start,
         period_end,
-        chart_sources!inner(
+        chart_sources(
           id,
           display_name,
           platform
@@ -85,12 +85,20 @@ export async function GET(): Promise<NextResponse> {
     }
 
     // Transformer les données des classements
-    const charts: ChartResponse[] = (chartsData || []).map((edition: any) => ({
-      id: edition.id,
-      name: edition.chart_sources?.display_name || "Classement sans nom",
-      track_count: edition.entry_count || 0,
-      platform: edition.chart_sources?.platform || "unknown",
-    }));
+    const charts: ChartResponse[] = (chartsData || [])
+      .filter((edition: any) => edition.chart_sources && edition.chart_sources.length > 0)
+      .map((edition: any) => {
+        const chartSource = Array.isArray(edition.chart_sources) 
+          ? edition.chart_sources[0] 
+          : edition.chart_sources;
+        
+        return {
+          id: edition.id,
+          name: chartSource?.display_name || "Classement sans nom",
+          track_count: edition.entry_count || 0,
+          platform: chartSource?.platform || "unknown",
+        };
+      });
 
     // 2. Récupérer les sources de collecte (chart_sources)
     const { data: sourcesData, error: sourcesError } = await supabase

@@ -76,7 +76,7 @@ export async function GET(request: Request): Promise<NextResponse> {
         .select(
           `
           id,
-          chart_sources!inner(id, display_name),
+          chart_sources(id, display_name),
           chart_entries(
             id,
             track_id,
