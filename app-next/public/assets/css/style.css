@@ -35,6 +35,15 @@
   --font-display: "Anton", "Archivo Black", sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "Space Mono", ui-monospace, monospace;
+  --font-ledpixel: "Ledpixel SC Slabserif", "Space Mono", ui-monospace, monospace;
+}
+
+@font-face {
+  font-family: "Ledpixel SC Slabserif";
+  src: url("/fonts/ledpixel-sc-slabserif.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 * { box-sizing: border-box; }
@@ -338,7 +347,7 @@ img { display: block; max-width: 100%; }
 .ticker__track { display: flex; gap: 0; padding: 0.8rem 0; width: max-content; animation: ticker 42s linear infinite; }
 .ticker:hover .ticker__track { animation-play-state: paused; }
 .ticker__group { display: flex; gap: 2.5rem; padding-right: 2.5rem; }
-.ticker__item { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--cream-dim); white-space: nowrap; }
+.ticker__item { display: flex; align-items: center; gap: 8px; font-family: var(--font-ledpixel); font-size: 0.82rem; color: var(--cream-dim); white-space: nowrap; }
 .ticker__item em { font-style: normal; color: var(--cream); }
 .ticker__item .up { color: var(--up); } .ticker__item .down { color: var(--down); }
 .ticker__rank { color: var(--electric-2); font-weight: 700; }
@@ -346,7 +355,7 @@ img { display: block; max-width: 100%; }
 .ticker__movement--new { color: #08070d; background: var(--electric-2); border-radius: 999px; padding: 1px 5px; min-width: auto; }
 .ticker__movement--stable { color: var(--cream-dim); }
 .ticker--empty { padding: 0.8rem 1rem; text-align: center; }
-.ticker__empty { color: var(--cream-dim); font-family: var(--font-mono); font-size: 0.82rem; }
+.ticker__empty { color: var(--cream-dim); font-family: var(--font-ledpixel); font-size: 0.82rem; }
 @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ============ SECTIONS ============ */
