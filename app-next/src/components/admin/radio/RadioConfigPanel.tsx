@@ -91,11 +91,32 @@ export function RadioConfigPanel({
     try {
       const updateData = {
         ...formData,
-        chart_source_key: selectedSourceType === "chart" ? selectedSourceId : "",
-        active_playlist_id:
-          selectedSourceType === "playlist" ? selectedSourceId : "",
-        auto_switch_to_chart: selectedSourceType === "chart",
+        chart_source_key: "",
+        active_playlist_id: "",
+        auto_switch_to_chart: false,
       };
+
+      if (selectedSourceType === "chart") {
+        // Matérialiser le classement en playlist radio (pré-téléchargement)
+        const syncResponse = await fetch("/api/admin/radio/sync-chart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chartId: selectedSourceId }),
+        });
+
+        if (!syncResponse.ok) {
+          const syncError = await syncResponse.json().catch(() => null);
+          throw new Error(
+            syncError?.error?.message || "Erreur lors de la synchronisation du classement"
+          );
+        }
+
+        const syncData = await syncResponse.json();
+        updateData.active_playlist_id = syncData.playlistId;
+        updateData.chart_source_key = selectedSourceId;
+      } else {
+        updateData.active_playlist_id = selectedSourceId;
+      }
 
       const response = await fetch("/api/admin/radio/config", {
         method: "PUT",
@@ -113,7 +134,11 @@ export function RadioConfigPanel({
       );
     } catch (error) {
       console.error("Erreur:", error);
-      alert("Erreur lors de la mise à jour de la configuration");
+      alert(
+        error instanceof Error
+          ? `Erreur: ${error.message}`
+          : "Erreur lors de la mise à jour de la configuration"
+      );
     } finally {
       setIsSaving(false);
     }

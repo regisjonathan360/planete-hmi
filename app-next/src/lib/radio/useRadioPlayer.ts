@@ -20,8 +20,8 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
   const {
     autoPlay = false,
     volume: initialVolume = 0.7,
-    preloadCount = 3,
-    crossfadeDuration = 2000,
+    preloadCount: initialPreloadCount = 3,
+    crossfadeDuration: initialCrossfadeDuration = 2000,
     sourceId,
     sourceType,
   } = options;
@@ -38,9 +38,42 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
   });
 
   const currentHowlRef = useRef<Howl | null>(null);
-  const nextHowlRef = useRef<Howl | null>(null);
   const preloadedHowls = useRef<Map<string, Howl>>(new Map());
   const isCrossfading = useRef(false);
+
+  // Réglages de lecture, surchargeables par la config radio renvoyée par l'API
+  const preloadCountRef = useRef(initialPreloadCount);
+  const crossfadeDurationRef = useRef(initialCrossfadeDuration);
+
+  /**
+   * Attache les handlers de fin/erreur à un Howl.
+   * On les détache d'abord pour éviter les doublons lors de la réutilisation
+   * d'un Howl préchargé (bug : la radio s'arrêtait après la première piste).
+   */
+  const attachHandlers = useCallback((howl: Howl, track: RadioTrack) => {
+    howl.off("end");
+    howl.off("loaderror");
+    howl.off("playerror");
+
+    howl.on("end", () => {
+      nextRef.current();
+    });
+
+    howl.on("loaderror", (id, error) => {
+      console.error("Error loading track:", track.title, error);
+      setState((prev) => ({
+        ...prev,
+        error: `Erreur de chargement: ${track.title}`,
+      }));
+      // Passer à la piste suivante
+      setTimeout(() => nextRef.current(), 1000);
+    });
+
+    howl.on("playerror", (id, error) => {
+      console.error("Error playing track:", track.title, error);
+      setTimeout(() => nextRef.current(), 1000);
+    });
+  }, []);
 
   /**
    * Charge la playlist depuis l'API (données par défaut)
@@ -54,6 +87,16 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
 
       const data = await response.json();
       const tracks = data.tracks || [];
+
+      // Appliquer la config radio (préchargement, crossfade)
+      if (data.config) {
+        if (typeof data.config.preload_count === "number") {
+          preloadCountRef.current = data.config.preload_count;
+        }
+        if (typeof data.config.crossfade_duration_ms === "number") {
+          crossfadeDurationRef.current = data.config.crossfade_duration_ms;
+        }
+      }
 
       setState((prev) => ({
         ...prev,
@@ -131,18 +174,23 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
   }, [sourceId, sourceType, loadSourcePlaylist, loadDefaultPlaylist]);
 
   /**
-   * Précharge les prochaines pistes
+   * Précharge les prochaines pistes (uniquement la ou les suivantes,
+   * jamais toute la playlist : préchargement progressif).
    */
   const preloadTracks = useCallback(
     (startIndex: number) => {
-      const { playlist } = state;
+      const { playlist, currentIndex } = state;
       if (playlist.length === 0) return;
 
+      const preloadCount = preloadCountRef.current;
+
+      // Précharger les N prochaines pistes
       for (let i = 1; i <= preloadCount; i++) {
         const index = (startIndex + i) % playlist.length;
         const track = playlist[index];
 
         if (!track || preloadedHowls.current.has(track.id)) continue;
+        if (!track.audio_url) continue;
 
         const howl = new Howl({
           src: [track.audio_url],
@@ -151,14 +199,29 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
           volume: 0, // Volume à 0 car on ne joue pas encore
         });
 
+        attachHandlers(howl, track);
         preloadedHowls.current.set(track.id, howl);
         setState((prev) => ({
           ...prev,
           preloadedTracks: new Set([...prev.preloadedTracks, track.id]),
         }));
       }
+
+      // Libérer les Howls qui ne sont plus dans la fenêtre de préchargement
+      // (la piste courante est conservée, elle peut être rejouée)
+      const keep = new Set<string>([playlist[currentIndex]?.id].filter(Boolean));
+      for (let i = 1; i <= preloadCount; i++) {
+        keep.add(playlist[(startIndex + i) % playlist.length]?.id);
+      }
+
+      for (const [trackId, howl] of preloadedHowls.current) {
+        if (!keep.has(trackId)) {
+          howl.unload();
+          preloadedHowls.current.delete(trackId);
+        }
+      }
     },
-    [state, preloadCount]
+    [state, attachHandlers]
   );
 
   /**
@@ -169,34 +232,21 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
       // Vérifier si déjà préchargé
       if (preloadedHowls.current.has(track.id)) {
         const howl = preloadedHowls.current.get(track.id)!;
+        attachHandlers(howl, track);
         howl.volume(state.isMuted ? 0 : state.volume);
         return howl;
       }
 
-      return new Howl({
+      const howl = new Howl({
         src: [track.audio_url],
         html5: true,
         volume: state.isMuted ? 0 : state.volume,
-        onend: () => {
-          // Piste terminée, passer à la suivante
-          next();
-        },
-        onloaderror: (id, error) => {
-          console.error("Error loading track:", track.title, error);
-          setState((prev) => ({
-            ...prev,
-            error: `Erreur de chargement: ${track.title}`,
-          }));
-          // Passer à la piste suivante
-          setTimeout(() => next(), 1000);
-        },
-        onplayerror: (id, error) => {
-          console.error("Error playing track:", track.title, error);
-          setTimeout(() => next(), 1000);
-        },
       });
+
+      attachHandlers(howl, track);
+      return howl;
     },
-    [state.volume, state.isMuted]
+    [state.volume, state.isMuted, attachHandlers]
   );
 
   /**
@@ -284,42 +334,41 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
 
     if (!nextTrack) return;
 
-    // Si crossfade activé
-    if (crossfadeDuration > 0 && !isCrossfading.current) {
-      isCrossfading.current = true;
-      const currentHowl = currentHowlRef.current;
-      const nextHowl = createHowl(nextTrack);
+    const crossfadeDuration = crossfadeDurationRef.current;
+    const currentHowl = currentHowlRef.current;
+    const nextHowl = createHowl(nextTrack);
 
-      if (currentHowl) {
-        // Fade out de la piste actuelle
+    if (currentHowl) {
+      if (crossfadeDuration > 0 && !isCrossfading.current) {
+        // Fade out de la piste actuelle + fade in de la suivante
+        isCrossfading.current = true;
         currentHowl.fade(state.volume, 0, crossfadeDuration);
         setTimeout(() => {
           currentHowl.stop();
         }, crossfadeDuration);
+
+        nextHowl.volume(0);
+        nextHowl.play();
+        nextHowl.fade(0, state.volume, crossfadeDuration);
+        isCrossfading.current = false;
+      } else {
+        // Transition normale
+        currentHowl.stop();
+        nextHowl.volume(state.isMuted ? 0 : state.volume);
+        nextHowl.play();
       }
-
-      // Fade in de la nouvelle piste
-      nextHowl.volume(0);
-      nextHowl.play();
-      nextHowl.fade(0, state.volume, crossfadeDuration);
-
-      currentHowlRef.current = nextHowl;
-      isCrossfading.current = false;
     } else {
-      // Transition normale
-      if (currentHowlRef.current) {
-        currentHowlRef.current.stop();
-      }
-      setState((prev) => ({ ...prev, currentIndex: nextIndex }));
-      setTimeout(() => play(), 100);
-      return;
+      nextHowl.play();
     }
+
+    currentHowlRef.current = nextHowl;
 
     setState((prev) => ({
       ...prev,
       currentIndex: nextIndex,
       currentTrack: nextTrack,
       nextTrack: playlist[(nextIndex + 1) % playlist.length],
+      isPlaying: true,
     }));
 
     // Précharger les prochaines pistes
@@ -331,7 +380,13 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ trackId: nextTrack.id }),
     }).catch(console.error);
-  }, [state, createHowl, crossfadeDuration, play, preloadTracks]);
+  }, [state, createHowl, preloadTracks]);
+
+  // Ref pour que les handlers des Howls préchargés puissent appeler next()
+  const nextRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    nextRef.current = next;
+  }, [next]);
 
   /**
    * Passe à la piste précédente
@@ -351,7 +406,7 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
    */
   const setVolume = useCallback((newVolume: number) => {
     const vol = Math.max(0, Math.min(1, newVolume));
-    
+
     if (currentHowlRef.current) {
       currentHowlRef.current.volume(vol);
     }

@@ -43,8 +43,8 @@ BEGIN
     SELECT 
       yv.id,
       COALESCE(yv.display_title, yv.source_title),
-      COALESCE(a.name, yc.channel_name, 'Artiste inconnu'),
-      t.artist_id,
+      COALESCE(a.name, yc.channel_title, 'Artiste inconnu'),
+      yc.artist_id,
       'https://www.youtube.com/watch?v=' || yv.video_id,
       COALESCE(yv.display_thumbnail_url, yv.source_thumbnail_url),
       COALESCE(yv.duration_seconds, 180),
@@ -55,8 +55,7 @@ BEGIN
       NOW()
     FROM youtube_videos yv
     JOIN youtube_channels yc ON yc.channel_id = yv.channel_id
-    LEFT JOIN tracks t ON t.id = yv.track_id
-    LEFT JOIN artists a ON a.id = t.artist_id
+    LEFT JOIN artists a ON a.id = yc.artist_id
     WHERE yv.review_status = 'APPROVED'
       AND yv.is_eligible = true
       AND yv.is_active = true

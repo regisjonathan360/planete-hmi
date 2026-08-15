@@ -146,7 +146,13 @@ export async function GET(): Promise<NextResponse> {
     }
 
     return NextResponse.json(
-      { tracks },
+      {
+        tracks,
+        config: {
+          preload_count: config.preload_count ?? 3,
+          crossfade_duration_ms: config.crossfade_duration_ms ?? 2000,
+        },
+      },
       { status: 200 }
     );
   } catch (err) {
