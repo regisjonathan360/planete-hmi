@@ -40,7 +40,7 @@ interface CircularNewsGalleryProps {
 export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState(() => Math.random() * 360);
-  const [dims, setDims] = useState({ radius: 340, cardW: 260, cardH: 377 });
+  const [dims, setDims] = useState({ radius: 340, cardW: 260, cardH: 324 });
   const [reduced, setReduced] = useState(false);
   const [gyroEnabled, setGyroEnabled] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -103,8 +103,9 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => observer.disconnect();
   }, []);
 
-/* Taille réactive : le carrousel suit la LARGEUR de la page (portrait/mobile =
-   taille de base actuelle ; en paysage les cartes s'élargissent avec le cercle). */
+/* Taille réactive : les CASES s'élargissent (horizontalement) avec la page
+   et la circonférence du carrousel suit. La hauteur des cartes reste fixe
+   (base mobile) — c'est la largeur qui s'élargit, pas la taille. */
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
@@ -116,9 +117,9 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       const n = Math.min(items.length, MAX_ITEMS);
       const anglePerItemRad = (2 * Math.PI) / n;
 
-      // Rayon = moitié de la largeur dispo : le cercle remplit la largeur du
-      // conteneur. En portrait/mobile (w petit), le minimum 220px conserve la
-      // taille de base actuelle ; en paysage le cercle s'élargit avec la page.
+      // Rayon = moitié de la largeur dispo : la circonférence du carrousel
+      // s'élargit avec la page. En portrait/mobile (w petit), le minimum
+      // 220px conserve la taille de base actuelle.
       let radius = Math.max(220, Math.min((w - 64) / 2, 1500));
 
       // Gap angulaire fixe entre les cartes (3.5° = petit espace visible)
@@ -138,11 +139,12 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
         radius = cardW / (2 * Math.tan(cardAngleRad / 2));
       }
 
-      // Proportion hauteur/largeur (1.35 = photo + 3 lignes titre)
-      const cardH = Math.round(cardW * 1.35);
-
       // Largeur minimum pour lisibilité (base mobile)
       cardW = Math.max(cardW, 240);
+
+      // Hauteur FIXE (base mobile, 240 × 1.35) : seules la largeur des cases
+      // et la circonférence du carrousel s'élargissent avec la page, pas la taille.
+      const cardH = 324;
 
       setDims((prev) =>
         Math.abs(prev.radius - radius) < 1 &&
