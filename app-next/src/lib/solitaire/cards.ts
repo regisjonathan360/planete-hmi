@@ -231,12 +231,12 @@ export function buildCardFaceConfigs(bundle: SolitaireCardsBundle): CardFaceConf
 
 /**
  * Zone sûre de l'image de l'artiste (spécification §16) :
- * rectangle relatif (0→1) dans lequel l'image peut être affichée sans
- * entrer en collision avec rang, enseigne et pips.
+ * rectangle relatif (0→1) dans lequel l'image est affichée.
  *
- * Les cartes à pips (2–10) réservent des colonnes latérales pour les
- * enseignes : le masque y est plus étroit et centré verticalement.
- * Les figures (J/Q/K) et l'as peuvent occuper une grande zone centrale.
+ * Le masque peut dépasser la zone « sûre » : aucune limite de taille
+ * n'est imposée, l'admin choisit librement (maskScale), quitte à recouvrir
+ * les pips (ceux dont le centre tombe sous le masque ne sont pas rendus).
+ * Les coins rang/enseigne restent toujours au-dessus (z-index).
  */
 export function getArtistSafeArea(rank: Rank, config: CardStyleConfig): {
   x: number;
@@ -246,8 +246,7 @@ export function getArtistSafeArea(rank: Rank, config: CardStyleConfig): {
 } {
   const pipRanks = ["two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"] as const;
   const hasPips = (pipRanks as readonly string[]).includes(rank);
-  const maxWidth = hasPips ? 0.42 : 0.66;
-  const width = Math.min(config.maskScale, maxWidth);
+  const width = config.maskScale;
   const height = hasPips ? width * 1.05 : width * 1.15;
   return {
     x: config.maskPositionX - width / 2,
