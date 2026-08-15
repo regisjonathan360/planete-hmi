@@ -32,6 +32,7 @@ import type {
 import { SolitairePlayingCard } from "./SolitairePlayingCard";
 import { useTableDrag } from "./useTableDrag";
 import { useTableGeometry } from "./useTableGeometry";
+import { useSolitaireFullscreen } from "@/components/solitaire/SolitaireScaleFrame";
 import styles from "./freecell-game.module.css";
 
 type DragPayload =
@@ -98,6 +99,7 @@ export const FreeCellGame = forwardRef<ModeGameHandle, FreeCellGameProps>(
     const wonRef = useRef(false);
 
     const tableRef = useRef<HTMLDivElement>(null);
+    const { isFullscreen } = useSolitaireFullscreen();
     const { ghost, ghostStyle, beginDrag } = useTableDrag({
       onDrop: handleDrop,
       frameRef: tableRef,
@@ -105,7 +107,7 @@ export const FreeCellGame = forwardRef<ModeGameHandle, FreeCellGameProps>(
     const {
       style: geometryStyle,
       overlap,
-    } = useTableGeometry({ columns: 8, maxStack: 24 });
+    } = useTableGeometry({ columns: 8, maxStack: 24, isFullscreen });
 
     useEffect(() => {
       onStatus({

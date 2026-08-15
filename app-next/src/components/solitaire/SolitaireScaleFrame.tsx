@@ -74,6 +74,7 @@ export function SolitaireScaleFrame({
   const [frameHeight, setFrameHeight] = useState<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const isFullscreenRef = useRef(false);
+  const measurePendingRef = useRef(false);
 
   const setOuterNode = useCallback((node: HTMLDivElement | null) => {
     outerRef.current = node;
@@ -81,19 +82,27 @@ export function SolitaireScaleFrame({
   }, []);
 
   const measure = useCallback(() => {
+    if (measurePendingRef.current) return;
+    measurePendingRef.current = true;
+
     const outer = outerRef.current;
-    if (!outer) return;
+    if (!outer) {
+      measurePendingRef.current = false;
+      return;
+    }
+
     const availableWidth = outer.clientWidth;
     const availableHeight = outer.clientHeight;
-    if (!availableWidth || !availableHeight) return;
-
     const viewportW = window.innerWidth;
     const viewportH = window.innerHeight;
 
+    if (!availableWidth || !availableHeight) {
+      measurePendingRef.current = false;
+      return;
+    }
+
     if (!fluid) {
       // Taille de design FIXE : le jeu est conçu en 1020×775 (+ barres).
-      // On ne mesure pas le contenu (scrollWidth/scrollHeight) : il s'étire
-      // à 100 % et rendrait la mesure dépendante de la largeur du cadre.
       // En plein écran, on clamp au viewport pour éviter tout débordement.
       const maxScale = isFullscreenRef.current
         ? Math.min(viewportW / DESIGN_WIDTH, viewportH / DESIGN_HEIGHT)
@@ -115,18 +124,18 @@ export function SolitaireScaleFrame({
       });
     }
 
-    // Hauteur du cadre = tout l'espace visible restant sous l'en-tête de
-    // la page (bornée au viewport si la page est défilée).
-    // En plein écran, on utilise la hauteur du viewport.
-    const rect = outer.getBoundingClientRect();
+    // Hauteur du cadre : en plein écran = viewport, sinon espace sous header
+    const rect = outerRef.current?.getBoundingClientRect();
     const availableHeightPx = isFullscreenRef.current
-      ? viewportH
-      : window.innerHeight - Math.max(rect.top, 0) - 14;
+      ? window.innerHeight
+      : (rect ? window.innerHeight - Math.max(rect.top, 0) - 14 : window.innerHeight);
     setFrameHeight((prev) =>
       prev !== null && Math.abs(prev - availableHeightPx) < 2
         ? prev
         : Math.max(420, Math.round(availableHeightPx))
     );
+
+    measurePendingRef.current = false;
   }, [fluid]);
 
   useEffect(() => {
@@ -134,16 +143,15 @@ export function SolitaireScaleFrame({
     const outer = outerRef.current;
     if (!outer) return;
 
-    const outerObserver = new ResizeObserver(measure);
+    const outerObserver = new ResizeObserver(() => measure());
     outerObserver.observe(outer);
-    // Filet de sécurité (plein écran, zoom navigateur, rotation mobile).
-    window.addEventListener("resize", measure);
+    window.addEventListener("resize", () => measure());
 
     return () => {
       outerObserver.disconnect();
-      window.removeEventListener("resize", measure);
+      window.removeEventListener("resize", () => measure());
     };
-  }, [measure]);
+  }, []);
 
   const enterFullscreen = useCallback(() => {
     const outer = outerRef.current;
@@ -180,10 +188,7 @@ export function SolitaireScaleFrame({
       const nowFullscreen = document.fullscreenElement === outerRef.current;
       isFullscreenRef.current = nowFullscreen;
       setIsFullscreen(nowFullscreen);
-      // Recalcule l'échelle APRÈS que React a appliqué le nouveau style
-      // (hauteur inline retirée en plein écran) : sans cela, le fantôme
-      // du drag garde l'échelle précédente pendant un instant
-      // (« gros fantôme »).
+      // Recalcule après que le navigateur a appliqué le fullscreen
       requestAnimationFrame(() => {
         requestAnimationFrame(() => measure());
       });
@@ -192,21 +197,15 @@ export function SolitaireScaleFrame({
     document.addEventListener("webkitfullscreenchange", onChange as EventListener);
     return () => {
       document.removeEventListener("fullscreenchange", onChange);
-      document.removeEventListener(
-        "webkitfullscreenchange",
-        onChange as EventListener
-      );
+      document.removeEventListener("webkitfullscreenchange", onChange as EventListener);
     };
-  }, [measure]);
+  }, []);
 
   const scale = transform?.scale ?? 1;
   const width = !fluid && transform ? transform.width : "100%";
   const height = !fluid && transform ? transform.height : "100%";
   const marginLeft = !fluid && transform ? (-transform.width * scale) / 2 : 0;
   const marginTop = !fluid && transform ? (-transform.height * scale) / 2 : 0;
-  // Le centrage (left:50% + marges négatives) ne vaut que pour la maquette
-  // fixe : en mode fluide le contenu doit remplir le cadre depuis son coin
-  // haut-gauche, sinon il déborde en bas à droite de l'écran.
   const centered = !fluid && transform;
 
   return (
@@ -237,6 +236,8 @@ export function SolitaireScaleFrame({
             marginTop,
             left: centered ? undefined : 0,
             top: centered ? undefined : 0,
+            maxWidth: isFullscreen ? "100vw" : undefined,
+            maxHeight: isFullscreen ? "100vh" : undefined,
           }}
         >
           {children}

@@ -12,6 +12,8 @@ interface UseRadioPlayerOptions {
   volume?: number;
   preloadCount?: number;
   crossfadeDuration?: number;
+  sourceId?: string;
+  sourceType?: "chart" | "playlist";
 }
 
 export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
@@ -20,6 +22,8 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
     volume: initialVolume = 0.7,
     preloadCount = 3,
     crossfadeDuration = 2000,
+    sourceId,
+    sourceType,
   } = options;
 
   const [state, setState] = useState<RadioPlayerState>({
@@ -39,9 +43,9 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
   const isCrossfading = useRef(false);
 
   /**
-   * Charge la playlist depuis l'API
+   * Charge la playlist depuis l'API (données par défaut)
    */
-  const loadPlaylist = useCallback(async () => {
+  const loadDefaultPlaylist = useCallback(async () => {
     try {
       setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
 
@@ -63,7 +67,7 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
         setTimeout(() => play(), 100);
       }
     } catch (error) {
-      console.error("Error loading playlist:", error);
+      console.error("Error loading default playlist:", error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -71,6 +75,60 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
       }));
     }
   }, [autoPlay]);
+
+  /**
+   * Charge la playlist depuis une source (chart ou playlist)
+   */
+  const loadSourcePlaylist = useCallback(async (id: string, type: "chart" | "playlist") => {
+    try {
+      setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
+
+      const params = new URLSearchParams();
+      if (type === "chart") {
+        params.append("chartId", id);
+      } else {
+        params.append("playlistId", id);
+      }
+
+      const response = await fetch(`/api/admin/radio/source-tracks?${params}`);
+      if (!response.ok) {
+        throw new Error("Erreur lors du chargement des pistes");
+      }
+
+      const data = await response.json();
+      const tracks = data.tracks || [];
+
+      setState((prev) => ({
+        ...prev,
+        playlist: tracks,
+        isLoading: false,
+        currentIndex: tracks.length > 0 ? 0 : -1,
+      }));
+
+      if (tracks.length > 0 && autoPlay) {
+        // Démarre la lecture automatiquement
+        setTimeout(() => play(), 100);
+      }
+    } catch (error) {
+      console.error("Error loading source playlist:", error);
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: "Impossible de charger les pistes",
+      }));
+    }
+  }, [autoPlay]);
+
+  /**
+   * Charge la playlist appropriée
+   */
+  const loadPlaylist = useCallback(async () => {
+    if (sourceId && sourceType) {
+      await loadSourcePlaylist(sourceId, sourceType);
+    } else {
+      await loadDefaultPlaylist();
+    }
+  }, [sourceId, sourceType, loadSourcePlaylist, loadDefaultPlaylist]);
 
   /**
    * Précharge les prochaines pistes

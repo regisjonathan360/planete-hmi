@@ -1,11 +1,12 @@
 /**
  * Panel de configuration de la radio
- * Permet de choisir la playlist active, le mode auto-chart, etc.
+ * Permet de choisir entre classements et sources de collecte
  */
 "use client";
 
-import { useState } from "react";
-import type { RadioConfig, RadioPlaylist } from "@/lib/radio/types";
+import { useState, useEffect } from "react";
+import { AvailableSourcesSelector } from "./AvailableSourcesSelector";
+import type { RadioConfig, RadioPlaylist, RadioTrack } from "@/lib/radio/types";
 import { normalizePlaylistTrackCount } from "@/lib/radio/types";
 import styles from "./RadioConfigPanel.module.css";
 
@@ -22,6 +23,16 @@ export function RadioConfigPanel({
 }: RadioConfigPanelProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedSourceId, setSelectedSourceId] = useState("");
+  const [selectedSourceType, setSelectedSourceType] = useState<"chart" | "playlist" | "">(
+    ""
+  );
+  const [sourcePreview, setSourcePreview] = useState<{
+    name: string;
+    tracks: RadioTrack[];
+    isLoading: boolean;
+  } | null>(null);
+
   const [formData, setFormData] = useState({
     active_playlist_id: config?.active_playlist_id || "",
     auto_switch_to_chart: config?.auto_switch_to_chart || false,
@@ -30,6 +41,83 @@ export function RadioConfigPanel({
     crossfade_duration_ms: config?.crossfade_duration_ms || 2000,
     is_live: config?.is_live ?? true,
   });
+
+  /**
+   * Charge les pistes d'une source sélectionnée
+   */
+  const handleSourceChange = async (
+    sourceId: string,
+    sourceType: "chart" | "playlist"
+  ) => {
+    setSelectedSourceId(sourceId);
+    setSelectedSourceType(sourceType);
+    setSourcePreview({ name: "", tracks: [], isLoading: true });
+
+    try {
+      const params = new URLSearchParams();
+      if (sourceType === "chart") {
+        params.append("chartId", sourceId);
+      } else {
+        params.append("playlistId", sourceId);
+      }
+
+      const response = await fetch(`/api/admin/radio/source-tracks?${params}`);
+      if (!response.ok) throw new Error("Erreur de chargement");
+
+      const data = await response.json();
+      setSourcePreview({
+        name: data.source_name,
+        tracks: data.tracks || [],
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error("Erreur de chargement:", error);
+      setSourcePreview({
+        name: "Erreur de chargement",
+        tracks: [],
+        isLoading: false,
+      });
+    }
+  };
+
+  /**
+   * Applique la source sélectionnée comme source radio
+   */
+  const applySource = async () => {
+    if (!selectedSourceId || !selectedSourceType) return;
+
+    setIsSaving(true);
+
+    try {
+      const updateData = {
+        ...formData,
+        chart_source_key: selectedSourceType === "chart" ? selectedSourceId : "",
+        active_playlist_id:
+          selectedSourceType === "playlist" ? selectedSourceId : "",
+        auto_switch_to_chart: selectedSourceType === "chart",
+      };
+
+      const response = await fetch("/api/admin/radio/config", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) throw new Error("Erreur lors de la mise à jour");
+
+      const updatedConfig = await response.json();
+      onConfigUpdate(updatedConfig);
+      setFormData(updateData);
+      alert(
+        `✅ Radio configurée avec: ${sourcePreview?.name}`
+      );
+    } catch (error) {
+      console.error("Erreur:", error);
+      alert("Erreur lors de la mise à jour de la configuration");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,152 +170,138 @@ export function RadioConfigPanel({
           </button>
         </div>
       ) : isEditing ? (
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {/* État de la radio */}
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              <input
-                type="checkbox"
-                checked={formData.is_live}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_live: e.target.checked })
-                }
-              />
-              <span>Radio en direct (LIVE)</span>
-            </label>
+        <div className={styles.form}>
+          {/* Section 1 : Sélectionner une source */}
+          <div className={styles.formSection}>
+            <h3>📻 Sélectionner la source radio</h3>
+            <p className={styles.hint}>
+              Choisissez un classement ou une playlist pour alimenter la radio
+            </p>
+
+            <AvailableSourcesSelector
+              onSelectChart={(id) => handleSourceChange(id, "chart")}
+              onSelectSource={(id) => handleSourceChange(id, "playlist")}
+            />
+
+            {/* Preview des pistes */}
+            {sourcePreview && (
+              <div className={styles.sourcePreview}>
+                <h4>{sourcePreview.name}</h4>
+                {sourcePreview.isLoading ? (
+                  <p>Chargement des pistes...</p>
+                ) : sourcePreview.tracks.length > 0 ? (
+                  <>
+                    <p className={styles.trackCount}>
+                      ✅ {sourcePreview.tracks.length} piste
+                      {sourcePreview.tracks.length > 1 ? "s" : ""} trouvée
+                      {sourcePreview.tracks.length > 1 ? "s" : ""}
+                    </p>
+
+                    <div className={styles.trackList}>
+                      {sourcePreview.tracks.slice(0, 5).map((track, idx) => (
+                        <div key={track.id} className={styles.trackItem}>
+                          <span className={styles.trackNumber}>{idx + 1}.</span>
+                          <span className={styles.trackName}>
+                            {track.title}
+                          </span>
+                          <span className={styles.trackArtist}>
+                            {track.artist_name}
+                          </span>
+                        </div>
+                      ))}
+                      {sourcePreview.tracks.length > 5 && (
+                        <p className={styles.more}>
+                          ... et {sourcePreview.tracks.length - 5} autre(s)
+                        </p>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      className={styles.applyButton}
+                      onClick={applySource}
+                      disabled={isSaving}
+                    >
+                      {isSaving
+                        ? "Application..."
+                        : "✅ Appliquer cette source"}
+                    </button>
+                  </>
+                ) : (
+                  <p className={styles.emptyTracks}>
+                    Aucune piste trouvée pour cette source
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Mode de la radio */}
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Mode de diffusion
-            </label>
-            <div className={styles.radioGroup}>
-              <label className={styles.radioLabel}>
+          {/* Section 2 : Paramètres avancés */}
+          <div className={styles.formSection}>
+            <h3>⚙️ Paramètres avancés</h3>
+
+            {/* État de la radio */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
                 <input
-                  type="radio"
-                  name="mode"
-                  checked={!formData.auto_switch_to_chart}
-                  onChange={() =>
-                    setFormData({ ...formData, auto_switch_to_chart: false })
+                  type="checkbox"
+                  checked={formData.is_live}
+                  onChange={(e) =>
+                    setFormData({ ...formData, is_live: e.target.checked })
                   }
                 />
-                <span>Playlist manuelle</span>
-              </label>
-              <label className={styles.radioLabel}>
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={formData.auto_switch_to_chart}
-                  onChange={() =>
-                    setFormData({ ...formData, auto_switch_to_chart: true })
-                  }
-                />
-                <span>Auto-chart (classement)</span>
+                <span>Radio en direct (LIVE)</span>
               </label>
             </div>
-          </div>
 
-          {/* Playlist active (si mode manuel) */}
-          {!formData.auto_switch_to_chart && (
+            {/* Nombre de pistes à précharger */}
             <div className={styles.formGroup}>
-              <label htmlFor="playlist" className={styles.label}>
-                Playlist active
+              <label htmlFor="preload" className={styles.label}>
+                Pistes à précharger
               </label>
-              <select
-                id="playlist"
-                value={formData.active_playlist_id}
+              <input
+                id="preload"
+                type="number"
+                min="1"
+                max="10"
+                value={formData.preload_count}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    active_playlist_id: e.target.value,
+                    preload_count: parseInt(e.target.value, 10),
                   })
                 }
-                className={styles.select}
-              >
-                <option value="">-- Sélectionner une playlist --</option>
-                {playlists.map((playlist) => (
-                  <option key={playlist.id} value={playlist.id}>
-                    {playlist.name} (
-                    {normalizePlaylistTrackCount(playlist.track_count)} pistes)
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Clé du classement (si mode auto-chart) */}
-          {formData.auto_switch_to_chart && (
-            <div className={styles.formGroup}>
-              <label htmlFor="chart" className={styles.label}>
-                Classement à diffuser
-              </label>
-              <input
-                id="chart"
-                type="text"
-                value={formData.chart_source_key}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    chart_source_key: e.target.value,
-                  })
-                }
-                placeholder="Ex: youtube-week, audiomack-top"
                 className={styles.input}
               />
               <p className={styles.hint}>
-                Entrez la clé source_key du classement à diffuser
+                Plus de pistes = transitions fluides
               </p>
             </div>
-          )}
 
-          {/* Nombre de pistes à précharger */}
-          <div className={styles.formGroup}>
-            <label htmlFor="preload" className={styles.label}>
-              Pistes à précharger
-            </label>
-            <input
-              id="preload"
-              type="number"
-              min="1"
-              max="10"
-              value={formData.preload_count}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  preload_count: parseInt(e.target.value, 10),
-                })
-              }
-              className={styles.input}
-            />
-            <p className={styles.hint}>
-              Plus de pistes = transitions fluides, mais plus de bande passante
-            </p>
-          </div>
-
-          {/* Durée du crossfade */}
-          <div className={styles.formGroup}>
-            <label htmlFor="crossfade" className={styles.label}>
-              Durée du crossfade (ms)
-            </label>
-            <input
-              id="crossfade"
-              type="number"
-              min="0"
-              max="10000"
-              step="100"
-              value={formData.crossfade_duration_ms}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  crossfade_duration_ms: parseInt(e.target.value, 10),
-                })
-              }
-              className={styles.input}
-            />
-            <p className={styles.hint}>
-              0 = transition instantanée, 2000 = 2 secondes de fondu enchaîné
-            </p>
+            {/* Durée du crossfade */}
+            <div className={styles.formGroup}>
+              <label htmlFor="crossfade" className={styles.label}>
+                Durée du crossfade (ms)
+              </label>
+              <input
+                id="crossfade"
+                type="number"
+                min="0"
+                max="10000"
+                step="100"
+                value={formData.crossfade_duration_ms}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    crossfade_duration_ms: parseInt(e.target.value, 10),
+                  })
+                }
+                className={styles.input}
+              />
+              <p className={styles.hint}>
+                0 = sans fondu, 2000 = 2 secondes
+              </p>
+            </div>
           </div>
 
           {/* Boutons d'action */}
@@ -238,17 +312,18 @@ export function RadioConfigPanel({
               className={styles.cancelButton}
               disabled={isSaving}
             >
-              Annuler
+              Fermer
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               className={styles.saveButton}
               disabled={isSaving}
             >
-              {isSaving ? "Enregistrement..." : "Enregistrer"}
+              {isSaving ? "Enregistrement..." : "💾 Enregistrer"}
             </button>
           </div>
-        </form>
+        </div>
       ) : (
         <div className={styles.summary}>
           <div className={styles.summaryItem}>
@@ -299,3 +374,4 @@ export function RadioConfigPanel({
     </div>
   );
 }
+

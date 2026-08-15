@@ -1,63 +1,110 @@
 /**
- * API route pour la gestion des playlists radio
- * POST /api/admin/radio/playlists - Créer une playlist
- * GET /api/admin/radio/playlists - Lister les playlists
+ * GET/POST /api/admin/radio/playlists
+ * 
+ * Récupère ou crée des playlists radio
+ * Requires: admin role
  */
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin-guard";
-import { getAllPlaylists } from "@/lib/radio/queries";
-import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { RadioPlaylist } from "@/lib/radio/types";
 
 export const dynamic = "force-dynamic";
 
-const createPlaylistSchema = z.object({
-  name: z.string().min(1).max(200),
-  description: z.string().optional(),
-  shuffle_enabled: z.boolean().default(true),
-  repeat_enabled: z.boolean().default(true),
-});
-
-export async function POST(request: Request) {
+export async function GET(): Promise<NextResponse> {
+  // Vérifier que l'utilisateur est admin
   const auth = await requireAdmin();
   if (!auth.ok) {
-    return NextResponse.json({ error: auth.error }, { status: auth.status });
+    return NextResponse.json(
+      { error: auth.error },
+      { status: auth.status }
+    );
   }
-  const supabase = await createClient();
 
   try {
-    const body = await request.json();
-    const data = createPlaylistSchema.parse(body);
+    const supabase = createAdminClient();
 
-    const { data: playlist, error } = await supabase
+    const { data, error } = await supabase
       .from("radio_playlists")
-      .insert({
-        ...data,
-        is_active: true,
-      })
-      .select()
-      .single();
+      .select(
+        `
+        *,
+        radio_playlist_tracks(count)
+        `
+      )
+      .order("created_at", { ascending: false });
 
     if (error) {
-      throw new Error(error.message);
+      console.error("Error fetching playlists:", error);
+      return NextResponse.json(
+        { error: "Erreur lors de la récupération des playlists" },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json(playlist);
-  } catch (error: any) {
-    console.error("Error creating playlist:", error);
+    return NextResponse.json(data || []);
+  } catch (err) {
+    console.error("Error:", err);
     return NextResponse.json(
-      { error: error.message || "Erreur lors de la création" },
+      { error: "Erreur serveur" },
       { status: 500 }
     );
   }
 }
 
-export async function GET() {
+export async function POST(request: Request): Promise<NextResponse> {
+  // Vérifier que l'utilisateur est admin
   const auth = await requireAdmin();
   if (!auth.ok) {
-    return NextResponse.json({ error: auth.error }, { status: auth.status });
+    return NextResponse.json(
+      { error: auth.error },
+      { status: auth.status }
+    );
   }
 
-  const playlists = await getAllPlaylists();
-  return NextResponse.json(playlists);
+  try {
+    const body: Partial<RadioPlaylist> = await request.json();
+
+    if (!body.name) {
+      return NextResponse.json(
+        { error: "Le nom de la playlist est requis" },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createAdminClient();
+
+    const { data, error } = await supabase
+      .from("radio_playlists")
+      .insert([
+        {
+          name: body.name,
+          description: body.description || null,
+          is_default: body.is_default ?? false,
+          is_active: body.is_active ?? true,
+          shuffle_enabled: body.shuffle_enabled ?? false,
+          repeat_enabled: body.repeat_enabled ?? false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating playlist:", error);
+      return NextResponse.json(
+        { error: "Erreur lors de la création de la playlist" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(data, { status: 201 });
+  } catch (err) {
+    console.error("Error:", err);
+    return NextResponse.json(
+      { error: "Erreur serveur" },
+      { status: 500 }
+    );
+  }
 }

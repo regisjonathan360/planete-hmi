@@ -34,6 +34,8 @@ export interface TableGeometryOptions {
   bottomReserve?: number;
   /** Part d'un chevauchement par rapport à la hauteur de carte. */
   overlapRatio?: number;
+  /** Si true, force l'utilisation des dimensions viewport (mode plein écran). */
+  isFullscreen?: boolean;
 }
 
 /**
@@ -58,6 +60,7 @@ export function useTableGeometry(options: TableGeometryOptions) {
     padX = 32,
     bottomReserve = 40,
     overlapRatio = 0.15,
+    isFullscreen = false,
   } = options;
 
   const tableRef = useRef<HTMLDivElement>(null);
@@ -80,8 +83,10 @@ export function useTableGeometry(options: TableGeometryOptions) {
       // Clamp to viewport size to prevent overflow in fullscreen
       const viewportW = window.innerWidth;
       const viewportH = window.innerHeight;
-      const width = Math.min(rect.width, viewportW);
-      const height = Math.min(rect.height, viewportH);
+      
+      // En plein écran, on utilise directement les dimensions viewport
+      const width = isFullscreen ? viewportW : Math.min(rect.width, viewportW);
+      const height = isFullscreen ? viewportH : Math.min(rect.height, viewportH);
 
       // Itératif : converger vers la taille optimale de carte
       let cardW = 120;

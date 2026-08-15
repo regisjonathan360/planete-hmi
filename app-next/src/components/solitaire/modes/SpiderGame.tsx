@@ -31,6 +31,7 @@ import type {
 import { SolitairePlayingCard } from "./SolitairePlayingCard";
 import { useTableDrag } from "./useTableDrag";
 import { useTableGeometry } from "./useTableGeometry";
+import { useSolitaireFullscreen } from "@/components/solitaire/SolitaireScaleFrame";
 import styles from "./spider-game.module.css";
 
 interface SpiderGameProps {
@@ -125,6 +126,7 @@ export const SpiderGame = forwardRef<ModeGameHandle, SpiderGameProps>(
     const wonRef = useRef(false);
 
     const tableRef = useRef<HTMLDivElement>(null);
+    const { isFullscreen } = useSolitaireFullscreen();
     const { ghost, ghostStyle, beginDrag } = useTableDrag({
       onDrop: handleDrop,
       frameRef: tableRef,
@@ -132,7 +134,7 @@ export const SpiderGame = forwardRef<ModeGameHandle, SpiderGameProps>(
     const {
       style: geometryStyle,
       overlap,
-    } = useTableGeometry({ columns: 10, maxStack: 22 });
+    } = useTableGeometry({ columns: 10, maxStack: 22, isFullscreen });
 
     useEffect(() => {
       onStatus({

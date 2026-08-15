@@ -1,34 +1,63 @@
 /**
- * API route pour enregistrer l'écoute d'une piste
  * POST /api/radio/play
+ * 
+ * Enregistre qu'une piste a été écoutée
+ * Public endpoint (pas d'authentification requise)
  */
 import { NextResponse } from "next/server";
-import { recordPlayHistory, incrementPlayCount } from "@/lib/radio/queries";
-import { z } from "zod";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
-const playSchema = z.object({
-  trackId: z.string().uuid(),
-});
-
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse> {
   try {
-    const body = await request.json();
-    const { trackId } = playSchema.parse(body);
+    const body: { trackId: string } = await request.json();
 
-    // Enregistrer dans l'historique
-    await recordPlayHistory(trackId);
+    if (!body.trackId) {
+      return NextResponse.json(
+        { error: "trackId est requis" },
+        { status: 400 }
+      );
+    }
 
-    // Incrémenter le compteur de lecture
-    await incrementPlayCount(trackId);
+    const supabase = createAdminClient();
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error recording play:", error);
+    // Enregistrer dans l'historique de lecture
+    const { error: historyError } = await supabase
+      .from("radio_play_history")
+      .insert([
+        {
+          track_id: body.trackId,
+          played_at: new Date().toISOString(),
+          listener_count: 1,
+          completed: false,
+        },
+      ]);
+
+    if (historyError) {
+      console.error("Error recording play history:", historyError);
+      // Ne pas retourner d'erreur au client, juste log
+    }
+
+    // Incrémenter le play_count du track
+    const { error: rpcError } = await supabase.rpc("increment_track_play_count", {
+      track_id: body.trackId,
+    });
+
+    if (rpcError) {
+      console.error("Error incrementing play count:", rpcError);
+      // Ne pas retourner d'erreur au client, juste log
+    }
+
     return NextResponse.json(
-      { error: "Erreur lors de l'enregistrement de l'écoute" },
-      { status: 500 }
+      { success: true },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("Error:", err);
+    return NextResponse.json(
+      { success: false },
+      { status: 200 } // On retourne 200 même en cas d'erreur pour ne pas bloquer la lecture
     );
   }
 }
