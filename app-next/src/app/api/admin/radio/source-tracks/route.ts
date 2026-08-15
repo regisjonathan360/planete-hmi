@@ -80,7 +80,7 @@ export async function GET(request: Request): Promise<NextResponse> {
           chart_entries(
             id,
             track_id,
-            ranked_position,
+            source_position,
             filtered_position
           )
           `
