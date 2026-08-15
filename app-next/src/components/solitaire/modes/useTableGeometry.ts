@@ -81,8 +81,13 @@ export function useTableGeometry(options: TableGeometryOptions) {
     const compute = () => {
       const rect = el.getBoundingClientRect();
       if (rect.width < 60 || rect.height < 60) return;
-      const width = rect.width;
-      const height = rect.height;
+
+      // Clamp to viewport size to prevent overflow in fullscreen
+      const viewportW = window.innerWidth;
+      const viewportH = window.innerHeight;
+      const width = Math.min(rect.width, viewportW);
+      const height = Math.min(rect.height, viewportH);
+
       const topBlock = clamp(topBlockMin, Math.round(height * 0.16), 150);
       const availableH = height - 20 - topBlock - bottomReserve;
       const denominator = 1 + Math.max(0, maxStack - 1) * overlapRatio;
@@ -119,9 +124,22 @@ export function useTableGeometry(options: TableGeometryOptions) {
     const observer = new ResizeObserver(compute);
     observer.observe(el);
     window.addEventListener("resize", compute);
+
+    // Recompute on fullscreen change (enter/exit) to avoid overflow
+    const onFullscreenChange = () => {
+      // Small delay to let browser finish fullscreen transition
+      requestAnimationFrame(() => {
+        requestAnimationFrame(compute);
+      });
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", onFullscreenChange);
+
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", compute);
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", onFullscreenChange);
     };
   }, [
     columns,

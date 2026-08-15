@@ -248,7 +248,7 @@ export function SolitaireModeShell({
         {/* Barre de titre (même chrome que le Solitaire 95 classique) */}
         <div className={styles.captionBar}>
           <span className={styles.captionTitle}>Solitaire — {modeLabel}</span>
-          <WindowControls onClose={switchToKlondike} />
+          <WindowControls />
         </div>
 
         {/* Menu principal */}

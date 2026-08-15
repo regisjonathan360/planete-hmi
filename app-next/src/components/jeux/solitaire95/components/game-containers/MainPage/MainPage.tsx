@@ -40,7 +40,6 @@ import { GameContainer } from "../";
 import { AppToolbar } from "../AppToolbar/AppToolbar";
 import { Solitaire95Menu } from "@/components/solitaire/Solitaire95Menu";
 import { WindowControls } from "@/components/solitaire/WindowControls";
-import { useExitSolitaire } from "@/components/solitaire/useExitSolitaire";
 import styles from "./MainPage.module.scss";
 
 export const SoundContext = createContext({ playSounds: true });
@@ -140,7 +139,6 @@ const MainPageInternal: React.FC<
   const [helpVisible, setHelpVisible] = useState(false);
   const [bottomBarText, setBottomBarText] = useState("");
   const [canvasSize, setCanvasSize] = useState<number[]>([]);
-  const exitSolitaire = useExitSolitaire();
 
   const setBottomBarTextCallback = useCallback(
     (text: string) => setBottomBarText(text),
@@ -244,7 +242,7 @@ const MainPageInternal: React.FC<
                   isWindowVisible as WindowsState
                 ).some((window) => window === true)}
               >
-                <WindowControls onClose={exitSolitaire} />
+                <WindowControls />
               </TopBar>
               <AppToolbar
                 gameVisible={gameVisible}
