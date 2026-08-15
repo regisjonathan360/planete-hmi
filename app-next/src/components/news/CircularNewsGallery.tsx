@@ -25,18 +25,17 @@ interface CircularNewsGalleryProps {
 }
 
 /** Vitesse d'auto-rotation en degrés par frame (au repos). */
-const AUTO_ROTATE_SPEED = 0.04;
-/** Nombre de cartes max dans le cercle (lisibilité + perf). */
-const MAX_ITEMS = 20;
-/** Sensibilité du drag : degrés de rotation par pixel déplacé. */
-const DRAG_SENSITIVITY = 0.35;
-/** Délai après un drag avant que l'auto-rotation ne reprenne. */
-const DRAG_RESUME_MS = 500;
-/** Distance de drag au-delà de laquelle on annule le clic sur une carte. */
-const CLICK_TOLERANCE = 6;
-
-/** Clamp des deltas gyroscope (degrés), comme le globe d'Haïti. */
-const GYRO_MAX = 26;
+  const AUTO_ROTATE_SPEED = 0.04;
+  /** Nombre de cartes max dans le cercle (lisibilité + perf). */
+  const MAX_ITEMS = 20;
+  /** Sensibilité du drag : degrés de rotation par pixel déplacé. */
+  const DRAG_SENSITIVITY = 0.35;
+  /** Délai après un drag avant que l'auto-rotation ne reprenne. */
+  const DRAG_RESUME_MS = 500;
+  /** Distance de drag au-delà de laquelle on annule le clic sur une carte. */
+  const CLICK_TOLERANCE = 6;
+  /** Clamp des deltas gyroscope (degrés), comme le globe d'Haïti. */
+  const GYRO_MAX = 26;
 
 export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -106,7 +105,8 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
 
   /* Taille réactive : rayon du cercle + dimensions des cartes selon l'écran.
      La largeur du conteneur pilote le rayon (comme la démo) et la hauteur
-     disponible borne la taille des cartes — cartes volontairement grandes. */
+     disponible borne la taille des cartes — cartes plus larges pour réduire
+     l'espace entre elles et mieux afficher photo + titre. */
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
@@ -114,11 +114,11 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       const w = host.clientWidth;
       const h = host.clientHeight;
       if (!w || !h) return;
-      const cardW = Math.round(Math.min(w * 0.42, h * 0.62, 440));
-      const cardH = Math.round(cardW * 1.4);
+      const cardW = Math.round(Math.min(w * 0.52, h * 0.68, 520));
+      const cardH = Math.round(cardW * 1.35);
       const radius = Math.max(
-        210,
-        Math.round(Math.min((w - cardW) / 2 - 12, 900))
+        180,
+        Math.round(Math.min((w - cardW) / 2 - 8, 850))
       );
       setDims((prev) =>
         Math.abs(prev.radius - radius) < 2 && Math.abs(prev.cardW - cardW) < 2
