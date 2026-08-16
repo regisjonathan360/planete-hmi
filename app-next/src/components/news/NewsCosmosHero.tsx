@@ -63,7 +63,7 @@ export function NewsCosmosHero({
       </Canvas>
 
       <div className="news-cosmos-hero__overlay">
-        <p className="section-tag">{tag}</p>
+        {tag && <p className="section-tag">{tag}</p>}
         <h1 className="news-cosmos-hero__title">{statement}</h1>
       </div>
 

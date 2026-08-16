@@ -430,8 +430,36 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
             <span>Glisser pour tourner</span>
             {showHandlePopup && (
               <span className="circular-news-gallery__popup" role="status">
-                Glissez sur la barre pour faire tourner le carrousel. Partout
-                ailleurs, la page défile.
+                <svg
+                  className="circular-news-gallery__swipe"
+                  viewBox="0 0 160 64"
+                  aria-hidden="true"
+                >
+                  <path
+                    className="circular-news-gallery__swipe-path"
+                    d="M16 46 C 40 18, 120 18, 144 46"
+                  />
+                  <path
+                    className="circular-news-gallery__swipe-arrow circular-news-gallery__swipe-arrow--l"
+                    d="M16 46 l 11 -4 M16 46 l 11 4"
+                  />
+                  <path
+                    className="circular-news-gallery__swipe-arrow circular-news-gallery__swipe-arrow--r"
+                    d="M144 46 l -11 -4 M144 46 l -11 4"
+                  />
+                  <g className="circular-news-gallery__swipe-hand">
+                    <rect x="4" y="0" width="9" height="24" rx="4.5" />
+                    <rect x="15" y="5" width="9" height="20" rx="4.5" />
+                    <rect x="26" y="10" width="9" height="15" rx="4.5" />
+                    <rect x="36" y="16" width="9" height="9" rx="4.5" />
+                    <path d="M2 20 h48 a6 6 0 0 1 6 6 v8 a6 6 0 0 1 -6 6 h-48 a6 6 0 0 1 -6 -6 v-8 a6 6 0 0 1 6 -6 z" />
+                    <path d="M2 26 q -10 2 -12 10 q -2 8 6 8 l 8 -2 z" />
+                  </g>
+                </svg>
+                <strong className="circular-news-gallery__popup-title">Glisser</strong>
+                <span className="circular-news-gallery__popup-sub">
+                  pour faire tourner le carrousel
+                </span>
                 <span className="circular-news-gallery__popup-arrow" aria-hidden="true" />
               </span>
             )}

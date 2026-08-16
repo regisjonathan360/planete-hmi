@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BirthdayPlanet } from "@/components/BirthdayPlanet";
@@ -18,7 +18,6 @@ const NewsCosmosHero = dynamic(
     ssr: false,
     loading: () => (
       <div className="news-cosmos-hero__fallback" role="status">
-        <p className="section-tag">{"// Actualités — Planète HMI"}</p>
         <h1 className="news-cosmos-hero__title">
           Actualités <span className="fx-o">HMI</span>
         </h1>
@@ -42,8 +41,6 @@ interface Article {
   is_featured: boolean;
   published_at: string | null;
 }
-
-const ALL_CATEGORIES = "Toutes";
 
 function articleTitle(article: Article) {
   return article.display_title || article.source_title;
@@ -80,24 +77,7 @@ export function NewsList({
   livingBirthdays?: Array<{ id: string; name: string; slug: string; imageUrl: string | null; isToday: boolean; daysUntil: number; isDeceased?: boolean }>;
   deceasedBirthdays?: Array<{ id: string; name: string; slug: string; imageUrl: string | null; isToday: boolean; daysUntil: number; isDeceased?: boolean }>;
 }) {
-  const categories = useMemo(
-    () => [
-      ALL_CATEGORIES,
-      ...Array.from(
-        new Set(articles.map((article) => article.category).filter(Boolean))
-      ).sort((a, b) => a.localeCompare(b, "fr")),
-    ],
-    [articles]
-  );
-  const [activeCategory, setActiveCategory] = useState(ALL_CATEGORIES);
-
-  const visibleArticles = useMemo(
-    () =>
-      activeCategory === ALL_CATEGORIES
-        ? articles
-        : articles.filter((article) => article.category === activeCategory),
-    [activeCategory, articles]
-  );
+  const visibleArticles = useMemo(() => articles, [articles]);
 
   const circleItems = useMemo<CircularNewsItem[]>(
     () =>
@@ -182,36 +162,14 @@ export function NewsList({
         {/* Hero cosmos pleine page — les actualités tournent en cercle 3D au
             milieu des étoiles ; on fait tourner le cercle à la main (drag)
             ou avec le gyroscope du téléphone (design 21st) */}
-        <NewsCosmosHero images={[]}>
+        <NewsCosmosHero images={[]} tag="">
               <div className="wrap news-page__content">
-                {categories.length > 1 && (
-                  <div
-                    className="pill-row news-page__filters"
-                    role="group"
-                    aria-label="Filtrer les actualités par rubrique"
-                  >
-                    {categories.map((category) => (
-                      <button
-                        key={category}
-                        type="button"
-                        className={`pill${activeCategory === category ? " is-active" : ""}`}
-                        aria-pressed={activeCategory === category}
-                        onClick={() => setActiveCategory(category)}
-                      >
-                        {category}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
                 <section className="section section--grow" aria-live="polite">
                   {circleItems.length > 0 ? (
                     <>
                       <div className="news-page__section-heading">
                         <div>
-                          <span className="section-tag">
-                            {`// ${activeCategory === ALL_CATEGORIES ? "Dernières publications" : activeCategory}`}
-                          </span>
+                          <span className="section-tag">{"// Musique"}</span>
                           <h2>L'actualité tourne autour de vous</h2>
                         </div>
                         <span className="news-page__count">
@@ -232,15 +190,6 @@ export function NewsList({
                         Les prochaines nouvelles de la musique haïtienne apparaîtront ici dès leur
                         publication.
                       </p>
-                      {activeCategory !== ALL_CATEGORIES && (
-                        <button
-                          type="button"
-                          className="btn btn-ghost"
-                          onClick={() => setActiveCategory(ALL_CATEGORIES)}
-                        >
-                          Voir toutes les actualités
-                        </button>
-                      )}
                     </div>
                   )}
                 </section>
