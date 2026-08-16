@@ -231,7 +231,7 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
       const url = sourceId && sourceType
         ? `/api/admin/radio/source-tracks?${new URLSearchParams({ [`${sourceType}Id`]: sourceId })}`
         : `/api/radio/playlist${refreshQuery ? `?${refreshQuery}` : ""}`;
-      const response = await fetch(url);
+      const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) throw new Error("playlist");
       const data = await response.json();
       const rawTracks = data.tracks || [];

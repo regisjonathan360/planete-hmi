@@ -26,14 +26,17 @@ export interface PlatformAudioCandidate {
   audio_url?: string | null;
 }
 
-/** Signed Deezer previews expire; do not keep serving one near its deadline. */
+/**
+ * Signed Deezer previews expire, and the older `/stream/c-*.mp3` CDN format
+ * is no longer reliable in browsers. Do not keep serving either one.
+ */
 export function isExpiringAudioUrl(value?: string | null, safetyWindowSeconds = 300): boolean {
   if (!value) return false;
   try {
     const url = new URL(value);
     const match = url.href.match(/[?&]hdnea=exp=(\d+)/);
-    if (!match) return false;
-    return Number(match[1]) * 1000 <= Date.now() + safetyWindowSeconds * 1000;
+    if (match && Number(match[1]) * 1000 <= Date.now() + safetyWindowSeconds * 1000) return true;
+    return /^(?:cdns?|cdnt)-preview[^/]*\.dzcdn\.net\/stream\/c-\d+\.mp3$/i.test(url.hostname + url.pathname);
   } catch {
     return false;
   }

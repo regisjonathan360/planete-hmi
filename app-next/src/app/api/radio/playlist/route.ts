@@ -30,7 +30,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       console.error("Error fetching radio config:", configError);
       return NextResponse.json(
         { tracks: [] },
-        { status: 200 }
+        { status: 200, headers: { "Cache-Control": "no-store, max-age=0" } }
       );
     }
 
@@ -38,7 +38,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       // Aucune configuration, retourner liste vide
       return NextResponse.json(
         { tracks: [] },
-        { status: 200 }
+        { status: 200, headers: { "Cache-Control": "no-store, max-age=0" } }
       );
     }
 
@@ -202,13 +202,13 @@ export async function GET(request: Request): Promise<NextResponse> {
           crossfade_duration_ms: config.crossfade_duration_ms ?? 2000,
         },
       },
-      { status: 200 }
+      { status: 200, headers: { "Cache-Control": "no-store, max-age=0" } }
     );
   } catch (err) {
     console.error("Error:", err);
     return NextResponse.json(
       { tracks: [] },
-      { status: 200 }
+      { status: 200, headers: { "Cache-Control": "no-store, max-age=0" } }
     );
   }
 }
