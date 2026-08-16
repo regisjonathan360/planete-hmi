@@ -98,6 +98,9 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
   const preloadCount = useRef(clamp(initialPreloadCount, 1, 5));
   const crossfadeDuration = useRef(Math.max(0, initialCrossfadeDuration));
   const nextRef = useRef<() => void>(() => undefined);
+  const recoverAudioRef = useRef<(trackId: string) => void>(() => undefined);
+  const recoveryInFlight = useRef(new Set<string>());
+  const recoveryAttempts = useRef(new Map<string, number>());
   useEffect(() => { stateRef.current = state; }, [state]);
 
   const getAudio = useCallback((track: RadioTrack) => {
@@ -130,6 +133,10 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
       const track = tracks[(index + offset) % tracks.length];
       if (!track || !isPlayableAudioUrl(track.audio_url)) continue;
       keep.add(track.id);
+      const cached = radioRuntime.audioCache.get(track.id);
+      if (cached && cached.src !== new URL(track.audio_url, window.location.href).href) {
+        removeCachedAudio(track.id);
+      }
       getAudio(track);
     }
     for (const trackId of radioRuntime.audioCache.keys()) {
@@ -168,8 +175,7 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
     audio.onended = () => { if (requestId === radioRuntime.playRequest) nextRef.current(); };
     audio.onerror = () => {
       if (requestId !== radioRuntime.playRequest) return;
-      setState((previous) => ({ ...previous, isPlaying: false, error: `Impossible de lire « ${track.title} »` }));
-      window.setTimeout(() => nextRef.current(), 250);
+      recoverAudioRef.current(track.id);
     };
     const fadeDuration = Math.min(crossfadeDuration.current, 5000);
     const shouldCrossfade = Boolean(previousAudio && previousAudio !== audio && fadeDuration > 0 && !snapshot.isMuted);
@@ -198,8 +204,13 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
         };
         requestAnimationFrame(fade);
       }
-    } catch {
-      setState((previous) => ({ ...previous, isPlaying: false, error: "Cliquez sur lecture pour autoriser le son" }));
+    } catch (playError: unknown) {
+      const name = playError instanceof DOMException ? playError.name : "";
+      if (name === "NotAllowedError" || name === "SecurityError") {
+        setState((previous) => ({ ...previous, isPlaying: false, error: "Cliquez sur lecture pour autoriser le son" }));
+      } else {
+        recoverAudioRef.current(track.id);
+      }
     }
   }, [getAudio, recordPlay, syncPreloadWindow]);
 
@@ -209,10 +220,12 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
   }, [playIndex]);
   useEffect(() => { nextRef.current = next; }, [next]);
 
-  const loadPlaylist = useCallback(async () => {
+  const loadPlaylist = useCallback(async (forceRefresh = false) => {
     try {
       setState((previous) => ({ ...previous, isLoading: true, error: undefined }));
-      const url = sourceId && sourceType ? `/api/admin/radio/source-tracks?${new URLSearchParams({ [`${sourceType}Id`]: sourceId })}` : "/api/radio/playlist";
+      const url = sourceId && sourceType
+        ? `/api/admin/radio/source-tracks?${new URLSearchParams({ [`${sourceType}Id`]: sourceId })}`
+        : forceRefresh ? "/api/radio/playlist?refresh=1" : "/api/radio/playlist";
       const response = await fetch(url);
       if (!response.ok) throw new Error("playlist");
       const data = await response.json();
@@ -262,8 +275,62 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
     }
   }, [autoPlay, initialPreloadCount, playIndex, sourceId, sourceType, syncPreloadWindow]);
 
+  const recoverAudio = useCallback(async (trackId: string) => {
+    if (recoveryInFlight.current.has(trackId)) return;
+
+    const attempts = recoveryAttempts.current.get(trackId) || 0;
+    if (attempts >= 1) {
+      recoveryAttempts.current.delete(trackId);
+      setState((previous) => ({
+        ...previous,
+        isPlaying: false,
+        isLoading: false,
+        error: `La piste « ${stateRef.current.currentTrack?.title || "en cours"} » est temporairement indisponible.`,
+      }));
+      window.setTimeout(() => nextRef.current(), 250);
+      return;
+    }
+
+    recoveryAttempts.current.set(trackId, attempts + 1);
+    recoveryInFlight.current.add(trackId);
+    const cached = radioRuntime.audioCache.get(trackId);
+    if (cached) removeCachedAudio(trackId);
+    if (radioRuntime.currentTrackId === trackId) radioRuntime.currentAudio = null;
+    setState((previous) => ({ ...previous, isPlaying: false, isLoading: true, error: undefined }));
+
+    try {
+      await loadPlaylist(true);
+      window.setTimeout(() => {
+        const refreshed = stateRef.current;
+        const index = refreshed.playlist.findIndex((track) => track.id === trackId);
+        if (index >= 0) void playIndex(index);
+        else nextRef.current();
+      }, 0);
+    } finally {
+      recoveryInFlight.current.delete(trackId);
+    }
+  }, [loadPlaylist, playIndex, removeCachedAudio]);
+  recoverAudioRef.current = (trackId) => { void recoverAudio(trackId); };
+
   const pause = useCallback(() => { radioRuntime.currentAudio?.pause(); setState((previous) => ({ ...previous, isPlaying: false })); }, []);
-  const resume = useCallback(() => { void radioRuntime.currentAudio?.play().then(() => setState((previous) => ({ ...previous, isPlaying: true }))).catch(() => undefined); }, []);
+  const resume = useCallback(() => {
+    const audio = radioRuntime.currentAudio;
+    const trackId = radioRuntime.currentTrackId || stateRef.current.currentTrack?.id;
+    if (!audio) {
+      void playIndex(Math.max(0, stateRef.current.currentIndex));
+      return;
+    }
+    void audio.play()
+      .then(() => setState((previous) => ({ ...previous, isPlaying: true, error: undefined })))
+      .catch((playError: unknown) => {
+        const name = playError instanceof DOMException ? playError.name : "";
+        if (name === "NotAllowedError" || name === "SecurityError") {
+          setState((previous) => ({ ...previous, isPlaying: false, error: "Cliquez sur lecture pour autoriser le son" }));
+        } else if (trackId) {
+          recoverAudioRef.current(trackId);
+        }
+      });
+  }, [playIndex]);
   const togglePlay = useCallback(() => { if (stateRef.current.isPlaying) pause(); else if (radioRuntime.currentAudio) resume(); else void playIndex(Math.max(0, stateRef.current.currentIndex)); }, [pause, playIndex, resume]);
   const previous = useCallback(() => { const snapshot = stateRef.current; if (snapshot.playlist.length) void playIndex((snapshot.currentIndex - 1 + snapshot.playlist.length) % snapshot.playlist.length); }, [playIndex]);
   const setVolume = useCallback((value: number) => { const nextVolume = clamp(value, 0, 1); if (radioRuntime.currentAudio) radioRuntime.currentAudio.volume = nextVolume; setState((previous) => ({ ...previous, volume: nextVolume, isMuted: nextVolume === 0 })); }, []);

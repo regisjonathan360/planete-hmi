@@ -106,7 +106,7 @@ export function RadioPlayer() {
             <button
               className={`${styles.controlButton} ${styles.playButton}`}
               onClick={togglePlay}
-              disabled={!currentTrack || isLoading}
+              disabled={!currentTrack}
               title={isPlaying ? "Pause" : "Lecture"}
             >
               {isPlaying ? <FaPause /> : <FaPlay />}

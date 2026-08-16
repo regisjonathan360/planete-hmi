@@ -8,10 +8,12 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { RadioTrack } from "@/lib/radio/types";
 import { resolveAudioUrl } from "@/lib/radio/audio";
+import { applyFreshDeezerPreviews, refreshDeezerPreviews } from "@/lib/deezer/previews";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(request: Request): Promise<NextResponse> {
+  const forceRefresh = new URL(request.url).searchParams.get("refresh") === "1";
   try {
     const supabase = createAdminClient();
 
@@ -83,13 +85,29 @@ export async function GET(): Promise<NextResponse> {
           platformByTrack.set(platformTrack.track_id, current);
         }
 
+        const candidates = (platformTracks || []) as Array<{
+          track_id: string;
+          platform?: string | null;
+          external_id?: string | number | null;
+          preview_url?: string | null;
+          audio_url?: string | null;
+        }>;
+        const refreshed = await refreshDeezerPreviews(candidates, forceRefresh);
+        const freshCandidates = applyFreshDeezerPreviews(candidates, refreshed);
+        const platformByTrackFresh = new Map<string, any[]>();
+        for (const platformTrack of freshCandidates) {
+          const current = platformByTrackFresh.get(platformTrack.track_id) || [];
+          current.push(platformTrack);
+          platformByTrackFresh.set(platformTrack.track_id, current);
+        }
+
         tracks = playlistTracks
           .filter((pt: any) => pt.radio_tracks && pt.radio_tracks.is_active)
           .map((pt: any) => ({
             ...pt.radio_tracks,
             audio_url: resolveAudioUrl(
               pt.radio_tracks.audio_url,
-              platformByTrack.get(pt.radio_tracks.id) || [],
+              platformByTrackFresh.get(pt.radio_tracks.id) || platformByTrack.get(pt.radio_tracks.id) || [],
             ),
           }));
       }
@@ -125,6 +143,8 @@ export async function GET(): Promise<NextResponse> {
           .order("filtered_position", { ascending: true });
 
         if (!entriesError && chartEntries) {
+          const chartPlatformTracks = chartEntries.flatMap((entry: any) => entry.tracks?.platform_tracks || []);
+          const refreshed = await refreshDeezerPreviews(chartPlatformTracks, forceRefresh);
           tracks = chartEntries
             .filter((entry: any) => entry.tracks)
             .map((entry: any) => {
@@ -133,7 +153,10 @@ export async function GET(): Promise<NextResponse> {
               // Récupérer audio URL
               let audioUrl = "";
               if (track.platform_tracks && track.platform_tracks.length > 0) {
-                audioUrl = resolveAudioUrl("", track.platform_tracks);
+                audioUrl = resolveAudioUrl(
+                  "",
+                  applyFreshDeezerPreviews(track.platform_tracks, refreshed),
+                );
               }
               // Note: YouTube videos ne sont pas directement playables par Howler.js
               // On attend une URL audio depuis platform_tracks

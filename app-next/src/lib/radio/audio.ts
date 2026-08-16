@@ -26,23 +26,41 @@ export interface PlatformAudioCandidate {
   audio_url?: string | null;
 }
 
+/** Signed Deezer previews expire; do not keep serving one near its deadline. */
+export function isExpiringAudioUrl(value?: string | null, safetyWindowSeconds = 300): boolean {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    const match = url.href.match(/[?&]hdnea=exp=(\d+)/);
+    if (!match) return false;
+    return Number(match[1]) * 1000 <= Date.now() + safetyWindowSeconds * 1000;
+  } catch {
+    return false;
+  }
+}
+
 /** Pick a real audio source from a stored URL or a platform preview. */
 export function resolveAudioUrl(
   storedUrl: string | null | undefined,
   platformTracks: PlatformAudioCandidate[] = [],
 ): string {
-  if (isPlayableAudioUrl(storedUrl)) return storedUrl;
+  if (isPlayableAudioUrl(storedUrl) && !isExpiringAudioUrl(storedUrl)) return storedUrl;
 
+  let fallbackUrl = "";
   for (const candidate of platformTracks) {
-    if (isPlayableAudioUrl(candidate.audio_url)) return candidate.audio_url;
-    if (isPlayableAudioUrl(candidate.preview_url)) return candidate.preview_url;
-
-    // Deezer exposes a preview stream by track id. This is a short preview,
-    // but it is a genuine audio resource and can be played by HTMLAudioElement.
-    if (candidate.platform === 'deezer' && /^\d+$/.test(String(candidate.external_id ?? ''))) {
-      return `https://cdns-preview-e.dzcdn.net/stream/c-${candidate.external_id}.mp3`;
+    if (isPlayableAudioUrl(candidate.audio_url)) {
+      if (!fallbackUrl) fallbackUrl = candidate.audio_url;
+      if (!isExpiringAudioUrl(candidate.audio_url)) return candidate.audio_url;
+    }
+    if (isPlayableAudioUrl(candidate.preview_url)) {
+      if (!fallbackUrl) fallbackUrl = candidate.preview_url;
+      if (!isExpiringAudioUrl(candidate.preview_url)) return candidate.preview_url;
     }
   }
 
-  return '';
+  // Keep an expiring stored URL only as a last resort when Deezer could not
+  // return a fresh preview. The caller can then retry the playlist endpoint.
+  if (isPlayableAudioUrl(storedUrl)) return storedUrl;
+
+  return fallbackUrl;
 }
