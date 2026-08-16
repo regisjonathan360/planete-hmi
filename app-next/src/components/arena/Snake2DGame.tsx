@@ -12,12 +12,9 @@ import { useEffect, useRef, useState } from "react";
 import { SNAKE_CONFIG } from "@/game/snake/config";
 import "./snake.css";
 
-const IS_TOUCH =
-  typeof window !== "undefined" &&
-  window.matchMedia("(pointer: coarse)").matches;
-
-const NICK_KEY = "snake3d.nick";
-const SKIN_KEY = "snake3d.skin";
+const NICK_KEY = "koule2d.nick";
+const LEGACY_NICK_KEY = "snake3d.nick";
+const SKIN_KEY = "koule2d.skin";
 
 type Phase = "menu" | "countdown" | "playing" | "paused" | "gameover";
 
@@ -66,6 +63,7 @@ declare global {
       togglePause(): void;
       quitToMenu(): void;
       setPlayerColor(color: number): void;
+      setPlayerName(name: string): void;
       setTouchBoost(active: boolean): void;
       hud: {
         onPhase: ((phase: Phase, score: number, best: number, isRecord: boolean) => void) | null;
@@ -97,28 +95,28 @@ const SKIN_HEX = SNAKE_CONFIG.snakeColors.map((c) =>
 
 export function Snake2DGame() {
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const autoPausedRef = useRef(false);
+  const nickRef = useRef("");
   const [phase, setPhase] = useState<Phase>("menu");
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState<number>(() => {
-    try {
-      return Number(localStorage.getItem("koule2d.best") ?? "0") || 0;
-    } catch {
-      return 0;
-    }
-  });
+  const [best, setBest] = useState<number>(readBest);
   const [countdown, setCountdown] = useState(3);
   const [isRecord, setIsRecord] = useState(false);
   const [board, setBoard] = useState<LeaderboardEntry[]>([]);
-  const [nick, setNick] = useState(() => readStored(NICK_KEY, "Joueur"));
+  const [nick, setNick] = useState(readNick);
   const [skinIdx, setSkinIdx] = useState(() => {
     const n = Number(readStored(SKIN_KEY, "0")) || 0;
     return Math.max(0, Math.min(SNAKE_CONFIG.snakeColors.length - 1, n));
   });
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
+  const [engineReady, setEngineReady] = useState(false);
+  const [engineError, setEngineError] = useState<string | null>(null);
+  const [isTouch, setIsTouch] = useState(false);
 
   /* ref miroir du skin pour le polling de montage */
   const skinIdxRef = useRef(skinIdx);
   skinIdxRef.current = skinIdx;
+  nickRef.current = nick;
 
   /* -------------------------------------------------- montage Phaser */
 
@@ -194,11 +192,15 @@ export function Snake2DGame() {
           if (g && g.hud) {
             window.clearInterval(poll);
             attachHud();
+            setEngineReady(true);
+            g.setPlayerName(nickRef.current);
             /* applique le skin choisi dès que le jeu est prêt */
             g.setPlayerColor(SNAKE_CONFIG.snakeColors[skinIdxRef.current]);
           }
         }, 100);
       } catch (err) {
+        delete (window as any).__koule2dScriptsPromise;
+        setEngineError(err instanceof Error ? err.message : "chargement impossible");
         console.error("Koulèv 2D: erreur de chargement", err);
       }
     }
@@ -236,7 +238,31 @@ export function Snake2DGame() {
         }
       }
       (window as any).__koule2dGame = undefined;
+      setEngineReady(false);
     };
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia("(pointer: coarse)");
+    const update = () => setIsTouch(media.matches);
+    update();
+    media.addEventListener?.("change", update);
+    return () => media.removeEventListener?.("change", update);
+  }, []);
+
+  useEffect(() => {
+    const onVisibility = () => {
+      const g = (window as any).__koule2dGame;
+      if (document.hidden && g?.phase === "playing") {
+        g.togglePause();
+        autoPausedRef.current = true;
+      } else if (!document.hidden && autoPausedRef.current && g?.phase === "paused") {
+        g.togglePause();
+        autoPausedRef.current = false;
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
   useEffect(() => {
@@ -255,12 +281,14 @@ export function Snake2DGame() {
   const applyNick = (value: string): void => {
     setNick(value);
     writeStored(NICK_KEY, value);
+    (window as any).__koule2dGame?.setPlayerName(value);
   };
 
   const onPlay = (): void => {
     if (stageRef.current) void tryFullscreen(stageRef.current);
     const g = (window as any).__koule2dGame;
-    if (!g) return;
+    if (!g || !engineReady) return;
+    g.setPlayerName(nick);
     g.setPlayerColor(SNAKE_CONFIG.snakeColors[skinIdx]);
     g.startGame();
   };
@@ -315,7 +343,7 @@ export function Snake2DGame() {
         </div>
       )}
 
-      {phase === "playing" && IS_TOUCH && (
+      {phase === "playing" && isTouch && (
         <button
           type="button"
           className="snk-boost-btn"
@@ -333,7 +361,17 @@ export function Snake2DGame() {
         </div>
       )}
 
-      {!scriptsLoaded && (
+      {engineError && (
+        <div className="snake-overlay snake-overlay--menu">
+          <div className="snake-panel" role="alert">
+            <p className="snake-panel__tag">{"// Erreur moteur"}</p>
+            <h2 className="snake-panel__title">Le jeu n&apos;a pas pu démarrer</h2>
+            <p className="snake-panel__desc">Recharge la page pour réessayer.</p>
+          </div>
+        </div>
+      )}
+
+      {!engineReady && !engineError && (
         <div className="snake-overlay snake-overlay--menu">
           <div className="snake-panel">
             <p className="snake-panel__tag">{"// Arène planétaire"}</p>
@@ -342,7 +380,7 @@ export function Snake2DGame() {
         </div>
       )}
 
-      {phase === "menu" && (
+      {phase === "menu" && !engineError && (
         <div className="snake-overlay snake-overlay--menu">
           <div className="snake-panel snake-menu">
             <p className="snake-panel__tag">{"// Arène planétaire"}</p>
@@ -398,13 +436,13 @@ export function Snake2DGame() {
             )}
 
             <div className="snake-panel__actions">
-              <button type="button" className="snake-btn snake-btn--play snake-menu__play" onClick={onPlay}>
-                ▶ Jouer
+              <button type="button" className="snake-btn snake-btn--play snake-menu__play" onClick={onPlay} disabled={!engineReady}>
+                {engineReady ? "▶ Jouer" : "Chargement…"}
               </button>
             </div>
 
             <ul className="snake-rules">
-              {IS_TOUCH ? (
+              {isTouch ? (
                 <>
                   <li>
                     <span className="snake-rules__ico">👆</span> Touche l&apos;écran :
@@ -494,4 +532,12 @@ export function Snake2DGame() {
       )}
     </div>
   );
+}
+
+function readNick(): string {
+  return readStored(NICK_KEY, readStored(LEGACY_NICK_KEY, "Joueur"));
+}
+
+function readBest(): number {
+  return Number(readStored("koule2d.best", readStored("snake3d.best", "0"))) || 0;
 }

@@ -240,6 +240,9 @@ Game.prototype = {
             this.player.setColor(color);
         }
     },
+    setPlayerName: function(name) {
+        this.playerName = String(name || 'Joueur').slice(0, 12);
+    },
     /**
      * Boost from the mobile UI button
      * @param {Boolean} active whether the boost button is pressed

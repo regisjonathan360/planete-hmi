@@ -217,8 +217,9 @@ Snake.prototype = {
         //where the head of the snake was at the end of the last cycle
         var i = 0;
         var found = false;
-        while (this.headPath[i].x != this.sections[1].body.x &&
-        this.headPath[i].y != this.sections[1].body.y) {
+        while (i < this.headPath.length && this.sections.length > 1 &&
+        (this.headPath[i].x != this.sections[1].body.x ||
+        this.headPath[i].y != this.sections[1].body.y)) {
             if (this.headPath[i].x == this.lastHeadPosition.x &&
             this.headPath[i].y == this.lastHeadPosition.y) {
                 found = true;
@@ -226,7 +227,7 @@ Snake.prototype = {
             }
             i++;
         }
-        if (!found) {
+        if (!found && this.headPath.length) {
             this.lastHeadPosition = new Phaser.Point(this.head.body.x, this.head.body.y);
             this.onCycleComplete();
         }

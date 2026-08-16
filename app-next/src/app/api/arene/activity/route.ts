@@ -49,7 +49,9 @@ export async function GET(request: Request) {
 
   const total = count ?? 0;
 
-  // Fetch activity items joined with community_profiles for actor info
+  // activity_feed.actor_id references auth.users, while the public profile
+  // lives in community_profiles.member_id. There is no direct foreign key
+  // between those two tables, so avoid a PostgREST relation that cannot exist.
   const { data: rawItems, error: fetchError } = await supabase
     .from("activity_feed")
     .select(`
@@ -60,11 +62,7 @@ export async function GET(request: Request) {
       target_id,
       target_label,
       metadata,
-      created_at,
-      community_profiles!activity_feed_actor_id_fkey (
-        pseudo,
-        niveau
-      )
+      created_at
     `)
     .order("created_at", { ascending: false })
     .range(offset, offset + effectivePageSize - 1);
@@ -76,11 +74,26 @@ export async function GET(request: Request) {
     );
   }
 
+  const actorIds = [
+    ...new Set(
+      (rawItems ?? [])
+        .map((row) => row.actor_id as string | null)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+  const { data: profiles } = actorIds.length
+    ? await supabase
+        .from("community_profiles")
+        .select("member_id, pseudo, niveau")
+        .in("member_id", actorIds)
+    : { data: [] };
+  const profileByMemberId = new Map(
+    (profiles ?? []).map((profile) => [profile.member_id as string, profile]),
+  );
+
   // Transform raw DB rows into ActivityItem format for grouping
   const activityItems = (rawItems ?? []).map((row) => {
-    const profile = row.community_profiles as unknown as
-      | { pseudo: string; niveau: string }
-      | null;
+    const profile = row.actor_id ? profileByMemberId.get(row.actor_id as string) : undefined;
 
     return {
       id: row.id as string,
