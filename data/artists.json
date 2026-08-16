@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-15T05:31:43.259Z",
+    "genereLe": "2026-08-16T05:34:46.771Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
       "topTitre": "Apiye (feat. Zile)",
       "metriques": {
-        "deezerFans": 8957,
+        "deezerFans": 8958,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 491714,
+        "deezerFans": 491909,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Rete La",
+      "topTitre": "Ou Mechan",
       "metriques": {
-        "deezerFans": 10389,
+        "deezerFans": 10390,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -87,17 +87,17 @@
     {
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/d41d8cd98f00b204e9800998ecf8427e/250x250-000000-80-0-0.jpg",
-      "topTitre": "Messi (Sunset Mix)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 15,
+        "deezerFans": 6,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/254822142",
+        "deezer": "https://www.deezer.com/artist/59634622",
         "spotify": null,
         "youtube": null
       },
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3783693,
+        "deezerFans": 3783716,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
