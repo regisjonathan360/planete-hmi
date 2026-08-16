@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 
 /* Galerie circulaire 3D des actualités — portage du modèle « CircularGallery »
    (rotateY + translateZ : les cartes font un cercle qui tourne autour du
@@ -46,8 +45,7 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   const [gyroEnabled, setGyroEnabled] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [showHandlePopup, setShowHandlePopup] = useState(false);
-  const [handlePinned, setHandlePinned] = useState(false);
+  const [showSwipeHint, setShowSwipeHint] = useState(false);
   const dragState = useRef({ active: false, id: -1, lastX: 0, lastY: 0, moved: 0, lastMoveAt: 0 });
   const gyroOrigin = useRef<{ beta: number; gamma: number } | null>(null);
   const gyroTarget = useRef({ beta: 0, gamma: 0, applied: 0 });
@@ -61,8 +59,8 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => query.removeEventListener("change", onChange);
   }, []);
 
-  /* Mobile : zone tactile réduite. Seule la poignée sous le carrousel fait
-     tourner le cercle — partout ailleurs, le geste défile la page. */
+  /* Mobile : le carrousel entier est tactile (swipe horizontal = rotation,
+     geste vertical = défilement de la page grâce à touch-action: pan-y). */
   useEffect(() => {
     const query = window.matchMedia("(max-width: 768px)");
     const onChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
@@ -71,32 +69,17 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => query.removeEventListener("change", onChange);
   }, []);
 
-  /* Poignée épinglée (position: fixed) tant que le carrousel est visible :
-     en fixed elle monte dans le contexte d'empilement racine et reste
-     tactile même quand le lecteur radio flottant (z-index 1000) chevauche
-     le bas de l'écran. */
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host || !isMobile) return;
-    const observer = new IntersectionObserver(
-      (entries) => setHandlePinned(entries.some((entry) => entry.isIntersecting)),
-      { rootMargin: "0px 0px 140px 0px", threshold: 0 }
-    );
-    observer.observe(host);
-    return () => observer.disconnect();
-  }, [isMobile]);
-
-  /* Popup d'aide mobile : apparaît peu après le montage pour aider à trouver
-     la poignée, puis disparaît au premier drag, au scroll ou après
-     quelques secondes. */
+  /* Indice d'aide mobile : apparaît peu après le montage pour montrer le
+     geste (main + double flèche courbe), puis disparaît au premier drag,
+     au scroll ou après quelques secondes. */
   useEffect(() => {
     if (!isMobile) {
-      setShowHandlePopup(false);
+      setShowSwipeHint(false);
       return;
     }
-    const showTimer = window.setTimeout(() => setShowHandlePopup(true), 700);
-    const hideTimer = window.setTimeout(() => setShowHandlePopup(false), 8000);
-    const onScroll = () => setShowHandlePopup(false);
+    const showTimer = window.setTimeout(() => setShowSwipeHint(true), 700);
+    const hideTimer = window.setTimeout(() => setShowSwipeHint(false), 8000);
+    const onScroll = () => setShowSwipeHint(false);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.clearTimeout(showTimer);
@@ -252,16 +235,11 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   }, [reduced, gyroEnabled]);
 
   /* Drag souris/tactile : la rotation suit le mouvement horizontal. Sur
-     mobile, seuls les gestes partant de la poignée font tourner le cercle —
-     partout ailleurs le geste défile la page. */
+     mobile, le geste horizontal sur le carrousel tourne le cercle et le
+     geste vertical défile la page (touch-action: pan-y sur le hôte). */
   const onPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (event.button !== 0 && event.pointerType === "mouse") return;
-      if (
-        isMobile &&
-        !(event.target as Element).closest(".circular-news-gallery__handle")
-      )
-        return;
       const drag = dragState.current;
       drag.active = true;
       drag.id = event.pointerId;
@@ -269,14 +247,14 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       drag.lastY = event.clientY;
       drag.moved = 0;
       setDragging(true);
-      setShowHandlePopup(false);
+      setShowSwipeHint(false);
       try {
         event.currentTarget.setPointerCapture(event.pointerId);
       } catch {
         // pointeur déjà relâché — le drag ne démarre pas vraiment
       }
     },
-    [isMobile]
+    []
   );
 
   const onPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
@@ -341,9 +319,9 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       aria-label="Actualités en cercle — glissez pour faire tourner (souris sur tout le carrousel, poignée sur mobile)"
       style={{
         perspective: "2000px",
-        /* Mobile : le hôte ne bloque pas le défilement de la page — seule la
-           poignée (touch-action: none en CSS) capture les gestes de drag. */
-        touchAction: isMobile ? undefined : "none",
+        /* Mobile : pan-y — le geste vertical défile la page, le geste
+           horizontal (que le navigateur ne réclame pas) tourne le cercle. */
+        touchAction: isMobile ? "pan-y" : "none",
         height: hostHeight,
         ["--gallery-card-w" as string]: `${dims.cardW}px`,
       }}
@@ -407,65 +385,40 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
           );
         })}
       </div>
-      {isMobile && handlePinned &&
-        createPortal(
-          <div
-            className="circular-news-gallery__handle"
+      {isMobile && showSwipeHint && (
+        <span className="circular-news-gallery__hint" role="status">
+          <svg
+            className="circular-news-gallery__swipe"
+            viewBox="0 0 160 64"
             aria-hidden="true"
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={endDrag}
           >
-            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
-              <path
-                d="M8 7l-5 5 5 5M16 7l5 5-5 5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span>Glisser pour tourner</span>
-            {showHandlePopup && (
-              <span className="circular-news-gallery__popup" role="status">
-                <svg
-                  className="circular-news-gallery__swipe"
-                  viewBox="0 0 160 64"
-                  aria-hidden="true"
-                >
-                  <path
-                    className="circular-news-gallery__swipe-path"
-                    d="M16 46 C 40 18, 120 18, 144 46"
-                  />
-                  <path
-                    className="circular-news-gallery__swipe-arrow circular-news-gallery__swipe-arrow--l"
-                    d="M16 46 l 11 -4 M16 46 l 11 4"
-                  />
-                  <path
-                    className="circular-news-gallery__swipe-arrow circular-news-gallery__swipe-arrow--r"
-                    d="M144 46 l -11 -4 M144 46 l -11 4"
-                  />
-                  <g className="circular-news-gallery__swipe-hand">
-                    <rect x="4" y="0" width="9" height="24" rx="4.5" />
-                    <rect x="15" y="5" width="9" height="20" rx="4.5" />
-                    <rect x="26" y="10" width="9" height="15" rx="4.5" />
-                    <rect x="36" y="16" width="9" height="9" rx="4.5" />
-                    <path d="M2 20 h48 a6 6 0 0 1 6 6 v8 a6 6 0 0 1 -6 6 h-48 a6 6 0 0 1 -6 -6 v-8 a6 6 0 0 1 6 -6 z" />
-                    <path d="M2 26 q -10 2 -12 10 q -2 8 6 8 l 8 -2 z" />
-                  </g>
-                </svg>
-                <strong className="circular-news-gallery__popup-title">Glisser</strong>
-                <span className="circular-news-gallery__popup-sub">
-                  pour faire tourner le carrousel
-                </span>
-                <span className="circular-news-gallery__popup-arrow" aria-hidden="true" />
-              </span>
-            )}
-          </div>,
-          document.body
-        )}
+            <path
+              className="circular-news-gallery__swipe-path"
+              d="M16 46 C 40 18, 120 18, 144 46"
+            />
+            <path
+              className="circular-news-gallery__swipe-arrow circular-news-gallery__swipe-arrow--l"
+              d="M16 46 l 11 -4 M16 46 l 11 4"
+            />
+            <path
+              className="circular-news-gallery__swipe-arrow circular-news-gallery__swipe-arrow--r"
+              d="M144 46 l -11 -4 M144 46 l -11 4"
+            />
+            <g className="circular-news-gallery__swipe-hand">
+              <rect x="4" y="0" width="9" height="24" rx="4.5" />
+              <rect x="15" y="5" width="9" height="20" rx="4.5" />
+              <rect x="26" y="10" width="9" height="15" rx="4.5" />
+              <rect x="36" y="16" width="9" height="9" rx="4.5" />
+              <path d="M2 20 h48 a6 6 0 0 1 6 6 v8 a6 6 0 0 1 -6 6 h-48 a6 6 0 0 1 -6 -6 v-8 a6 6 0 0 1 6 -6 z" />
+              <path d="M2 26 q -10 2 -12 10 q -2 8 6 8 l 8 -2 z" />
+            </g>
+          </svg>
+          <strong className="circular-news-gallery__hint-title">Glisser</strong>
+          <span className="circular-news-gallery__hint-sub">
+            pour faire tourner le carrousel
+          </span>
+        </span>
+      )}
     </div>
   );
 }
