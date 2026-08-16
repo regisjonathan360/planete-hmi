@@ -11,6 +11,7 @@ import {
   getRadioStats 
 } from "@/lib/radio/queries";
 import { RadioAdminDashboard } from "@/components/admin/radio/RadioAdminDashboard";
+import { AdminHeader } from "../AdminHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -26,21 +27,20 @@ export default async function RadioAdminPage() {
   ]);
 
   return (
-    <div className="admin-container">
-      <div className="admin-header">
-        <h1>🎵 Administration de la Radio</h1>
-        <p>
-          Gérez la radio Planète HMI : playlists, pistes, et configuration
-        </p>
-      </div>
+    <>
+      <AdminHeader email={admin.email} active="radio" />
+      <main className="admin__main">
+        <h1 className="admin__title">Administration de la radio</h1>
+        <p className="admin__subtitle">Gérez les playlists, les pistes et la diffusion continue de Planète HMI.</p>
 
-      <RadioAdminDashboard
-        initialPlaylists={playlists}
-        initialTracks={tracks}
-        initialConfig={config}
-        initialStats={stats}
-        adminEmail={admin.email ?? ""}
-      />
-    </div>
+        <RadioAdminDashboard
+          initialPlaylists={playlists}
+          initialTracks={tracks}
+          initialConfig={config}
+          initialStats={stats}
+          adminEmail={admin.email ?? ""}
+        />
+      </main>
+    </>
   );
 }
