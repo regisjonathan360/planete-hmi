@@ -65,9 +65,12 @@ declare global {
       setPlayerColor(color: number): void;
       setPlayerName(name: string): void;
       setTouchBoost(active: boolean): void;
+      toggleSound(): boolean;
+      soundEnabled: boolean;
       hud: {
         onPhase: ((phase: Phase, score: number, best: number, isRecord: boolean) => void) | null;
         onCountdown: ((n: number) => void) | null;
+        onLeaderboard: ((entries: LeaderboardEntry[]) => void) | null;
       };
     };
   }
@@ -112,6 +115,9 @@ export function Snake2DGame() {
   const [engineReady, setEngineReady] = useState(false);
   const [engineError, setEngineError] = useState<string | null>(null);
   const [isTouch, setIsTouch] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const submittedScoreRef = useRef(false);
+  const submitScoreRef = useRef<((value: number) => void) | null>(null);
 
   /* ref miroir du skin pour le polling de montage */
   const skinIdxRef = useRef(skinIdx);
@@ -146,8 +152,11 @@ export function Snake2DGame() {
         setScore(s);
         setBest(b);
         setIsRecord(rec);
+        if (p === "gameover") submitScoreRef.current?.(s);
       };
       g.hud.onCountdown = (n: number) => setCountdown(n);
+      g.hud.onLeaderboard = (entries: LeaderboardEntry[]) => setBoard(entries);
+      setSoundEnabled(g.soundEnabled !== false);
     };
 
     async function boot(): Promise<void> {
@@ -193,7 +202,7 @@ export function Snake2DGame() {
             window.clearInterval(poll);
             attachHud();
             setEngineReady(true);
-            g.setPlayerName(nickRef.current);
+    g.setPlayerName(nickRef.current);
             /* applique le skin choisi dès que le jeu est prêt */
             g.setPlayerColor(SNAKE_CONFIG.snakeColors[skinIdxRef.current]);
           }
@@ -290,8 +299,29 @@ export function Snake2DGame() {
     if (!g || !engineReady) return;
     g.setPlayerName(nick);
     g.setPlayerColor(SNAKE_CONFIG.snakeColors[skinIdx]);
+    submittedScoreRef.current = false;
     g.startGame();
   };
+
+  const toggleSound = (): void => {
+    const g = (window as any).__koule2dGame;
+    if (!g) return;
+    setSoundEnabled(Boolean(g.toggleSound()));
+  };
+
+  const submitScore = (value: number): void => {
+    if (submittedScoreRef.current || value <= 0) return;
+    submittedScoreRef.current = true;
+    void fetch("/api/arene/snake-scores", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ score: value, pseudo: nickRef.current, skin: skinIdxRef.current }),
+      keepalive: true,
+    }).catch(() => {
+      /* Le meilleur score local reste disponible si l'utilisateur est anonyme. */
+    });
+  };
+  submitScoreRef.current = submitScore;
 
   const game = () => (window as any).__koule2dGame;
 
@@ -339,8 +369,35 @@ export function Snake2DGame() {
                 ⏸
               </button>
             )}
+            <button
+              type="button"
+              className="snake-icon-btn"
+              aria-label={soundEnabled ? "Couper le son" : "Activer le son"}
+              aria-pressed={soundEnabled}
+              onClick={toggleSound}
+            >
+              {soundEnabled ? "🔊" : "🔇"}
+            </button>
           </div>
         </div>
+      )}
+
+      {inGame && board.length > 0 && (
+        <aside className="snk-board" aria-label="Classement de la partie">
+          <h3 className="snk-board__title">Classement</h3>
+          <ol className="snk-board__list">
+            {board.slice(0, 5).map((entry, index) => (
+              <li
+                key={`${entry.name}-${index}`}
+                className={index === 0 ? "snk-board__row snk-board__row--first" : "snk-board__row"}
+              >
+                <span className="snk-board__dot" style={{ backgroundColor: `#${entry.color.toString(16).padStart(6, "0")}` }} />
+                <span className="snk-board__name">{entry.name}</span>
+                <span className="snk-board__pts">{entry.score}</span>
+              </li>
+            ))}
+          </ol>
+        </aside>
       )}
 
       {phase === "playing" && isTouch && (
@@ -350,6 +407,8 @@ export function Snake2DGame() {
           onPointerDown={() => game()?.setTouchBoost(true)}
           onPointerUp={() => game()?.setTouchBoost(false)}
           onPointerCancel={() => game()?.setTouchBoost(false)}
+          onPointerLeave={() => game()?.setTouchBoost(false)}
+          onLostPointerCapture={() => game()?.setTouchBoost(false)}
         >
           ⚡ BOOST
         </button>

@@ -94,11 +94,11 @@ PlayerSnake.prototype.update = function() {
         return;
     }
     //allow arrow keys to be used
-    if (this.cursors.left.isDown) {
+    if (this.cursors.left.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
         this.head.body.setZeroRotation();
         this.head.body.rotateLeft(this.getRotationSpeed());
     }
-    else if (this.cursors.right.isDown) {
+    else if (this.cursors.right.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
         this.head.body.setZeroRotation();
         this.head.body.rotateRight(this.getRotationSpeed());
     }

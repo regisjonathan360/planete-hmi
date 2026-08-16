@@ -45,6 +45,8 @@ Food.prototype = {
         //increment the size of the snake
         if (this.head && Math.round(this.head.body.x) == Math.round(this.sprite.body.x) &&
         Math.round(this.head.body.y) == Math.round(this.sprite.body.y)) {
+            var state = this.game.state.getCurrentState();
+            if (state && state.playFoodSound) state.playFoodSound();
             this.head.snake.incrementSize();
             this.destroy();
         }

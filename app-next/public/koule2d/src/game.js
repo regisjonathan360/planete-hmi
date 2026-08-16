@@ -6,11 +6,17 @@ Game = function(game) {
     this.best = 0;
     this.isRecord = false;
     this.playerColor = 0xe23030;
+    this.playerName = 'Joueur';
+    this.soundEnabled = true;
+    this._audioContext = null;
     //public hud callbacks used by the embedding page
     this.hud = {
         onPhase: null,
-        onCountdown: null
+        onCountdown: null,
+        onLeaderboard: null
     };
+    this.boardTimer = 0;
+    this.lastBoardKey = '';
     this._touchBoost = false;
 }
 
@@ -30,6 +36,7 @@ Game.prototype = {
         //load the best score saved in local storage
         try {
             this.best = Number(localStorage.getItem('koule2d.best') || '0') || 0;
+            this.soundEnabled = localStorage.getItem('koule2d.sound') !== 'off';
         } catch (e) {
             this.best = 0;
         }
@@ -111,8 +118,12 @@ Game.prototype = {
 
         //create bots
         this.bots = [];
-        this.bots.push(new BotSnake(this.game, 'circle', -200, 0));
-        this.bots.push(new BotSnake(this.game, 'circle', 200, 0));
+        var botA = new BotSnake(this.game, 'circle', -200, 0);
+        botA.name = 'Zéphyr';
+        var botB = new BotSnake(this.game, 'circle', 200, 0);
+        botB.name = 'Nova';
+        this.bots.push(botA);
+        this.bots.push(botB);
 
         //initialize snake groups and collision
         for (var i = 0 ; i < this.game.snakes.length ; i++) {
@@ -162,6 +173,7 @@ Game.prototype = {
             this.checkPlayerDeath();
             this.updateScore();
         }
+        this.emitLeaderboard();
     },
     /**
      * Move the game from one phase to another and notify the page
@@ -205,6 +217,8 @@ Game.prototype = {
      * Start a new run: rebuild the world and count down
      */
     startGame: function() {
+        this.ensureAudio();
+        this.playTone(440, 0.08, 'square', 0.025);
         this.initWorld();
         this.isRecord = false;
         this.lastScore = undefined;
@@ -218,9 +232,12 @@ Game.prototype = {
      */
     togglePause: function() {
         if (this.phase === 'playing') {
+            this.playTone(220, 0.06, 'sine', 0.02);
             this.setPhase('paused');
         }
         else if (this.phase === 'paused') {
+            this.ensureAudio();
+            this.playTone(440, 0.06, 'sine', 0.02);
             this.setPhase('playing');
         }
     },
@@ -240,8 +257,68 @@ Game.prototype = {
             this.player.setColor(color);
         }
     },
+    emitLeaderboard: function() {
+        if (!this.hud.onLeaderboard || !this.player) return;
+        this.boardTimer -= this.game.time.physicsElapsed;
+        if (this.boardTimer > 0) return;
+        this.boardTimer = 0.25;
+        var entries = [{ name: this.playerName || 'Joueur', color: this.playerColor, score: this.getScore() }];
+        for (var i = 0; i < this.bots.length; i++) {
+            entries.push({ name: this.bots[i].name || ('Bot ' + (i + 1)), color: this.bots[i].color || 0xffffff, score: this.bots[i].snakeLength || 0 });
+        }
+        entries.sort(function(a, b) { return b.score - a.score; });
+        var key = entries.map(function(entry) { return entry.name + ':' + entry.score; }).join('|');
+        if (key !== this.lastBoardKey) {
+            this.lastBoardKey = key;
+            this.hud.onLeaderboard(entries.slice(0, 8));
+        }
+    },
     setPlayerName: function(name) {
         this.playerName = String(name || 'Joueur').slice(0, 12);
+    },
+    toggleSound: function() {
+        this.soundEnabled = !this.soundEnabled;
+        try { localStorage.setItem('koule2d.sound', this.soundEnabled ? 'on' : 'off'); } catch (e) {}
+        if (this.soundEnabled) {
+            this.ensureAudio();
+            this.playTone(660, 0.07, 'sine', 0.02);
+        }
+        return this.soundEnabled;
+    },
+    ensureAudio: function() {
+        if (!this.soundEnabled || typeof window === 'undefined') return;
+        var AudioCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtor) return;
+        try {
+            if (!this._audioContext) this._audioContext = new AudioCtor();
+            if (this._audioContext.state === 'suspended') this._audioContext.resume();
+        } catch (e) {}
+    },
+    playTone: function(frequency, duration, type, volume) {
+        if (!this.soundEnabled) return;
+        this.ensureAudio();
+        var ctx = this._audioContext;
+        if (!ctx || ctx.state === 'closed') return;
+        try {
+            var now = ctx.currentTime;
+            var oscillator = ctx.createOscillator();
+            var gain = ctx.createGain();
+            oscillator.type = type || 'sine';
+            oscillator.frequency.setValueAtTime(frequency, now);
+            gain.gain.setValueAtTime(0.0001, now);
+            gain.gain.exponentialRampToValueAtTime(volume || 0.02, now + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+            oscillator.start(now);
+            oscillator.stop(now + duration + 0.02);
+        } catch (e) {}
+    },
+    playFoodSound: function() {
+        this.playTone(520 + Math.min(this.getScore(), 80) * 3, 0.055, 'triangle', 0.018);
+    },
+    playDeathSound: function() {
+        this.playTone(120, 0.24, 'sawtooth', 0.035);
     },
     /**
      * Boost from the mobile UI button
@@ -305,6 +382,7 @@ Game.prototype = {
         if (this.phase !== 'playing') {
             return;
         }
+        this.playDeathSound();
         var score = this.getScore();
         this.isRecord = score > this.best;
         if (this.isRecord) {
@@ -335,8 +413,8 @@ Game.prototype = {
             this.playerDestroyed();
         }
         //place food where snake was destroyed
-        for (var i = 0 ; i < snake.headPath.length ;
-        i += Math.round(snake.headPath.length / snake.snakeLength) * 2) {
+        var step = Math.max(1, Math.round(snake.headPath.length / Math.max(1, snake.snakeLength)) * 2);
+        for (var i = 0 ; i < snake.headPath.length ; i += step) {
             this.initFood(
                 snake.headPath[i].x + Util.randomInt(-10,10),
                 snake.headPath[i].y + Util.randomInt(-10,10)
