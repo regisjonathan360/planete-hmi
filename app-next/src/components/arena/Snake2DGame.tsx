@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------
    Snake2DGame — composant React qui embarque le jeu de serpent
-   Koulèv 2D (moteur Phaser 2.6) dans l'UI de l'Arène.
+   HMI Snake 2D (moteur Phaser) dans l'UI de l'Arène.
    Charge les scripts du jeu depuis /koule2d, monte le canvas
    dans le stage et sert de pont entre l'UI React (menu, HUD,
    pause, game over) et le moteur.
@@ -444,8 +444,8 @@ export function Snake2DGame() {
           <div className="snake-panel snake-menu">
             <p className="snake-panel__tag">{"// Arène planétaire"}</p>
             <h2 className="snake-menu__title">
-              <span className="snake-menu__title-main">KOULÈV</span>
-              <span className="snake-menu__title-3d">2D</span>
+              <span className="snake-menu__title-main">HMI SNAKE</span>
+              <span className="snake-menu__title-3d">PHASER 2D</span>
             </h2>
 
             <label className="snake-menu__field">

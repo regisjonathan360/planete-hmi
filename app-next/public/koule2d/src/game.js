@@ -53,13 +53,47 @@ Game.prototype = {
         this.game.world.setBounds(-width*mapScale, -height*mapScale, width*mapScale*2, height*mapScale*2);
     	this.game.stage.backgroundColor = '#444';
 
-        //add tilesprite background
-        var background = this.game.add.tileSprite(-width*mapScale, -height*mapScale,
-            this.game.world.width, this.game.world.height, 'background');
+        /* Arène HMI : fond dessiné par Phaser (pas de DOM, pas d'image blanche
+           héritée de l'ancien prototype). La grille reste légère pour ne pas
+           coûter de FPS, tandis que les étoiles donnent une profondeur lisible. */
+        var worldLeft = -width * mapScale;
+        var worldTop = -height * mapScale;
+        var worldWidth = this.game.world.width;
+        var worldHeight = this.game.world.height;
+        var background = this.game.add.graphics(worldLeft, worldTop);
+        background.beginFill(0x08051e, 1);
+        background.drawRect(0, 0, worldWidth, worldHeight);
+        background.lineStyle(1, 0x2de2ff, 0.08);
+        for (var gridX = 0; gridX <= worldWidth; gridX += 80) {
+            background.moveTo(gridX, 0);
+            background.lineTo(gridX, worldHeight);
+        }
+        for (var gridY = 0; gridY <= worldHeight; gridY += 80) {
+            background.moveTo(0, gridY);
+            background.lineTo(worldWidth, gridY);
+        }
+        background.lineStyle(8, 0xff2bd6, 0.65);
+        background.drawRect(10, 10, worldWidth - 20, worldHeight - 20);
+        background.endFill();
+
+        var stars = this.game.add.graphics(worldLeft, worldTop);
+        for (var star = 0; star < 180; star++) {
+            var starColor = star % 3 === 0 ? 0xff2bd6 : 0x2de2ff;
+            stars.beginFill(starColor, 0.18 + (star % 4) * 0.08);
+            stars.drawCircle(Util.randomInt(20, worldWidth - 20), Util.randomInt(20, worldHeight - 20), star % 5 === 0 ? 3 : 1.5);
+            stars.endFill();
+        }
 
         //initialize physics and groups
         this.game.physics.startSystem(Phaser.Physics.P2JS);
         this.foodGroup = this.game.add.group();
+        /* Un seul emitter partagé : les consommations produisent un feedback
+           arcade sans créer/détruire un emitter à chaque frame. */
+        this.particles = this.game.add.emitter(0, 0, 120);
+        this.particles.makeParticles('food');
+        this.particles.gravity = 0;
+        this.particles.setAlpha(0.95, 0, 320);
+        this.particles.setScale(0.8, 0.15, 0.8, 0.15, 320);
         this.snakeHeadCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.foodCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
@@ -400,12 +434,21 @@ Game.prototype = {
      * @param  {number} y y-coordinate
      * @return {Food}   food object created
      */
-    initFood: function(x, y) {
-        var f = new Food(this.game, x, y);
+    initFood: function(x, y, variant) {
+        var f = new Food(this.game, x, y, variant === undefined ? Util.randomInt(0, 2) : variant);
         f.sprite.body.setCollisionGroup(this.foodCollisionGroup);
         this.foodGroup.add(f.sprite);
         f.sprite.body.collides([this.snakeHeadCollisionGroup]);
         return f;
+    },
+    foodCollected: function(food) {
+        if (this.particles) {
+            this.particles.x = food.sprite.body.x;
+            this.particles.y = food.sprite.body.y;
+            this.particles.forEach(function(particle) { particle.tint = food.color; }, this);
+            this.particles.start(true, 320, null, food.value === 3 ? 10 : 6);
+        }
+        this.playFoodSound();
     },
     snakeDestroyed: function(snake) {
         //if the player died through p2 collision, end the run

@@ -5,11 +5,15 @@
  * @param  {Number} x    coordinate
  * @param  {Number} y    coordinate
  */
-Food = function(game, x, y) {
+Food = function(game, x, y, variant) {
     this.game = game;
+    this.variant = variant || 0;
+    this.value = this.variant === 2 ? 3 : (this.variant === 1 ? 2 : 1);
+    this.color = this.variant === 2 ? 0xffc857 : (this.variant === 1 ? 0x35e6ff : 0xff4fd8);
     this.debug = false;
     this.sprite = this.game.add.sprite(x, y, 'food');
-    this.sprite.tint = 0xff0000;
+    this.sprite.tint = this.color;
+    this.sprite.scale.setTo(this.variant === 2 ? 1.25 : (this.variant === 1 ? 1.05 : 0.9));
 
     this.game.physics.p2.enable(this.sprite, this.debug);
     this.sprite.body.clearShapes();
@@ -41,13 +45,14 @@ Food.prototype = {
      * Call from main update loop
      */
     update: function() {
+        this.sprite.angle += this.variant === 2 ? 1.2 : 0.7;
         //once the food reaches the center of the snake head, destroy it and
         //increment the size of the snake
         if (this.head && Math.round(this.head.body.x) == Math.round(this.sprite.body.x) &&
         Math.round(this.head.body.y) == Math.round(this.sprite.body.y)) {
             var state = this.game.state.getCurrentState();
-            if (state && state.playFoodSound) state.playFoodSound();
-            this.head.snake.incrementSize();
+            if (state && state.foodCollected) state.foodCollected(this);
+            for (var i = 0; i < this.value; i++) this.head.snake.incrementSize();
             this.destroy();
         }
     },
