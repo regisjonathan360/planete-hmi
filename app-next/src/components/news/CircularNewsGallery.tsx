@@ -5,8 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 /* Galerie circulaire 3D des actualités — portage du modèle « CircularGallery »
    (rotateY + translateZ : les cartes font un cercle qui tourne autour du
    centre). Auto-rotation discrète au repos, rotation à la main en faisant
-   glisser la souris/le doigt (comme la démo), et petite rotation au
-   gyroscope du téléphone (même principe que le globe de la carte d'Haïti).
+   glisser la souris/le doigt (comme la démo).
    Opacité dégradée selon la distance angulaire à l'avant de la scène. */
 
 export interface CircularNewsItem {
@@ -32,23 +31,18 @@ interface CircularNewsGalleryProps {
   const DRAG_SENSITIVITY = 0.35;
   /** Délai après un drag avant que l'auto-rotation ne reprenne. */
   const DRAG_RESUME_MS = 500;
-  /** Distance de drag au-delà de laquelle on annule le clic sur une carte. */
+/** Distance de drag au-delà de laquelle on annule le clic sur une carte. */
   const CLICK_TOLERANCE = 6;
-  /** Clamp des deltas gyroscope (degrés), comme le globe d'Haïti. */
-  const GYRO_MAX = 26;
 
 export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState(() => Math.random() * 360);
   const [dims, setDims] = useState({ radius: 340, cardW: 260, cardH: 324 });
   const [reduced, setReduced] = useState(false);
-  const [gyroEnabled, setGyroEnabled] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const dragState = useRef({ active: false, id: -1, lastX: 0, lastY: 0, moved: 0, lastMoveAt: 0 });
-  const gyroOrigin = useRef<{ beta: number; gamma: number } | null>(null);
-  const gyroTarget = useRef({ beta: 0, gamma: 0, applied: 0 });
 
   /* prefers-reduced-motion : on coupe l'auto-rotation (le drag reste). */
   useEffect(() => {
@@ -88,53 +82,7 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     };
   }, [isMobile]);
 
-  /* Détection + activation automatique du gyroscope : la mécanique se lance
-     dès que la section des actualités entre dans le champ de vision. Sur iOS
-     la permission exige un geste utilisateur : on la demande au premier
-     toucher/clic sur la galerie (et seulement si la section est visible). */
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-    if (!("DeviceOrientationEvent" in window)) return;
-
-    type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
-      requestPermission?: () => Promise<"granted" | "denied">;
-    };
-    const orientation = DeviceOrientationEvent as DeviceOrientationWithPermission;
-
-    const activate = () => {
-      gyroOrigin.current = null;
-      setGyroEnabled(true);
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        observer.disconnect();
-        if (orientation.requestPermission) {
-          host.addEventListener(
-            "pointerdown",
-            () => {
-              orientation
-                .requestPermission?.()
-                .then((result) => {
-                  if (result === "granted") activate();
-                })
-                .catch(() => {});
-            },
-            { once: true, capture: true }
-          );
-        } else {
-          activate();
-        }
-      },
-      { threshold: 0.35 }
-    );
-    observer.observe(host);
-    return () => observer.disconnect();
-  }, []);
-
-/* Taille réactive : les CASES s'élargissent (horizontalement) avec la page
+  /* Taille réactive : les CASES s'élargissent (horizontalement) avec la page
    et la circonférence du carrousel suit. La hauteur des cartes reste fixe
    (base mobile) — c'est la largeur qui s'élargit, pas la taille. */
   useEffect(() => {
@@ -191,27 +139,8 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => observer.disconnect();
   }, [items.length]);
 
-  /* Gyroscope (mobile) : origine capturée au premier événement, deltas beta/
-     gamma clampés en degrés — même mécanique que HaitiInteractiveGlobe. */
-  useEffect(() => {
-    if (!gyroEnabled) return;
-    const handleOrientation = (event: DeviceOrientationEvent) => {
-      if (event.beta == null || event.gamma == null) return;
-      gyroOrigin.current ??= { beta: event.beta, gamma: event.gamma };
-      const origin = gyroOrigin.current;
-      gyroTarget.current = {
-        beta: Math.max(-GYRO_MAX, Math.min(GYRO_MAX, (event.beta - origin.beta) * 0.6)),
-        gamma: Math.max(-GYRO_MAX, Math.min(GYRO_MAX, (event.gamma - origin.gamma) * 0.6)),
-        applied: gyroTarget.current.applied,
-      };
-    };
-    window.addEventListener("deviceorientation", handleOrientation, true);
-    return () => window.removeEventListener("deviceorientation", handleOrientation, true);
-  }, [gyroEnabled]);
-
   /* Rotation : l'auto-rotation tourne au repos, le drag (souris ou doigt)
-     fait tourner le cercle à la main, le gyroscope ajoute un léger
-     déplacement. Boucle rAF unique comme la démo. */
+     fait tourner le cercle à la main. Boucle rAF unique comme la démo. */
   useEffect(() => {
     let raf = 0;
     const tick = () => {
@@ -220,19 +149,13 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       const recentlyDragged = now - drag.lastMoveAt < DRAG_RESUME_MS;
       setRotation((prev) => {
         if (drag.active || recentlyDragged) return prev;
-        if (gyroEnabled) {
-          const target = gyroTarget.current;
-          const delta = target.beta + target.gamma - target.applied;
-          target.applied = target.beta + target.gamma;
-          if (delta !== 0) return prev + delta;
-        }
         return reduced ? prev : prev + AUTO_ROTATE_SPEED;
       });
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [reduced, gyroEnabled]);
+  }, [reduced]);
 
   /* Drag souris/tactile : la rotation suit le mouvement horizontal. Sur
      mobile, le geste horizontal sur le carrousel tourne le cercle et le
