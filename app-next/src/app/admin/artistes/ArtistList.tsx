@@ -258,7 +258,17 @@ export function ArtistList({
   }, [artistRows]);
 
   const filtered = useMemo(() => artistRows.filter((artist) => {
-    if (search && !artist.name.toLocaleLowerCase("fr").includes(search.toLocaleLowerCase("fr"))) return false;
+    if (search) {
+      const q = search.toLocaleLowerCase("fr");
+      const qSlug = q
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+      const nameHit = artist.name.toLocaleLowerCase("fr").includes(q);
+      const slugHit = qSlug.length > 0 && (artist.slug ?? "").toLowerCase().includes(qSlug);
+      if (!nameHit && !slugHit) return false;
+    }
     if (!matchesArtistFilter(artist, selectedFilter)) return false;
     if (statusFilter !== "all" && artist.haitian_status !== statusFilter) return false;
     if (activeFilter === "active" && !artist.is_active) return false;

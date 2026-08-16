@@ -456,6 +456,7 @@ export function ArtistEditForm({
               primary_genre: previous.primary_genre || normalizeWikipediaGenre(result.genres[0]),
             }));
           }}
+          onImageApplied={(target, url) => update(target, url)}
         />
       </Fieldset>
 
@@ -999,10 +1000,12 @@ function EnrichmentPanel({
   artistId,
   urls,
   onWikipediaCollected,
+  onImageApplied,
 }: {
   artistId: string;
   urls: Record<string, string>;
   onWikipediaCollected: (result: FieldResult) => void;
+  onImageApplied: (target: "image_url" | "banner_url", url: string) => void;
 }) {
   const router = useRouter();
   const [loadingField, setLoadingField] = useState<string | null>(null);
@@ -1118,7 +1121,12 @@ function EnrichmentPanel({
       });
       const json = await res.json();
       setToast(res.ok ? `✓ ${json.message}` : `❌ ${json.error}`);
-      if (res.ok) router.refresh();
+      if (res.ok) {
+        // La nouvelle URL (stockage du site) doit apparaître immédiatement
+        // dans l'aperçu et le champ du formulaire — sans rechargement manuel.
+        if (typeof json.url === "string") onImageApplied(target, json.url);
+        router.refresh();
+      }
     } catch {
       setToast("❌ Erreur réseau.");
     } finally {

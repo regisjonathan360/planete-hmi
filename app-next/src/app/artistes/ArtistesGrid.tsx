@@ -47,7 +47,18 @@ export function ArtistesGrid({
 
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      result = result.filter((a) => a.name.toLowerCase().includes(q));
+      // Le slug (normalisé : minuscules, sans accents, tirets) doit aussi
+      // permettre de retrouver l'artiste — ex. « michael-brun ».
+      const qSlug = q
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+      result = result.filter(
+        (a) =>
+          a.name.toLowerCase().includes(q) ||
+          (qSlug.length > 0 && a.slug.toLowerCase().includes(qSlug))
+      );
     }
 
     if (roleFilter !== "all") {

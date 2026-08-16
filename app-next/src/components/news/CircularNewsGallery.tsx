@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 /* Galerie circulaire 3D des actualités — portage du modèle « CircularGallery »
    (rotateY + translateZ : les cartes font un cercle qui tourne autour du
@@ -44,6 +45,9 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
   const [reduced, setReduced] = useState(false);
   const [gyroEnabled, setGyroEnabled] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showHandlePopup, setShowHandlePopup] = useState(false);
+  const [handlePinned, setHandlePinned] = useState(false);
   const dragState = useRef({ active: false, id: -1, lastX: 0, lastY: 0, moved: 0, lastMoveAt: 0 });
   const gyroOrigin = useRef<{ beta: number; gamma: number } | null>(null);
   const gyroTarget = useRef({ beta: 0, gamma: 0, applied: 0 });
@@ -56,6 +60,50 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     query.addEventListener("change", onChange);
     return () => query.removeEventListener("change", onChange);
   }, []);
+
+  /* Mobile : zone tactile réduite. Seule la poignée sous le carrousel fait
+     tourner le cercle — partout ailleurs, le geste défile la page. */
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 768px)");
+    const onChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
+    setIsMobile(query.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
+
+  /* Poignée épinglée (position: fixed) tant que le carrousel est visible :
+     en fixed elle monte dans le contexte d'empilement racine et reste
+     tactile même quand le lecteur radio flottant (z-index 1000) chevauche
+     le bas de l'écran. */
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host || !isMobile) return;
+    const observer = new IntersectionObserver(
+      (entries) => setHandlePinned(entries.some((entry) => entry.isIntersecting)),
+      { rootMargin: "0px 0px 140px 0px", threshold: 0 }
+    );
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, [isMobile]);
+
+  /* Popup d'aide mobile : apparaît peu après le montage pour aider à trouver
+     la poignée, puis disparaît au premier drag, au scroll ou après
+     quelques secondes. */
+  useEffect(() => {
+    if (!isMobile) {
+      setShowHandlePopup(false);
+      return;
+    }
+    const showTimer = window.setTimeout(() => setShowHandlePopup(true), 700);
+    const hideTimer = window.setTimeout(() => setShowHandlePopup(false), 8000);
+    const onScroll = () => setShowHandlePopup(false);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(showTimer);
+      window.clearTimeout(hideTimer);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [isMobile]);
 
   /* Détection + activation automatique du gyroscope : la mécanique se lance
      dès que la section des actualités entre dans le champ de vision. Sur iOS
@@ -203,17 +251,33 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
     return () => cancelAnimationFrame(raf);
   }, [reduced, gyroEnabled]);
 
-  /* Drag souris/tactile : la rotation suit le mouvement horizontal. */
-  const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.button !== 0 && event.pointerType === "mouse") return;
-    const drag = dragState.current;
-    drag.active = true;
-    drag.id = event.pointerId;
-    drag.lastX = event.clientX;
-    drag.lastY = event.clientY;
-    drag.moved = 0;
-    setDragging(true);
-  }, []);
+  /* Drag souris/tactile : la rotation suit le mouvement horizontal. Sur
+     mobile, seuls les gestes partant de la poignée font tourner le cercle —
+     partout ailleurs le geste défile la page. */
+  const onPointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (event.button !== 0 && event.pointerType === "mouse") return;
+      if (
+        isMobile &&
+        !(event.target as Element).closest(".circular-news-gallery__handle")
+      )
+        return;
+      const drag = dragState.current;
+      drag.active = true;
+      drag.id = event.pointerId;
+      drag.lastX = event.clientX;
+      drag.lastY = event.clientY;
+      drag.moved = 0;
+      setDragging(true);
+      setShowHandlePopup(false);
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      } catch {
+        // pointeur déjà relâché — le drag ne démarre pas vraiment
+      }
+    },
+    [isMobile]
+  );
 
   const onPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     const drag = dragState.current;
@@ -274,10 +338,12 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
       ref={hostRef}
       className={`circular-news-gallery${dragging ? " circular-news-gallery--dragging" : ""}`}
       role="region"
-      aria-label="Actualités en cercle — glissez avec la souris pour faire tourner"
+      aria-label="Actualités en cercle — glissez pour faire tourner (souris sur tout le carrousel, poignée sur mobile)"
       style={{
         perspective: "2000px",
-        touchAction: "none",
+        /* Mobile : le hôte ne bloque pas le défilement de la page — seule la
+           poignée (touch-action: none en CSS) capture les gestes de drag. */
+        touchAction: isMobile ? undefined : "none",
         height: hostHeight,
         ["--gallery-card-w" as string]: `${dims.cardW}px`,
       }}
@@ -341,6 +407,37 @@ export function CircularNewsGallery({ items }: CircularNewsGalleryProps) {
           );
         })}
       </div>
+      {isMobile && handlePinned &&
+        createPortal(
+          <div
+            className="circular-news-gallery__handle"
+            aria-hidden="true"
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={endDrag}
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+              <path
+                d="M8 7l-5 5 5 5M16 7l5 5-5 5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>Glisser pour tourner</span>
+            {showHandlePopup && (
+              <span className="circular-news-gallery__popup" role="status">
+                Glissez sur la barre pour faire tourner le carrousel. Partout
+                ailleurs, la page défile.
+                <span className="circular-news-gallery__popup-arrow" aria-hidden="true" />
+              </span>
+            )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

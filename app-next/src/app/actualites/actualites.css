@@ -258,6 +258,104 @@
   backdrop-filter: blur(2px);
 }
 
+/* ============ POIGNÉE TACTILE MOBILE ============
+   Sur mobile, seule cette petite barre (verticalement bien plus petite que
+   les cartes) fait tourner le carrousel ; le reste de la galerie défile la
+   page normalement. Un popup aide à trouver la zone tactile. */
+@media (max-width: 768px) {
+  /* Rendu dans un portail (document.body) : échappe au contexte
+     d'empilement du hero et à la perspective du carrousel, donc le
+     z-index 1001 monte bien au-dessus du lecteur radio flottant (1000). */
+  .circular-news-gallery__handle {
+    position: fixed;
+    left: 1.25rem;
+    bottom: 2.75rem;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(21, 19, 31, 0.8);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(244, 239, 228, 0.16);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+    color: var(--cream);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .circular-news-gallery__handle:active {
+    cursor: grabbing;
+  }
+
+  .circular-news-gallery__handle svg {
+    flex-shrink: 0;
+  }
+
+  .circular-news-gallery__popup {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    width: max-content;
+    max-width: min(272px, calc(100vw - 2.5rem));
+    padding: 0.6rem 0.95rem;
+    border-radius: 12px;
+    background: rgba(8, 7, 13, 0.94);
+    border: 1px solid rgba(255, 106, 0, 0.4);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.5);
+    color: var(--cream);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.5;
+    text-align: center;
+    animation: news-popup-in 0.35s var(--ease);
+  }
+
+  .circular-news-gallery__popup-arrow {
+    position: absolute;
+    top: 100%;
+    left: 1.85rem;
+    border: 7px solid transparent;
+    border-top-color: rgba(255, 106, 0, 0.4);
+  }
+
+  @keyframes news-popup-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* La poignée remplace le hint texte (qui reste sur desktop). */
+  .news-gallery-hint {
+    display: none;
+  }
+
+  /* Place pour la poignée et le popup sous le carrousel : le hero est en
+     overflow:hidden, sans cette marge le popup serait coupé. */
+  .news-cosmos-hero__content .news-page__content {
+    padding-bottom: 8.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circular-news-gallery__popup {
+    animation: none;
+  }
+}
+
 /* ============ CONTENU ACTUALITÉS ============ */
 .news-page__content {
   padding-bottom: clamp(2rem, 6vw, 4rem);
