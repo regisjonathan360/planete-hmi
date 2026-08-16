@@ -12,10 +12,12 @@ const DEEZER_TRACK_BATCH_SIZE = 8;
 export async function refreshDeezerPreviews(
   candidates: PlatformAudioCandidate[],
   force = false,
+  onlyTrackId?: string,
 ): Promise<Map<string, string>> {
   const ids = [...new Set(
     candidates
       .filter((candidate) => candidate.platform === "deezer")
+      .filter((candidate) => !onlyTrackId || (candidate as PlatformAudioCandidate & { track_id?: string }).track_id === onlyTrackId)
       .filter((candidate) => {
         const current = candidate.preview_url || candidate.audio_url;
         return /^\d+$/.test(String(candidate.external_id ?? "")) &&
@@ -28,17 +30,25 @@ export async function refreshDeezerPreviews(
   for (let index = 0; index < ids.length; index += DEEZER_TRACK_BATCH_SIZE) {
     const batch = ids.slice(index, index + DEEZER_TRACK_BATCH_SIZE);
     const results = await Promise.all(batch.map(async (id) => {
-      try {
-        const response = await fetch(`https://api.deezer.com/track/${encodeURIComponent(id)}`, {
-          cache: "no-store",
-          signal: AbortSignal.timeout(8000),
-        });
-        if (!response.ok) return null;
-        const payload = (await response.json()) as { id?: number; preview?: string | null };
-        return payload.id && payload.preview ? { id: String(payload.id), preview: payload.preview } : null;
-      } catch {
-        return null;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        try {
+          // Deezer can cache a signed preview response. A unique query keeps a
+          // forced radio recovery from replacing a valid URL with an old one.
+          const cacheBust = `${Date.now()}-${attempt}-${id}`;
+          const response = await fetch(
+            `https://api.deezer.com/track/${encodeURIComponent(id)}?radio_refresh=${cacheBust}`,
+            { cache: "no-store", signal: AbortSignal.timeout(8000) },
+          );
+          if (!response.ok) continue;
+          const payload = (await response.json()) as { id?: number; preview?: string | null };
+          if (payload.id && payload.preview && !isExpiringAudioUrl(payload.preview)) {
+            return { id: String(payload.id), preview: payload.preview };
+          }
+        } catch {
+          // Try once more with a different cache-busting URL.
+        }
       }
+      return null;
     }));
 
     for (const result of results) {
@@ -55,6 +65,8 @@ export function applyFreshDeezerPreviews<T extends PlatformAudioCandidate>(
 ): T[] {
   return candidates.map((candidate) => {
     const preview = refreshed.get(String(candidate.external_id ?? ""));
-    return preview ? { ...candidate, preview_url: preview, audio_url: preview } : candidate;
+    return preview && !isExpiringAudioUrl(preview)
+      ? { ...candidate, preview_url: preview, audio_url: preview }
+      : candidate;
   });
 }

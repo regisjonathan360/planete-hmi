@@ -186,6 +186,7 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
       if (requestId !== radioRuntime.playRequest) return;
       radioRuntime.currentAudio = audio;
       radioRuntime.currentTrackId = track.id;
+      recoveryAttempts.current.delete(track.id);
       setState((previous) => ({ ...previous, isPlaying: true, currentIndex: index, currentTrack: track, nextTrack: tracks[(index + 1) % tracks.length], error: undefined }));
       syncPreloadWindow(index, tracks);
       recordPlay(track);
@@ -197,8 +198,8 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
             return;
           }
           const progress = Math.min(1, (now - startedAt) / fadeDuration);
-          previousAudio.volume = snapshot.volume * (1 - progress);
-          audio.volume = snapshot.volume * progress;
+          previousAudio.volume = clamp(snapshot.volume * (1 - progress), 0, 1);
+          audio.volume = clamp(snapshot.volume * progress, 0, 1);
           if (progress < 1) requestAnimationFrame(fade);
           else previousAudio.pause();
         };
@@ -220,12 +221,16 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
   }, [playIndex]);
   useEffect(() => { nextRef.current = next; }, [next]);
 
-  const loadPlaylist = useCallback(async (forceRefresh = false) => {
+  const loadPlaylist = useCallback(async (forceRefresh = false, refreshTrackId?: string): Promise<RadioTrack[]> => {
     try {
       setState((previous) => ({ ...previous, isLoading: true, error: undefined }));
+      const refreshParams = new URLSearchParams();
+      if (forceRefresh) refreshParams.set("refresh", "1");
+      if (refreshTrackId) refreshParams.set("trackId", refreshTrackId);
+      const refreshQuery = refreshParams.toString();
       const url = sourceId && sourceType
         ? `/api/admin/radio/source-tracks?${new URLSearchParams({ [`${sourceType}Id`]: sourceId })}`
-        : forceRefresh ? "/api/radio/playlist?refresh=1" : "/api/radio/playlist";
+        : `/api/radio/playlist${refreshQuery ? `?${refreshQuery}` : ""}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error("playlist");
       const data = await response.json();
@@ -270,8 +275,10 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
       }));
       if (tracks.length) syncPreloadWindow(currentIndex, tracks);
       if (autoPlay && tracks.length && !hasRuntimeAudio) window.setTimeout(() => void playIndex(currentIndex), 0);
+      return tracks;
     } catch {
       setState((previous) => ({ ...previous, isLoading: false, error: "Impossible de charger la playlist radio" }));
+      return [];
     }
   }, [autoPlay, initialPreloadCount, playIndex, sourceId, sourceType, syncPreloadWindow]);
 
@@ -299,13 +306,12 @@ export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
     setState((previous) => ({ ...previous, isPlaying: false, isLoading: true, error: undefined }));
 
     try {
-      await loadPlaylist(true);
+      const refreshedTracks = await loadPlaylist(true, trackId);
       window.setTimeout(() => {
-        const refreshed = stateRef.current;
-        const index = refreshed.playlist.findIndex((track) => track.id === trackId);
+        const index = refreshedTracks.findIndex((track) => track.id === trackId);
         if (index >= 0) void playIndex(index);
         else nextRef.current();
-      }, 0);
+      }, 50);
     } finally {
       recoveryInFlight.current.delete(trackId);
     }

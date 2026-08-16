@@ -13,7 +13,9 @@ import { applyFreshDeezerPreviews, refreshDeezerPreviews } from "@/lib/deezer/pr
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request): Promise<NextResponse> {
-  const forceRefresh = new URL(request.url).searchParams.get("refresh") === "1";
+  const searchParams = new URL(request.url).searchParams;
+  const forceRefresh = searchParams.get("refresh") === "1";
+  const refreshTrackId = searchParams.get("trackId") || undefined;
   try {
     const supabase = createAdminClient();
 
@@ -92,7 +94,7 @@ export async function GET(request: Request): Promise<NextResponse> {
           preview_url?: string | null;
           audio_url?: string | null;
         }>;
-        const refreshed = await refreshDeezerPreviews(candidates, forceRefresh);
+        const refreshed = await refreshDeezerPreviews(candidates, forceRefresh, refreshTrackId);
         const freshCandidates = applyFreshDeezerPreviews(candidates, refreshed);
         const platformByTrackFresh = new Map<string, any[]>();
         for (const platformTrack of freshCandidates) {

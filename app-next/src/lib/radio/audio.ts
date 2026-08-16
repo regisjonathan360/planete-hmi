@@ -46,21 +46,16 @@ export function resolveAudioUrl(
 ): string {
   if (isPlayableAudioUrl(storedUrl) && !isExpiringAudioUrl(storedUrl)) return storedUrl;
 
-  let fallbackUrl = "";
   for (const candidate of platformTracks) {
     if (isPlayableAudioUrl(candidate.audio_url)) {
-      if (!fallbackUrl) fallbackUrl = candidate.audio_url;
       if (!isExpiringAudioUrl(candidate.audio_url)) return candidate.audio_url;
     }
     if (isPlayableAudioUrl(candidate.preview_url)) {
-      if (!fallbackUrl) fallbackUrl = candidate.preview_url;
       if (!isExpiringAudioUrl(candidate.preview_url)) return candidate.preview_url;
     }
   }
 
-  // Keep an expiring stored URL only as a last resort when Deezer could not
-  // return a fresh preview. The caller can then retry the playlist endpoint.
-  if (isPlayableAudioUrl(storedUrl)) return storedUrl;
-
-  return fallbackUrl;
+  // Never send an expired signed URL to HTMLAudioElement. The API caller will
+  // omit this track from the playable playlist so the radio can continue.
+  return "";
 }
