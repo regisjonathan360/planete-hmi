@@ -40,6 +40,8 @@ export function RadioConfigPanel({
     preload_count: config?.preload_count || 3,
     crossfade_duration_ms: config?.crossfade_duration_ms || 2000,
     is_live: config?.is_live ?? true,
+    auto_sync_enabled: config?.auto_sync_enabled ?? true,
+    auto_source_key: config?.auto_source_key || "deezer_haiti_top100",
   });
 
   /**
@@ -217,9 +219,7 @@ export function RadioConfigPanel({
                 ) : sourcePreview.tracks.length > 0 ? (
                   <>
                     <p className={styles.trackCount}>
-                      ✅ {sourcePreview.tracks.length} piste
-                      {sourcePreview.tracks.length > 1 ? "s" : ""} trouvée
-                      {sourcePreview.tracks.length > 1 ? "s" : ""}
+                      ✅ {sourcePreview.tracks.filter((track) => track.audio_url).length} piste(s) jouable(s) sur {sourcePreview.tracks.length}
                     </p>
 
                     <div className={styles.trackList}>
@@ -245,7 +245,7 @@ export function RadioConfigPanel({
                       type="button"
                       className={styles.applyButton}
                       onClick={applySource}
-                      disabled={isSaving}
+                      disabled={isSaving || !sourcePreview.tracks.some((track) => Boolean(track.audio_url))}
                     >
                       {isSaving
                         ? "Application..."
@@ -264,6 +264,40 @@ export function RadioConfigPanel({
           {/* Section 2 : Paramètres avancés */}
           <div className={styles.formSection}>
             <h3>⚙️ Paramètres avancés</h3>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                <input
+                  type="checkbox"
+                  checked={formData.auto_sync_enabled}
+                  onChange={(e) =>
+                    setFormData({ ...formData, auto_sync_enabled: e.target.checked })
+                  }
+                />
+                <span>Mettre à jour automatiquement la radio</span>
+              </label>
+              <p className={styles.hint}>
+                Les classements sont relus chaque jour et seules les previews ou sources audio autorisées sont ajoutées.
+              </p>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="auto-source" className={styles.label}>
+                Classement automatique prioritaire
+              </label>
+              <select
+                id="auto-source"
+                value={formData.auto_source_key}
+                onChange={(e) => setFormData({ ...formData, auto_source_key: e.target.value })}
+                className={styles.input}
+                disabled={!formData.auto_sync_enabled}
+              >
+                <option value="deezer_haiti_top100">Deezer — Top Haiti</option>
+                <option value="spotify_haiti_popular">Spotify — Top 50</option>
+                <option value="tiktok_haiti_viral_playlist">TikTok — Viral</option>
+                <option value="audiomack_haiti_weekly100">Audiomack — Weekly 100</option>
+              </select>
+            </div>
 
             {/* État de la radio */}
             <div className={styles.formGroup}>

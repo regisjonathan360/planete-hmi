@@ -103,6 +103,7 @@ export async function collectPlaylistChart(
       artworkUrl: track.artworkUrl,
       artistImageUrl: null,
       sourceTrackUrl: track.url,
+      previewUrl: track.previewUrl,
       artistSlug: slugify(track.artistNames[0] ?? artistText),
       trackSlug: slugify(track.title),
       albumName: track.albumName,

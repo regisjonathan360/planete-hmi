@@ -323,6 +323,18 @@
   letter-spacing: 0.1em;
 }
 
+.liveBadge[data-live="false"] {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.liveBadge[data-live="false"] .liveIndicator {
+  background: rgba(255, 255, 255, 0.45);
+  animation: none;
+  box-shadow: none;
+}
+
 .liveIndicator {
   width: 6px;
   height: 6px;

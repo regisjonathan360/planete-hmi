@@ -132,9 +132,9 @@ export function RadioPlayer() {
 
           {/* Contrôles droite : Badge LIVE + Minimize */}
           <div className={styles.rightControls}>
-            <div className={styles.liveBadge}>
+            <div className={styles.liveBadge} data-live={Boolean(currentTrack && !error)}>
               <span className={styles.liveIndicator} />
-              LIVE
+              {currentTrack && !error ? "LIVE" : "HORS LIGNE"}
             </div>
 
             <button

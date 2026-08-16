@@ -12,6 +12,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin-guard";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { resolveAudioUrl } from "@/lib/radio/audio";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +24,7 @@ const syncChartSchema = z.object({
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
       "chartId doit être un UUID"
     ),
+  playlistId: z.string().uuid().optional(),
 });
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -56,7 +58,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    const { chartId } = parsed.data;
+    const { chartId, playlistId: requestedPlaylistId } = parsed.data;
     const supabase = createAdminClient();
 
     // 1. Récupérer le classement et sa source
@@ -127,7 +129,10 @@ export async function POST(request: Request): Promise<NextResponse> {
         platform_tracks(
           id,
           platform,
-          external_url
+          external_url,
+          external_id,
+          preview_url,
+          audio_url
         ),
         youtube_videos(
           id,
@@ -148,18 +153,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     const radioTracks = (tracksData || []).map((track: any) => {
       let audioUrl = "";
 
-      if (track.platform_tracks && track.platform_tracks.length > 0) {
-        audioUrl = track.platform_tracks[0].external_url || "";
-      }
-
-      if (!audioUrl && track.youtube_videos && track.youtube_videos.length > 0) {
-        const youtube = track.youtube_videos.find(
-          (yt: any) => yt.is_active && yt.review_status === "APPROVED"
-        );
-        if (youtube) {
-          audioUrl = `https://www.youtube.com/watch?v=${youtube.video_id}`;
-        }
-      }
+      audioUrl = resolveAudioUrl("", track.platform_tracks || []);
+      // Les URLs de pages Spotify/YouTube/Audiomack ne sont pas des sources audio HTML5.
 
       let artistName = "Artiste inconnu";
       let artistId: string | null = null;
@@ -198,9 +193,14 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     // 5. Créer ou réutiliser la playlist dédiée au classement
     const playlistName = `Chart - ${chartName}`;
-    let playlistId: string;
+    let playlistId: string = requestedPlaylistId || "";
 
-    const { data: existingPlaylist } = await supabase
+    if (playlistId) {
+      const { data: targetPlaylist } = await supabase.from("radio_playlists").select("id").eq("id", playlistId).maybeSingle();
+      if (!targetPlaylist) return NextResponse.json({ error: { code: "not_found", message: "Playlist cible non trouvée" } }, { status: 404 });
+    }
+
+    const { data: existingPlaylist } = playlistId ? { data: null } : await supabase
       .from("radio_playlists")
       .select("id")
       .eq("name", playlistName)
@@ -230,10 +230,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     // 6. Remplacer les entrées de la playlist (ordre du classement)
-    await supabase
-      .from("radio_playlist_tracks")
-      .delete()
-      .eq("playlist_id", playlistId);
+    if (!requestedPlaylistId) {
+      await supabase.from("radio_playlist_tracks").delete().eq("playlist_id", playlistId);
+    }
 
     const positionByTrackId = new Map(
       (entries || []).map((entry: any, index: number) => [
@@ -252,7 +251,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     const { error: insertError } = await supabase
       .from("radio_playlist_tracks")
-      .insert(playlistTracks);
+      .upsert(playlistTracks, { onConflict: "playlist_id,track_id", ignoreDuplicates: true });
 
     if (insertError) {
       console.error("Erreur insertion playlist_tracks:", insertError);

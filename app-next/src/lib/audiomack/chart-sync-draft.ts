@@ -341,6 +341,8 @@ async function ensurePlatformTrack(
       platform,
       external_id: externalId,
       external_url: entry.sourceTrackUrl,
+      preview_url: entry.previewUrl ?? null,
+      audio_url: entry.previewUrl ?? null,
       platform_title: entry.title,
       platform_artist_text: entry.artistName,
       artwork_url: entry.artworkUrl,

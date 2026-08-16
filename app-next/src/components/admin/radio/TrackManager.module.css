@@ -174,8 +174,10 @@
 }
 
 .actionButton {
-  width: 36px;
+  min-width: 36px;
+  width: auto;
   height: 36px;
+  padding: 0 0.75rem;
   border-radius: 8px;
   border: none;
   background: rgba(255, 255, 255, 0.1);

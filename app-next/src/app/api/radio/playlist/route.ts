@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { RadioTrack } from "@/lib/radio/types";
+import { resolveAudioUrl } from "@/lib/radio/audio";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,7 @@ export async function GET(): Promise<NextResponse> {
         .from("radio_playlist_tracks")
         .select(
           `
+          track_id,
           radio_tracks(
             id,
             title,
@@ -65,9 +67,31 @@ export async function GET(): Promise<NextResponse> {
         .order("track_position", { ascending: true });
 
       if (!playlistError && playlistTracks) {
+        const radioTrackIds = playlistTracks
+          .map((item: any) => item.radio_tracks?.id)
+          .filter(Boolean);
+        const { data: platformTracks } = radioTrackIds.length
+          ? await supabase
+              .from("platform_tracks")
+              .select("track_id, platform, external_id, preview_url, audio_url")
+              .in("track_id", radioTrackIds)
+          : { data: [] };
+        const platformByTrack = new Map<string, any[]>();
+        for (const platformTrack of platformTracks || []) {
+          const current = platformByTrack.get(platformTrack.track_id) || [];
+          current.push(platformTrack);
+          platformByTrack.set(platformTrack.track_id, current);
+        }
+
         tracks = playlistTracks
           .filter((pt: any) => pt.radio_tracks && pt.radio_tracks.is_active)
-          .map((pt: any) => pt.radio_tracks);
+          .map((pt: any) => ({
+            ...pt.radio_tracks,
+            audio_url: resolveAudioUrl(
+              pt.radio_tracks.audio_url,
+              platformByTrack.get(pt.radio_tracks.id) || [],
+            ),
+          }));
       }
     }
 
@@ -92,7 +116,7 @@ export async function GET(): Promise<NextResponse> {
               duration_ms,
               default_artwork_url,
               track_artists(artist_id, artists(id, name)),
-              platform_tracks(external_url, platform),
+            platform_tracks(external_url, platform, external_id, preview_url, audio_url),
               youtube_videos(id, video_id, is_active, review_status)
             )
             `
@@ -109,7 +133,7 @@ export async function GET(): Promise<NextResponse> {
               // Récupérer audio URL
               let audioUrl = "";
               if (track.platform_tracks && track.platform_tracks.length > 0) {
-                audioUrl = track.platform_tracks[0].external_url || "";
+                audioUrl = resolveAudioUrl("", track.platform_tracks);
               }
               // Note: YouTube videos ne sont pas directement playables par Howler.js
               // On attend une URL audio depuis platform_tracks

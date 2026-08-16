@@ -15,6 +15,12 @@ import { recomputeAdminEdition } from "@/lib/charts/admin/recompute-admin-editio
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // Vercel Pro: max 60s pour le scraping Audiomack
 
+// Vercel Cron envoie une requête GET. Le POST reste accepté pour les
+// déclenchements manuels ou les intégrations externes.
+export async function GET(request: Request) {
+  return POST(request);
+}
+
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;

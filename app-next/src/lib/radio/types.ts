@@ -27,7 +27,7 @@ export interface RadioTrack {
   cover_image_url?: string;
   duration_seconds: number;
   genre?: string;
-  source: 'manual' | 'chart' | 'youtube' | 'audiomack' | 'spotify';
+  source: 'manual' | 'chart' | 'youtube' | 'audiomack' | 'spotify' | 'deezer' | 'soundcloud';
   source_id?: string;
   is_active: boolean;
   play_count: number;
@@ -66,6 +66,11 @@ export interface RadioConfig {
   preload_count: number;
   crossfade_duration_ms: number;
   is_live: boolean;
+  auto_sync_enabled?: boolean;
+  auto_source_key?: string;
+  last_auto_sync_at?: string | null;
+  last_auto_sync_status?: string | null;
+  last_auto_sync_error?: string | null;
   updated_at: string;
   updated_by?: string;
 }

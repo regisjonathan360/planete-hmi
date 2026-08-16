@@ -1,11 +1,7 @@
-/**
- * Hook React pour le lecteur radio avec préchargement intelligent
- */
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Howl } from "howler";
-import type { RadioTrack, RadioPlayerState } from "./types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { RadioPlayerState, RadioTrack } from "./types";
 
 interface UseRadioPlayerOptions {
   autoPlay?: boolean;
@@ -16,443 +12,274 @@ interface UseRadioPlayerOptions {
   sourceType?: "chart" | "playlist";
 }
 
+type BufferedAudio = HTMLAudioElement & { __radioHandlersAttached?: boolean };
+
+const RADIO_SESSION_KEY = "planete-hmi:radio-session:v2";
+
+const radioRuntime: {
+  audioCache: Map<string, BufferedAudio>;
+  currentAudio: BufferedAudio | null;
+  currentTrackId?: string;
+  pendingPosition?: { trackId: string; position: number };
+  playRequest: number;
+} = {
+  audioCache: new Map(),
+  currentAudio: null,
+  playRequest: 0,
+};
+
+interface PersistedRadioSession {
+  trackId?: string;
+  position?: number;
+  isPlaying?: boolean;
+  volume?: number;
+  isMuted?: boolean;
+}
+
+function readRadioSession(): PersistedRadioSession | undefined {
+  try {
+    const raw = window.sessionStorage.getItem(RADIO_SESSION_KEY);
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw) as PersistedRadioSession;
+    return parsed && typeof parsed === "object" ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeRadioSession(state: RadioPlayerState) {
+  if (!state.currentTrack) return;
+  try {
+    window.sessionStorage.setItem(
+      RADIO_SESSION_KEY,
+      JSON.stringify({
+        trackId: state.currentTrack.id,
+        position: radioRuntime.currentAudio?.currentTime ?? 0,
+        isPlaying: state.isPlaying,
+        volume: state.volume,
+        isMuted: state.isMuted,
+      } satisfies PersistedRadioSession),
+    );
+  } catch {
+    // Storage can be disabled by privacy settings; playback still works.
+  }
+}
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+function isPlayableAudioUrl(url?: string) {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url, window.location.href);
+    const path = parsed.pathname.toLowerCase();
+    const isAllowedProtocol = ["http:", "https:", "blob:", "data:"].includes(parsed.protocol);
+    const isPageUrl = /youtube\.com|youtu\.be|spotify\.com|audiomack\.com|deezer\.com/.test(parsed.hostname)
+      || /\.(html?|php)(\?|$)/.test(path);
+    return isAllowedProtocol && !isPageUrl;
+  } catch {
+    return false;
+  }
+}
+
 export function useRadioPlayer(options: UseRadioPlayerOptions = {}) {
   const {
     autoPlay = false,
     volume: initialVolume = 0.7,
     preloadCount: initialPreloadCount = 3,
-    crossfadeDuration: initialCrossfadeDuration = 2000,
+    crossfadeDuration: initialCrossfadeDuration = 0,
     sourceId,
     sourceType,
   } = options;
-
   const [state, setState] = useState<RadioPlayerState>({
-    isPlaying: false,
-    playlist: [],
-    currentIndex: -1,
-    volume: initialVolume,
-    isMuted: false,
-    preloadedTracks: new Set(),
-    isLoading: true,
-    error: undefined,
+    isPlaying: false, playlist: [], currentIndex: -1, volume: initialVolume,
+    isMuted: false, preloadedTracks: new Set(), isLoading: true,
   });
+  const stateRef = useRef(state);
+  const preloadCount = useRef(clamp(initialPreloadCount, 1, 5));
+  const crossfadeDuration = useRef(Math.max(0, initialCrossfadeDuration));
+  const nextRef = useRef<() => void>(() => undefined);
+  useEffect(() => { stateRef.current = state; }, [state]);
 
-  const currentHowlRef = useRef<Howl | null>(null);
-  const preloadedHowls = useRef<Map<string, Howl>>(new Map());
-  const isCrossfading = useRef(false);
-
-  // Réglages de lecture, surchargeables par la config radio renvoyée par l'API
-  const preloadCountRef = useRef(initialPreloadCount);
-  const crossfadeDurationRef = useRef(initialCrossfadeDuration);
-
-  /**
-   * Attache les handlers de fin/erreur à un Howl.
-   * On les détache d'abord pour éviter les doublons lors de la réutilisation
-   * d'un Howl préchargé (bug : la radio s'arrêtait après la première piste).
-   */
-  const attachHandlers = useCallback((howl: Howl, track: RadioTrack) => {
-    howl.off("end");
-    howl.off("loaderror");
-    howl.off("playerror");
-
-    howl.on("end", () => {
-      nextRef.current();
-    });
-
-    howl.on("loaderror", (id, error) => {
-      console.error("Error loading track:", track.title, error);
-      setState((prev) => ({
-        ...prev,
-        error: `Erreur de chargement: ${track.title}`,
-      }));
-      // Passer à la piste suivante
-      setTimeout(() => nextRef.current(), 1000);
-    });
-
-    howl.on("playerror", (id, error) => {
-      console.error("Error playing track:", track.title, error);
-      setTimeout(() => nextRef.current(), 1000);
-    });
+  const getAudio = useCallback((track: RadioTrack) => {
+    const cached = radioRuntime.audioCache.get(track.id);
+    if (cached) return cached;
+    const audio = new Audio() as BufferedAudio;
+    audio.preload = "auto";
+    audio.src = track.audio_url;
+    radioRuntime.audioCache.set(track.id, audio);
+    audio.load();
+    return audio;
   }, []);
 
-  /**
-   * Charge la playlist depuis l'API (données par défaut)
-   */
-  const loadDefaultPlaylist = useCallback(async () => {
+  const removeCachedAudio = useCallback((trackId: string) => {
+    const audio = radioRuntime.audioCache.get(trackId);
+    if (!audio) return;
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
+    radioRuntime.audioCache.delete(trackId);
+  }, []);
+
+  const syncPreloadWindow = useCallback((index: number, tracks: RadioTrack[]) => {
+    if (!tracks.length) return;
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const constrained = Boolean(connection?.saveData) || /slow-2g|2g/.test(connection?.effectiveType || "");
+    const count = constrained ? 1 : preloadCount.current;
+    const keep = new Set<string>();
+    for (let offset = 0; offset <= count; offset += 1) {
+      const track = tracks[(index + offset) % tracks.length];
+      if (!track || !isPlayableAudioUrl(track.audio_url)) continue;
+      keep.add(track.id);
+      getAudio(track);
+    }
+    for (const trackId of radioRuntime.audioCache.keys()) {
+      if (!keep.has(trackId) && trackId !== tracks[index]?.id) removeCachedAudio(trackId);
+    }
+    setState((previous) => ({ ...previous, preloadedTracks: new Set([...keep].filter((id) => id !== tracks[index]?.id)) }));
+  }, [getAudio, removeCachedAudio]);
+
+  const recordPlay = useCallback((track: RadioTrack) => {
+    void fetch("/api/radio/play", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trackId: track.id }) }).catch(() => undefined);
+  }, []);
+
+  const playIndex = useCallback(async (index: number) => {
+    const snapshot = stateRef.current;
+    const tracks = snapshot.playlist;
+    if (!tracks.length || index < 0 || index >= tracks.length) return;
+    const track = tracks[index];
+    if (!isPlayableAudioUrl(track.audio_url)) {
+      setState((previous) => ({ ...previous, error: `Source audio non lisible : ${track.title}` }));
+      return;
+    }
+    const requestId = ++radioRuntime.playRequest;
+    const previousAudio = radioRuntime.currentAudio;
+    const audio = getAudio(track);
+    audio.volume = snapshot.isMuted ? 0 : snapshot.volume;
+    const isResumingSameAudio = previousAudio === audio && radioRuntime.currentTrackId === track.id;
+    const pendingPosition = radioRuntime.pendingPosition?.trackId === track.id
+      ? radioRuntime.pendingPosition.position
+      : undefined;
+    if (!isResumingSameAudio) {
+      audio.currentTime = pendingPosition && Number.isFinite(pendingPosition)
+        ? Math.max(0, pendingPosition)
+        : 0;
+      radioRuntime.pendingPosition = undefined;
+    }
+    audio.onended = () => { if (requestId === radioRuntime.playRequest) nextRef.current(); };
+    audio.onerror = () => {
+      if (requestId !== radioRuntime.playRequest) return;
+      setState((previous) => ({ ...previous, isPlaying: false, error: `Impossible de lire « ${track.title} »` }));
+      window.setTimeout(() => nextRef.current(), 250);
+    };
+    const fadeDuration = Math.min(crossfadeDuration.current, 5000);
+    const shouldCrossfade = Boolean(previousAudio && previousAudio !== audio && fadeDuration > 0 && !snapshot.isMuted);
+    if (previousAudio && previousAudio !== audio && !shouldCrossfade) previousAudio.pause();
+    if (shouldCrossfade) audio.volume = 0;
     try {
-      setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
-
-      const response = await fetch("/api/radio/playlist");
-      if (!response.ok) throw new Error("Failed to load playlist");
-
-      const data = await response.json();
-      const tracks = data.tracks || [];
-
-      // Appliquer la config radio (préchargement, crossfade)
-      if (data.config) {
-        if (typeof data.config.preload_count === "number") {
-          preloadCountRef.current = data.config.preload_count;
-        }
-        if (typeof data.config.crossfade_duration_ms === "number") {
-          crossfadeDurationRef.current = data.config.crossfade_duration_ms;
-        }
+      await audio.play();
+      if (requestId !== radioRuntime.playRequest) return;
+      radioRuntime.currentAudio = audio;
+      radioRuntime.currentTrackId = track.id;
+      setState((previous) => ({ ...previous, isPlaying: true, currentIndex: index, currentTrack: track, nextTrack: tracks[(index + 1) % tracks.length], error: undefined }));
+      syncPreloadWindow(index, tracks);
+      recordPlay(track);
+      if (shouldCrossfade && previousAudio) {
+        const startedAt = performance.now();
+        const fade = (now: number) => {
+          if (requestId !== radioRuntime.playRequest) {
+            previousAudio.pause();
+            return;
+          }
+          const progress = Math.min(1, (now - startedAt) / fadeDuration);
+          previousAudio.volume = snapshot.volume * (1 - progress);
+          audio.volume = snapshot.volume * progress;
+          if (progress < 1) requestAnimationFrame(fade);
+          else previousAudio.pause();
+        };
+        requestAnimationFrame(fade);
       }
-
-      setState((prev) => ({
-        ...prev,
-        playlist: tracks,
-        isLoading: false,
-        currentIndex: tracks.length > 0 ? 0 : -1,
-      }));
-
-      if (tracks.length > 0 && autoPlay) {
-        // Démarre la lecture automatiquement
-        setTimeout(() => play(), 100);
-      }
-    } catch (error) {
-      console.error("Error loading default playlist:", error);
-      setState((prev) => ({
-        ...prev,
-        isLoading: false,
-        error: "Impossible de charger la playlist",
-      }));
+    } catch {
+      setState((previous) => ({ ...previous, isPlaying: false, error: "Cliquez sur lecture pour autoriser le son" }));
     }
-  }, [autoPlay]);
+  }, [getAudio, recordPlay, syncPreloadWindow]);
 
-  /**
-   * Charge la playlist depuis une source (chart ou playlist)
-   */
-  const loadSourcePlaylist = useCallback(async (id: string, type: "chart" | "playlist") => {
-    try {
-      setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
-
-      const params = new URLSearchParams();
-      if (type === "chart") {
-        params.append("chartId", id);
-      } else {
-        params.append("playlistId", id);
-      }
-
-      const response = await fetch(`/api/admin/radio/source-tracks?${params}`);
-      if (!response.ok) {
-        throw new Error("Erreur lors du chargement des pistes");
-      }
-
-      const data = await response.json();
-      const tracks = data.tracks || [];
-
-      setState((prev) => ({
-        ...prev,
-        playlist: tracks,
-        isLoading: false,
-        currentIndex: tracks.length > 0 ? 0 : -1,
-      }));
-
-      if (tracks.length > 0 && autoPlay) {
-        // Démarre la lecture automatiquement
-        setTimeout(() => play(), 100);
-      }
-    } catch (error) {
-      console.error("Error loading source playlist:", error);
-      setState((prev) => ({
-        ...prev,
-        isLoading: false,
-        error: "Impossible de charger les pistes",
-      }));
-    }
-  }, [autoPlay]);
-
-  /**
-   * Charge la playlist appropriée
-   */
-  const loadPlaylist = useCallback(async () => {
-    if (sourceId && sourceType) {
-      await loadSourcePlaylist(sourceId, sourceType);
-    } else {
-      await loadDefaultPlaylist();
-    }
-  }, [sourceId, sourceType, loadSourcePlaylist, loadDefaultPlaylist]);
-
-  /**
-   * Précharge les prochaines pistes (uniquement la ou les suivantes,
-   * jamais toute la playlist : préchargement progressif).
-   */
-  const preloadTracks = useCallback(
-    (startIndex: number) => {
-      const { playlist, currentIndex } = state;
-      if (playlist.length === 0) return;
-
-      const preloadCount = preloadCountRef.current;
-
-      // Précharger les N prochaines pistes
-      for (let i = 1; i <= preloadCount; i++) {
-        const index = (startIndex + i) % playlist.length;
-        const track = playlist[index];
-
-        if (!track || preloadedHowls.current.has(track.id)) continue;
-        if (!track.audio_url) continue;
-
-        const howl = new Howl({
-          src: [track.audio_url],
-          html5: true,
-          preload: true,
-          volume: 0, // Volume à 0 car on ne joue pas encore
-        });
-
-        attachHandlers(howl, track);
-        preloadedHowls.current.set(track.id, howl);
-        setState((prev) => ({
-          ...prev,
-          preloadedTracks: new Set([...prev.preloadedTracks, track.id]),
-        }));
-      }
-
-      // Libérer les Howls qui ne sont plus dans la fenêtre de préchargement
-      // (la piste courante est conservée, elle peut être rejouée)
-      const keep = new Set<string>([playlist[currentIndex]?.id].filter(Boolean));
-      for (let i = 1; i <= preloadCount; i++) {
-        keep.add(playlist[(startIndex + i) % playlist.length]?.id);
-      }
-
-      for (const [trackId, howl] of preloadedHowls.current) {
-        if (!keep.has(trackId)) {
-          howl.unload();
-          preloadedHowls.current.delete(trackId);
-        }
-      }
-    },
-    [state, attachHandlers]
-  );
-
-  /**
-   * Crée un Howl pour une piste
-   */
-  const createHowl = useCallback(
-    (track: RadioTrack): Howl => {
-      // Vérifier si déjà préchargé
-      if (preloadedHowls.current.has(track.id)) {
-        const howl = preloadedHowls.current.get(track.id)!;
-        attachHandlers(howl, track);
-        howl.volume(state.isMuted ? 0 : state.volume);
-        return howl;
-      }
-
-      const howl = new Howl({
-        src: [track.audio_url],
-        html5: true,
-        volume: state.isMuted ? 0 : state.volume,
-      });
-
-      attachHandlers(howl, track);
-      return howl;
-    },
-    [state.volume, state.isMuted, attachHandlers]
-  );
-
-  /**
-   * Joue la piste actuelle
-   */
-  const play = useCallback(() => {
-    const { playlist, currentIndex } = state;
-    if (playlist.length === 0 || currentIndex === -1) return;
-
-    const track = playlist[currentIndex];
-    if (!track) return;
-
-    // Arrêter la piste actuelle si elle existe
-    if (currentHowlRef.current) {
-      currentHowlRef.current.stop();
-    }
-
-    // Créer ou récupérer le Howl
-    const howl = createHowl(track);
-    currentHowlRef.current = howl;
-
-    // Lancer la lecture
-    howl.play();
-
-    setState((prev) => ({
-      ...prev,
-      isPlaying: true,
-      currentTrack: track,
-      nextTrack: playlist[(currentIndex + 1) % playlist.length],
-    }));
-
-    // Précharger les prochaines pistes
-    preloadTracks(currentIndex);
-
-    // Enregistrer l'écoute
-    fetch("/api/radio/play", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ trackId: track.id }),
-    }).catch(console.error);
-  }, [state, createHowl, preloadTracks]);
-
-  /**
-   * Met en pause la lecture
-   */
-  const pause = useCallback(() => {
-    if (currentHowlRef.current) {
-      currentHowlRef.current.pause();
-      setState((prev) => ({ ...prev, isPlaying: false }));
-    }
-  }, []);
-
-  /**
-   * Reprend la lecture
-   */
-  const resume = useCallback(() => {
-    if (currentHowlRef.current) {
-      currentHowlRef.current.play();
-      setState((prev) => ({ ...prev, isPlaying: true }));
-    }
-  }, []);
-
-  /**
-   * Toggle play/pause
-   */
-  const togglePlay = useCallback(() => {
-    if (state.isPlaying) {
-      pause();
-    } else if (currentHowlRef.current && currentHowlRef.current.playing()) {
-      resume();
-    } else {
-      play();
-    }
-  }, [state.isPlaying, play, pause, resume]);
-
-  /**
-   * Passe à la piste suivante avec crossfade optionnel
-   */
   const next = useCallback(() => {
-    const { playlist, currentIndex } = state;
-    if (playlist.length === 0) return;
+    const snapshot = stateRef.current;
+    if (snapshot.playlist.length) void playIndex((snapshot.currentIndex + 1) % snapshot.playlist.length);
+  }, [playIndex]);
+  useEffect(() => { nextRef.current = next; }, [next]);
 
-    const nextIndex = (currentIndex + 1) % playlist.length;
-    const nextTrack = playlist[nextIndex];
-
-    if (!nextTrack) return;
-
-    const crossfadeDuration = crossfadeDurationRef.current;
-    const currentHowl = currentHowlRef.current;
-    const nextHowl = createHowl(nextTrack);
-
-    if (currentHowl) {
-      if (crossfadeDuration > 0 && !isCrossfading.current) {
-        // Fade out de la piste actuelle + fade in de la suivante
-        isCrossfading.current = true;
-        currentHowl.fade(state.volume, 0, crossfadeDuration);
-        setTimeout(() => {
-          currentHowl.stop();
-        }, crossfadeDuration);
-
-        nextHowl.volume(0);
-        nextHowl.play();
-        nextHowl.fade(0, state.volume, crossfadeDuration);
-        isCrossfading.current = false;
-      } else {
-        // Transition normale
-        currentHowl.stop();
-        nextHowl.volume(state.isMuted ? 0 : state.volume);
-        nextHowl.play();
+  const loadPlaylist = useCallback(async () => {
+    try {
+      setState((previous) => ({ ...previous, isLoading: true, error: undefined }));
+      const url = sourceId && sourceType ? `/api/admin/radio/source-tracks?${new URLSearchParams({ [`${sourceType}Id`]: sourceId })}` : "/api/radio/playlist";
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("playlist");
+      const data = await response.json();
+      const rawTracks = data.tracks || [];
+      const tracks = rawTracks.filter((track: RadioTrack) => isPlayableAudioUrl(track.audio_url));
+      if (data.config) {
+        preloadCount.current = clamp(Number(data.config.preload_count) || initialPreloadCount, 1, 5);
+        crossfadeDuration.current = Math.max(0, Number(data.config.crossfade_duration_ms) || 0);
       }
-    } else {
-      nextHowl.play();
+      const session = readRadioSession();
+      const preferredTrackId = radioRuntime.currentTrackId ?? session?.trackId;
+      const restoredIndex = preferredTrackId
+        ? tracks.findIndex((track: RadioTrack) => track.id === preferredTrackId)
+        : -1;
+      const currentIndex = restoredIndex >= 0 ? restoredIndex : (tracks.length ? 0 : -1);
+      const hasRuntimeAudio = Boolean(
+        radioRuntime.currentAudio &&
+        radioRuntime.currentTrackId &&
+        radioRuntime.currentTrackId === tracks[currentIndex]?.id,
+      );
+      if (
+        !hasRuntimeAudio &&
+        session?.trackId &&
+        session.trackId === tracks[currentIndex]?.id &&
+        Number.isFinite(session.position)
+      ) {
+        radioRuntime.pendingPosition = { trackId: session.trackId, position: Math.max(0, session.position ?? 0) };
+      }
+      setState((previous) => ({
+        ...previous,
+        playlist: tracks,
+        currentIndex,
+        currentTrack: tracks[currentIndex],
+        nextTrack: tracks.length ? tracks[(currentIndex + 1) % tracks.length] : undefined,
+        volume: session?.volume !== undefined ? clamp(session.volume, 0, 1) : previous.volume,
+        isMuted: session?.isMuted ?? previous.isMuted,
+        isPlaying: hasRuntimeAudio ? Boolean(radioRuntime.currentAudio && !radioRuntime.currentAudio.paused) : false,
+        isLoading: false,
+        error: rawTracks.length > 0 && tracks.length === 0
+          ? "Cette playlist ne contient aucune source audio lisible. Ajoutez un fichier ou une URL audio directe."
+          : undefined,
+      }));
+      if (tracks.length) syncPreloadWindow(currentIndex, tracks);
+      if (autoPlay && tracks.length && !hasRuntimeAudio) window.setTimeout(() => void playIndex(currentIndex), 0);
+    } catch {
+      setState((previous) => ({ ...previous, isLoading: false, error: "Impossible de charger la playlist radio" }));
     }
+  }, [autoPlay, initialPreloadCount, playIndex, sourceId, sourceType, syncPreloadWindow]);
 
-    currentHowlRef.current = nextHowl;
-
-    setState((prev) => ({
-      ...prev,
-      currentIndex: nextIndex,
-      currentTrack: nextTrack,
-      nextTrack: playlist[(nextIndex + 1) % playlist.length],
-      isPlaying: true,
-    }));
-
-    // Précharger les prochaines pistes
-    preloadTracks(nextIndex);
-
-    // Enregistrer l'écoute
-    fetch("/api/radio/play", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ trackId: nextTrack.id }),
-    }).catch(console.error);
-  }, [state, createHowl, preloadTracks]);
-
-  // Ref pour que les handlers des Howls préchargés puissent appeler next()
-  const nextRef = useRef<() => void>(() => {});
+  const pause = useCallback(() => { radioRuntime.currentAudio?.pause(); setState((previous) => ({ ...previous, isPlaying: false })); }, []);
+  const resume = useCallback(() => { void radioRuntime.currentAudio?.play().then(() => setState((previous) => ({ ...previous, isPlaying: true }))).catch(() => undefined); }, []);
+  const togglePlay = useCallback(() => { if (stateRef.current.isPlaying) pause(); else if (radioRuntime.currentAudio) resume(); else void playIndex(Math.max(0, stateRef.current.currentIndex)); }, [pause, playIndex, resume]);
+  const previous = useCallback(() => { const snapshot = stateRef.current; if (snapshot.playlist.length) void playIndex((snapshot.currentIndex - 1 + snapshot.playlist.length) % snapshot.playlist.length); }, [playIndex]);
+  const setVolume = useCallback((value: number) => { const nextVolume = clamp(value, 0, 1); if (radioRuntime.currentAudio) radioRuntime.currentAudio.volume = nextVolume; setState((previous) => ({ ...previous, volume: nextVolume, isMuted: nextVolume === 0 })); }, []);
+  const toggleMute = useCallback(() => { const muted = !stateRef.current.isMuted; if (radioRuntime.currentAudio) radioRuntime.currentAudio.volume = muted ? 0 : stateRef.current.volume; setState((previous) => ({ ...previous, isMuted: muted })); }, []);
   useEffect(() => {
-    nextRef.current = next;
-  }, [next]);
-
-  /**
-   * Passe à la piste précédente
-   */
-  const previous = useCallback(() => {
-    const { playlist, currentIndex } = state;
-    if (playlist.length === 0) return;
-
-    const prevIndex = currentIndex === 0 ? playlist.length - 1 : currentIndex - 1;
-
-    setState((prev) => ({ ...prev, currentIndex: prevIndex }));
-    setTimeout(() => play(), 100);
-  }, [state, play]);
-
-  /**
-   * Change le volume
-   */
-  const setVolume = useCallback((newVolume: number) => {
-    const vol = Math.max(0, Math.min(1, newVolume));
-
-    if (currentHowlRef.current) {
-      currentHowlRef.current.volume(vol);
-    }
-
-    setState((prev) => ({ ...prev, volume: vol, isMuted: vol === 0 }));
-  }, []);
-
-  /**
-   * Toggle mute
-   */
-  const toggleMute = useCallback(() => {
-    const newMuted = !state.isMuted;
-
-    if (currentHowlRef.current) {
-      currentHowlRef.current.volume(newMuted ? 0 : state.volume);
-    }
-
-    setState((prev) => ({ ...prev, isMuted: newMuted }));
-  }, [state]);
-
-  /**
-   * Charge la playlist au montage du composant
-   */
-  useEffect(() => {
-    loadPlaylist();
-
+    void loadPlaylist();
+    const persist = () => writeRadioSession(stateRef.current);
+    const interval = window.setInterval(persist, 2000);
+    window.addEventListener("pagehide", persist);
     return () => {
-      // Nettoyage
-      if (currentHowlRef.current) {
-        currentHowlRef.current.unload();
-      }
-      preloadedHowls.current.forEach((howl) => howl.unload());
-      preloadedHowls.current.clear();
+      window.clearInterval(interval);
+      window.removeEventListener("pagehide", persist);
+      // Do not stop or destroy the shared Audio elements when a client
+      // component is remounted during navigation.
     };
   }, [loadPlaylist]);
 
-  return {
-    ...state,
-    play,
-    pause,
-    resume,
-    togglePlay,
-    next,
-    previous,
-    setVolume,
-    toggleMute,
-    loadPlaylist,
-  };
+  return { ...state, play: () => void playIndex(Math.max(0, stateRef.current.currentIndex)), pause, resume, togglePlay, next, previous, setVolume, toggleMute, loadPlaylist };
 }

@@ -61,8 +61,7 @@ export function SiteHeader({ initialUser }: { initialUser?: HeaderUser | null })
         </Link>
 
         <nav className="nav" aria-label="Navigation principale">
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
-          <a href="/">Accueil</a>
+          <Link href="/">Accueil</Link>
           <Link href="/artistes">Artistes</Link>
           <Link href="/charts">Classements</Link>
           <Link href="/arene">Arène</Link>
@@ -109,8 +108,7 @@ export function SiteHeader({ initialUser }: { initialUser?: HeaderUser | null })
         aria-label="Navigation mobile"
         hidden={!menuOpen}
       >
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire */}
-        <a href="/" onClick={() => setMenuOpen(false)}>Accueil</a>
+        <Link href="/" onClick={() => setMenuOpen(false)}>Accueil</Link>
         <Link href="/artistes" onClick={() => setMenuOpen(false)}>Artistes</Link>
         <Link href="/charts" onClick={() => setMenuOpen(false)}>Classements</Link>
         <Link href="/arene" onClick={() => setMenuOpen(false)}>Arène</Link>

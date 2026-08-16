@@ -27,7 +27,7 @@ export async function POST() {
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status });
 
   // Fetch Deezer API (publique, pas de clé)
-  let tracks: { id: number; title: string; artist: { name: string; picture_medium?: string }; album?: { title?: string; cover_medium?: string }; link?: string }[];
+  let tracks: { id: number; title: string; artist: { name: string; picture_medium?: string }; album?: { title?: string; cover_medium?: string }; link?: string; preview?: string | null }[];
   try {
     const res = await fetch(`https://api.deezer.com/playlist/${PLAYLIST_ID}/tracks?limit=100`, {
       cache: "no-store",
@@ -55,6 +55,7 @@ export async function POST() {
     artworkUrl: track.album?.cover_medium ?? null,
     artistImageUrl: track.artist.picture_medium ?? null,
     sourceTrackUrl: track.link ?? null,
+    previewUrl: track.preview ?? null,
     artistSlug: slugify(track.artist.name),
     trackSlug: slugify(track.title),
     albumName: track.album?.title ?? null,

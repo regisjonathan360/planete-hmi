@@ -10,6 +10,8 @@ export interface AudiomackNormalizedEntry {
   artworkUrl: string | null;
   artistImageUrl: string | null;
   sourceTrackUrl: string | null;
+  /** Preview/audio direct autorisé par la source, jamais une page de plateforme. */
+  previewUrl?: string | null;
   artistSlug: string | null;
   trackSlug: string | null;
   albumName: string | null;
@@ -43,6 +45,9 @@ export interface AudiomackRawTrack {
   image?: string | null;
   image_base?: string | null;
   url?: string;
+  preview?: string | null;
+  preview_url?: string | null;
+  audio_url?: string | null;
   url_slug?: string;
   artist_url_slug?: string;
   album?: string;

@@ -11,6 +11,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin-guard";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { resolveAudioUrl } from "@/lib/radio/audio";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,7 @@ interface TrackResponse {
   cover_image_url?: string;
   duration_seconds: number;
   source: string;
+  playable: boolean;
 }
 
 interface SourceTracksResponse {
@@ -139,7 +141,9 @@ export async function GET(request: Request): Promise<NextResponse> {
               id,
               platform,
               external_url,
-              external_id
+              external_id,
+              preview_url,
+              audio_url
             ),
             youtube_videos(
               id,
@@ -169,18 +173,10 @@ export async function GET(request: Request): Promise<NextResponse> {
           // Récupérer l'audio URL depuis platform_tracks ou YouTube
           let audioUrl = "";
           
-          if (track.platform_tracks && track.platform_tracks.length > 0) {
-            audioUrl = track.platform_tracks[0].external_url || "";
-          }
-          
-          if (!audioUrl && track.youtube_videos && track.youtube_videos.length > 0) {
-            const youtube = track.youtube_videos.find((yt: any) => 
-              yt.is_active && yt.review_status === "APPROVED"
-            );
-            if (youtube) {
-              audioUrl = `https://www.youtube.com/watch?v=${youtube.video_id}`;
-            }
-          }
+          audioUrl = resolveAudioUrl("", track.platform_tracks || []);
+
+          // Une page YouTube n'est pas une source audio HTML5 et ne doit pas
+          // être présentée comme une piste jouable dans la radio.
 
           // Récupérer l'artiste principal
           let artistName = "Artiste inconnu";
@@ -204,6 +200,7 @@ export async function GET(request: Request): Promise<NextResponse> {
             cover_image_url: track.default_artwork_url,
             duration_seconds: Math.floor((track.duration_ms || 0) / 1000),
             source: "chart",
+            playable: Boolean(audioUrl),
           };
         });
       }
@@ -281,9 +278,35 @@ export async function GET(request: Request): Promise<NextResponse> {
         );
       }
 
+      const radioTrackIds = (playlistTracksData || [])
+        .map((item: any) => item.radio_tracks?.id)
+        .filter(Boolean);
+      const { data: platformTracks } = radioTrackIds.length
+        ? await supabase
+            .from("platform_tracks")
+            .select("track_id, platform, external_id, preview_url, audio_url")
+            .in("track_id", radioTrackIds)
+        : { data: [] };
+      const platformByTrack = new Map<string, any[]>();
+      for (const platformTrack of platformTracks || []) {
+        const current = platformByTrack.get(platformTrack.track_id) || [];
+        current.push(platformTrack);
+        platformByTrack.set(platformTrack.track_id, current);
+      }
+
       tracks = (playlistTracksData || [])
         .filter((pt: any) => pt.radio_tracks)
-        .map((pt: any) => pt.radio_tracks);
+        .map((pt: any) => ({
+          ...pt.radio_tracks,
+          audio_url: resolveAudioUrl(
+            pt.radio_tracks.audio_url,
+            platformByTrack.get(pt.radio_tracks.id) || [],
+          ),
+          playable: Boolean(resolveAudioUrl(
+            pt.radio_tracks.audio_url,
+            platformByTrack.get(pt.radio_tracks.id) || [],
+          )),
+        }));
     }
 
     const response: SourceTracksResponse = {
