@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-16T05:34:46.771Z",
+    "genereLe": "2026-08-17T05:40:32.700Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -11,10 +11,10 @@
     {
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3f26140e1acb5831ac739b6efc4903f9/250x250-000000-80-0-0.jpg",
       "topTitre": "Apiye (feat. Zile)",
       "metriques": {
-        "deezerFans": 8958,
+        "deezerFans": 8961,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé",
+      "topTitre": "Rihanna",
       "metriques": {
-        "deezerFans": 491909,
+        "deezerFans": 492120,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -50,9 +50,9 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg",
-      "topTitre": "Fè Lapli",
+      "topTitre": "Ou Pati",
       "metriques": {
-        "deezerFans": 7896,
+        "deezerFans": 7898,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Ou Mechan",
+      "topTitre": "Tag li",
       "metriques": {
-        "deezerFans": 10390,
+        "deezerFans": 10393,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -109,7 +109,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
       "topTitre": "Gason Malen",
       "metriques": {
-        "deezerFans": 6812,
+        "deezerFans": 6813,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Timoun",
+      "topTitre": "Fòs",
       "metriques": {
         "deezerFans": 6714,
         "spotifyFollowers": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "Si Yo Vle",
+      "topTitre": "Kontra Anile",
       "metriques": {
-        "deezerFans": 4918,
+        "deezerFans": 4920,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3783716,
+        "deezerFans": 3783753,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
