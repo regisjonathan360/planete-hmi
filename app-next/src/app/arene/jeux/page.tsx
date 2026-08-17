@@ -29,18 +29,8 @@ const JEUX: Jeu[] = [
     description:
       "Repose les cartes sur les fondations par couleur, de l'as au roi. Dans l'Arène, les cartes sont illustrées par les artistes : visages des artistes de la planète en pleine carte.",
     href: "/arene/solitaire",
-    badge: "Disponible",
+badge: "Disponible",
     meta: "Cartes · Réflexion · Artistes",
-  },
-  {
-    id: "koulèv",
-    title: "Koulèv",
-    tagline: "Le serpent arcade",
-    description:
-      "Dévore les gemmes et deviens le serpent le plus long de la planète. Pilote à la souris, au clavier ou au joystick.",
-    href: "/arene/serpent",
-    badge: "Disponible",
-    meta: "Arcade · 3D · Plein écran",
   },
 ];
 
