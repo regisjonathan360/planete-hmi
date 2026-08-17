@@ -38,6 +38,10 @@ Shadow.prototype = {
         this.shadowGroup.add(shadow);
         this.shadows.push(shadow);
     },
+    removeLast: function() {
+        var shadow = this.shadows.pop();
+        if (shadow) shadow.destroy();
+    },
     /**
      * Call from the snake update loop
      */

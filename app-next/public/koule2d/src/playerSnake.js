@@ -8,15 +8,18 @@
 PlayerSnake = function(game, spriteKey, x, y) {
     Snake.call(this, game, spriteKey, x, y);
     this.cursors = game.input.keyboard.createCursorKeys();
+    this.keyboardBoostHeld = false;
 
     //handle the space key so that the player's snake can speed up
-    var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    var self = this;
-    spaceKey.onDown.add(this.spaceKeyDown, this);
-    spaceKey.onUp.add(this.spaceKeyUp, this);
+    this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    var ejectKey = this.game.input.keyboard.addKey(Phaser.Keyboard.E);
+    this.spaceKey.onDown.add(this.spaceKeyDown, this);
+    this.spaceKey.onUp.add(this.spaceKeyUp, this);
+    ejectKey.onDown.add(this.ejectWaste, this);
     this.addDestroyedCallback(function() {
-        spaceKey.onDown.remove(this.spaceKeyDown, this);
-        spaceKey.onUp.remove(this.spaceKeyUp, this);
+        this.spaceKey.onDown.remove(this.spaceKeyDown, this);
+        this.spaceKey.onUp.remove(this.spaceKeyUp, this);
+        ejectKey.onDown.remove(this.ejectWaste, this);
     }, this);
 }
 
@@ -25,15 +28,24 @@ PlayerSnake.prototype.constructor = PlayerSnake;
 
 //make this snake light up and speed up when the space key is down
 PlayerSnake.prototype.spaceKeyDown = function() {
-    this.speed = this.fastSpeed;
-    this.shadow.isLightingUp = true;
+    this.keyboardBoostHeld = true;
+    this.setBoosting(true);
 }
 //make the snake slow down when the space key is up again
 PlayerSnake.prototype.spaceKeyUp = function() {
-    if (!this.touchBoost) {
-        this.speed = this.slowSpeed;
-        this.shadow.isLightingUp = false;
-    }
+    this.keyboardBoostHeld = false;
+    if (!this.touchBoost) this.setBoosting(false);
+}
+
+// Authoritative release used by React pointer/keyboard safety handlers.
+PlayerSnake.prototype.releaseBoost = function() {
+    this.keyboardBoostHeld = false;
+    this.touchBoost = false;
+    this.setBoosting(false);
+}
+
+PlayerSnake.prototype.ejectWaste = function() {
+    Snake.prototype.ejectWaste.call(this);
 }
 
 /**
@@ -87,12 +99,18 @@ PlayerSnake.prototype.steerTowardJoystick = function() {
 PlayerSnake.prototype.tempUpdate = PlayerSnake.prototype.update;
 PlayerSnake.prototype.update = function() {
     var joystick = this.game.joystick;
+    // Reconcile boost from the real input state every frame. This is the
+    // fallback that fixes missed keyup/pointerup events on desktop and touch.
+    var shouldBoost = !!this.touchBoost || !!this.keyboardBoostHeld;
+    if (shouldBoost !== this.boosting) this.setBoosting(shouldBoost);
     //when the game is not playing (menu, countdown): cruise straight ahead
     if (window.__koule2dGame && window.__koule2dGame.phase !== 'playing') {
+        if (this.boosting) this.releaseBoost();
         this.head.body.setZeroRotation();
         this.tempUpdate();
         return;
     }
+    if (this.touchEject) this.ejectWaste();
     //allow arrow keys to be used
     if (this.cursors.left.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
         this.head.body.setZeroRotation();

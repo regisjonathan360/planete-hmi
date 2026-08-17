@@ -5,7 +5,7 @@
  * @param  {Number} x         coordinate
  * @param  {Number} y         coordinate
  */
-Snake = function(game, spriteKey, x, y) {
+Snake = function(game, spriteKey, x, y, initialSections) {
     this.game = game;
     //create an array of snakes in the game object and add this snake
     if (!this.game.snakes) {
@@ -15,10 +15,19 @@ Snake = function(game, spriteKey, x, y) {
     this.debug = false;
     this.snakeLength = 0;
     this.spriteKey = spriteKey;
+    this.minLength = 18;
+    this.boosting = false;
+    this.boostCostTimer = 0.45;
+    this.wasteTimer = 2;
+    this.ejectCooldown = 0;
+    this.initialSections = Math.max(this.minLength, Number(initialSections) || 30);
+    this.skin = { id: '01_neon_cyan', frame: '01_neon_cyan', name: 'Neon Cyan', base: 0x0ff0ff, accent: 0x006bff, style: 'pulse' };
 
     //various quantities that can be changed
     this.scale = 0.6;
-    this.fastSpeed = 280;
+    // Boost clearly faster than cruise speed, while still leaving room for
+    // steering and wall avoidance.
+    this.fastSpeed = 360;
     this.slowSpeed = 156;
     this.speed = this.slowSpeed;
     //base rotation in degrees per second and rotation gained per
@@ -47,7 +56,7 @@ Snake = function(game, spriteKey, x, y) {
 
     this.lastHeadPosition = new Phaser.Point(this.head.body.x, this.head.body.y);
     //add 30 sections behind the head
-    this.initSections(30);
+    this.initSections(this.initialSections);
 
     //initialize the eyes
     this.eyes = new EyePair(this.game, this.head, this.scale);
@@ -70,6 +79,7 @@ Snake = function(game, spriteKey, x, y) {
 
     this.onDestroyedCallbacks = [];
     this.onDestroyedContexts = [];
+    this._destroyed = false;
 }
 
 Snake.prototype = {
@@ -103,28 +113,107 @@ Snake.prototype = {
      */
     setColor: function(color) {
         this.color = color;
+        this.skin.base = color;
         for (var i = 0 ; i < this.sections.length ; i++) {
             this.sections[i].tint = color;
         }
+    },
+    setSkin: function(skin) {
+        if (!skin) return;
+        this.skin = {
+            id: String(skin.id || skin.frame || '01_neon_cyan'),
+            frame: String(skin.frame || skin.id || '01_neon_cyan'),
+            name: String(skin.name || 'Skin HMI'),
+            base: Number(skin.base) || 0xe23030,
+            accent: Number(skin.accent) || 0xffb020,
+            style: String(skin.style || 'pulse')
+        };
+        this.color = this.skin.base;
+        this.refreshSkinTextures();
+    },
+    refreshSkinTextures: function() {
+        for (var i = 0; i < this.sections.length; i++) {
+            this.applySkinTexture(this.sections[i], i);
+            this.sections[i].tint = this.getSectionTint(i);
+        }
+        this.setScale(this.scale);
+    },
+    restoreAfterPause: function() {
+        // Phaser can leave overlap-hidden sections at alpha 0 after a long
+        // pause. Restore every live section without changing snakeLength or
+        // scale, then redraw the visual helpers.
+        for (var i = 0; i < this.sections.length; i++) {
+            if (!this.sections[i] || !this.sections[i].body) continue;
+            this.sections[i].visible = true;
+            this.sections[i].alpha = 1;
+        }
+        this.refreshSkinTextures();
+        if (this.eyes) this.eyes.update();
+        if (this.shadow) this.shadow.update();
+    },
+    applySkinTexture: function(section, index) {
+        if (!this.skin || !this.skin.frame || !section || !section.loadTexture) return;
+        try {
+            if (index === 0) section.loadTexture('skin-head-atlas', this.skin.frame);
+            else if (index === this.sections.length - 1) section.loadTexture('skin-tail-atlas', this.skin.frame);
+            else section.loadTexture('skin-body-atlas', this.skin.frame);
+            section.anchor.setTo(0.5, 0.5);
+        } catch (e) {
+            /* Fallback to the legacy circle texture if an atlas is unavailable. */
+        }
+    },
+    getSectionTint: function(index) {
+        if (!this.skin) return this.color || 0xe23030;
+        if (this.skin.style === 'stripe' && index % 4 < 2) return this.skin.accent;
+        if (this.skin.style === 'pulse' && index % 7 === 0) return this.skin.accent;
+        return this.skin.base;
     },
     /**
      * Boost on/off from an external UI (mobile touch button)
      * @param {Boolean} active whether the boost should be active
      */
     setTouchBoost: function(active) {
+        this.setBoosting(active);
+    },
+    setBoosting: function(active) {
         this.touchBoost = !!active;
-        if (this.touchBoost) {
-            this.speed = this.fastSpeed;
-            if (this.shadow) {
-                this.shadow.isLightingUp = true;
-            }
+        this.boosting = !!active;
+        this.speed = this.boosting ? this.fastSpeed : this.slowSpeed;
+        if (!this.boosting) {
+            this.boostCostTimer = 0.45;
+            this.wasteTimer = this.randomWasteInterval();
         }
-        else {
-            this.speed = this.slowSpeed;
-            if (this.shadow) {
-                this.shadow.isLightingUp = false;
-            }
+        if (this.shadow) this.shadow.isLightingUp = this.boosting;
+    },
+    setTouchEject: function(active) {
+        this.touchEject = !!active;
+    },
+    handleBoostEconomy: function() {
+        var state = this.game.state.getCurrentState();
+        if (!state || state.phase !== 'playing') return;
+        this.ejectCooldown = Math.max(0, this.ejectCooldown - this.game.time.physicsElapsed);
+        if (!this.boosting) return;
+        this.boostCostTimer -= this.game.time.physicsElapsed;
+        this.wasteTimer -= this.game.time.physicsElapsed;
+        if (this.wasteTimer <= 0) {
+            this.wasteTimer = this.randomWasteInterval();
+            if (this.snakeLength > this.minLength + 4) state.dropWaste(this, 1);
         }
+    },
+    randomWasteInterval: function() {
+        var roll = Math.random();
+        if (roll < 0.06) return 0.2;
+        if (roll < 0.28) return 2;
+        if (roll < 0.62) return 5;
+        if (roll < 0.84) return 8;
+        if (roll < 0.96) return 12;
+        return 20;
+    },
+    ejectWaste: function() {
+        var state = this.game.state.getCurrentState();
+        if (!state || state.phase !== 'playing' || this.ejectCooldown > 0 || this.snakeLength <= this.minLength + 4) return false;
+        this.ejectCooldown = Math.max(0.8, this.randomWasteInterval());
+        return state.dropWaste(this, 1);
     },
     /**
      * Add a section to the snake at a given position
@@ -154,6 +243,7 @@ Snake.prototype = {
         //add a circle body to this section
         sec.body.clearShapes();
         sec.body.addCircle(sec.width*0.5);
+        sec.tint = this.getSectionTint(this.sections.length - 1);
 
         return sec;
     },
@@ -168,6 +258,7 @@ Snake.prototype = {
      * Call from the main update loop
      */
     update: function() {
+        this.handleBoostEconomy();
         var speed = this.speed;
         this.head.body.moveForward(speed);
 
@@ -287,6 +378,7 @@ Snake.prototype = {
             var lastSec = this.sections[this.sections.length - 1];
             this.addSectionAtPosition(lastSec.body.x, lastSec.body.y);
             this.queuedSections--;
+            this.refreshSkinTextures();
         }
     },
     /**
@@ -307,9 +399,7 @@ Snake.prototype = {
             var sec = this.sections[i];
             sec.scale.setTo(this.scale);
             sec.body.data.shapes[0].radius = this.game.physics.p2.pxm(sec.width*0.5);
-            if (this.color !== undefined) {
-                sec.tint = this.color;
-            }
+            if (this.color !== undefined) sec.tint = this.getSectionTint(i);
         }
 
         //scale eyes and shadows
@@ -321,13 +411,33 @@ Snake.prototype = {
      */
     incrementSize: function() {
         this.addSectionsAfterLast(1);
-        this.setScale(this.scale * 1.01);
+        // A food token should make the snake feel rewarded without causing
+        // exponential visual growth after only a few seconds.
+        this.setScale(this.scale * 1.003);
+    },
+    shrinkSnake: function(amount) {
+        var removed = 0;
+        var count = Math.max(1, Math.floor(amount || 1));
+        while (removed < count && this.sections.length > this.minLength) {
+            var sec = this.sections.pop();
+            if (sec) sec.destroy();
+            if (this.shadow && this.shadow.removeLast) this.shadow.removeLast();
+            removed++;
+        }
+        this.snakeLength = this.sections.length;
+        if (removed > 0) {
+            this.setScale(Math.max(0.48, this.scale / Math.pow(1.003, removed)));
+        }
+        return removed;
     },
     /**
      * Destroy the snake
      */
     destroy: function() {
-        this.game.snakes.splice(this.game.snakes.indexOf(this), 1);
+        if (this._destroyed) return;
+        this._destroyed = true;
+        var snakeIndex = this.game.snakes.indexOf(this);
+        if (snakeIndex >= 0) this.game.snakes.splice(snakeIndex, 1);
         //remove constraints
         this.game.physics.p2.removeConstraint(this.edgeLock);
         this.edge.destroy();
@@ -355,14 +465,13 @@ Snake.prototype = {
      * @param  {Phaser.Physics.P2.Body} phaserBody body it hit
      */
     edgeContact: function(phaserBody) {
-        //if the edge hits another snake's section, destroy this snake
-        if (phaserBody && this.sections.indexOf(phaserBody.sprite) == -1) {
-            this.destroy();
-        }
-        //if the edge hits this snake's own section, a simple solution to avoid
-        //glitches is to move the edge to the center of the head, where it
-        //will then move back to the front because of the lock constraint
-        else if (phaserBody) {
+        // Wall contacts are handled by Game.onSnakeWallContact and the
+        // logical bounds pass. Do not let a missing sprite on a static P2
+        // body look like an arbitrary snake collision.
+        if (!phaserBody || phaserBody.isArenaWall) return;
+        // If a future collision body is one of this snake's own sections,
+        // move the edge back to the head to avoid a lock-constraint glitch.
+        if (this.sections.indexOf(phaserBody.sprite) >= 0) {
             this.edge.body.x = this.head.body.x;
             this.edge.body.y = this.head.body.y;
         }

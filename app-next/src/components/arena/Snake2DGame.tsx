@@ -9,7 +9,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { SNAKE_CONFIG } from "@/game/snake/config";
 import "./snake.css";
 
 const NICK_KEY = "koule2d.nick";
@@ -22,6 +21,28 @@ interface LeaderboardEntry {
   name: string;
   color: number;
   score: number;
+}
+
+interface MinimapPoint {
+  x: number;
+  y: number;
+}
+
+interface MinimapSnake {
+  name: string;
+  x: number;
+  y: number;
+  color: number;
+  isPlayer: boolean;
+  points: MinimapPoint[];
+}
+
+interface MinimapSnapshot {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  snakes: MinimapSnake[];
 }
 
 function readStored(key: string, fallback: string): string {
@@ -60,11 +81,16 @@ declare global {
     __koule2dGame?: {
       phase: string;
       startGame(): void;
+      restartGame?(): void;
       togglePause(): void;
       quitToMenu(): void;
       setPlayerColor(color: number): void;
+      setPlayerSkin(skin: SnakeSkin): void;
       setPlayerName(name: string): void;
       setTouchBoost(active: boolean): void;
+      releaseBoost(): void;
+      setTouchEject(active: boolean): void;
+      getMinimapSnapshot?(): MinimapSnapshot;
       toggleSound(): boolean;
       soundEnabled: boolean;
       hud: {
@@ -92,10 +118,6 @@ async function tryFullscreen(el: HTMLElement): Promise<void> {
   }
 }
 
-const SKIN_HEX = SNAKE_CONFIG.snakeColors.map((c) =>
-  `#${c.toString(16).padStart(6, "0")}`
-);
-
 export function Snake2DGame() {
   const stageRef = useRef<HTMLDivElement | null>(null);
   const autoPausedRef = useRef(false);
@@ -106,16 +128,20 @@ export function Snake2DGame() {
   const [countdown, setCountdown] = useState(3);
   const [isRecord, setIsRecord] = useState(false);
   const [board, setBoard] = useState<LeaderboardEntry[]>([]);
+  const [minimap, setMinimap] = useState<MinimapSnapshot | null>(null);
   const [nick, setNick] = useState(readNick);
   const [skinIdx, setSkinIdx] = useState(() => {
     const n = Number(readStored(SKIN_KEY, "0")) || 0;
-    return Math.max(0, Math.min(SNAKE_CONFIG.snakeColors.length - 1, n));
+    return Math.max(0, Math.min(HMI_SKINS.length - 1, n));
   });
+  const [skins, setSkins] = useState<SnakeSkin[]>(HMI_SKINS);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [engineReady, setEngineReady] = useState(false);
   const [engineError, setEngineError] = useState<string | null>(null);
   const [isTouch, setIsTouch] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [pauseMinimized, setPauseMinimized] = useState(false);
+  const minimapRef = useRef<HTMLCanvasElement | null>(null);
   const submittedScoreRef = useRef(false);
   const submitScoreRef = useRef<((value: number) => void) | null>(null);
 
@@ -204,7 +230,7 @@ export function Snake2DGame() {
             setEngineReady(true);
     g.setPlayerName(nickRef.current);
             /* applique le skin choisi dès que le jeu est prêt */
-            g.setPlayerColor(SNAKE_CONFIG.snakeColors[skinIdxRef.current]);
+            g.setPlayerSkin(HMI_SKINS[skinIdxRef.current]);
           }
         }, 100);
       } catch (err) {
@@ -274,17 +300,78 @@ export function Snake2DGame() {
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
+  /* Pointer-up can happen outside the button on mobile. Always release the
+     gameplay actions globally so a lost pointer event can never leave boost
+     or ejection stuck on. */
+  useEffect(() => {
+    const releaseTouchActions = () => {
+      const g = (window as any).__koule2dGame;
+      g?.releaseBoost?.();
+      g?.setTouchBoost(false);
+      g?.setTouchEject(false);
+    };
+    window.addEventListener("pointerup", releaseTouchActions, true);
+    window.addEventListener("pointercancel", releaseTouchActions, true);
+    window.addEventListener("blur", releaseTouchActions);
+    document.addEventListener("visibilitychange", releaseTouchActions);
+    return () => {
+      window.removeEventListener("pointerup", releaseTouchActions, true);
+      window.removeEventListener("pointercancel", releaseTouchActions, true);
+      window.removeEventListener("blur", releaseTouchActions);
+      document.removeEventListener("visibilitychange", releaseTouchActions);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "playing") {
+      const g = (window as any).__koule2dGame;
+      g?.releaseBoost?.();
+      g?.setTouchBoost(false);
+      g?.setTouchEject(false);
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "paused") setPauseMinimized(false);
+  }, [phase]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/koule2d/skins/skin-catalog.json")
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error("catalogue indisponible"))))
+      .then((catalog: Array<{ id: string; name: string; frame: string; palette?: string[]; rarity?: string }>) => {
+        if (cancelled || !Array.isArray(catalog) || catalog.length === 0) return;
+        setSkins(catalog.map((skin) => ({
+          id: skin.id,
+          frame: skin.frame || skin.id,
+          name: skin.name,
+          base: hexToNumber(skin.palette?.[0], 0x2de2ff),
+          accent: hexToNumber(skin.palette?.[1], 0x8b2fff),
+          style: "pulse" as const,
+          rarity: skin.rarity || "standard",
+        })));
+        const stored = Number(readStored(SKIN_KEY, "0")) || 0;
+        setSkinIdx(Math.max(0, Math.min(catalog.length - 1, stored)));
+      })
+      .catch(() => {
+        /* Le fallback intégré garde le menu utilisable hors ligne. */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   useEffect(() => {
     if (!scriptsLoaded) return;
     const g = (window as any).__koule2dGame;
-    if (g) g.setPlayerColor(SNAKE_CONFIG.snakeColors[skinIdx]);
-  }, [skinIdx, scriptsLoaded]);
+    if (g) g.setPlayerSkin(skins[skinIdx] || HMI_SKINS[0]);
+  }, [skinIdx, scriptsLoaded, skins]);
 
   const applySkin = (idx: number): void => {
     setSkinIdx(idx);
     writeStored(SKIN_KEY, String(idx));
     const g = (window as any).__koule2dGame;
-    if (g) g.setPlayerColor(SNAKE_CONFIG.snakeColors[idx]);
+    if (g) g.setPlayerSkin(skins[idx] || HMI_SKINS[0]);
   };
 
   const applyNick = (value: string): void => {
@@ -298,9 +385,10 @@ export function Snake2DGame() {
     const g = (window as any).__koule2dGame;
     if (!g || !engineReady) return;
     g.setPlayerName(nick);
-    g.setPlayerColor(SNAKE_CONFIG.snakeColors[skinIdx]);
+    g.setPlayerSkin(skins[skinIdx] || HMI_SKINS[0]);
     submittedScoreRef.current = false;
-    g.startGame();
+    if (typeof g.restartGame === "function") g.restartGame();
+    else g.startGame();
   };
 
   const toggleSound = (): void => {
@@ -326,6 +414,82 @@ export function Snake2DGame() {
   const game = () => (window as any).__koule2dGame;
 
   useEffect(() => {
+    const visible = phase === "playing" || phase === "countdown" || phase === "paused";
+    if (!engineReady || !visible) {
+      setMinimap(null);
+      return;
+    }
+
+    const readSnapshot = (): void => {
+      const snapshot = game()?.getMinimapSnapshot?.();
+      if (snapshot) setMinimap(snapshot);
+    };
+    readSnapshot();
+    const timer = window.setInterval(readSnapshot, 120);
+    return () => window.clearInterval(timer);
+  }, [phase, engineReady]);
+
+  useEffect(() => {
+    const canvas = minimapRef.current;
+    if (!canvas || !minimap) return;
+    const size = 260;
+    const ratio = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width = size * ratio;
+    canvas.height = size * ratio;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, size, size);
+
+    const project = (point: MinimapPoint): MinimapPoint => ({
+      x: 8 + ((point.x - minimap.left) / Math.max(1, minimap.right - minimap.left)) * (size - 16),
+      y: 8 + ((point.y - minimap.top) / Math.max(1, minimap.bottom - minimap.top)) * (size - 16),
+    });
+    const color = (value: number): string => `#${Math.max(0, value || 0).toString(16).padStart(6, "0").slice(-6)}`;
+
+    ctx.strokeStyle = "rgba(45, 226, 255, 0.18)";
+    ctx.lineWidth = 1;
+    [size * 0.25, size * 0.5, size * 0.75].forEach((offset) => {
+      ctx.beginPath();
+      ctx.moveTo(offset, 8);
+      ctx.lineTo(offset, size - 8);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(8, offset);
+      ctx.lineTo(size - 8, offset);
+      ctx.stroke();
+    });
+
+    ctx.strokeStyle = "rgba(255, 43, 214, 0.82)";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(8, 8, size - 16, size - 16);
+
+    minimap.snakes.forEach((snake) => {
+      const points = snake.points.map(project);
+      if (points.length > 1) {
+        ctx.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.strokeStyle = snake.isPlayer ? "#ffffff" : color(snake.color);
+        ctx.globalAlpha = snake.isPlayer ? 0.9 : 0.56;
+        ctx.lineWidth = snake.isPlayer ? 5 : 3;
+        ctx.stroke();
+      }
+      const head = project(snake);
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, snake.isPlayer ? 7 : 5, 0, Math.PI * 2);
+      ctx.fillStyle = snake.isPlayer ? "#ffffff" : color(snake.color);
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.shadowBlur = snake.isPlayer ? 14 : 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+  }, [minimap]);
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       if (e.code === "Enter") {
         e.preventDefault();
@@ -334,12 +498,28 @@ export function Snake2DGame() {
       } else if (e.code === "KeyP") {
         e.preventDefault();
         game()?.togglePause();
+      } else if (e.code === "KeyE") {
+        e.preventDefault();
+        game()?.ejectWaste?.();
+      } else if (e.code === "Space") {
+        e.preventDefault();
+        game()?.setTouchBoost(true);
       } else if (e.code === "Escape") {
         game()?.quitToMenu();
       }
     };
+    const onKeyUp = (e: KeyboardEvent): void => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        game()?.releaseBoost?.();
+      }
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("keyup", onKeyUp);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keyup", onKeyUp);
+    };
   });
 
   const inGame = phase === "playing" || phase === "countdown" || phase === "paused";
@@ -400,18 +580,53 @@ export function Snake2DGame() {
         </aside>
       )}
 
+      {inGame && (
+        <canvas
+          ref={minimapRef}
+          className="snk-minimap"
+          width={260}
+          height={260}
+          role="img"
+          aria-label="Minimap de l’arène : joueur, bots et limites"
+        />
+      )}
+
       {phase === "playing" && isTouch && (
-        <button
-          type="button"
-          className="snk-boost-btn"
-          onPointerDown={() => game()?.setTouchBoost(true)}
-          onPointerUp={() => game()?.setTouchBoost(false)}
-          onPointerCancel={() => game()?.setTouchBoost(false)}
-          onPointerLeave={() => game()?.setTouchBoost(false)}
-          onLostPointerCapture={() => game()?.setTouchBoost(false)}
-        >
-          ⚡ BOOST
-        </button>
+        <div className="snk-mobile-actions">
+          <button
+            type="button"
+            className="snk-boost-btn"
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              game()?.setTouchBoost(true);
+            }}
+            onPointerUp={(event) => {
+              if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+              game()?.releaseBoost?.();
+              game()?.setTouchBoost(false);
+            }}
+            onPointerCancel={() => game()?.releaseBoost?.()}
+            onLostPointerCapture={() => game()?.releaseBoost?.()}
+          >
+            BOOST
+          </button>
+          <button
+            type="button"
+            className="snk-eject-btn"
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              game()?.setTouchEject(true);
+            }}
+            onPointerUp={(event) => {
+              if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+              game()?.setTouchEject(false);
+            }}
+            onPointerCancel={() => game()?.setTouchEject(false)}
+            onLostPointerCapture={() => game()?.setTouchEject(false)}
+          >
+            ÉJECTER
+          </button>
+        </div>
       )}
 
       {phase === "countdown" && (
@@ -470,22 +685,29 @@ export function Snake2DGame() {
             <div className="snake-menu__skins">
               <span className="snake-menu__field-label">Ton skin</span>
               <div className="snake-menu__swatches">
-                {SKIN_HEX.map((hex, i) => (
+                {skins.map((skin, i) => (
                   <button
-                    key={hex}
+                    key={skin.id || skin.name}
                     type="button"
                     className={
                       i === skinIdx
                         ? "snake-menu__swatch snake-menu__swatch--on"
                         : "snake-menu__swatch"
                     }
-                    style={{ backgroundColor: hex }}
-                    aria-label={`Skin ${i + 1}`}
+                    style={{
+                      backgroundColor: `#${skin.base.toString(16).padStart(6, "0")}`,
+                      backgroundImage: skin.id
+                        ? `url(/koule2d/skins/${skin.id}-head.webp), linear-gradient(135deg, #${skin.base.toString(16).padStart(6, "0")} 0 58%, #${skin.accent.toString(16).padStart(6, "0")} 58% 100%)`
+                        : `linear-gradient(135deg, #${skin.base.toString(16).padStart(6, "0")} 0 58%, #${skin.accent.toString(16).padStart(6, "0")} 58% 100%)`,
+                    }}
+                    aria-label={skin.name}
+                    title={skin.name}
                     aria-pressed={i === skinIdx}
                     onClick={() => applySkin(i)}
                   />
                 ))}
               </div>
+              <span className="snake-menu__skin-name">{skins[skinIdx]?.name || "Chargement des skins"}</span>
             </div>
 
             {best > 0 && (
@@ -509,14 +731,18 @@ export function Snake2DGame() {
                   </li>
                   <li>
                     <span className="snake-rules__ico">⚡</span> Maintiens BOOST
-                    pour accélérer… mais attention aux collisions !
+                    pour accélérer : la vitesse consomme de la longueur
+                  </li>
+                  <li>
+                    <span className="snake-rules__ico">●</span> Espace / Ejecter :
+                    dépose une déjection toxique qui fait rétrécir les autres
                   </li>
                 </>
               ) : (
                 <>
                   <li>
                     <span className="snake-rules__ico">🖱️</span> La souris pilote
-                    le serpent · <kbd>Espace</kbd> = Boost
+                    le serpent · <kbd>Espace</kbd> = Boost · <kbd>E</kbd> = Éjecter
                   </li>
                   <li>
                     <span className="snake-rules__ico">⌨️</span> Flèches en
@@ -534,27 +760,75 @@ export function Snake2DGame() {
       )}
 
       {phase === "paused" && (
-        <div className="snake-overlay">
-          <div className="snake-panel">
-            <p className="snake-panel__tag">{"// Pause"}</p>
-            <h2 className="snake-panel__title">Pause</h2>
-            <div className="snake-panel__actions">
+        <div className={pauseMinimized ? "snake-overlay snake-overlay--pause-mini" : "snake-overlay"}>
+          {pauseMinimized ? (
+            <div className="snake-pause-mini" role="status" aria-label="Pause réduite">
+              <span>PAUSE</span>
               <button
                 type="button"
-                className="snake-btn snake-btn--play"
+                className="snake-pause-mini__restore"
+                aria-label="Agrandir la pause"
+                onClick={() => setPauseMinimized(false)}
+              >
+                ↗
+              </button>
+              <button
+                type="button"
+                className="snake-pause-mini__resume"
+                aria-label="Reprendre la partie"
                 onClick={() => game()?.togglePause()}
               >
-                Reprendre
+                ▶
               </button>
               <button
                 type="button"
-                className="snake-btn"
-                onClick={() => game()?.quitToMenu()}
+                className="snake-pause-mini__fullscreen"
+                aria-label="Quitter le plein écran"
+                onClick={() => void exitFullscreen()}
               >
-                Menu
+                ⤢
               </button>
             </div>
-          </div>
+          ) : (
+            <div className="snake-panel">
+              <div className="snake-pause-panel__topline">
+                <p className="snake-panel__tag">{"// Pause"}</p>
+                <button
+                  type="button"
+                  className="snake-pause-minimize"
+                  aria-label="Réduire la pause"
+                  onClick={() => setPauseMinimized(true)}
+                >
+                  Réduire
+                </button>
+                <button
+                  type="button"
+                  className="snake-pause-fullscreen"
+                  aria-label="Quitter le plein écran"
+                  onClick={() => void exitFullscreen()}
+                >
+                  Sortir du plein écran
+                </button>
+              </div>
+              <h2 className="snake-panel__title">Pause</h2>
+              <div className="snake-panel__actions">
+                <button
+                  type="button"
+                  className="snake-btn snake-btn--play"
+                  onClick={() => game()?.togglePause()}
+                >
+                  Reprendre
+                </button>
+                <button
+                  type="button"
+                  className="snake-btn"
+                  onClick={() => game()?.quitToMenu()}
+                >
+                  Menu
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -592,6 +866,45 @@ export function Snake2DGame() {
     </div>
   );
 }
+
+async function exitFullscreen(): Promise<void> {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+  } catch {
+    /* Le navigateur peut refuser la sortie si le document a changé d’état. */
+  }
+}
+
+function hexToNumber(value: string | undefined, fallback: number): number {
+  if (!value) return fallback;
+  const parsed = Number.parseInt(value.replace("#", ""), 16);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+interface SnakeSkin {
+  id?: string;
+  frame?: string;
+  name: string;
+  base: number;
+  accent: number;
+  style: "pulse" | "stripe";
+  rarity?: string;
+}
+
+const HMI_SKINS: SnakeSkin[] = [
+  { name: "Kompa Pulse", base: 0xe23030, accent: 0xffb020, style: "pulse" },
+  { name: "Rara Cyan", base: 0x2de2ff, accent: 0xffffff, style: "stripe" },
+  { name: "Neon Kreyòl", base: 0xff2bd6, accent: 0x8b2fff, style: "pulse" },
+  { name: "Flanm Ble", base: 0x1677ff, accent: 0x2de2ff, style: "stripe" },
+  { name: "Flanm Wouj", base: 0xff3b30, accent: 0xffb020, style: "pulse" },
+  { name: "Audiomack Night", base: 0x111111, accent: 0xff4d22, style: "stripe" },
+  { name: "Spotify Lime", base: 0x1ed760, accent: 0x071b12, style: "pulse" },
+  { name: "Apple Sunset", base: 0xfa2d48, accent: 0xffc857, style: "stripe" },
+  { name: "Deezer Violet", base: 0x7c3aed, accent: 0xb76cff, style: "pulse" },
+  { name: "Instagram Heat", base: 0xe1306c, accent: 0xffdc80, style: "stripe" },
+  { name: "YouTube Red", base: 0xff0033, accent: 0xffffff, style: "pulse" },
+  { name: "Planète Or", base: 0x7a4b12, accent: 0xffd166, style: "stripe" },
+];
 
 function readNick(): string {
   return readStored(NICK_KEY, readStored(LEGACY_NICK_KEY, "Joueur"));
