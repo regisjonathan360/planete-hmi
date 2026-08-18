@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-17T05:40:32.700Z",
+    "genereLe": "2026-08-18T05:35:44.459Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "Rihanna",
       "metriques": {
-        "deezerFans": 492120,
+        "deezerFans": 492342,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -50,9 +50,9 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg",
-      "topTitre": "Ou Pati",
+      "topTitre": "Ayo Girl (Haitian Konpa Remix)",
       "metriques": {
-        "deezerFans": 7898,
+        "deezerFans": 7899,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Tag li",
       "metriques": {
-        "deezerFans": 10393,
+        "deezerFans": 10394,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -90,7 +90,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 6,
+        "deezerFans": 7,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Kontra Anile",
       "metriques": {
-        "deezerFans": 4920,
+        "deezerFans": 4921,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
-      "topTitre": "Olha a Explosão",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
+      "topTitre": "Infinito (Ao Vivo)",
       "metriques": {
-        "deezerFans": 3783753,
+        "deezerFans": 41556,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5237400",
+        "deezer": "https://www.deezer.com/artist/132091652",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 96.7
+      "scoreHMI": 43.8
     }
   ]
 }
