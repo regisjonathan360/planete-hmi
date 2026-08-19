@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-18T05:35:44.459Z",
+    "genereLe": "2026-08-19T05:37:06.668Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3f26140e1acb5831ac739b6efc4903f9/250x250-000000-80-0-0.jpg",
       "topTitre": "Apiye (feat. Zile)",
       "metriques": {
-        "deezerFans": 8961,
+        "deezerFans": 8963,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "Rihanna",
       "metriques": {
-        "deezerFans": 492342,
+        "deezerFans": 492550,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Tag li",
       "metriques": {
-        "deezerFans": 10394,
+        "deezerFans": 10396,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -87,17 +87,17 @@
     {
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/d41d8cd98f00b204e9800998ecf8427e/250x250-000000-80-0-0.jpg",
+      "topTitre": "Messi (Sunset Mix)",
       "metriques": {
-        "deezerFans": 7,
+        "deezerFans": 15,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/59634622",
+        "deezer": "https://www.deezer.com/artist/254822142",
         "spotify": null,
         "youtube": null
       },
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Fòs",
+      "topTitre": "Tankou melodi",
       "metriques": {
         "deezerFans": 6714,
         "spotifyFollowers": null,
@@ -164,7 +164,7 @@
       "nom": "Belo",
       "genre": "Reggae",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
-      "topTitre": "Lakou trankil",
+      "topTitre": "Rise Again",
       "metriques": {
         "deezerFans": 1228,
         "spotifyFollowers": null,
@@ -185,7 +185,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/84240697bd32e502dc2cf878636c76c5/250x250-000000-80-0-0.jpg",
       "topTitre": "Let's get Scratchin'",
       "metriques": {
-        "deezerFans": 29,
+        "deezerFans": 30,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -221,7 +221,7 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "Drive",
+      "topTitre": "Manyen m la (feat. Kenny Haiti)",
       "metriques": {
         "deezerFans": 2212,
         "spotifyFollowers": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
-      "topTitre": "Infinito (Ao Vivo)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
+      "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 41556,
+        "deezerFans": 3783788,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/132091652",
+        "deezer": "https://www.deezer.com/artist/5237400",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 43.8
+      "scoreHMI": 96.7
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-18T05:35:44.459Z",
+    "genereLe": "2026-08-19T05:37:06.668Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,19 +10,19 @@
   "classement": [
     {
       "rang": 1,
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Olha a Explosão",
+      "score": 96.7,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "titre": "Rihanna",
       "score": 72.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 2,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "Infinito (Ao Vivo)",
-      "score": 43.8,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 3,
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "Fòs",
+      "titre": "Tankou melodi",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
@@ -76,7 +76,7 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "Drive",
+      "titre": "Manyen m la (feat. Kenny Haiti)",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
     },
@@ -84,7 +84,7 @@
       "rang": 10,
       "nom": "Belo",
       "genre": "Reggae",
-      "titre": "Lakou trankil",
+      "titre": "Rise Again",
       "score": 2.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
