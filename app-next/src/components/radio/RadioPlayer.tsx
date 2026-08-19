@@ -15,11 +15,7 @@ import {
   FaPlay,
   FaBroadcastTower,
   FaSpinner,
-  FaStepBackward,
-  FaStepForward,
   FaTimes,
-  FaVolumeMute,
-  FaVolumeUp,
 } from "react-icons/fa";
 
 function formatGenre(genre?: string) {
@@ -49,7 +45,6 @@ export function RadioPlayer() {
     previous,
     setVolume,
     setGenre,
-    toggleMute,
   } = useRadioPlayer({ autoPlay: false, volume: 0.7, preloadCount: 3 });
 
   const [isVisible, setIsVisible] = useState(true);
@@ -137,12 +132,27 @@ export function RadioPlayer() {
           <span className={styles.genreReadout}>{formatGenre(activeGenre)}</span>
         </div>
 
-        <div className={styles.speakerLeft} aria-hidden="true">
-          <span className={styles.speakerCone} />
-        </div>
-        <div className={styles.speakerRight} aria-hidden="true">
-          <span className={styles.speakerCone} />
-        </div>
+        <button
+          className={`${styles.speakerButton} ${styles.speakerLeft}`}
+          type="button"
+          onClick={previous}
+          disabled={!currentTrack || isLoading}
+          title="Piste précédente"
+          aria-label="Piste précédente"
+        >
+          <img src="/images/radio/hmi-speaker-left.png" alt="" aria-hidden="true" draggable={false} />
+        </button>
+
+        <button
+          className={`${styles.speakerButton} ${styles.speakerRight}`}
+          type="button"
+          onClick={next}
+          disabled={!currentTrack || isLoading}
+          title="Piste suivante"
+          aria-label="Piste suivante"
+        >
+          <img src="/images/radio/hmi-speaker-right.png" alt="" aria-hidden="true" draggable={false} />
+        </button>
 
         <div className={styles.coverWell}>
           {currentTrack?.cover_image_url ? (
@@ -170,37 +180,7 @@ export function RadioPlayer() {
           {isPlaying ? <FaPause aria-hidden="true" /> : <FaPlay aria-hidden="true" />}
         </button>
 
-        <button
-          className={`${styles.transportButton} ${styles.previousButton}`}
-          type="button"
-          onClick={previous}
-          disabled={!currentTrack || isLoading}
-          title="Piste précédente"
-          aria-label="Piste précédente"
-        >
-          <FaStepBackward aria-hidden="true" />
-        </button>
-        <button
-          className={`${styles.transportButton} ${styles.nextButton}`}
-          type="button"
-          onClick={next}
-          disabled={!currentTrack || isLoading}
-          title="Piste suivante"
-          aria-label="Piste suivante"
-        >
-          <FaStepForward aria-hidden="true" />
-        </button>
-
         <div className={styles.volumeControl}>
-          <button
-            className={styles.volumeButton}
-            type="button"
-            onClick={toggleMute}
-            title={isMuted ? "Activer le son" : "Couper le son"}
-            aria-label={isMuted ? "Activer le son" : "Couper le son"}
-          >
-            {isMuted ? <FaVolumeMute aria-hidden="true" /> : <FaVolumeUp aria-hidden="true" />}
-          </button>
           <label className={styles.srOnly} htmlFor="radio-volume">Volume de la radio</label>
           <input
             id="radio-volume"
@@ -212,7 +192,9 @@ export function RadioPlayer() {
             value={volumeLevel}
             onChange={(event) => setVolume(Number(event.target.value) / 100)}
             aria-valuetext={`${volumeLevel} %`}
+            title={`Volume : ${volumeLevel} %`}
           />
+          <span className={styles.volumeButton} aria-hidden="true" />
         </div>
 
         <div className={styles.liveStatus} data-live={isLive}>
