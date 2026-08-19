@@ -15,6 +15,8 @@ import {
   FaPlay,
   FaBroadcastTower,
   FaSpinner,
+  FaStepBackward,
+  FaStepForward,
   FaTimes,
 } from "react-icons/fa";
 
@@ -132,26 +134,41 @@ export function RadioPlayer() {
           <span className={styles.genreReadout}>{formatGenre(activeGenre)}</span>
         </div>
 
+        <img
+          className={`${styles.speakerDecor} ${styles.speakerLeft}`}
+          src="/images/radio/hmi-speaker-left.png"
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+        />
+        <img
+          className={`${styles.speakerDecor} ${styles.speakerRight}`}
+          src="/images/radio/hmi-speaker-right.png"
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+        />
+
         <button
-          className={`${styles.speakerButton} ${styles.speakerLeft}`}
+          className={styles.speakerLeftCenter}
           type="button"
           onClick={previous}
           disabled={!currentTrack || isLoading}
           title="Piste précédente"
           aria-label="Piste précédente"
         >
-          <img src="/images/radio/hmi-speaker-left.png" alt="" aria-hidden="true" draggable={false} />
+          <FaStepBackward aria-hidden="true" />
         </button>
 
         <button
-          className={`${styles.speakerButton} ${styles.speakerRight}`}
+          className={styles.speakerRightCenter}
           type="button"
           onClick={next}
           disabled={!currentTrack || isLoading}
           title="Piste suivante"
           aria-label="Piste suivante"
         >
-          <img src="/images/radio/hmi-speaker-right.png" alt="" aria-hidden="true" draggable={false} />
+          <FaStepForward aria-hidden="true" />
         </button>
 
         <div className={styles.coverWell}>

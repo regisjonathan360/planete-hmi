@@ -60,12 +60,12 @@
 }
 
 .stationScreen {
-  top: 40.4%;
-  left: 25.3%;
+  top: 36%;
+  left: 23%;
   display: grid;
-  width: 34.3%;
+  width: 38%;
   min-width: 0;
-  height: 5.7%;
+  height: 8%;
   padding: 0.7% 1.4% 0.3%;
   overflow: hidden;
   color: #e5f4ff;
@@ -92,7 +92,7 @@
 
 .trackTitle {
   font-family: var(--font-space-mono), ui-monospace, monospace;
-  font-size: clamp(6px, 1.05vw, 11px);
+  font-size: clamp(7px, 1.2vw, 13px);
   font-weight: 700;
   line-height: 1.16;
   letter-spacing: -0.03em;
@@ -102,7 +102,7 @@
 .screenState,
 .screenError {
   margin-top: 1.5%;
-  font-size: clamp(5px, 0.88vw, 9px);
+  font-size: clamp(6px, 1vw, 10px);
   line-height: 1.15;
   color: rgba(219, 239, 255, 0.8);
 }
@@ -163,6 +163,8 @@
 .genreSelect:focus-visible,
 .playButton:focus-visible,
 .speakerButton:focus-visible,
+.speakerLeftCenter:focus-visible,
+.speakerRightCenter:focus-visible,
 .volumeSlider:focus-visible,
 .minimizeButton:focus-visible,
 .radioLauncher:focus-visible {
@@ -195,16 +197,31 @@
   aspect-ratio: 1;
 }
 
-.speakerButton img {
+.speakerDecor {
+  display: block;
+  width: 25.4%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.speakerDecor.speakerLeft {
+  position: absolute;
+  top: 51.2%;
+  left: 8.3%;
+}
+
+.speakerDecor.speakerRight {
+  position: absolute;
+  top: 51.2%;
+  right: 8.3%;
+}
+
+.speakerDecor img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   transform-origin: center;
-}
-
-.speakerButton:disabled {
-  cursor: not-allowed;
 }
 
 .speakerLeft,
@@ -216,21 +233,56 @@
 .speakerLeft { left: 8.3%; }
 .speakerRight { right: 8.3%; }
 
-.speakerButton:hover:not(:disabled) img {
-  filter: brightness(1.12);
+.speakerLeftCenter,
+.speakerRightCenter {
+  position: absolute;
+  z-index: 3;
+  top: 63%;
+  width: 7%;
+  aspect-ratio: 1;
+  display: grid;
+  padding: 0;
+  cursor: pointer;
+  place-items: center;
+  color: rgba(248, 251, 255, 0.92);
+  font-size: clamp(7px, 1.1vw, 12px);
+  background: rgba(5, 12, 28, 0.6);
+  border: 1px solid rgba(180, 210, 255, 0.35);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
-.speakerButton:active:not(:disabled) img {
-  transform: scale(0.97);
+.speakerLeftCenter { left: 18.5%; }
+.speakerRightCenter { right: 18.5%; }
+
+.boombox:hover .speakerLeftCenter,
+.boombox:hover .speakerRightCenter,
+.speakerLeftCenter:focus-visible,
+.speakerRightCenter:focus-visible {
+  opacity: 1;
+}
+
+.speakerLeftCenter:hover:not(:disabled),
+.speakerRightCenter:hover:not(:disabled) {
+  color: #fff;
+  background: rgba(13, 104, 207, 0.75);
+  transform: scale(1.1);
+}
+
+.speakerLeftCenter:disabled,
+.speakerRightCenter:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
 }
 
 .coverWell {
-  top: 47.5%;
-  left: 33.5%;
+  top: 49%;
+  left: 36%;
   display: grid;
   z-index: 1;
-  width: 22.3%;
-  aspect-ratio: 1.12;
+  width: 28%;
+  aspect-ratio: 1.6;
   place-items: center;
   overflow: hidden;
   background: #03060a;
@@ -298,8 +350,7 @@
   transform: scale(1.08);
 }
 
-.playButton:disabled,
-.speakerButton:disabled {
+.playButton:disabled {
   cursor: not-allowed;
   opacity: 0.42;
 }
@@ -510,11 +561,11 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .radioPlayer[data-playing="true"] .speakerButton img {
+  .radioPlayer[data-playing="true"] .speakerDecor {
     animation: speakerBounce 430ms cubic-bezier(0.42, 0, 0.58, 1) infinite;
   }
 
-  .radioPlayer[data-playing="true"] .speakerRight img {
+  .radioPlayer[data-playing="true"] .speakerDecor.speakerRight {
     animation-delay: 120ms;
   }
 }
@@ -531,10 +582,10 @@
   }
 
   .stationScreen {
-    top: 39.9%;
-    left: 36.6%;
-    width: 24.5%;
-    height: 9.6%;
+    top: 36%;
+    left: 24%;
+    width: 36%;
+    height: 8%;
     padding-top: 2.5%;
   }
 
@@ -561,6 +612,11 @@
     opacity: 1;
   }
 
+  .speakerLeftCenter,
+  .speakerRightCenter {
+    opacity: 1;
+  }
+
   .radioLauncher {
     right: 10px;
     bottom: max(10px, env(safe-area-inset-bottom));
@@ -571,7 +627,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .radioPlayer,
-  .speakerButton img,
+  .speakerDecor,
   .coverPulse,
   .liveDot,
   .launcherPulse,
