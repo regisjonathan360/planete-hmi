@@ -20,14 +20,9 @@ export const ToolButton: React.FC<ToolButtonPropTypes> = (props) => {
     label = "",
   } = props;
 
-  const handleToolButtonKeyPress = ({ key }: { key: string }) => {
-    if (onClick && key === "Enter") {
-      onClick();
-    }
-  };
-
   return (
-    <div
+    <button
+      type="button"
       onClick={!disabled ? onClick : undefined}
       className={[
         styles.shortcutLetter,
@@ -37,8 +32,8 @@ export const ToolButton: React.FC<ToolButtonPropTypes> = (props) => {
       onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
       role="button"
-      tabIndex={!disabled ? 1 : 0}
-      onKeyDown={handleToolButtonKeyPress}
+      tabIndex={!disabled ? 0 : -1}
+      disabled={disabled}
       aria-label={label}
     >
       {label
@@ -50,6 +45,6 @@ export const ToolButton: React.FC<ToolButtonPropTypes> = (props) => {
             letter
           )
         )}
-    </div>
+    </button>
   );
 };

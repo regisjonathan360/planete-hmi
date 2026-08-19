@@ -68,7 +68,9 @@ export const CardInternal: React.FC<CardPropTypes & CardStateTypes> = ({
       cardOrder,
       foundationNumber,
     },
-    canDrag: canBeDragged,
+    // Une carte face cachée ne doit jamais pouvoir être tirée. Avant cette
+    // garde, un drag pouvait contourner les règles de retournement.
+    canDrag: !isTurnedBack && canBeDragged !== false,
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
       item: monitor.getItem(),
@@ -77,13 +79,13 @@ export const CardInternal: React.FC<CardPropTypes & CardStateTypes> = ({
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
-  });
+  }, [preview]);
 
   const frontImage: string = cardFrontsImages[`${cardFront}_${cardSuite}`];
   const backImage: string = cardBackImages[`${cardBack}`];
 
   const handleButtonClick = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" || event.key === " ") {
       onClick?.(event);
     }
   };
@@ -108,10 +110,17 @@ export const CardInternal: React.FC<CardPropTypes & CardStateTypes> = ({
           : { opacity: "1" }
       }
       data-front={!isTurnedBack}
+      data-cardname={cardFront}
+      data-suite={cardSuite}
+      data-color={cardColor}
+      data-order={cardOrder}
       data-pilenumber={pileNumber}
       data-positiononpile={positionOnPile}
+      role="button"
+      aria-label={`${cardFront} ${cardSuite}${isTurnedBack ? ", carte cachée" : ""}`}
+      aria-disabled={isTurnedBack || canBeDragged === false}
       tabIndex={canBeFocused && !isAnyWindowOpened ? 1 : -1}
-      onKeyPress={handleButtonClick}
+      onKeyDown={handleButtonClick}
     >
       {!isTurnedBack ? (
         <div

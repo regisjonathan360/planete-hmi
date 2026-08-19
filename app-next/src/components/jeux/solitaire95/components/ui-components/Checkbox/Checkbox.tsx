@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./Checkbox.module.scss";
 
 type CheckboxPropTypes = {
@@ -18,47 +18,27 @@ export const Checkbox: React.FC<CheckboxPropTypes> = ({
   disabled,
   underscoredLetter,
 }) => {
-  const [isChecked, setIsChecked] = useState(checked);
-
-  useEffect(() => setIsChecked(checked), [checked]);
-
-  const handleButtonClick = ({ key }: { key: string }) => {
-    if (key === "Enter") {
-      if (!disabled) {
-        setIsChecked(!isChecked);
-        onClick();
-      }
-    }
-  };
-
   return (
-    <div className={styles.checkbox} aria-checked={isChecked}>
-      <div
-        className={[
-          styles.doubleBorder,
-          isChecked ? styles["doubleBorder__selected"] : null,
-        ].join(" ")}
-        onClick={() => {
-          if (!disabled) {
-            setIsChecked(!isChecked);
-            onClick();
-          }
-        }}
-      >
-        <input
-          type="checkbox"
-          id={id}
-          defaultChecked={isChecked}
-          className={disabled ? styles.disabled : undefined}
-          aria-label={label}
-        />
-      </div>
+    <div className={styles.checkbox}>
+      <input
+        type="checkbox"
+        id={id}
+        checked={checked}
+        onChange={onClick}
+        disabled={disabled}
+        aria-label={label}
+      />
       <label
         htmlFor={id}
         className={[styles.label, disabled ? styles.disabled : null].join(" ")}
-        tabIndex={!disabled ? 1 : -1}
-        onKeyPress={handleButtonClick}
       >
+        <span
+          className={[
+            styles.doubleBorder,
+            checked ? styles["doubleBorder__selected"] : null,
+          ].join(" ")}
+          aria-hidden="true"
+        />
         {label
           .split("")
           .map((letter, index) =>

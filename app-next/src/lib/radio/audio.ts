@@ -6,6 +6,13 @@
 
 const PAGE_HOSTS = /(?:^|\.)?(?:youtube\.com|youtu\.be|spotify\.com|audiomack\.com|deezer\.com)$/i;
 const PAGE_PATH = /\.(?:html?|php)(?:$|\?)/i;
+const AUDIOMACK_AUDIO_HOST = /^(?:songs(?:\.dev)?|streaming|media|cdn[a-z0-9-]*)\.audiomack\.com$/i;
+
+function isDirectAudiomackAudioUrl(url: URL) {
+  // Les liens de lecture officiels sont servis sur des sous-domaines dédiés
+  // (ex. songs.dev.audiomack.com), et non sur les pages audiomack.com.
+  return AUDIOMACK_AUDIO_HOST.test(url.hostname);
+}
 
 export function isPlayableAudioUrl(value?: string | null): value is string {
   if (!value?.trim()) return false;
@@ -13,7 +20,8 @@ export function isPlayableAudioUrl(value?: string | null): value is string {
   try {
     const url = new URL(value.trim());
     if (!['http:', 'https:', 'blob:', 'data:'].includes(url.protocol)) return false;
-    return !PAGE_HOSTS.test(url.hostname) && !PAGE_PATH.test(url.pathname);
+    if (PAGE_PATH.test(url.pathname)) return false;
+    return !PAGE_HOSTS.test(url.hostname) || isDirectAudiomackAudioUrl(url);
   } catch {
     return false;
   }

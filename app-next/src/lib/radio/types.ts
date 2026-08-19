@@ -99,6 +99,8 @@ export interface RadioPlayerState {
   nextTrack?: RadioTrack;
   playlist: RadioTrack[];
   currentIndex: number;
+  /** Genre en cours de diffusion. Absent = programmation complète. */
+  selectedGenre?: string;
   volume: number;
   isMuted: boolean;
   preloadedTracks: Set<string>;

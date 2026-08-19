@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "./RadioButton.module.scss";
 
 type RadiobuttonPropTypes = {
@@ -14,36 +14,25 @@ export const Radiobutton: React.FC<RadiobuttonPropTypes> = ({
   currentValue,
   underscoredLetter,
 }) => {
-  const [isChecked, setIsChecked] = useState(currentValue === label);
-
-  useEffect(() => {
-    setIsChecked(currentValue === label);
-  }, [currentValue, label]);
-
-  const handleButtonClick = ({ key }: { key: string }) => {
-    if (key === "Enter") {
-      onClick();
-    }
-  };
-
   return (
-    <div
+    <button
+      type="button"
       className={styles.radioWrapper}
       onClick={onClick}
       role="radio"
       id={label}
       aria-label={label}
-      onKeyDown={handleButtonClick}
+      aria-checked={currentValue === label}
     >
       <div className={styles.customRadio__outer}>
         <div className={styles.customRadio__inner}>
           <div
             className={styles.customRadio__circle}
-            style={{ visibility: isChecked ? "visible" : "hidden" }}
+            style={{ visibility: currentValue === label ? "visible" : "hidden" }}
           />
         </div>
       </div>
-      <label htmlFor={label} className={styles.radioLabel} tabIndex={1}>
+      <span className={styles.radioLabel}>
         {label
           .split("")
           .map((letter, index) =>
@@ -53,7 +42,7 @@ export const Radiobutton: React.FC<RadiobuttonPropTypes> = ({
               letter
             )
           )}
-      </label>
-    </div>
+      </span>
+    </button>
   );
 };

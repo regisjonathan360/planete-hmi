@@ -123,11 +123,13 @@ const PileInternal: React.FC<
       cardOrder,
     ];
 
-    const indexOfDraggedCardOnPile = cardsOnPiles[pileNumber]
+    const sourcePile = cardsOnPiles[pileNumber];
+    const indexOfDraggedCardOnPile = sourcePile
       ?.map((el: cardConfigType) => `${el[0]}_${el[1]}`)
-      .indexOf(`${cardFront}_${cardSuite}`);
+      .indexOf(`${cardFront}_${cardSuite}`) ?? -1;
+    if (pileNumber !== undefined && indexOfDraggedCardOnPile < 0) return;
 
-    const cardsToDrag = cardsOnPiles[pileNumber]?.slice(
+    const cardsToDrag = sourcePile?.slice(
       indexOfDraggedCardOnPile
     );
 
@@ -167,18 +169,19 @@ const PileInternal: React.FC<
     cardOrder: string;
     cardColor: string;
   }) => {
-    const cardsOnPileLength = pileTarget.props.children.length;
-    const frontCardOnPile =
-      pileTarget.props.children[cardsOnPileLength - 1]?.props.children.props;
-    const frontCardOrder = frontCardOnPile?.cardOrder;
-    const frontCardColor = frontCardOnPile?.cardColor;
+    // Le DOM contenait toujours un placeholder dans une colonne vide :
+    // compter `children` interdisait donc le déplacement d'un roi. Utiliser
+    // l'état métier de la colonne, jamais la structure rendue.
+    const pileCards = cardsOnPiles[String(pileIndex)] ?? [];
+    const topCard = pileCards[pileCards.length - 1];
 
-    if (draggedCard.cardFront === "king" && !cardsOnPileLength) {
+    if (draggedCard.cardFront === "king" && !topCard) {
       return true;
     }
+    if (!topCard) return false;
     return (
-      frontCardOrder - 1 === parseInt(draggedCard.cardOrder) &&
-      frontCardColor !== draggedCard.cardColor
+      Number(topCard[4]) - 1 === Number(draggedCard.cardOrder) &&
+      topCard[3] !== draggedCard.cardColor
     );
   };
 
@@ -232,18 +235,17 @@ const PileInternal: React.FC<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (e: any) => {
       let pileNumber, cardOnPileNumber, isTargetCardTurnedFront;
-      if (e.key) {
-        pileNumber = e.target.dataset?.pilenumber;
-        cardOnPileNumber = e.target.dataset?.positiononpile;
-        isTargetCardTurnedFront = e.target.firstChild?.dataset?.cardname;
-      } else {
-        pileNumber = e.target.parentNode.dataset?.pilenumber;
-        cardOnPileNumber = e.target.parentNode.dataset?.positiononpile;
-        isTargetCardTurnedFront = e.target.dataset?.cardname;
-      }
-      if (cardOnPileNumber && pileNumber && !isTargetCardTurnedFront) {
+      const currentTarget = e.currentTarget as HTMLElement;
+      pileNumber = currentTarget.dataset?.pilenumber;
+      cardOnPileNumber = currentTarget.dataset?.positiononpile;
+      isTargetCardTurnedFront = currentTarget.dataset?.front === "true";
+      if (
+        cardOnPileNumber !== undefined &&
+        pileNumber !== undefined &&
+        !isTargetCardTurnedFront
+      ) {
         addPoints(5);
-        turnCardOnPile(pileNumber);
+        turnCardOnPile(String(pileNumber));
         setUndoAction([]);
       }
     },

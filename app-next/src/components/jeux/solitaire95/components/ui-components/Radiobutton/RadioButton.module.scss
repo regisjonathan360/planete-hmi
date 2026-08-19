@@ -1,8 +1,13 @@
 .radioWrapper {
   display: flex;
   align-items: center;
-  cursor: default;
+  cursor: pointer;
   width: fit-content;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 4px 0;
 }
 
 .customRadio {

@@ -9,19 +9,26 @@ export const useStartTimer = (
   const [time, setTime] = useState(intitialTime);
 
   useEffect(() => {
-    if (gameStarted) {
-      const timeInterval = setInterval(() => setTime(time + 1), 1000);
-      return () => clearInterval(timeInterval);
-    }
-    if (gameFinished) {
-      setTime(time);
-      saveScoreTimeCallback(time);
-    }
-    if (!gameFinished && !gameStarted) {
+    setTime(intitialTime);
+  }, [intitialTime]);
+
+  useEffect(() => {
+    if (!gameStarted || gameFinished) return undefined;
+    const timeInterval = window.setInterval(() => {
+      setTime((currentTime) => currentTime + 1);
+    }, 1000);
+    return () => window.clearInterval(timeInterval);
+  }, [gameStarted, gameFinished]);
+
+  useEffect(() => {
+    if (gameFinished) saveScoreTimeCallback(time);
+  }, [gameFinished, saveScoreTimeCallback, time]);
+
+  useEffect(() => {
+    if (!gameFinished && !gameStarted && intitialTime === 0) {
       setTime(0);
     }
-    return;
-  }, [gameStarted, time, gameFinished, saveScoreTimeCallback]);
+  }, [gameStarted, gameFinished, intitialTime]);
 
   return time;
 };

@@ -61,7 +61,13 @@ interface ApiPageResult {
   error?: string;
 }
 
-async function fetchPage(path: string, params: Record<string, string>): Promise<ApiPageResult> {
+interface ApiResponse {
+  ok: boolean;
+  data: unknown;
+  error?: string;
+}
+
+async function fetchAudiomackApi(path: string, params: Record<string, string> = {}): Promise<ApiResponse> {
   const url = `${API_BASE}/${path}`;
   const signedUrl = buildSignedUrl("GET", url, params);
 
@@ -77,21 +83,28 @@ async function fetchPage(path: string, params: Record<string, string>): Promise<
     });
 
     if (!res.ok) {
-      return { ok: false, tracks: [], error: `Audiomack API a repondu HTTP ${res.status}.` };
+      return { ok: false, data: null, error: `Audiomack API a repondu HTTP ${res.status}.` };
     }
 
-    const json = (await res.json()) as { results?: unknown };
-    if (!Array.isArray(json.results)) {
-      return { ok: false, tracks: [], error: "Reponse API Audiomack inattendue (pas de liste)." };
-    }
-    return { ok: true, tracks: json.results as AudiomackRawTrack[] };
+    return { ok: true, data: await res.json() };
   } catch (error) {
     return {
       ok: false,
-      tracks: [],
+      data: null,
       error: error instanceof Error ? error.message : "Erreur reseau API Audiomack.",
     };
   }
+}
+
+async function fetchPage(path: string, params: Record<string, string>): Promise<ApiPageResult> {
+  const result = await fetchAudiomackApi(path, params);
+  if (!result.ok) return { ok: false, tracks: [], error: result.error };
+
+  const json = result.data as { results?: unknown };
+  if (!Array.isArray(json.results)) {
+    return { ok: false, tracks: [], error: "Reponse API Audiomack inattendue (pas de liste)." };
+  }
+  return { ok: true, tracks: json.results as AudiomackRawTrack[] };
 }
 
 /**
@@ -138,4 +151,75 @@ export async function fetchAudiomackApiChart(options: { genre?: string | null; p
     .sort((a, b) => a.rank - b.rank);
 
   return { ok: true, entries, sourceUpdatedAt: null };
+}
+
+export interface AudiomackPlaylistApiResult {
+  ok: boolean;
+  playlist: {
+    id?: string;
+    title: string;
+    description?: string | null;
+    genre?: string | null;
+    imageUrl?: string | null;
+    tracks: AudiomackRawTrack[];
+  } | null;
+  error?: string;
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
+
+/**
+ * Lit une playlist publique Audiomack par son propriétaire et son slug.
+ * L'URL de destination est construite côté serveur : aucune URL fournie par
+ * l'admin n'est utilisée directement comme cible de fetch.
+ */
+export async function fetchAudiomackApiPlaylist(
+  artistSlug: string,
+  playlistSlug: string,
+): Promise<AudiomackPlaylistApiResult> {
+  const safeArtist = encodeURIComponent(artistSlug);
+  const safePlaylist = encodeURIComponent(playlistSlug);
+  const result = await fetchAudiomackApi(`playlist/${safeArtist}/${safePlaylist}`);
+  if (!result.ok) return { ok: false, playlist: null, error: result.error };
+
+  const root = asRecord(result.data);
+  const payload = asRecord(root?.results) ?? root;
+  if (!payload) {
+    return { ok: false, playlist: null, error: "Réponse Audiomack inattendue pour cette playlist." };
+  }
+
+  const tracks = Array.isArray(payload.tracks)
+    ? payload.tracks as AudiomackRawTrack[]
+    : Array.isArray(payload.results)
+      ? payload.results as AudiomackRawTrack[]
+      : [];
+  if (!tracks.length) {
+    return { ok: false, playlist: null, error: "Cette playlist Audiomack ne contient aucune piste accessible." };
+  }
+
+  const title = typeof payload.title === "string"
+    ? payload.title.trim()
+    : typeof payload.name === "string"
+      ? payload.name.trim()
+      : playlistSlug;
+
+  return {
+    ok: true,
+    playlist: {
+      id: payload.id != null ? String(payload.id) : undefined,
+      title: title || playlistSlug,
+      description: typeof payload.description === "string" ? payload.description.trim() || null : null,
+      genre: typeof payload.genre === "string" ? payload.genre.trim() || null : null,
+      imageUrl: typeof payload.image === "string"
+        ? payload.image
+        : typeof payload.image_base === "string"
+          ? payload.image_base
+          : null,
+      tracks,
+    },
+  };
 }

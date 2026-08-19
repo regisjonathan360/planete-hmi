@@ -32,13 +32,19 @@ export function RadioAdminDashboard({
   initialTracks,
   initialConfig,
   initialStats,
-  adminEmail,
 }: RadioAdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabType>("config");
   const [playlists, setPlaylists] = useState(initialPlaylists);
   const [tracks, setTracks] = useState(initialTracks);
   const [config, setConfig] = useState(initialConfig);
-  const [stats, setStats] = useState(initialStats);
+  const [stats] = useState(initialStats);
+
+  const refreshRadioConfig = () => {
+    void fetch("/api/admin/radio/config")
+      .then((response) => response.ok ? response.json() : null)
+      .then((updatedConfig) => { if (updatedConfig) setConfig(updatedConfig); })
+      .catch(() => undefined);
+  };
 
   const tabs: { id: TabType; label: string; icon: string }[] = [
     { id: "config", label: "Configuration", icon: "⚙️" },
@@ -80,6 +86,7 @@ export function RadioAdminDashboard({
             playlists={playlists}
             tracks={tracks}
             onPlaylistsUpdate={setPlaylists}
+            onRadioActivated={refreshRadioConfig}
           />
         )}
 

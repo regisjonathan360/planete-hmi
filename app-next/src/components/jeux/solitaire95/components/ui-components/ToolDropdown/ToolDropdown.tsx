@@ -15,7 +15,7 @@ export const ToolDropdown: React.FC<PropTypes> = (props) => {
         styles.dropdownContainer,
         visible ? styles.dropdownContainer__visible : null,
       ].join(" ")}
-      role="listbox"
+      role="menu"
       aria-labelledby={buttonId}
       hidden={!visible}
     >

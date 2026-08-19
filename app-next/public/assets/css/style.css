@@ -1333,12 +1333,11 @@ a.section-link:hover { color: var(--flame-orange); }
    de progression + cartes « squelette » (shimmer) tant que la
    page n'est pas prête.
 
-   - Avec JS : PageLoader ajoute `.is-done` dès que `load` est
-     atteint (ou après un délai de secours) ; le fondu est fait
-     par `transition`.
+   - Avec JS : PageLoader surveille le DOM (MutationObserver)
+     et les images, puis ajoute `.is-done` quand tout est
+     stable et chargé. Repli de sécurité à ~6 s.
    - Sans JS : l'animation de secours ci-dessous se déclenche
-     seule après 2,8 s (elle ne s'exécute pas quand JS a déjà
-     posé `.is-done`, qui coupe l'animation).
+     seule après 5,5 s.
    ========================================================= */
 .page-loader {
   position: fixed;
@@ -1352,7 +1351,7 @@ a.section-link:hover { color: var(--flame-orange); }
   opacity: 1;
   visibility: visible;
   /* Repli seulement si JavaScript ne s'exécute jamais. */
-  animation: page-loader-fallback 0.5s ease 2.8s forwards;
+  animation: page-loader-fallback 0.5s ease 5.5s forwards;
 }
 /* La transition vit sur `.is-done` : la sortie se fait en fondu, la
    réapparition (changement de route) est immédiate — pas de flash. */

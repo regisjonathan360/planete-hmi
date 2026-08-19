@@ -98,6 +98,7 @@ type MainPageStateTypes = {
   scoreType: string;
   vegasScore: number;
   keepVegasScore: boolean;
+  gameFinished: boolean;
 };
 
 type MainPagePropTypes = Partial<SoundContextType> & {
@@ -122,6 +123,7 @@ const MainPageInternal: React.FC<
     scoreType,
     vegasScore,
     keepVegasScore,
+    gameFinished,
   } = props;
 
   const soundContextValue: SoundContextType = {
@@ -160,9 +162,9 @@ const MainPageInternal: React.FC<
     const testCard = cards.map((el: FoundationState) => el?.cards);
     const allCards = testCard?.reduce((acc, val) => acc.concat(val), []);
 
-    if (allCards.length === 52) {
-      setTimeout(() => setGameFinished(true), 300);
-      setTimeout(() => stopGame(), 400);
+    if (allCards.length === 52 && !gameFinished) {
+      setGameFinished(true);
+      stopGame();
       setCanvasSize([
         mainPageRef.current
           ?.querySelector("#gameContainer")
@@ -182,6 +184,7 @@ const MainPageInternal: React.FC<
     addPointsOnEnd,
     setGameFinished,
     scoreTime,
+    gameFinished,
   ]);
 
   useEffect(() => isGameEnded(), [cardsOnFoundations, isGameEnded]);
@@ -208,22 +211,6 @@ const MainPageInternal: React.FC<
       <div
         className={styles.mainPage}
         ref={mainPageRef}
-        onClick={(e) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const eventTarget = e.target as any;
-          const classListOfParent = eventTarget.offsetParent?.classList;
-          const disabledButton = classListOfParent
-            ? [...eventTarget?.offsetParent?.classList].filter((el) =>
-                el.match("dropdownContainer")
-              ).length
-            : undefined;
-          if (gameVisible && !disabledButton) {
-            setGameVisible(false);
-          }
-          if (helpVisible && !disabledButton) {
-            setHelpVisible(false);
-          }
-        }}
       >
         <SoundContext.Provider value={soundContextValue}>
           <VegasContext.Provider value={vegasContext}>
@@ -296,6 +283,7 @@ const mapStateToProps = (state: {
     scoreType: state.gameState.scoreType,
     vegasScore: state.countScore.dollars,
     keepVegasScore: state.gameState.keepVegasScore,
+    gameFinished: state.gameState.gameFinished,
   };
 };
 

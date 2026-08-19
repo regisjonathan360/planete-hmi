@@ -83,19 +83,16 @@ const FoundationInternal: React.FC<
 
     const foundationObject =
       cardsOnFoundations[Object.keys(cardsOnFoundations)[foundationTargetId]];
+    if (!foundationObject) return false;
 
     if (card.cardFront?.match(/ace/)) {
-      return foundationObject.foundationSuite === undefined;
+      return foundationObject.cards.length === 0;
     } else {
       const resolvedCardsOnFoundation = foundationObject.cards;
+      const topCard = resolvedCardsOnFoundation[resolvedCardsOnFoundation.length - 1];
       return (
         card.cardSuite === foundationObject.foundationSuite &&
-        parseInt(
-          resolvedCardsOnFoundation[
-            resolvedCardsOnFoundation.length - 1
-          ][4] as string
-        ) ===
-          card.cardOrder - 1
+        !!topCard && Number(topCard[4]) === Number(card.cardOrder) - 1
       );
     }
   };

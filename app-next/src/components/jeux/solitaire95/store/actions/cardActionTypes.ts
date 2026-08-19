@@ -91,10 +91,10 @@ export type RemoveCardFromFoundationType = (
 
 export type TurnCardOnPileTypeReducer = {
   type: ACTION_TYPES.TURN_CARD_ON_PILE;
-  cardToTurn: number;
+  cardToTurn: number | string;
 };
 export type TurnCardOnPileType = (
-  cardToTurn: number
+  cardToTurn: number | string
 ) => TurnCardOnPileTypeReducer;
 
 export type StockTurnCounterTypeReducer = {

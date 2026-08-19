@@ -19,23 +19,18 @@ export const TopbarButton: React.FC<TopbarButtonPropTypes> = ({
   onMouseOver,
   label = "",
 }) => {
-  const handleTopBarButtonKeyPress = ({ key }: { key: string }) => {
-    if (key === " " || key === "Enter") {
-      onClick();
-    }
-  };
-
   const { isAnyWindowOpened } = useContext(WindowsOpenedContext);
 
   return (
-    <div
+    <button
+      type="button"
       className={[styles.container, active ? styles.active : ""].join(" ")}
       onClick={onClick}
       role="button"
       id={id}
       onMouseOver={onMouseOver}
-      tabIndex={!isAnyWindowOpened ? 1 : -1}
-      onKeyPress={handleTopBarButtonKeyPress}
+      tabIndex={!isAnyWindowOpened ? 0 : -1}
+      disabled={isAnyWindowOpened}
       aria-label={label}
     >
       {label
@@ -47,6 +42,6 @@ export const TopbarButton: React.FC<TopbarButtonPropTypes> = ({
             letter
           )
         )}
-    </div>
+    </button>
   );
 };

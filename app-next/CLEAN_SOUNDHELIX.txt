@@ -1,0 +1,44 @@
+🧹 NETTOYER LES PISTES DE TEST MAINTENANTT
+
+===================================================
+PROBLÈME: Vous voyez SoundHelix et autres test tracks
+SOLUTION: Exécuter le script de nettoyage
+TEMPS: 30 secondes
+===================================================
+
+✅ Le script existe: 20260818_clean_dummy_data.sql
+✅ Code pushé sur GitHub
+✅ Prêt à exécuter
+
+===================================================
+FAIRE MAINTENANT:
+===================================================
+
+1. Supabase: https://supabase.com/dashboard
+2. SQL Editor → New Query
+3. Ouvrir: supabase/migrations/20260818_clean_dummy_data.sql
+4. Copier TOUT
+5. Coller dans Supabase
+6. Cmd+Enter
+7. Attendre: ✅ Query successful
+
+===================================================
+RÉSULTAT:
+
+remaining_tracks: 0
+remaining_playlists: 0
+
+===================================================
+APRÈS NETTOYAGE:
+
+1. Rafraîchissez /admin/radio
+2. SoundHelix DISPARU ✅
+3. Vous voyez classements réels (ou liste vide)
+4. Sélectionnez un classement réel
+5. Cliquez "✅ Appliquer"
+6. Testez la radio ▶️
+
+===================================================
+C'EST TOUT!
+
+Let's clean this up! 🧹

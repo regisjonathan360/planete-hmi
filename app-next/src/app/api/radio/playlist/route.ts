@@ -59,6 +59,7 @@ export async function GET(request: Request): Promise<NextResponse> {
             audio_url,
             cover_image_url,
             duration_seconds,
+            genre,
             source,
             is_active,
             play_count,
@@ -130,6 +131,7 @@ export async function GET(request: Request): Promise<NextResponse> {
           .select(
             `
             track_id,
+            genre,
             tracks(
               id,
               title,
@@ -183,6 +185,7 @@ export async function GET(request: Request): Promise<NextResponse> {
                 audio_url: audioUrl,
                 cover_image_url: track.default_artwork_url,
                 duration_seconds: Math.floor((track.duration_ms || 0) / 1000),
+                genre: entry.genre || undefined,
                 source: "chart",
                 is_active: true,
                 play_count: 0,

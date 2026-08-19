@@ -349,7 +349,7 @@ export default function AdminSolitairePage() {
   };
 
   return (
-    <div>
+    <div className="solitaire-admin">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
         <div>
           <h1 className="admin__title">Solitaire de l&apos;Arène</h1>
@@ -365,16 +365,9 @@ export default function AdminSolitairePage() {
 
       {!loading && bundle && (
         <>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "minmax(0, 1fr) 360px",
-              gap: "1rem",
-              alignItems: "start",
-            }}
-          >
+          <div className="solitaire-admin-layout">
             {/* ---- Grille des 52 cartes ---- */}
-            <div className="admin-card" style={{ padding: "0.75rem" }}>
+            <div className="admin-card solitaire-admin-cards-panel" style={{ padding: "0.75rem" }}>
               <h2 className="admin-card__title">
                 Les 52 cartes{" "}
                 <span style={{ fontWeight: 400, color: "var(--admin-muted)" }}>
@@ -424,15 +417,15 @@ export default function AdminSolitairePage() {
             </div>
 
             {/* ---- Panneau d'édition ---- */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <div className="admin-card" style={{ padding: "0.75rem" }}>
+            <div className="solitaire-admin-editor-column">
+              <div className="admin-card solitaire-admin-editor-card" style={{ padding: "0.75rem" }}>
                 <h2 className="admin-card__title">
                   {selected ? `Carte ${selected.cardKey}` : "Édition d'une carte"}
                 </h2>
 
                 {selected ? (
                   <>
-                    <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "0.75rem" }}>
+                    <div className="solitaire-admin-editor-header">
                       <div style={{ width: 104, height: 140, flexShrink: 0, borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(122,162,255,0.35)" }}>
                         <SolitaireCardFace
                           rank={rankOfKey(selected.cardKey)}
@@ -443,7 +436,7 @@ export default function AdminSolitairePage() {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div className="field">
                           <label htmlFor="solitaire-artist-search">Artiste</label>
-                          <div style={{ position: "relative" }}>
+                          <div className="solitaire-admin-artist-search" style={{ position: "relative" }}>
                             <input
                               id="solitaire-artist-search"
                               type="text"
@@ -511,18 +504,7 @@ export default function AdminSolitairePage() {
                           </div>
                         </div>
 
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            gap: "0.5rem",
-                            marginTop: "0.5rem",
-                            padding: "0.4rem 0.5rem",
-                            borderRadius: "8px",
-                            background: "var(--admin-panel-2, #111827)",
-                          }}
-                        >
+                        <div className="solitaire-admin-selected-artist">
                           {selected.artistId ? (
                             <>
                               <span style={{ fontSize: "0.8rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -546,7 +528,7 @@ export default function AdminSolitairePage() {
                       </div>
                     </div>
 
-                    <div className="field">
+                    <div className="field solitaire-admin-field">
                       <label htmlFor="solitaire-mask-type">Forme du masque</label>
                       <select
                         id="solitaire-mask-type"
@@ -566,7 +548,7 @@ export default function AdminSolitairePage() {
                     </div>
 
                     {FIELD_DEFS.map((field) => (
-                      <div className="field" key={field.key}>
+                      <div className="field solitaire-admin-field" key={field.key}>
                         <label htmlFor={`solitaire-${field.key}`}>
                           {field.label}{" "}
                           <span style={{ color: "var(--admin-muted)" }}>
@@ -581,12 +563,13 @@ export default function AdminSolitairePage() {
                           step={field.step}
                           value={selected[field.key] as number}
                           onChange={(e) => updateDraftStyle(field.key, Number(e.target.value))}
+                          className="solitaire-admin-range"
                           style={{ width: "100%" }}
                         />
                       </div>
                     ))}
 
-                    <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem" }}>
+                    <div className="solitaire-admin-save-row">
                       <button
                         type="button"
                         className="btn btn--primary"
@@ -613,7 +596,7 @@ export default function AdminSolitairePage() {
               </div>
 
               {/* ---- Presets par rang ---- */}
-              <div className="admin-card" style={{ padding: "0.75rem" }}>
+              <div className="admin-card solitaire-admin-presets-card" style={{ padding: "0.75rem" }}>
                 <h2 className="admin-card__title">Géométrie par rang (presets)</h2>
                 <p style={{ margin: "0 0 0.5rem", fontSize: "0.75rem", color: "var(--admin-muted)" }}>
                   Base appliquée à toutes les cartes du rang. Modifier ici, c&apos;est

@@ -9,17 +9,20 @@ import type { RadioPlaylist, RadioTrack } from "@/lib/radio/types";
 import { normalizePlaylistTrackCount } from "@/lib/radio/types";
 import styles from "./PlaylistManager.module.css";
 import { AvailableSourcesSelector } from "./AvailableSourcesSelector";
+import { AudiomackPlaylistImporter } from "./AudiomackPlaylistImporter";
 
 interface PlaylistManagerProps {
   playlists: RadioPlaylist[];
   tracks: RadioTrack[];
   onPlaylistsUpdate: (playlists: RadioPlaylist[]) => void;
+  onRadioActivated: () => void;
 }
 
 export function PlaylistManager({
   playlists,
   tracks,
   onPlaylistsUpdate,
+  onRadioActivated,
 }: PlaylistManagerProps) {
   const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -58,6 +61,24 @@ export function PlaylistManager({
       console.error("Error creating playlist:", error);
       alert("Erreur lors de la création de la playlist");
     }
+  };
+
+  const selectPlaylist = async (playlistId: string) => {
+    setSelectedPlaylist(playlistId);
+    const response = await fetch(`/api/admin/radio/playlists/${playlistId}/tracks`);
+    if (response.ok) {
+      const rows = await response.json();
+      setPlaylistTracks(rows.map((row: { radio_tracks: RadioTrack }) => row.radio_tracks).filter(Boolean));
+    }
+  };
+
+  const handleAudiomackImport = (playlist: RadioPlaylist, activated: boolean) => {
+    const updated = safePlaylists.some((item) => item.id === playlist.id)
+      ? safePlaylists.map((item) => item.id === playlist.id ? playlist : item)
+      : [playlist, ...safePlaylists];
+    onPlaylistsUpdate(updated);
+    void selectPlaylist(playlist.id);
+    if (activated) onRadioActivated();
   };
 
   return (
@@ -103,6 +124,8 @@ export function PlaylistManager({
         </div>
       )}
 
+      <AudiomackPlaylistImporter onImported={handleAudiomackImport} />
+
       <div className={styles.playlists}>
         {safePlaylists.length === 0 ? (
           <div className={styles.empty}>
@@ -117,14 +140,7 @@ export function PlaylistManager({
                 className={`${styles.playlistCard} ${
                   selectedPlaylist === playlist.id ? styles.selected : ""
                 }`}
-                onClick={async () => {
-                  setSelectedPlaylist(playlist.id);
-                  const response = await fetch(`/api/admin/radio/playlists/${playlist.id}/tracks`);
-                  if (response.ok) {
-                    const rows = await response.json();
-                    setPlaylistTracks(rows.map((row: { radio_tracks: RadioTrack }) => row.radio_tracks).filter(Boolean));
-                  }
-                }}
+                onClick={() => { void selectPlaylist(playlist.id); }}
               >
                 <div className={styles.playlistIcon}>📋</div>
                 <div className={styles.playlistInfo}>

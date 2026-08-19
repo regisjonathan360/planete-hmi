@@ -1,4 +1,5 @@
 import { getStaticPageBody, getStaticPageScripts } from "@/lib/static-page";
+import { StaticPageClientEffects } from "@/components/StaticPageClientEffects";
 
 /**
  * Rend une page HTML statique portée dans Next.js.
@@ -16,6 +17,7 @@ export function StaticPage({
   replacements?: Array<{ marker: string; html: string }>;
   hideStaticHeader?: boolean;
 }) {
+  const rootId = `static-page-${filename.replace(/[^a-z0-9_-]/gi, "-")}`;
   let body = getStaticPageBody(filename);
   let activeReplacements = [...replacements];
   // Supprimer le header statique si demandé (le SiteHeader React prend le relais)
@@ -64,7 +66,12 @@ export function StaticPage({
 
   return (
     <>
-      <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: body }} />
+      <div
+        id={rootId}
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: body }}
+      />
+      <StaticPageClientEffects rootId={rootId} />
       {scripts.map((src) => (
         <script key={src} src={src} defer />
       ))}

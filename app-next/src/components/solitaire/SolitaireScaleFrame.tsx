@@ -92,9 +92,13 @@ export function SolitaireScaleFrame({
     }
 
     const availableWidth = outer.clientWidth;
-    const availableHeight = outer.clientHeight;
     const viewportW = window.innerWidth;
     const viewportH = window.innerHeight;
+    const rect = outer.getBoundingClientRect();
+    const availableHeightPx = isFullscreenRef.current
+      ? window.innerHeight
+      : window.innerHeight - Math.max(rect.top, 0) - 14;
+    const availableHeight = Math.max(0, availableHeightPx);
 
     if (!availableWidth || !availableHeight) {
       measurePendingRef.current = false;
@@ -124,15 +128,11 @@ export function SolitaireScaleFrame({
       });
     }
 
-    // Hauteur du cadre : en plein écran = viewport, sinon espace sous header
-    const rect = outerRef.current?.getBoundingClientRect();
-    const availableHeightPx = isFullscreenRef.current
-      ? window.innerHeight
-      : (rect ? window.innerHeight - Math.max(rect.top, 0) - 14 : window.innerHeight);
+    // Hauteur du cadre : en plein écran = viewport, sinon espace sous header.
     setFrameHeight((prev) =>
       prev !== null && Math.abs(prev - availableHeightPx) < 2
         ? prev
-        : Math.max(420, Math.round(availableHeightPx))
+        : Math.max(360, Math.round(availableHeightPx))
     );
 
     measurePendingRef.current = false;
@@ -143,19 +143,41 @@ export function SolitaireScaleFrame({
     const outer = outerRef.current;
     if (!outer) return;
 
+    // Le cadre peut être positionné après le premier rendu (header, police,
+    // sidebar responsive). Reprendre la mesure sur deux frames évite de
+    // conserver la hauteur minimale de 360 px alors que davantage d'espace
+    // est déjà disponible.
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      measure();
+      secondFrame = window.requestAnimationFrame(measure);
+    });
+
     const outerObserver = new ResizeObserver(() => measure());
     outerObserver.observe(outer);
-    window.addEventListener("resize", () => measure());
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
 
     return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
       outerObserver.disconnect();
-      window.removeEventListener("resize", () => measure());
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
     };
+  }, [measure]);
+
+  const getFullscreenElement = useCallback(() => {
+    const webkitDocument = document as Document & {
+      webkitFullscreenElement?: Element | null;
+    };
+    return document.fullscreenElement ?? webkitDocument.webkitFullscreenElement ?? null;
   }, []);
 
   const enterFullscreen = useCallback(() => {
     const outer = outerRef.current;
-    if (!outer || document.fullscreenElement) return;
+    if (!outer || getFullscreenElement()) return;
     if (outer.requestFullscreen) {
       const promise = outer.requestFullscreen();
       if (promise && typeof promise.catch === "function") {
@@ -167,7 +189,7 @@ export function SolitaireScaleFrame({
       };
       webkitOuter.webkitRequestFullscreen?.();
     }
-  }, []);
+  }, [getFullscreenElement]);
 
   const exitFullscreen = useCallback(() => {
     if (document.exitFullscreen) {
@@ -185,7 +207,7 @@ export function SolitaireScaleFrame({
 
   useEffect(() => {
     const onChange = () => {
-      const nowFullscreen = document.fullscreenElement === outerRef.current;
+      const nowFullscreen = getFullscreenElement() === outerRef.current;
       isFullscreenRef.current = nowFullscreen;
       setIsFullscreen(nowFullscreen);
       // Recalcule après que le navigateur a appliqué le fullscreen
@@ -199,7 +221,7 @@ export function SolitaireScaleFrame({
       document.removeEventListener("fullscreenchange", onChange);
       document.removeEventListener("webkitfullscreenchange", onChange as EventListener);
     };
-  }, []);
+  }, [getFullscreenElement, measure]);
 
   const scale = transform?.scale ?? 1;
   const width = !fluid && transform ? transform.width : "100%";
@@ -234,10 +256,8 @@ export function SolitaireScaleFrame({
             transform: `scale(${scale})`,
             marginLeft,
             marginTop,
-            left: centered ? undefined : 0,
-            top: centered ? undefined : 0,
-            maxWidth: isFullscreen ? "100vw" : undefined,
-            maxHeight: isFullscreen ? "100vh" : undefined,
+            left: centered ? "50%" : 0,
+            top: centered ? "50%" : 0,
           }}
         >
           {children}

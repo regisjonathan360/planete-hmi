@@ -21,10 +21,16 @@ export const moveToFoundation = (
   isVegas?: boolean,
   vegasDollarCounter?: CountVegasScoreType
 ): void => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { dataset } = event.target as any;
+  // Les cartes personnalisées contiennent plusieurs nœuds enfants. Utiliser
+  // event.target faisait échouer le double-clic dès qu'on cliquait sur le
+  // visage de l'artiste au lieu du conteneur de la carte.
+  const target = (event.target as Element | null)?.closest?.(
+    "[data-cardname]"
+  ) as HTMLElement | null;
+  const dataset = target?.dataset ?? {};
   const { cardname, suite, color, pilenumber, order } = dataset;
-  const cardConfig: cardConfigType = [cardname, suite, true, color, order];
+  if (!cardname || !suite || !color || !order) return;
+  const cardConfig = [cardname, suite, true, color, order] as cardConfigType;
 
   if (cardname?.match("ace")) {
     const foundationToPopulate: string[] = [];
@@ -62,7 +68,7 @@ export const moveToFoundation = (
           parseInt(
             cardsOnFoundation[cardsOnFoundation.length - 1][4] as string
           ) ===
-          order - 1
+          Number(order) - 1
         ) {
           addToFoundationCallback(cardConfig, foundation);
           addPoints(10);

@@ -80,3 +80,38 @@
 .disabled {
   color: rgba(148, 169, 208, 0.4);
 }
+
+/* Le contrôle est piloté par l'input natif : il reste accessible au clavier
+   et ne se désynchronise plus de la valeur Redux. */
+.checkbox {
+  position: relative;
+}
+
+.checkbox input[type="checkbox"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox input[type="checkbox"]::after {
+  display: none !important;
+  visibility: hidden !important;
+  content: none !important;
+}
+
+.doubleBorder {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  background-color: #0b1130;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  cursor: pointer;
+}

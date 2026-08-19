@@ -53,8 +53,8 @@ export const SettingsWindow: React.FC<SettingWindowPropTypes> = (props) => {
   } = props;
 
   const [windowPosition, setWindowPosition] = useState([
-    positionOnWindow?.[0] || 100,
-    positionOnWindow?.[1] || 100,
+    positionOnWindow?.[0] ?? 100,
+    positionOnWindow?.[1] ?? 100,
   ]);
   const [maxWindowWidth, setMaxWindowWidth] = useState(width || 450);
   const [calculatedHeight, setCalulatedWindowHeight] = useState<number>();
@@ -73,6 +73,15 @@ export const SettingsWindow: React.FC<SettingWindowPropTypes> = (props) => {
       setCalulatedWindowHeight(heightCalculated);
     }
   }, [height]);
+
+  useEffect(() => {
+    if (!visible) return undefined;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeButtonAction?.();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [visible, closeButtonAction]);
 
   const [, drop] = useDrop({
     accept: itemTypes.WINDOW,
@@ -136,7 +145,7 @@ export const SettingsWindow: React.FC<SettingWindowPropTypes> = (props) => {
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
-  });
+  }, [preview]);
 
   const windowError = useMemo(
     () =>
@@ -189,7 +198,7 @@ export const SettingsWindow: React.FC<SettingWindowPropTypes> = (props) => {
       <div
         className={styles.settingsWindow}
         style={{
-          width: width ? `${width}px` : "450px",
+          width: width ? `${width}px` : "min(450px, calc(100vw - 32px))",
           height: height ? `${height}px` : undefined,
           top: `${windowPosition[0]}px`,
           left: `${windowPosition[1]}px`,
@@ -220,7 +229,11 @@ export const SettingsWindow: React.FC<SettingWindowPropTypes> = (props) => {
         >
           <div
             className={styles.settingsWindow__inner}
-            style={{ width: `${(width as number) - 4}px` || "450px" }}
+            style={{
+              width: width
+                ? `${Math.max(0, Math.min(width, maxWindowWidth) - 4)}px`
+                : "calc(100% - 4px)",
+            }}
           >
             {children}
             <div className={styles.buttonContainer}>

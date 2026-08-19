@@ -8,7 +8,9 @@ export const undoActions: Middleware = (store) => (next) => (action: any) => {
   const previousState = store.getState();
 
   let actionToUndo: UndoActionType = [];
-  const undoState = store.getState().gameState.actionToUndo;
+  // Le middleware enrichit l'entrée d'annulation au fil d'un déplacement.
+  // Copie le tableau pour ne jamais muter l'état Redux précédent.
+  const undoState = [...store.getState().gameState.actionToUndo] as UndoActionType;
 
   switch (action.type) {
     case ACTION_TYPES.REVERSE_STOCK:
@@ -17,7 +19,7 @@ export const undoActions: Middleware = (store) => (next) => (action: any) => {
           action.type,
           previousState.cardDistribution.cardsOnStock,
           previousState.cardDistribution.threeCardsOnTable,
-          previousState.cardDistribution.cardsFromStock.reverse(),
+          previousState.cardDistribution.cardsFromStock.slice().reverse(),
         ];
       }
       if (previousState.gameState.drawType === "drawThree") {

@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useState } from "react";
+﻿import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import {
@@ -99,7 +99,7 @@ const OptionsInternal: React.FC<
     scoreType,
     dealCardsAllSteps,
     toggleScoreType,
-    keepVegasScoreState,
+    keepVegasScoreState: initialKeepVegasScore,
     setKeepVegasScore,
   } = props;
   const [isDragOutline, setDragOutline] = useState(outlineDragging);
@@ -108,24 +108,42 @@ const OptionsInternal: React.FC<
   const [timerVisibleState, setTimerVisibleSrate] = useState(timerVisible);
   const [toggleDrawTypeState, setToggleDrawTypeState] = useState(drawType);
   const [toggleScoreTypeState, setToggleScoreTypeState] = useState(scoreType);
+  const [keepVegasScoreLocal, setKeepVegasScoreLocal] =
+    useState(initialKeepVegasScore);
   const [backgroundId, setBackgroundId] = useState<string>(
     getStoredSolitaireBackground()?.id ?? SOLITAIRE_CLASSIC_BACKGROUND_ID
   );
 
+  useEffect(() => {
+    if (!isWindowVisible) return;
+    setDragOutline(outlineDragging);
+    setBottomBarVisibleState(bottomBarVisible);
+    setTimerVisibleSrate(timerVisible);
+    setToggleDrawTypeState(drawType);
+    setToggleScoreTypeState(scoreType);
+    setKeepVegasScoreLocal(initialKeepVegasScore);
+  }, [
+    isWindowVisible,
+    outlineDragging,
+    bottomBarVisible,
+    timerVisible,
+    drawType,
+    scoreType,
+    initialKeepVegasScore,
+  ]);
+
   const onOkClick = useCallback(() => {
     toggleOptionsWindow(false, "optionsWindow");
+    setOutlineDragging(isDragOutline);
     toggleBottomBar(bottomBarVisibleState);
-    if (timerVisibleState !== timerVisible) {
-      toggleTimer(timerVisibleState);
-      dealCardsAllSteps(true, false);
-    }
-    if (toggleDrawTypeState !== drawType) {
-      toggledrawType(toggleDrawTypeState);
-      dealCardsAllSteps(true, false);
-    }
-    if (toggleScoreTypeState !== scoreType) {
-      toggleScoreType(toggleScoreTypeState);
-      dealCardsAllSteps(true, false);
+    toggleTimer(timerVisibleState);
+    setKeepVegasScore(keepVegasScoreLocal);
+    const shouldRedeal =
+      toggleDrawTypeState !== drawType || toggleScoreTypeState !== scoreType;
+    toggledrawType(toggleDrawTypeState);
+    toggleScoreType(toggleScoreTypeState);
+    if (shouldRedeal) {
+      dealCardsAllSteps(toggleScoreTypeState === "vegas", keepVegasScoreLocal);
     }
     const storedBackground = getStoredSolitaireBackground();
     if (backgroundId !== (storedBackground?.id ?? SOLITAIRE_CLASSIC_BACKGROUND_ID)) {
@@ -146,6 +164,10 @@ const OptionsInternal: React.FC<
     dealCardsAllSteps,
     toggledrawType,
     toggleScoreType,
+    isDragOutline,
+    setOutlineDragging,
+    keepVegasScoreLocal,
+    setKeepVegasScore,
   ]);
 
   const closeButtonAction = useCallback(
@@ -217,9 +239,9 @@ const OptionsInternal: React.FC<
           underscoredLetter={1}
           label="Timed game"
           id="timedGame"
-          checked={timerVisible}
+          checked={timerVisibleState}
           onClick={() => {
-            setTimerVisibleSrate(!timerVisible);
+            setTimerVisibleSrate(!timerVisibleState);
           }}
         />
         <Checkbox
@@ -229,24 +251,23 @@ const OptionsInternal: React.FC<
           checked={isDragOutline}
           onClick={() => {
             setDragOutline(!isDragOutline);
-            setOutlineDragging(!isDragOutline);
           }}
         />
         <Checkbox
           underscoredLetter={7}
           label="Status bar"
           id="statusBar"
-          checked={bottomBarVisible}
+          checked={bottomBarVisibleState}
           onClick={() => {
-            setBottomBarVisibleState(!bottomBarVisible);
+            setBottomBarVisibleState(!bottomBarVisibleState);
           }}
         />
         <Checkbox
           underscoredLetter={0}
           label="Keep score"
           id="keepScore"
-          checked={toggleScoreTypeState === "vegas" && keepVegasScoreState}
-          onClick={() => setKeepVegasScore(!keepVegasScoreState)}
+          checked={toggleScoreTypeState === "vegas" && keepVegasScoreLocal}
+          onClick={() => setKeepVegasScoreLocal(!keepVegasScoreLocal)}
           disabled={toggleScoreTypeState !== "vegas"}
         />
       </div>

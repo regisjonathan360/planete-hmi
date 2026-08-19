@@ -1,0 +1,44 @@
+🧹 NETTOYER LES PISTES DE TEST - FINAL
+
+===================================================
+LE SCRIPT A ÉTÉ FIXÉ ✅
+===================================================
+
+Erreur précédente: ❌ Permission denied on system trigger
+Cause: DISABLE TRIGGER ALL n'était pas autorisé
+Fixé: ✅ Script mis à jour (pas de DISABLE TRIGGER)
+
+===================================================
+FAIRE MAINTENANT - 30 SECONDES:
+===================================================
+
+1. Allez: https://supabase.com/dashboard
+2. SQL Editor → New Query
+3. Ouvrez: supabase/migrations/20260818_clean_dummy_data.sql
+4. Copiez TOUT
+5. Collez dans Supabase
+6. Cmd+Enter (ou Ctrl+Enter)
+7. Attendez: ✅ Query successful
+
+===================================================
+VÉRIFICATION:
+
+Vous devriez voir:
+- CLEANUP COMPLETE
+- remaining_tracks: 0
+- remaining_playlists: 0
+
+===================================================
+APRÈS NETTOYAGE:
+
+1. Rafraîchissez: /admin/radio
+2. SoundHelix disparu ✅
+3. Vous voyez classements réels (ou liste vide)
+4. Sélectionnez un classement
+5. Cliquez "✅ Appliquer"
+6. Testez radio ▶️
+
+===================================================
+C'EST TOUT!
+
+Let's clean this! 🧹

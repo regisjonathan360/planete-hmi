@@ -48,6 +48,7 @@ export interface AudiomackRawTrack {
   preview?: string | null;
   preview_url?: string | null;
   audio_url?: string | null;
+  streaming_url?: string | null;
   url_slug?: string;
   artist_url_slug?: string;
   album?: string;
@@ -73,6 +74,13 @@ export interface AudiomackRawTrack {
 }
 
 export interface AudiomackRawPlaylist {
+  id?: string | number;
+  title?: string;
+  name?: string;
+  description?: string | null;
+  image?: string | null;
+  image_base?: string | null;
+  genre?: string | null;
   results?: AudiomackRawTrack[];
   tracks?: AudiomackRawTrack[];
   [key: string]: unknown;

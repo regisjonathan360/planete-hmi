@@ -16,20 +16,16 @@ export const Button: React.FC<ButtonPropTypes> = ({
 }) => {
   const [buttonActive, setButtonActive] = useState(false);
 
-  const handleButtonClick = ({ key }: { key: string }) => {
-    if (key === "Enter" && !disabled) {
-      onClick?.();
-    }
-  };
-
   return (
-    <div
+    <button
+      type="button"
       className={[
         styles.button,
         buttonActive ? styles["button--active"] : undefined,
         disabled ? styles["button--disabled"] : undefined,
       ].join(" ")}
-      tabIndex={!disabled ? 1 : -1}
+      tabIndex={!disabled ? 0 : -1}
+      disabled={disabled}
       onMouseDown={() => {
         !disabled && setButtonActive(true);
       }}
@@ -40,8 +36,6 @@ export const Button: React.FC<ButtonPropTypes> = ({
         !disabled && setButtonActive(false);
       }}
       onClick={() => !disabled && onClick?.()}
-      onKeyPress={handleButtonClick}
-      role="button"
       aria-label={text}
     >
       <div className={buttonActive ? styles.button__activeBorder : undefined}>
@@ -55,6 +49,6 @@ export const Button: React.FC<ButtonPropTypes> = ({
             )
           )}
       </div>
-    </div>
+    </button>
   );
 };

@@ -41,7 +41,7 @@ export function normalizeAudiomackResponse(raw: AudiomackRawPlaylist): Audiomack
       artworkUrl: firstHttp(t.image, t.image_base, t.images?.original?.filename),
       artistImageUrl: firstHttp(t.uploader?.image, t.uploader?.image_base, t.uploader?.thumbnail),
       sourceTrackUrl: buildTrackUrl(artistSlug, trackSlug, directUrl ?? undefined),
-      previewUrl: firstHttp(t.preview, t.preview_url, t.audio_url),
+      previewUrl: firstHttp(t.streaming_url, t.preview, t.preview_url, t.audio_url),
       artistSlug,
       trackSlug,
       albumName: t.album ? String(t.album) : null,

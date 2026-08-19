@@ -124,7 +124,9 @@ export const cardDistribution = (
       };
     case ACTION_TYPES.TURN_CARD_ON_PILE:
       // eslint-disable-next-line no-case-declarations
-      const newStateForPile = state.cardsOnPiles[action.cardToTurn];
+      const pileKey = String(action.cardToTurn);
+      const newStateForPile = state.cardsOnPiles[pileKey];
+      if (!newStateForPile?.length) return state;
       // eslint-disable-next-line no-case-declarations
       const mapState = newStateForPile.map((card, index) => {
         return index === newStateForPile.length - 1
@@ -135,13 +137,13 @@ export const cardDistribution = (
               return attribute;
             })
           : card;
-      });
+      }) as cardConfigType[];
       return {
         ...state,
         cardsOnPiles: {
           ...state.cardsOnPiles,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          [(action.cardToTurn as any)[0]]: mapState,
+          [pileKey]: mapState,
         },
       };
     case ACTION_TYPES.UNDO_TAKE_ONE_FROM_STOCK:

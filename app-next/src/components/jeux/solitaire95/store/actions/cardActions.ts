@@ -24,7 +24,18 @@ import {
 } from "./actionTypes";
 
 const mixCardsForGame = (cards: cardConfigType[]): cardConfigType[][] => {
-  const randomizeCardInput = cards.sort(() => Math.random() - 0.5);
+  // Ne jamais trier `createCards` directement : ce tableau est partagé par
+  // toutes les donnes et un tri en place rendait les parties suivantes
+  // dépendantes de la précédente. Fisher-Yates donne aussi un mélange plus
+  // régulier que `sort(() => Math.random() - 0.5)`.
+  const randomizeCardInput = [...cards];
+  for (let index = randomizeCardInput.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [randomizeCardInput[index], randomizeCardInput[randomIndex]] = [
+      randomizeCardInput[randomIndex],
+      randomizeCardInput[index],
+    ];
+  }
   const cardsForStock = randomizeCardInput.slice(0, 24);
   const cardsForPiles = randomizeCardInput.slice(24);
   return [cardsForStock, cardsForPiles];

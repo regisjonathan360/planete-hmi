@@ -1,4 +1,4 @@
-﻿import React from "react";
+﻿import React, { useCallback, useEffect } from "react";
 import { connect } from "react-redux";
 import { GameState, Points } from "../../../store/reducers";
 import { countScore, saveTime, saveScoreTime } from "../../../store/actions/";
@@ -36,8 +36,6 @@ const TimerInternal: React.FC<TimerStatePropTypes & TimerDispatchPropTypes> = (
     saveScoreTime,
   } = props;
 
-  const saveTimeCallback = () => saveTime(time);
-
   const time = useStartTimer(
     gameStarted,
     gameFinished,
@@ -46,7 +44,12 @@ const TimerInternal: React.FC<TimerStatePropTypes & TimerDispatchPropTypes> = (
   );
   useSubstractPointsEveryTenSeconds(score, time, substractPoints);
 
-  window.addEventListener("beforeunload", saveTimeCallback);
+  const saveTimeCallback = useCallback(() => saveTime(time), [saveTime, time]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", saveTimeCallback);
+    return () => window.removeEventListener("beforeunload", saveTimeCallback);
+  }, [saveTimeCallback]);
 
   return <div className={styles.timer}>Time: {time}</div>;
 };

@@ -281,7 +281,7 @@ const CardStockInternal: React.FC<
   ]);
 
   const handleButtonClick = ({ key }: { key: string }) => {
-    if (key === "Enter") {
+    if (key === "Enter" || key === " ") {
       if (!cardsOnStock?.length && blockVegasStock) {
         return undefined;
       }
@@ -300,8 +300,16 @@ const CardStockInternal: React.FC<
         className={styles.cardStock}
         onClick={stockOnClickCallback()}
         style={{ marginRight: `${distanceBtwPiles}px` }}
-        onKeyPress={handleButtonClick}
-        tabIndex={!isAnyWindowOpened ? 1 : -1}
+        onKeyDown={handleButtonClick}
+        tabIndex={!isAnyWindowOpened ? 0 : -1}
+        role="button"
+        aria-label={
+          cardsOnStock?.length
+            ? drawType === "drawOne"
+              ? "Piocher une carte"
+              : "Piocher trois cartes"
+            : "Retourner le talon"
+        }
       >
         <div className={styles.cardStock__cardHolder}>
           <div className={stockHolderBackground} />

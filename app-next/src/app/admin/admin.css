@@ -379,6 +379,121 @@ body:has(.admin) > div[aria-hidden="true"][style*="z-index: 50"] {
 .login-card p { color: var(--admin-muted); font-size: 0.85rem; margin: 0 0 1.5rem; }
 .error-text { color: var(--admin-danger); font-size: 0.85rem; margin-top: 0.5rem; }
 
+/* Éditeur des cartes du Solitaire : densité maîtrisée et aperçu persistant. */
+.solitaire-admin-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.solitaire-admin-editor-column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.solitaire-admin-editor-card {
+  position: sticky;
+  top: 1rem;
+  z-index: 5;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.solitaire-admin-editor-card > .admin-card__title {
+  margin-bottom: 0.5rem;
+}
+
+.solitaire-admin-editor-header {
+  position: sticky;
+  top: -0.75rem;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: -0.75rem -0.75rem 0.5rem;
+  padding: 0.75rem 0.75rem 0.5rem;
+  background: var(--admin-panel);
+  border-bottom: 1px solid rgba(122, 162, 255, 0.14);
+}
+
+.solitaire-admin-editor-header > :last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.solitaire-admin-editor-header .field {
+  margin-bottom: 0.35rem;
+}
+
+.solitaire-admin-selected-artist {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 8px;
+  background: var(--admin-panel-2, #111827);
+}
+
+.solitaire-admin-field {
+  gap: 0.2rem;
+  margin-bottom: 0.45rem;
+}
+
+.solitaire-admin-field label {
+  font-size: 0.76rem;
+}
+
+.solitaire-admin-range {
+  min-height: 1.05rem;
+  accent-color: var(--admin-accent-2);
+}
+
+.solitaire-admin-save-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.solitaire-admin-presets-card details {
+  margin-bottom: 0.25rem !important;
+}
+
+.solitaire-admin-presets-card .field {
+  gap: 0.2rem;
+  margin-bottom: 0.4rem;
+}
+
+@media (max-width: 900px) {
+  .solitaire-admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .solitaire-admin-editor-card {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .solitaire-admin-editor-header {
+    position: static;
+    margin: 0 0 0.5rem;
+    padding: 0 0 0.5rem;
+  }
+}
+
+@media (max-width: 620px) {
+  .solitaire-admin-editor-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
 .edit-panel { border-top: 1px dashed var(--admin-border); margin-top: 0.6rem; padding-top: 0.6rem; grid-column: 1 / -1; }
 .edit-panel__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; }
 .banner {

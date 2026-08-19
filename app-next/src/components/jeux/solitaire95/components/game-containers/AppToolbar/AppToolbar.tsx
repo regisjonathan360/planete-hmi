@@ -1,4 +1,4 @@
-﻿import React from "react";
+﻿import React, { useEffect, useRef } from "react";
 import { ToolBar, TopbarButton } from "../../ui-components";
 import { ToolDropdown } from "../../ui-components";
 import styles from "./AppToolbar.module.scss";
@@ -22,8 +22,22 @@ export const AppToolbar: React.FC<AppToolbarPropTypes> = (props) => {
     setBottomBarText,
   } = props;
 
+  const toolbarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const closeMenusOutside = (event: PointerEvent) => {
+      if (!toolbarRef.current?.contains(event.target as Node)) {
+        setGameVisible(false);
+        setHelpVisible(false);
+      }
+    };
+    document.addEventListener("pointerdown", closeMenusOutside);
+    return () => document.removeEventListener("pointerdown", closeMenusOutside);
+  }, [setGameVisible, setHelpVisible]);
+
   return (
-    <ToolBar>
+    <div ref={toolbarRef}>
+      <ToolBar>
       <div className={styles.topBarButtonContainer}>
         <div style={{ width: "100%" }}>
           <TopbarButton
@@ -35,12 +49,7 @@ export const AppToolbar: React.FC<AppToolbarPropTypes> = (props) => {
             label="Game"
             id={"gameButton"}
             active={gameVisible}
-            onMouseOver={() => {
-              if (helpVisible) {
-                setGameVisible(!gameVisible);
-                setHelpVisible(false);
-              }
-            }}
+            onMouseOver={() => undefined}
           />
           <ToolDropdown visible={gameVisible} buttonId={"gameButton"}>
             <GameDropdown
@@ -61,12 +70,7 @@ export const AppToolbar: React.FC<AppToolbarPropTypes> = (props) => {
             label="Help"
             id={"helpButton"}
             active={helpVisible}
-            onMouseOver={() => {
-              if (gameVisible) {
-                setHelpVisible(!helpVisible);
-                setGameVisible(false);
-              }
-            }}
+            onMouseOver={() => undefined}
           />
           <ToolDropdown visible={helpVisible} buttonId={"helpButton"}>
             <HelpDropdown
@@ -76,6 +80,7 @@ export const AppToolbar: React.FC<AppToolbarPropTypes> = (props) => {
           </ToolDropdown>
         </div>
       </div>
-    </ToolBar>
+      </ToolBar>
+    </div>
   );
 };

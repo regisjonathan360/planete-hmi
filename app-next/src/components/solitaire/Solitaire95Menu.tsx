@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { dealCards, toggleWindow } from "@/components/jeux/solitaire95/store/actions/";
+import { toggleWindow } from "@/components/jeux/solitaire95/store/actions/";
+import { dealCardsAllSteps } from "@/components/jeux/solitaire95/helpers/dealCardsAllSteps";
 import {
   SOLITAIRE_MODES,
   SOLITAIRE_MODE_SWITCH_EVENT,
@@ -28,17 +29,18 @@ export function Solitaire95Menu() {
      (SOLITAIRE_START_DIRECT_KEY) qui fait démarrer le Klondike directement,
      sans écran d'accueil. L'écran d'accueil reste la porte d'entrée d'une
      visite directe. */
-  const [visible, setVisible] = useState(() => {
+  const [dismissed, setDismissed] = useState(() => {
     try {
-      return sessionStorage.getItem(SOLITAIRE_START_DIRECT_KEY) !== "1";
+      return sessionStorage.getItem(SOLITAIRE_START_DIRECT_KEY) === "1";
     } catch {
-      return true;
+      return false;
     }
   });
   const [modesOpen, setModesOpen] = useState(false);
   const dispatch = useDispatch();
   const { enterFullscreen } = useSolitaireFullscreen();
-  const { closeMenu } = useSolitaireGameMenu();
+  const { closeMenu, isMenuOpen } = useSolitaireGameMenu();
+  const visible = !dismissed || isMenuOpen;
 
   /* Consomme le signal et lance une nouvelle donne (l'écran d'accueil est
      déjà masqué par l'état initial ci-dessus). */
@@ -51,26 +53,29 @@ export function Solitaire95Menu() {
       /* ignore */
     }
     if (startDirect) {
-      dispatch(dealCards());
+      dealCardsAllSteps(dispatch, false, false);
     }
   }, [dispatch]);
 
   if (!visible) return null;
 
   const startGame = () => {
-    dispatch(dealCards());
+    dealCardsAllSteps(dispatch, false, false);
     enterFullscreen();
-    setVisible(false);
+    setDismissed(true);
+    closeMenu();
   };
 
   const openOptions = () => {
     dispatch(toggleWindow(true, "optionsWindow"));
-    setVisible(false);
+    setDismissed(true);
+    closeMenu();
   };
 
   const openHelp = () => {
     dispatch(toggleWindow(true, "helpTopicsWindow"));
-    setVisible(false);
+    setDismissed(true);
+    closeMenu();
   };
 
   const switchMode = (mode: string) => {
@@ -136,7 +141,14 @@ export function Solitaire95Menu() {
           dans le menu « Game » de la fenêtre.
         </p>
 
-        <button type="button" className={styles.menu__back} onClick={closeMenu}>
+        <button
+          type="button"
+          className={styles.menu__back}
+          onClick={() => {
+            setDismissed(true);
+            closeMenu();
+          }}
+        >
           <span aria-hidden="true">←</span>
           Fermer
         </button>
