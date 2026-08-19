@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CollectProgressBar, readCollectStream, type CollectProgress } from "@/components/CollectProgressBar";
 
 interface NewsSource {
@@ -266,6 +266,32 @@ function EditPanel({
   const [excerpt, setExcerpt] = useState(article.display_excerpt || "");
   const [category, setCategory] = useState(article.category);
   const [featured, setFeatured] = useState(article.is_featured);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setUploading(true);
+    setUploadError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/admin/news/image", { method: "POST", body: form });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setUploadError(data.error ?? "Échec de l'envoi de l'image.");
+        return;
+      }
+      setImageUrl(data.url ?? "");
+    } catch {
+      setUploadError("Erreur réseau pendant l'envoi de l'image.");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   return (
     <div className="edit-panel">
@@ -280,10 +306,22 @@ function EditPanel({
         </div>
       </div>
       <div className="field">
-        <label>URL de l&apos;image</label>
-        <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://... (laisser vide pour l'image source)" />
+        <label>Image de l&apos;actualité</label>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://... (laisser vide pour l'image source)" style={{ flex: 1 }} />
+          <button type="button" className="btn btn--ghost btn--sm" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+            {uploading ? "Envoi..." : "Choisir sur l'appareil"}
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" style={{ display: "none" }} onChange={handleImageUpload} />
+        </div>
+        {uploadError && <p style={{ color: "var(--admin-danger, #dc2626)", fontSize: "0.8rem", margin: "0.35rem 0 0" }}>{uploadError}</p>}
         {imageUrl && (
-          <img src={imageUrl} alt="Preview" style={{ width: 120, height: 80, objectFit: "cover", borderRadius: 6, marginTop: "0.4rem", border: "1px solid var(--admin-border)" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "0.4rem" }}>
+            <img src={imageUrl} alt="Preview" style={{ width: 120, height: 80, objectFit: "cover", borderRadius: 6, border: "1px solid var(--admin-border)" }} />
+            {article.display_image_url && (
+              <button type="button" className="btn btn--ghost btn--sm" onClick={() => setImageUrl("")}>Réutiliser l&apos;image source</button>
+            )}
+          </div>
         )}
       </div>
       <div className="field">
