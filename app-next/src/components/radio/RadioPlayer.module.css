@@ -60,7 +60,7 @@
 }
 
 .stationScreen {
-  top: 34%;
+  top: 36%;
   left: 36%;
   display: grid;
   place-items: center;
@@ -595,7 +595,7 @@
   }
 
   .stationScreen {
-    top: 34%;
+    top: 36%;
     left: 36%;
     width: 32%;
     height: 8%;
