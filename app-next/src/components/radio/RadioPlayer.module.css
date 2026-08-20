@@ -60,13 +60,13 @@
 }
 
 .stationScreen {
-  top: 33%;
-  left: 40%;
+  top: 35%;
+  left: 35%;
   display: grid;
-  width: 22%;
+  width: 35%;
   min-width: 0;
-  height: 4.5%;
-  padding: 0.2% 0.8% 0.1%;
+  height: 7%;
+  padding: 0.4% 1% 0.2%;
   overflow: hidden;
   color: #e5f4ff;
   text-shadow: 0 1px 0 #031027, 0 0 6px rgba(92, 192, 255, 0.65);
@@ -593,11 +593,11 @@
   }
 
   .stationScreen {
-    top: 33%;
-    left: 40%;
-    width: 20%;
-    height: 4.5%;
-    padding-top: 0.5%;
+    top: 35%;
+    left: 35%;
+    width: 30%;
+    height: 7%;
+    padding-top: 1%;
   }
 
   .trackTitle {
