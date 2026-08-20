@@ -60,13 +60,13 @@
 }
 
 .stationScreen {
-  top: 36%;
-  left: 23%;
+  top: 33%;
+  left: 27%;
   display: grid;
-  width: 38%;
+  width: 30%;
   min-width: 0;
-  height: 8%;
-  padding: 0.7% 1.4% 0.3%;
+  height: 7%;
+  padding: 0.5% 1.2% 0.2%;
   overflow: hidden;
   color: #e5f4ff;
   text-shadow: 0 1px 0 #031027, 0 0 6px rgba(92, 192, 255, 0.65);
@@ -237,7 +237,7 @@
 .speakerRightCenter {
   position: absolute;
   z-index: 3;
-  top: 63%;
+  top: 62%;
   width: 7%;
   aspect-ratio: 1;
   display: grid;
@@ -253,8 +253,8 @@
   transition: opacity 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
-.speakerLeftCenter { left: 18.5%; }
-.speakerRightCenter { right: 18.5%; }
+.speakerLeftCenter { left: 17.5%; }
+.speakerRightCenter { right: 17.5%; }
 
 .boombox:hover .speakerLeftCenter,
 .boombox:hover .speakerRightCenter,
@@ -277,12 +277,12 @@
 }
 
 .coverWell {
-  top: 49%;
-  left: 36%;
+  top: 50%;
+  left: 34.5%;
   display: grid;
   z-index: 1;
-  width: 28%;
-  aspect-ratio: 1.6;
+  width: 31%;
+  aspect-ratio: 1.5;
   place-items: center;
   overflow: hidden;
   background: #03060a;
@@ -330,8 +330,8 @@
 }
 
 .playButton {
-  top: 48.9%;
-  left: 47.3%;
+  top: 50%;
+  left: 48.5%;
   z-index: 2;
   width: 5.5%;
   min-width: 32px;
@@ -593,11 +593,11 @@
   }
 
   .stationScreen {
-    top: 36%;
-    left: 24%;
-    width: 36%;
-    height: 8%;
-    padding-top: 2.5%;
+    top: 33%;
+    left: 28%;
+    width: 28%;
+    height: 7%;
+    padding-top: 1.5%;
   }
 
   .trackTitle {
