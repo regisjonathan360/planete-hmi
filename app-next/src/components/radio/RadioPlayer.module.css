@@ -464,10 +464,10 @@
 .minimizeButton {
   top: 19.1%;
   right: 12.4%;
-  width: clamp(20px, 3vw, 28px);
+  width: clamp(26px, 3.8vw, 36px);
   aspect-ratio: 1;
   color: rgba(241, 248, 255, 0.88);
-  font-size: clamp(9px, 1.25vw, 13px);
+  font-size: clamp(11px, 1.6vw, 17px);
   background: rgba(3, 9, 18, 0.58);
   border: 1px solid rgba(208, 231, 255, 0.35);
   border-radius: 50%;

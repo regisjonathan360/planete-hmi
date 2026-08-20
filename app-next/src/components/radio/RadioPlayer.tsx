@@ -49,7 +49,7 @@ export function RadioPlayer() {
     setGenre,
   } = useRadioPlayer({ autoPlay: false, volume: 0.7, preloadCount: 3 });
 
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const genreOptions = useMemo(
     () => Array.from(new Set(
       playlist
