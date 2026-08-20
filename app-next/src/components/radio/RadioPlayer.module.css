@@ -277,11 +277,11 @@
 }
 
 .coverWell {
-  top: 49%;
-  left: 35.5%;
+  top: 50%;
+  left: 36%;
   display: grid;
   z-index: 1;
-  width: 29%;
+  width: 27%;
   aspect-ratio: 1;
   place-items: center;
   overflow: hidden;
@@ -330,17 +330,17 @@
 }
 
 .playButton {
-  top: 55%;
-  left: 48.5%;
+  top: 57%;
+  left: 48%;
   z-index: 2;
-  width: 7%;
-  min-width: 38px;
+  width: 5%;
+  min-width: 30px;
   aspect-ratio: 1;
-  font-size: clamp(10px, 1.6vw, 17px);
-  background: rgba(0, 0, 0, 0.35);
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  font-size: clamp(9px, 1.3vw, 14px);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.65);
   border-radius: 50%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   transition: transform 160ms ease, filter 160ms ease;
 }
 
@@ -594,8 +594,8 @@
 
   .stationScreen {
     top: 32%;
-    left: 35%;
-    width: 24%;
+    left: 36%;
+    width: 22%;
     height: 6.5%;
     padding-top: 1%;
   }
