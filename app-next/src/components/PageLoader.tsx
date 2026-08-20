@@ -188,25 +188,10 @@ export function PageLoader() {
         <div className="page-loader__brand">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="page-loader__logo" src="/brand/logo1.png" alt="" width={64} height={64} />
-          <span className="page-loader__title">
-            Planète <em>HMI</em>
-          </span>
         </div>
 
         <div className="page-loader__bar">
           <i />
-        </div>
-
-        <div className="page-loader__grid">
-          <div className="page-loader__row">
-            <span className="page-loader__card"><i /><i /><i /></span>
-            <span className="page-loader__card"><i /><i /><i /></span>
-            <span className="page-loader__card"><i /><i /><i /></span>
-          </div>
-          <div className="page-loader__row page-loader__row--wide">
-            <span className="page-loader__card"><i /><i /><i /></span>
-            <span className="page-loader__card"><i /><i /><i /></span>
-          </div>
         </div>
 
         <p className="page-loader__hint">Les étoiles de la musique haïtienne {"s'allument…"}</p>
