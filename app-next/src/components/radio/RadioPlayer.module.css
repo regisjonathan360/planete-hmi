@@ -60,10 +60,10 @@
 }
 
 .stationScreen {
-  top: 34%;
-  left: 38%;
+  top: 36%;
+  left: 40%;
   display: grid;
-  width: 28%;
+  width: 26%;
   min-width: 0;
   height: 5.5%;
   padding: 0.3% 0.8% 0.2%;
@@ -330,13 +330,13 @@
 }
 
 .playButton {
-  top: 59%;
-  left: 46.5%;
+  top: 58.5%;
+  left: 46%;
   z-index: 2;
-  width: 6%;
-  min-width: 34px;
+  width: 7%;
+  min-width: 40px;
   aspect-ratio: 1;
-  font-size: clamp(10px, 1.4vw, 15px);
+  font-size: clamp(11px, 1.6vw, 18px);
   background: rgba(0, 0, 0, 0.3);
   border: 2px solid rgba(255, 255, 255, 0.65);
   border-radius: 50%;
@@ -593,9 +593,9 @@
   }
 
   .stationScreen {
-    top: 34%;
-    left: 38%;
-    width: 24%;
+    top: 36%;
+    left: 40%;
+    width: 22%;
     height: 5.5%;
     padding-top: 0.8%;
   }
