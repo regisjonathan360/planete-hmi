@@ -60,13 +60,14 @@
 }
 
 .stationScreen {
-  top: 35%;
-  left: 42%;
+  top: 34%;
+  left: 36%;
   display: grid;
-  width: 30%;
+  place-items: center;
+  width: 36%;
   min-width: 0;
-  height: 7%;
-  padding: 0.4% 1% 0.2%;
+  height: 8%;
+  padding: 0;
   overflow: hidden;
   color: #e5f4ff;
   text-shadow: 0 1px 0 #031027, 0 0 6px rgba(92, 192, 255, 0.65);
@@ -88,6 +89,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-align: center;
 }
 
 .trackTitle {
@@ -330,8 +332,8 @@
 }
 
 .playButton {
-  top: 57%;
-  left: 49%;
+  top: 58.5%;
+  left: 46%;
   z-index: 2;
   width: 7%;
   min-width: 40px;
@@ -593,11 +595,11 @@
   }
 
   .stationScreen {
-    top: 35%;
-    left: 42%;
-    width: 28%;
-    height: 7%;
-    padding-top: 1%;
+    top: 34%;
+    left: 36%;
+    width: 32%;
+    height: 8%;
+    padding-top: 0;
   }
 
   .trackTitle {
