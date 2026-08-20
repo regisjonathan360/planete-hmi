@@ -60,10 +60,10 @@
 }
 
 .stationScreen {
-  top: 38%;
-  left: 42%;
+  top: 37%;
+  left: 48%;
   display: grid;
-  width: 24%;
+  width: 22%;
   min-width: 0;
   height: 5%;
   padding: 0.2% 0.8% 0.1%;
@@ -331,7 +331,7 @@
 
 .playButton {
   top: 58%;
-  left: 47%;
+  left: 50%;
   z-index: 2;
   width: 7%;
   min-width: 40px;
@@ -593,9 +593,9 @@
   }
 
   .stationScreen {
-    top: 38%;
-    left: 42%;
-    width: 22%;
+    top: 37%;
+    left: 48%;
+    width: 20%;
     height: 5%;
     padding-top: 0.6%;
   }
