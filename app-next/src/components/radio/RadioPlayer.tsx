@@ -13,7 +13,6 @@ import {
   FaMusic,
   FaPause,
   FaPlay,
-  FaBroadcastTower,
   FaSpinner,
   FaStepBackward,
   FaStepForward,
@@ -75,8 +74,8 @@ export function RadioPlayer() {
         data-playing={isPlaying && !isMuted}
       >
         <span className={styles.launcherPulse} aria-hidden="true" />
-        <FaBroadcastTower aria-hidden="true" />
-        <span>Radio</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={styles.launcherImg} src="/images/radio/hmi-boombox-mini.png" alt="" aria-hidden="true" draggable={false} />
       </button>
     );
   }
