@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-21T05:38:44.487Z",
+    "genereLe": "2026-08-22T05:33:39.621Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3f26140e1acb5831ac739b6efc4903f9/250x250-000000-80-0-0.jpg",
       "topTitre": "Apiye (feat. Zile)",
       "metriques": {
-        "deezerFans": 8965,
+        "deezerFans": 8969,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "AIME MOI",
       "metriques": {
-        "deezerFans": 492898,
+        "deezerFans": 493137,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -52,7 +52,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg",
       "topTitre": "Ayo Girl (Haitian Konpa Remix)",
       "metriques": {
-        "deezerFans": 7902,
+        "deezerFans": 7904,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Tag li",
       "metriques": {
-        "deezerFans": 10403,
+        "deezerFans": 10408,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,21 +163,21 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
-      "topTitre": "Rise Again",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 1228,
+        "deezerFans": 15,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5858154",
+        "deezer": "https://www.deezer.com/artist/220083935",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 2.4
+      "scoreHMI": 0
     },
     {
       "nom": "BIC",
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3783832,
+        "deezerFans": 3783868,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
