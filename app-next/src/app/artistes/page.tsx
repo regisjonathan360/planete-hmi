@@ -2,8 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ArtistesGrid } from "./ArtistesGrid";
 import { SiteHeader } from "@/components/SiteHeader";
 import Link from "next/link";
-import { HaitiShapeButton } from "@/components/HaitiMap/HaitiShapeButton";
-import { EtoilesEteintesLink } from "@/components/EtoilesEteintes/EtoilesEteintesLink";
+import { ArtistesSidebar } from "./ArtistesSidebar";
 import { withFallbackAvatars } from "@/lib/artists/avatar";
 import { PRODUCER_ARTIST_TYPES, countProductionsByProducer } from "@/lib/producers/queries";
 import { canonicalizeArtistRoles } from "@/lib/artists/roles";
@@ -281,57 +280,11 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
       <main id="contenu">
         <div className="wrap artistes-layout">
           {/* Sidebar : bouton carte + catégories */}
-          <aside className="artistes-sidebar">
-            {/* Bouton carte Haïti — silhouette générée depuis le GeoJSON GADM réel */}
-            <HaitiShapeButton />
-
-            {/* Catégories */}
-            <nav
-              className="artistes-sidebar__nav"
-              aria-label="Catégories d'artistes"
-            >
-              {categories.map((cat) => {
-                const isActive = cat.type === activeType;
-                return (
-                  <a
-                    key={cat.type || "all"}
-                    href={cat.type ? `/artistes?type=${cat.type}` : "/artistes"}
-                    aria-current={isActive ? "page" : undefined}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "0.55rem 0.8rem",
-                      borderRadius: 8,
-                      fontSize: "0.82rem",
-                      fontWeight: isActive ? 600 : 400,
-                      color: isActive ? "#f4efe4" : "#9a9ac0",
-                      textDecoration: "none",
-                      background: isActive ? "rgba(124,92,255,0.22)" : "rgba(20,20,42,0.5)",
-                      border: `1px solid ${isActive ? "rgba(124,92,255,0.6)" : "transparent"}`,
-                      transition: "all 0.15s",
-                    }}
-                  >
-                    <span>{cat.label}</span>
-                    <span
-                      style={{
-                        fontSize: "0.7rem",
-                        opacity: 0.6,
-                        background: isActive ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)",
-                        padding: "0.1rem 0.4rem",
-                        borderRadius: 999,
-                      }}
-                    >
-                      {cat.count}
-                    </span>
-                  </a>
-                );
-              })}
-            </nav>
-
-            {/* Hommage aux artistes disparus, sous les options de filtre */}
-            <EtoilesEteintesLink count={deceasedCount} />
-          </aside>
+          <ArtistesSidebar
+            categories={categories.map((c) => ({ type: c.type, label: c.label, count: c.count }))}
+            activeType={activeType}
+            deceasedCount={deceasedCount}
+          />
 
           {/* Contenu principal */}
           <div style={{ flex: 1, minWidth: 0 }}>

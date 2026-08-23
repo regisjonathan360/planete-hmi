@@ -757,6 +757,9 @@ a.section-link:hover { color: var(--flame-orange); }
 .artistes-layout { padding-top: 2rem; display: flex; gap: 2rem; align-items: flex-start; }
 .artistes-sidebar { position: sticky; top: 5rem; flex-shrink: 0; width: 200px; }
 .artistes-sidebar__nav { display: flex; flex-direction: column; gap: 0.3rem; }
+.artistes-sidebar-toggle,
+.artistes-sidebar-backdrop,
+.artistes-sidebar-close { display: none; }
 .a-card { display: flex; flex-direction: column; transition: transform 0.25s var(--ease); }
 .a-card:hover { transform: translateY(-5px); }
 .a-card__media { position: relative; aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
@@ -859,6 +862,92 @@ a.section-link:hover { color: var(--flame-orange); }
   .chart-item__stat { min-width: 0; }
   .event-row { grid-template-columns: 64px 1fr; }
   .event-row .btn { grid-column: 1 / -1; }
+
+  /* ── Sidebar drawer mobile ── */
+  .artistes-sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background: rgba(18, 17, 27, 0.55);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(244, 239, 228, 0.12);
+    border-radius: 50%;
+    color: rgba(244, 239, 228, 0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: fixed;
+    top: 4.5rem;
+    right: 1rem;
+    z-index: 900;
+  }
+  .artistes-sidebar-toggle:hover {
+    border-color: rgba(70, 183, 255, 0.5);
+    color: #46b7ff;
+  }
+
+  .artistes-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .artistes-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(12, 11, 20, 0.97);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-right: 1px solid rgba(244, 239, 228, 0.08);
+  }
+  .artistes-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .artistes-sidebar-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(244, 239, 228, 0.06);
+    border: 1px solid rgba(244, 239, 228, 0.12);
+    border-radius: 50%;
+    color: rgba(244, 239, 228, 0.7);
+    cursor: pointer;
+    align-self: flex-end;
+    transition: all 0.2s;
+  }
+  .artistes-sidebar-close:hover {
+    color: #f4efe4;
+    border-color: rgba(244, 239, 228, 0.3);
+  }
+
+  .artistes-sidebar__nav {
+    flex-direction: column;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 }
 
 /* ============ TOAST (retour visuel démo) ============ */
