@@ -220,8 +220,27 @@
 .artistes-sphere-section {
   display: flex;
   justify-content: center;
-  padding: 1rem 0 2rem;
+  align-items: center;
+  padding: 2rem 0 2.5rem;
   min-height: 300px;
+  position: relative;
+}
+.artistes-sphere-section::before {
+  content: "";
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(700px, 95vw);
+  height: calc(100% + 1rem);
+  background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 78%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.artistes-sphere-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 
