@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-22T05:33:39.621Z",
+    "genereLe": "2026-08-23T05:35:37.124Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Tag li",
+      "titre": "PARDON MAMAN",
       "score": 27.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -36,9 +36,9 @@
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Apiye (feat. Zile)",
+      "titre": "Krazèd Fwaye",
       "score": 25.8,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3f26140e1acb5831ac739b6efc4903f9/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3a693849e9532cf55fb122c51d883c9f/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 5,
@@ -46,7 +46,7 @@
       "genre": "Konpa",
       "titre": "Ayo Girl (Haitian Konpa Remix)",
       "score": 24.3,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/cbffebb8039b49446b8aaadde84f15ac/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
@@ -76,9 +76,17 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "Manyen m la (feat. Kenny Haiti)",
+      "titre": "M Pa Kyè",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 10,
+      "nom": "Belo",
+      "genre": "Reggae",
+      "titre": "Rise Again",
+      "score": 2.4,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
