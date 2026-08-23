@@ -757,7 +757,7 @@ a.section-link:hover { color: var(--flame-orange); }
 .artistes-layout { padding-top: 2rem; display: flex; gap: 2rem; align-items: flex-start; }
 .artistes-sidebar { position: sticky; top: 5rem; flex-shrink: 0; width: 200px; }
 .artistes-sidebar__nav { display: flex; flex-direction: column; gap: 0.3rem; }
-.artistes-sidebar-toggle,
+.artistes-sidebar-toggle { display: none; }
 .artistes-sidebar-backdrop,
 .artistes-sidebar-close { display: none; }
 .a-card { display: flex; flex-direction: column; transition: transform 0.25s var(--ease); }
