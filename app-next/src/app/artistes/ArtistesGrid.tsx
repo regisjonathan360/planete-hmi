@@ -46,12 +46,12 @@ export function ArtistesGrid({
   const [sort, setSort] = useState<SortMode>("name");
   const [viewMode, setViewMode] = useState<ViewMode>("sphere");
   const [filtersExpanded, setFiltersExpanded] = useState(false);
-  const [sphereSize, setSphereSize] = useState(500);
+  const [sphereSize, setSphereSize] = useState(600);
 
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
-      setSphereSize(w < 640 ? w - 32 : w < 1024 ? 520 : 620);
+      setSphereSize(w < 640 ? Math.min(w - 16, 400) : w < 1024 ? 600 : 720);
     };
     update();
     window.addEventListener("resize", update);
@@ -272,11 +272,11 @@ export function ArtistesGrid({
             <SphereImageGrid
               images={sphereImages}
               containerSize={sphereSize}
-              sphereRadius={sphereSize * 0.38}
+              sphereRadius={sphereSize * 0.40}
               dragSensitivity={0.6}
               momentumDecay={0.95}
               maxRotationSpeed={5}
-              baseImageScale={0.14}
+              baseImageScale={0.17}
               perspective={1000}
               autoRotate={true}
               autoRotateSpeed={0.15}
