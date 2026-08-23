@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 // ─── Types ───────────────────────────────────────────────────────
 export interface ImageData {
@@ -49,25 +49,24 @@ export default function SphereImageGrid({
   onImageClick,
   className = "",
 }: SphereImageGridProps) {
-  const [mounted, setMounted] = useState(false);
-  const [rotation, setRotation] = useState({ x: 15, y: 15 });
-  const [velocity, setVelocity] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState(false);
   const [selected, setSelected] = useState<ImageData | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
-  const [positions, setPositions] = useState<
-    { theta: number; phi: number }[]
-  >([]);
 
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
   const lastMouse = useRef({ x: 0, y: 0 });
   const raf = useRef<number | null>(null);
+
+  // Mutable state — no re-renders
+  const rotRef = useRef({ x: 15, y: 15 });
+  const velRef = useRef({ x: 0, y: 0 });
+  const draggingRef = useRef(false);
 
   const R = sphereRadius || containerSize * 0.5;
   const imgSize = containerSize * baseImageScale;
 
-  // ── Generate sphere positions (Fibonacci) ──────────────────────
-  const genPositions = useCallback(() => {
+  // ── Pre-compute sphere positions (static, no deps) ─────────────
+  const spherePositions = useMemo(() => {
     const pos: { theta: number; phi: number }[] = [];
     const n = images.length;
     const golden = (1 + Math.sqrt(5)) / 2;
@@ -85,170 +84,143 @@ export default function SphereImageGrid({
     return pos;
   }, [images.length]);
 
+  // ── Animation loop — pure DOM, zero React re-renders ───────────
   useEffect(() => {
-    setPositions(genPositions());
-  }, [genPositions]);
+    const clamp = (s: number) =>
+      Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, s));
 
-  // ── Calculate world positions ───────────────────────────────────
-  const calcWorld = useCallback(() => {
-    return positions.map((pos, idx) => {
-      const tR = deg2rad(pos.theta);
-      const pR = deg2rad(pos.phi);
-      const rxR = deg2rad(rotation.x);
-      const ryR = deg2rad(rotation.y);
-
-      let x = R * Math.sin(pR) * Math.cos(tR);
-      let y = R * Math.cos(pR);
-      let z = R * Math.sin(pR) * Math.sin(tR);
-
-      // Y rotation
-      const x1 = x * Math.cos(ryR) + z * Math.sin(ryR);
-      const z1 = -x * Math.sin(ryR) + z * Math.cos(ryR);
-      x = x1;
-      z = z1;
-
-      // X rotation
-      const y2 = y * Math.cos(rxR) - z * Math.sin(rxR);
-      const z2 = y * Math.sin(rxR) + z * Math.cos(rxR);
-      y = y2;
-      z = z2;
-
-      const visible = z > -30;
-      let opacity = 1;
-      if (z <= -10) opacity = Math.max(0, (z + 30) / 20);
-
-      const dist = Math.sqrt(x * x + y * y);
-      const distR = Math.min(dist / R, 1);
-      const centerScale = Math.max(0.3, 1 - distR * 0.7);
-      const depthScale = (z + R) / (2 * R);
-      const scale = centerScale * Math.max(0.5, 0.8 + depthScale * 0.3);
-
-      return {
-        x,
-        y,
-        z,
-        scale,
-        zIndex: Math.round(1000 + z),
-        visible,
-        opacity,
-        idx,
-      };
-    });
-  }, [positions, rotation, R]);
-
-  // ── Momentum animation loop ────────────────────────────────────
-  const update = useCallback(() => {
-    if (dragging) return;
-    setVelocity((v) => {
-      const nx = v.x * momentumDecay;
-      const ny = v.y * momentumDecay;
-      if (!autoRotate && Math.abs(nx) < 0.01 && Math.abs(ny) < 0.01)
-        return { x: 0, y: 0 };
-      return { x: nx, y: ny };
-    });
-    setRotation((prev) => {
-      let ny = prev.y;
-      if (autoRotate) ny += autoRotateSpeed;
-      ny += Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, velocity.y));
-      return {
-        x: normAngle(
-          prev.x +
-            Math.max(
-              -maxRotationSpeed,
-              Math.min(maxRotationSpeed, velocity.x)
-            )
-        ),
-        y: normAngle(ny),
-      };
-    });
-  }, [dragging, momentumDecay, velocity, autoRotate, autoRotateSpeed, maxRotationSpeed]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
     const loop = () => {
-      update();
+      // Update velocity & rotation (refs, no re-render)
+      if (!draggingRef.current) {
+        const v = velRef.current;
+        v.x *= momentumDecay;
+        v.y *= momentumDecay;
+        if (!autoRotate && Math.abs(v.x) < 0.005 && Math.abs(v.y) < 0.005) {
+          v.x = 0;
+          v.y = 0;
+        }
+        const r = rotRef.current;
+        let newY = r.y;
+        if (autoRotate) newY += autoRotateSpeed;
+        newY += clamp(v.y);
+        r.x = normAngle(r.x + clamp(v.x));
+        r.y = normAngle(newY);
+      }
+
+      // Compute & apply transforms directly to DOM
+      const r = rotRef.current;
+      const rxR = deg2rad(r.x);
+      const ryR = deg2rad(r.y);
+      const cosRy = Math.cos(ryR);
+      const sinRy = Math.sin(ryR);
+      const cosRx = Math.cos(rxR);
+      const sinRx = Math.sin(rxR);
+      const half = containerSize / 2;
+
+      for (let i = 0; i < spherePositions.length; i++) {
+        const el = itemsRef.current[i];
+        if (!el) continue;
+
+        const pos = spherePositions[i];
+        const tR = deg2rad(pos.theta);
+        const pR = deg2rad(pos.phi);
+
+        let x = R * Math.sin(pR) * Math.cos(tR);
+        let y = R * Math.cos(pR);
+        let z = R * Math.sin(pR) * Math.sin(tR);
+
+        const x1 = x * cosRy + z * sinRy;
+        const z1 = -x * sinRy + z * cosRy;
+        x = x1;
+        z = z1;
+
+        const y2 = y * cosRx - z * sinRx;
+        const z2 = y * sinRx + z * cosRx;
+        y = y2;
+        z = z2;
+
+        const visible = z > -30;
+        if (!visible) {
+          el.style.visibility = "hidden";
+          continue;
+        }
+        el.style.visibility = "visible";
+
+        let opacity = 1;
+        if (z <= -10) opacity = Math.max(0, (z + 30) / 20);
+
+        const dist = Math.sqrt(x * x + y * y);
+        const distR = Math.min(dist / R, 1);
+        const centerScale = Math.max(0.3, 1 - distR * 0.7);
+        const depthScale = (z + R) / (2 * R);
+        const scale = centerScale * Math.max(0.5, 0.8 + depthScale * 0.3);
+        const sz = imgSize * scale;
+
+        el.style.width = `${sz}px`;
+        el.style.height = `${sz}px`;
+        el.style.left = `${half + x}px`;
+        el.style.top = `${half + y}px`;
+        el.style.opacity = String(opacity);
+        el.style.zIndex = String(Math.round(1000 + z));
+      }
+
       raf.current = requestAnimationFrame(loop);
     };
+
     raf.current = requestAnimationFrame(loop);
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
     };
-  }, [mounted, update]);
+  }, [spherePositions, containerSize, R, imgSize, momentumDecay, autoRotate, autoRotateSpeed, maxRotationSpeed]);
 
-  // ── Mouse / touch handlers ─────────────────────────────────────
-  const clamp = (s: number) =>
-    Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, s));
-
-  const onDown = useCallback(
-    (cx: number, cy: number) => {
-      setDragging(true);
-      setVelocity({ x: 0, y: 0 });
-      lastMouse.current = { x: cx, y: cy };
-    },
-    []
-  );
-
-  const onMove = useCallback(
-    (cx: number, cy: number) => {
-      if (!dragging) return;
-      const dx = cx - lastMouse.current.x;
-      const dy = cy - lastMouse.current.y;
-      const rx = clamp(-dy * dragSensitivity);
-      const ry = clamp(dx * dragSensitivity);
-      setRotation((p) => ({ x: normAngle(p.x + rx), y: normAngle(p.y + ry) }));
-      setVelocity({ x: rx, y: ry });
-      lastMouse.current = { x: cx, y: cy };
-    },
-    [dragging, dragSensitivity, clamp]
-  );
-
-  const onUp = useCallback(() => setDragging(false), []);
-
+  // ── Mouse handlers ─────────────────────────────────────────────
   useEffect(() => {
-    if (!mounted) return;
-    const mMove = (e: MouseEvent) => onMove(e.clientX, e.clientY);
-    const mUp = () => onUp();
-    const tMove = (e: TouchEvent) => {
-      e.preventDefault();
-      onMove(e.touches[0].clientX, e.touches[0].clientY);
+    const onMove = (e: MouseEvent) => {
+      if (!draggingRef.current) return;
+      const dx = e.clientX - lastMouse.current.x;
+      const dy = e.clientY - lastMouse.current.y;
+      const rx = Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, -dy * dragSensitivity));
+      const ry = Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, dx * dragSensitivity));
+      rotRef.current.x = normAngle(rotRef.current.x + rx);
+      rotRef.current.y = normAngle(rotRef.current.y + ry);
+      velRef.current = { x: rx, y: ry };
+      lastMouse.current = { x: e.clientX, y: e.clientY };
     };
-    const tEnd = () => onUp();
-    document.addEventListener("mousemove", mMove);
-    document.addEventListener("mouseup", mUp);
-    document.addEventListener("touchmove", tMove, { passive: false });
-    document.addEventListener("touchend", tEnd);
+    const onUp = () => { draggingRef.current = false; };
+
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
     return () => {
-      document.removeEventListener("mousemove", mMove);
-      document.removeEventListener("mouseup", mUp);
-      document.removeEventListener("touchmove", tMove);
-      document.removeEventListener("touchend", tEnd);
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
     };
-  }, [mounted, onMove, onUp]);
+  }, [dragSensitivity, maxRotationSpeed]);
+
+  // ── Touch handlers — NO preventDefault, scrolling works ────────
+  useEffect(() => {
+    const onTouchMove = (e: TouchEvent) => {
+      if (!draggingRef.current) return;
+      const touch = e.touches[0];
+      const dx = touch.clientX - lastMouse.current.x;
+      const dy = touch.clientY - lastMouse.current.y;
+      const rx = Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, -dy * dragSensitivity));
+      const ry = Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, dx * dragSensitivity));
+      rotRef.current.x = normAngle(rotRef.current.x + rx);
+      rotRef.current.y = normAngle(rotRef.current.y + ry);
+      velRef.current = { x: rx, y: ry };
+      lastMouse.current = { x: touch.clientX, y: touch.clientY };
+    };
+    const onTouchEnd = () => { draggingRef.current = false; };
+
+    document.addEventListener("touchmove", onTouchMove, { passive: true });
+    document.addEventListener("touchend", onTouchEnd);
+    return () => {
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [dragSensitivity, maxRotationSpeed]);
 
   // ── Render ──────────────────────────────────────────────────────
-  if (!mounted) {
-    return (
-      <div
-        style={{
-          width: containerSize,
-          height: containerSize,
-          background: "rgba(18,17,27,0.3)",
-          borderRadius: 12,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "rgba(244,239,228,0.4)",
-        }}
-      >
-        Chargement…
-      </div>
-    );
-  }
-
   if (!images.length) {
     return (
       <div
@@ -268,17 +240,40 @@ export default function SphereImageGrid({
     );
   }
 
-  const world = calcWorld();
-
   return (
     <>
       <style>{`
         @keyframes sphereFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes sphereScaleIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .sphere-item {
+          position: absolute;
+          will-change: transform, left, top, width, height, opacity;
+          cursor: pointer;
+          transition: opacity 0.15s;
+          visibility: hidden;
+        }
+        .sphere-item-inner {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          overflow: hidden;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+          border: 2px solid rgba(244,239,228,0.15);
+          transition: transform 0.2s ease-out;
+        }
+        .sphere-item:hover .sphere-item-inner {
+          transform: scale(1.15);
+        }
+        .sphere-item img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
       `}</style>
 
       <div
-        ref={ref}
+        ref={containerRef}
         className={className}
         style={{
           width: containerSize,
@@ -286,63 +281,41 @@ export default function SphereImageGrid({
           position: "relative",
           perspective: `${perspective}px`,
           userSelect: "none",
-          cursor: dragging ? "grabbing" : "grab",
+          cursor: "grab",
           margin: "0 auto",
         }}
-        onMouseDown={(e) => onDown(e.clientX, e.clientY)}
+        onMouseDown={(e) => {
+          draggingRef.current = true;
+          velRef.current = { x: 0, y: 0 };
+          lastMouse.current = { x: e.clientX, y: e.clientY };
+        }}
         onTouchStart={(e) => {
-          e.preventDefault();
-          onDown(e.touches[0].clientX, e.touches[0].clientY);
+          draggingRef.current = true;
+          velRef.current = { x: 0, y: 0 };
+          const t = e.touches[0];
+          lastMouse.current = { x: t.clientX, y: t.clientY };
         }}
       >
-        {world.map((pos) => {
-          if (!pos.visible) return null;
-          const img = images[pos.idx];
+        {spherePositions.map((_, i) => {
+          const img = images[i];
           if (!img) return null;
-          const sz = imgSize * pos.scale;
-          const isH = hovered === pos.idx;
           return (
             <div
               key={img.id}
-              style={{
-                position: "absolute",
-                width: sz,
-                height: sz,
-                left: containerSize / 2 + pos.x,
-                top: containerSize / 2 + pos.y,
-                opacity: pos.opacity,
-                transform: `translate(-50%, -50%) scale(${isH ? Math.min(1.2, 1.2 / pos.scale) : 1})`,
-                zIndex: pos.zIndex,
-                transition: "transform 0.2s ease-out",
-                cursor: "pointer",
-              }}
-              onMouseEnter={() => setHovered(pos.idx)}
+              className="sphere-item"
+              ref={(el) => { itemsRef.current[i] = el; }}
+              onMouseEnter={() => setHovered(i)}
               onMouseLeave={() => setHovered(null)}
               onClick={() =>
                 onImageClick ? onImageClick(img) : setSelected(img)
               }
             >
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
-                  border: "2px solid rgba(244,239,228,0.15)",
-                }}
-              >
+              <div className="sphere-item-inner">
                 <img
                   src={img.src}
                   alt={img.alt}
                   draggable={false}
-                  loading={pos.idx < 3 ? "eager" : "lazy"}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
+                  loading={i < 3 ? "eager" : "lazy"}
                 />
               </div>
             </div>
@@ -382,12 +355,7 @@ export default function SphereImageGrid({
               <img
                 src={selected.src}
                 alt={selected.alt}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
               />
               <button
                 onClick={() => setSelected(null)}
@@ -415,26 +383,12 @@ export default function SphereImageGrid({
             {(selected.title || selected.description) && (
               <div style={{ padding: "1rem 1.25rem" }}>
                 {selected.title && (
-                  <h3
-                    style={{
-                      margin: "0 0 0.35rem",
-                      fontSize: "1.1rem",
-                      fontWeight: 700,
-                      color: "#f4efe4",
-                    }}
-                  >
+                  <h3 style={{ margin: "0 0 0.35rem", fontSize: "1.1rem", fontWeight: 700, color: "#f4efe4" }}>
                     {selected.title}
                   </h3>
                 )}
                 {selected.description && (
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: "0.88rem",
-                      color: "rgba(244,239,228,0.6)",
-                      lineHeight: 1.5,
-                    }}
-                  >
+                  <p style={{ margin: 0, fontSize: "0.88rem", color: "rgba(244,239,228,0.6)", lineHeight: 1.5 }}>
                     {selected.description}
                   </p>
                 )}

@@ -105,17 +105,20 @@ export function ArtistesGrid({
     return result;
   }, [artists, search, roleFilter, genreFilter, genderFilter, sort]);
 
-  const sphereImages = useMemo(
-    () =>
-      filtered.map((a) => ({
-        id: a.id,
-        src: artistAvatarSrc(a.imageUrl),
-        alt: a.name,
-        title: a.name,
-        description: a.tags.length > 0 ? a.tags.join(", ") : undefined,
-      })),
-    [filtered]
-  );
+  const sphereImages = useMemo(() => {
+    const mapped = filtered.map((a) => ({
+      id: a.id,
+      src: artistAvatarSrc(a.imageUrl),
+      alt: a.name,
+      title: a.name,
+      description: a.tags.length > 0 ? a.tags.join(", ") : undefined,
+    }));
+    // Limit on mobile for performance
+    if (typeof window !== "undefined" && window.innerWidth < 640) {
+      return mapped.slice(0, 40);
+    }
+    return mapped;
+  }, [filtered]);
 
   const handleSphereClick = useCallback(
     (img: { id: string; title?: string }) => {

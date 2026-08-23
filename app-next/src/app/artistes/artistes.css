@@ -257,14 +257,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem 0 2.5rem;
-  min-height: 300px;
+  padding: 0.5rem 0 1.5rem;
+  min-height: 0;
   position: relative;
 }
 .artistes-sphere-section::before {
   content: "";
   position: absolute;
-  top: -2rem;
+  top: -1rem;
   left: 50%;
   transform: translateX(-50%);
   width: min(700px, 95vw);
@@ -277,6 +277,12 @@
 .artistes-sphere-section > * {
   position: relative;
   z-index: 1;
+}
+
+@media (max-width: 640px) {
+  .artistes-sphere-section {
+    padding: 0 0 1rem;
+  }
 }
 
 
