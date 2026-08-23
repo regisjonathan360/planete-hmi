@@ -6,6 +6,7 @@ import { ARTIST_TAGS, getTagMeta } from "@/lib/artists/tags";
 import { artistAvatarSrc } from "@/lib/artists/avatar";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import SphereImageGrid from "@/components/ui/img-sphere";
+import { SidebarToggleButton } from "./ArtistesShell";
 import type { PublicArtist } from "./page";
 
 type ViewMode = "sphere" | "grid";
@@ -176,6 +177,7 @@ export function ArtistesGrid({
             </svg>
           )}
         </button>
+        <SidebarToggleButton />
       </div>
 
       {/* Filtre par rôle */}

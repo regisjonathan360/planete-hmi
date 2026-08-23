@@ -868,25 +868,35 @@ a.section-link:hover { color: var(--flame-orange); }
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
-    background: rgba(18, 17, 27, 0.55);
+    background: rgba(18, 17, 27, 0.65);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(244, 239, 228, 0.12);
-    border-radius: 50%;
-    color: rgba(244, 239, 228, 0.7);
+    border: 1px solid rgba(255, 213, 79, 0.3);
+    border-radius: 14px;
     cursor: pointer;
     transition: all 0.2s;
-    position: fixed;
-    top: 4.5rem;
-    right: 1rem;
-    z-index: 900;
+    position: static;
+    z-index: auto;
+    animation: togglePulse 2s ease-in-out infinite;
   }
   .artistes-sidebar-toggle:hover {
-    border-color: rgba(70, 183, 255, 0.5);
-    color: #46b7ff;
+    border-color: rgba(255, 213, 79, 0.7);
+    background: rgba(255, 213, 79, 0.1);
+  }
+  .artistes-sidebar-toggle-icon {
+    filter: drop-shadow(0 0 6px rgba(255, 213, 79, 0.7));
+    animation: iconGlow 2s ease-in-out infinite;
+  }
+  @keyframes togglePulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 213, 79, 0.2); }
+    50% { box-shadow: 0 0 18px rgba(255, 213, 79, 0.45); }
+  }
+  @keyframes iconGlow {
+    0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px rgba(255, 213, 79, 0.5)); }
+    50% { opacity: 0.75; filter: drop-shadow(0 0 10px rgba(255, 213, 79, 0.9)); }
   }
 
   .artistes-sidebar-backdrop {

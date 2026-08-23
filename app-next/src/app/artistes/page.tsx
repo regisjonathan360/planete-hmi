@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ArtistesGrid } from "./ArtistesGrid";
 import { SiteHeader } from "@/components/SiteHeader";
 import Link from "next/link";
-import { ArtistesSidebar } from "./ArtistesSidebar";
+import { ArtistesShell } from "./ArtistesShell";
 import { withFallbackAvatars } from "@/lib/artists/avatar";
 import { PRODUCER_ARTIST_TYPES, countProductionsByProducer } from "@/lib/producers/queries";
 import { canonicalizeArtistRoles } from "@/lib/artists/roles";
@@ -278,16 +278,11 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
       <SiteHeader />
 
       <main id="contenu">
-        <div className="wrap artistes-layout">
-          {/* Sidebar : bouton carte + catégories */}
-          <ArtistesSidebar
-            categories={categories.map((c) => ({ type: c.type, label: c.label, count: c.count }))}
-            activeType={activeType}
-            deceasedCount={deceasedCount}
-          />
-
-          {/* Contenu principal */}
-          <div style={{ flex: 1, minWidth: 0 }}>
+        <ArtistesShell
+          categories={categories.map((c) => ({ type: c.type, label: c.label, count: c.count }))}
+          activeType={activeType}
+          deceasedCount={deceasedCount}
+        >
             <p className="breadcrumb">
               {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- rechargement complet volontaire (réinitialise les animations) */}
               <a href="/">Accueil</a> /{" "}
@@ -314,8 +309,7 @@ export default async function ArtistesPage({ searchParams }: { searchParams: Pro
             )}
 
             <ArtistesGrid artists={artists} showProductionCount={isProducerView} />
-          </div>
-        </div>
+        </ArtistesShell>
       </main>
 
       <footer className="site-footer">
