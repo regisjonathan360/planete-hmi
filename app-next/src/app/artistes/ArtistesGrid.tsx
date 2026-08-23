@@ -45,6 +45,7 @@ export function ArtistesGrid({
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortMode>("name");
   const [viewMode, setViewMode] = useState<ViewMode>("sphere");
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
   const [sphereSize, setSphereSize] = useState(500);
 
   useEffect(() => {
@@ -199,39 +200,64 @@ export function ArtistesGrid({
         ))}
       </nav>
 
-      {/* Filtre par genre (2e rangée) */}
-      <nav className="artistes-filters" aria-label="Filtrer par genre">
-        {GENRE_FILTERS.map((g) => (
-          <button
-            key={g.id}
-            type="button"
-            className={genreFilter === g.id ? "filter-btn is-active" : "filter-btn"}
-            onClick={() => setGenreFilter(g.id)}
-          >
-            {g.icon} {g.label}
-          </button>
-        ))}
-      </nav>
+      {/* Filtres secondaires (genre + profil) — repliés par défaut */}
+      <div className={`artistes-filters-extra ${filtersExpanded ? "is-open" : ""}`}>
+        <nav className="artistes-filters" aria-label="Filtrer par genre">
+          {GENRE_FILTERS.map((g) => (
+            <button
+              key={g.id}
+              type="button"
+              className={genreFilter === g.id ? "filter-btn is-active" : "filter-btn"}
+              onClick={() => setGenreFilter(g.id)}
+            >
+              {g.icon} {g.label}
+            </button>
+          ))}
+        </nav>
 
-      {/* Filtre par sexe / Type de profil (3e rangée) */}
-      <nav className="artistes-filters" aria-label="Filtrer par sexe ou type de profil">
-        {[
-          { id: "all", label: "Tous les profils" },
-          { id: "m", label: "♂ Masculin" },
-          { id: "f", label: "♀ Féminin" },
-          { id: "g", label: "👥 Groupes" },
-          { id: "o", label: "⚧ Autres" },
-        ].map((gender) => (
-          <button
-            key={gender.id}
-            type="button"
-            className={genderFilter === gender.id ? "filter-btn is-active" : "filter-btn"}
-            onClick={() => setGenderFilter(gender.id as typeof genderFilter)}
-          >
-            {gender.label}
-          </button>
-        ))}
-      </nav>
+        <nav className="artistes-filters" aria-label="Filtrer par sexe ou type de profil">
+          {[
+            { id: "all", label: "Tous les profils" },
+            { id: "m", label: "♂ Masculin" },
+            { id: "f", label: "♀ Féminin" },
+            { id: "g", label: "👥 Groupes" },
+            { id: "o", label: "⚧ Autres" },
+          ].map((gender) => (
+            <button
+              key={gender.id}
+              type="button"
+              className={genderFilter === gender.id ? "filter-btn is-active" : "filter-btn"}
+              onClick={() => setGenderFilter(gender.id as typeof genderFilter)}
+            >
+              {gender.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      <button
+        type="button"
+        className="artistes-filters-toggle"
+        onClick={() => setFiltersExpanded(!filtersExpanded)}
+        aria-expanded={filtersExpanded}
+      >
+        {filtersExpanded ? "Moins de filtres" : "Plus de filtres"}
+        <svg
+          viewBox="0 0 12 12"
+          width="10"
+          height="10"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          style={{
+            transform: filtersExpanded ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.25s ease",
+          }}
+        >
+          <path d="M2 4.5l4 4 4-4" />
+        </svg>
+      </button>
 
       {/* Vue sphère (par défaut) */}
       {viewMode === "sphere" && (

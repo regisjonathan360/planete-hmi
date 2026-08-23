@@ -75,6 +75,42 @@
   margin-bottom: 1.5rem;
 }
 
+/* Filtres secondaires repliables */
+.artistes-filters-extra {
+  display: flex;
+  flex-direction: column;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.35s ease;
+  margin-bottom: 0;
+}
+.artistes-filters-extra.is-open {
+  max-height: 400px;
+  opacity: 1;
+  margin-bottom: 0.75rem;
+}
+
+/* Bouton "Plus de filtres" */
+.artistes-filters-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  color: rgba(70, 183, 255, 0.8);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: Inter, sans-serif;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  margin-bottom: 1rem;
+  transition: color 0.2s;
+}
+.artistes-filters-toggle:hover {
+  color: #46b7ff;
+}
+
 .filter-btn {
   background: rgba(18, 17, 27, 0.85);
   border: 1px solid rgba(244, 239, 228, 0.15);
