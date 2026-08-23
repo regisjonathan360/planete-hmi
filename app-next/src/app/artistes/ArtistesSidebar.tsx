@@ -49,8 +49,16 @@ export function ArtistesSidebar({
         aria-label="Ouvrir le menu des catégories"
         onClick={() => setOpen(true)}
       >
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+        <svg viewBox="0 0 28 24" width="22" height="18" fill="currentColor">
+          {/* Silhouette gauche (petite) */}
+          <circle cx="6" cy="6.5" r="2.5" />
+          <path d="M2 15.5c0-2.5 1.8-4.5 4-4.5s4 2 4 4.5v1.5H2v-1.5z" />
+          {/* Silhouette centre (grande) */}
+          <circle cx="14" cy="5" r="3.2" />
+          <path d="M8.5 16c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5v1.5H8.5V16z" />
+          {/* Silhouette droite (petite) */}
+          <circle cx="22" cy="6.5" r="2.5" />
+          <path d="M18 15.5c0-2.5 1.8-4.5 4-4.5s4 2 4 4.5v1.5H18v-1.5z" />
         </svg>
       </button>
 
