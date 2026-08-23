@@ -1,11 +1,14 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { ARTIST_TAGS, getTagMeta } from "@/lib/artists/tags";
 import { artistAvatarSrc } from "@/lib/artists/avatar";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import SphereImageGrid from "@/components/ui/img-sphere";
 import type { PublicArtist } from "./page";
+
+type ViewMode = "sphere" | "grid";
 
 /** Genres disponibles pour le filtre (dérivés des chart_entries). */
 const GENRE_FILTERS = [
@@ -41,6 +44,18 @@ export function ArtistesGrid({
   const [genderFilter, setGenderFilter] = useState<"all" | "m" | "f" | "g" | "o">("all");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortMode>("name");
+  const [viewMode, setViewMode] = useState<ViewMode>("sphere");
+  const [sphereSize, setSphereSize] = useState(500);
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setSphereSize(w < 640 ? w - 32 : w < 1024 ? 520 : 620);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const filtered = useMemo(() => {
     let result = artists;
@@ -89,6 +104,26 @@ export function ArtistesGrid({
     return result;
   }, [artists, search, roleFilter, genreFilter, genderFilter, sort]);
 
+  const sphereImages = useMemo(
+    () =>
+      filtered.map((a) => ({
+        id: a.id,
+        src: artistAvatarSrc(a.imageUrl),
+        alt: a.name,
+        title: a.name,
+        description: a.tags.length > 0 ? a.tags.join(", ") : undefined,
+      })),
+    [filtered]
+  );
+
+  const handleSphereClick = useCallback(
+    (img: { id: string; title?: string }) => {
+      const artist = filtered.find((a) => a.id === img.id);
+      if (artist) window.location.href = `/artistes/${artist.slug}`;
+    },
+    [filtered]
+  );
+
   return (
     <>
       {/* Barre de recherche + tri */}
@@ -115,6 +150,28 @@ export function ArtistesGrid({
           <option value="name">Nom (A→Z)</option>
           <option value="ranking">Classement</option>
         </select>
+        <button
+          type="button"
+          className="artistes-view-toggle"
+          aria-label={viewMode === "sphere" ? "Passer à la grille" : "Passer à la sphère"}
+          onClick={() => setViewMode(viewMode === "sphere" ? "grid" : "sphere")}
+          title={viewMode === "sphere" ? "Vue grille" : "Vue sphère"}
+        >
+          {viewMode === "sphere" ? (
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <ellipse cx="12" cy="12" rx="10" ry="4" />
+              <line x1="12" y1="2" x2="12" y2="22" />
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* Filtre par rôle */}
@@ -176,7 +233,32 @@ export function ArtistesGrid({
         ))}
       </nav>
 
-      {/* Grille d'artistes */}
+      {/* Vue sphère (par défaut) */}
+      {viewMode === "sphere" && (
+        <section className="section section--tight artistes-sphere-section" aria-label="Sphère d'artistes">
+          {filtered.length === 0 && (
+            <p className="artistes-empty">Aucun artiste trouvé pour ces critères.</p>
+          )}
+          {filtered.length > 0 && (
+            <SphereImageGrid
+              images={sphereImages}
+              containerSize={sphereSize}
+              sphereRadius={sphereSize * 0.38}
+              dragSensitivity={0.6}
+              momentumDecay={0.95}
+              maxRotationSpeed={5}
+              baseImageScale={0.14}
+              perspective={1000}
+              autoRotate={true}
+              autoRotateSpeed={0.15}
+              onImageClick={handleSphereClick}
+            />
+          )}
+        </section>
+      )}
+
+      {/* Vue grille classique */}
+      {viewMode === "grid" && (
       <section className="section section--tight" aria-label="Liste des artistes">
         <div className="artistes-grid">
           {filtered.length === 0 && (
@@ -233,6 +315,7 @@ export function ArtistesGrid({
           ))}
         </div>
       </section>
+      )}
     </>
   );
 }

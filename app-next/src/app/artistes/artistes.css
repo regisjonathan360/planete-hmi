@@ -194,6 +194,36 @@
 }
 .artistes-sort:focus { outline: none; border-color: rgba(70, 183, 255, 0.5); }
 
+/* Toggle sphère / grille */
+.artistes-view-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: rgba(18, 17, 27, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 239, 228, 0.12);
+  border-radius: 50%;
+  color: rgba(244, 239, 228, 0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.artistes-view-toggle:hover {
+  border-color: rgba(70, 183, 255, 0.5);
+  color: #46b7ff;
+}
+
+/* Section sphère */
+.artistes-sphere-section {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0 2rem;
+  min-height: 300px;
+}
+
 
 /* Bouton favori sur les cartes artistes */
 .fav-btn {
