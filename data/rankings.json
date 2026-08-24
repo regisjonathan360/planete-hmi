@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-23T05:35:37.124Z",
+    "genereLe": "2026-08-24T05:44:11.028Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,25 +10,25 @@
   "classement": [
     {
       "rang": 1,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "Olha a Explosão",
-      "score": 96.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+      "nom": "Joé Dwèt Filé",
+      "genre": "Konpa",
+      "titre": "4 Kampé",
+      "score": 72.8,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 2,
-      "nom": "Joé Dwèt Filé",
-      "genre": "Konpa",
-      "titre": "AIME MOI",
-      "score": 72.8,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Perdoa",
+      "score": 43.8,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "PARDON MAMAN",
+      "titre": "Rete La (Remix)",
       "score": 27.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -36,9 +36,9 @@
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Krazèd Fwaye",
+      "titre": "Apiye (feat. Zile)",
       "score": 25.8,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3a693849e9532cf55fb122c51d883c9f/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 5,
@@ -46,7 +46,7 @@
       "genre": "Konpa",
       "titre": "Ayo Girl (Haitian Konpa Remix)",
       "score": 24.3,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/cbffebb8039b49446b8aaadde84f15ac/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "Tankou melodi",
+      "titre": "Flanm",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Kontra Anile",
+      "titre": "Si Yo Vle",
       "score": 18.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
