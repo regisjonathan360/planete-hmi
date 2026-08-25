@@ -154,19 +154,27 @@
 }
 .row__top20:hover { border-color: var(--electric-2); color: var(--electric-2); background: rgba(70,183,255,0.08); }
 
-/* ---- Grille de cartes (style Audiomack) ---- */
+/* ---- Rangée scrollable horizontalement (style Audiomack) ---- */
 .track-scroll {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
-  gap: 1.4rem 1.1rem;
-  padding: 0.2rem 0 0.4rem;
+  display: flex;
+  gap: 1.1rem;
+  overflow-x: auto;
+  padding: 0.2rem 0.2rem 0.6rem;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244,239,228,0.2) transparent;
 }
+.track-scroll::-webkit-scrollbar { height: 6px; }
+.track-scroll::-webkit-scrollbar-thumb { background: rgba(244,239,228,0.2); border-radius: 8px; }
 
 /* ---- Carte chanson verticale (transparente, style Audiomack) ---- */
 .card {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 0 0 168px;
+  width: 168px;
+  scroll-snap-align: start;
 }
 .card__visual {
   display: flex;
@@ -314,7 +322,8 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 640px) {
-  .track-scroll { grid-template-columns: repeat(2, 1fr); gap: 1rem 0.75rem; }
+  .track-scroll { gap: 0.75rem; scroll-snap-type: x mandatory; }
+  .card { flex: 0 0 148px; width: 148px; }
   .card__rank { font-size: 1.5rem; min-width: 1.25ch; }
   .card__visual { gap: 0.35rem; }
   .card__cover { border-radius: 8px; }
