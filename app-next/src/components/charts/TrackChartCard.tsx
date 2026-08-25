@@ -3,7 +3,7 @@ import { libelleMetrique } from "@/lib/charts/format";
 import { ChartMovementBadge } from "./ChartMovementBadge";
 import { TrackHoverPreview } from "./TrackHoverPreview";
 
-/** Carte d'une chanson : position HMI à côté de la pochette (jamais dessus). */
+/** Carte style Audiomack : grande pochette, position à gauche, titre/artiste dessous. */
 export function TrackChartCard({ entry }: { entry: ChartEntryView }) {
   const metric = libelleMetrique(entry.metric_value, entry.metric_unit);
   const pos = entry.filtered_position;
@@ -17,6 +17,13 @@ export function TrackChartCard({ entry }: { entry: ChartEntryView }) {
   // Extraire artistSlug et trackSlug depuis platform_url.
   const slugs = extractSlugs(entry.platform_url);
 
+  const cover = entry.artwork_url ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img className="card__cover" src={entry.artwork_url} alt="" loading="lazy" width={300} height={300} />
+  ) : (
+    <div className="card__cover" aria-hidden="true" />
+  );
+
   return (
     <TrackHoverPreview
       platformUrl={entry.platform_url}
@@ -24,16 +31,25 @@ export function TrackChartCard({ entry }: { entry: ChartEntryView }) {
       trackSlug={slugs.trackSlug}
     >
       <article className="card">
-        <div className={rankClass} aria-hidden="true">
-          {entry.filtered_position}
+        <div className="card__visual">
+          <div className={rankClass} aria-hidden="true">
+            {entry.filtered_position}
+          </div>
+          {entry.platform_url ? (
+            <a
+              className="card__coverlink"
+              href={entry.platform_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              tabIndex={-1}
+              aria-hidden="true"
+            >
+              {cover}
+            </a>
+          ) : (
+            cover
+          )}
         </div>
-      <div className="card__body">
-        {entry.artwork_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img className="card__cover" src={entry.artwork_url} alt="" loading="lazy" width={62} height={62} />
-        ) : (
-          <div className="card__cover" aria-hidden="true" />
-        )}
         <div className="card__meta">
           <p className="card__title">
             <span className="sr-only">Position {entry.filtered_position} : </span>
@@ -43,15 +59,8 @@ export function TrackChartCard({ entry }: { entry: ChartEntryView }) {
           <div className="card__foot">
             <ChartMovementBadge movement={entry.movement} entryStatus={entry.entry_status} />
             {metric && <span className="card__metric">{metric}</span>}
-            <span className="card__src">Source #{entry.source_position}</span>
-            {entry.platform_url && (
-              <a className="hmi__link" href={entry.platform_url} target="_blank" rel="noopener noreferrer">
-                Écouter ↗
-              </a>
-            )}
           </div>
         </div>
-      </div>
       </article>
     </TrackHoverPreview>
   );
