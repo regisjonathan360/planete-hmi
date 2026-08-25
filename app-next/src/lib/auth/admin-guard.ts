@@ -19,21 +19,17 @@ export async function getAdminUser(): Promise<AdminUser | null> {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser();
-  
-  console.log("[ADMIN-GUARD] auth.getUser:", user?.email ?? "null", "error:", authError?.message ?? "none");
-  
-  if (!user) return null;
+
+  if (!user || authError) return null;
 
   // Utiliser le même client (session utilisateur) pour lire user_roles.
   // La policy "users read own role" autorise la lecture de sa propre ligne.
-  const { data: role, error: roleError } = await supabase
+  const { data: role } = await supabase
     .from("user_roles")
     .select("role")
     .eq("user_id", user.id)
     .eq("role", "admin")
     .maybeSingle();
-
-  console.log("[ADMIN-GUARD] user_roles:", role, "error:", roleError?.message ?? "none");
 
   if (!role) return null;
   return { id: user.id, email: user.email ?? null };

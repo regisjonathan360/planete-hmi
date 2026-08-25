@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { safeNextPath } from "@/lib/safe-redirect";
 
 export function LoginForm() {
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/admin";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,8 +18,11 @@ export function LoginForm() {
     setError(null);
     setLoading(true);
 
+    // Redirection uniquement vers un chemin interne (anti open-redirect).
+    const target = safeNextPath(searchParams.get("next"), "/admin");
+
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (authError) {
       setError("Identifiants invalides ou accès refusé.");
@@ -27,8 +30,24 @@ export function LoginForm() {
       return;
     }
 
+    // Vérifier le rôle admin immédiatement : un compte valide sans rôle
+    // admin est rejeté et déconnecté.
+    const { data: role } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (!role) {
+      await supabase.auth.signOut();
+      setError("Identifiants invalides ou accès refusé.");
+      setLoading(false);
+      return;
+    }
+
     // Navigation dure pour que le serveur voie les cookies frais.
-    window.location.href = next;
+    window.location.href = target;
   }
 
   return (

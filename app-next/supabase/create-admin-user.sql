@@ -1,5 +1,10 @@
 -- Créer un utilisateur admin de développement local.
--- Identifiants : admin@planete-hmi.local / Admin123!
+-- Identifiant : admin@planete-hmi.local
+-- Le mot de passe n'est JAMAIS stocké en clair ici : seul le hash bcrypt est
+-- présent dans ce dépôt. Le mot de passe réel est conservé dans un gestionnaire
+-- de mots de passe et doit être appliqué manuellement sur l'instance cible.
+-- Pour régénérer un hash : bcrypt (cost >= 10), ex. via bcryptjs :
+--   node -e "console.log(require('bcryptjs').hashSync(process.argv[1],10))" '<mot-de-passe>'
 
 INSERT INTO auth.users (
   id, instance_id, aud, role, email, encrypted_password,
@@ -11,7 +16,7 @@ INSERT INTO auth.users (
   'authenticated',
   'authenticated',
   'admin@planete-hmi.local',
-  crypt('Admin123!', gen_salt('bf')),
+  '$2a$10$CYxwun1..FfatGDMMIzEiOwCjTMork3h400EB9BdB1xzb6d1uz1N.',
   now(), now(), now(), '',
   '{"provider":"email","providers":["email"]}',
   '{"full_name":"Admin HMI"}'

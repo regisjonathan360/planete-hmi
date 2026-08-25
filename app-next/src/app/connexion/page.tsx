@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { safeNextPath } from "@/lib/safe-redirect";
 import { SiteHeader } from "@/components/SiteHeader";
 import { VisitorAuthForm } from "./VisitorAuthForm";
 
@@ -19,7 +20,9 @@ export default async function ConnexionPage({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const params = await searchParams;
-  if (user) redirect(params.next ?? "/compte");
+  // Uniquement des chemins internes (anti open-redirect).
+  const nextPath = safeNextPath(params.next, "/compte");
+  if (user) redirect(nextPath);
 
   return (
     <>
@@ -30,7 +33,7 @@ export default async function ConnexionPage({
           <p style={{ color: "rgba(244,239,228,0.6)", marginBottom: "1.5rem" }}>
             Connecte-toi pour ajouter des artistes en favoris et accéder à ton espace.
           </p>
-          <VisitorAuthForm nextPath={params.next ?? "/compte"} />
+          <VisitorAuthForm nextPath={nextPath} />
         </div>
       </main>
     </>

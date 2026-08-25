@@ -1,6 +1,10 @@
 /**
- * Rafraîchissement de session Supabase + garde d'accès /admin.
- * Exécuté par le middleware Next.js sur chaque requête concernée.
+ * Rafraîchissement de session Supabase.
+ * Exécuté par src/proxy.ts sur les routes listées dans son matcher.
+ *
+ * NOTE : ce module ne fait QUE rafraîchir les tokens. Les contrôles d'accès
+ * restent gérés par chaque page/route (getUser + RLS) — ne pas s'y fier
+ * comme unique garde.
  */
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";

@@ -3,7 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_NEXT_PATHS = new Set(["/espace-artiste"]);
+const ALLOWED_NEXT_PATHS = new Set([
+  "/espace-artiste",
+  "/compte",
+  "/mot-de-passe-reinitialiser",
+]);
 
 function safeNextPath(value: string | null): string {
   return value && ALLOWED_NEXT_PATHS.has(value) ? value : "/espace-artiste";
