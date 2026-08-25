@@ -150,8 +150,9 @@ describe("scrapeChokarella", () => {
     const articles = await scrapeChokarella(SOURCE_URL);
 
     expect(articles).toHaveLength(1);
+    // L'image est upgradée vers l'original sans suffixe de redimensionnement
     expect(articles[0].imageUrl).toBe(
-      "https://www.chokarella.com/wp-content/uploads/2026/07/hero-615x410.jpg"
+      "https://www.chokarella.com/wp-content/uploads/2026/07/hero.jpg"
     );
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });

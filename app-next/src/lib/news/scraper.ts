@@ -270,11 +270,11 @@ function extractImageFromHtml(html: string, sourceUrl: URL): string | null {
         if (EXCLUDED_CLASS_PATTERNS.some((pattern) => pattern.test(classes))) continue;
       }
 
-      // Exclure les images avec width/height explicitement petits (< 100px)
+      // Exclure les images avec width/height explicitement petits (< 200px)
       const widthMatch = fullTag.match(/\bwidth=["']?(\d+)/i);
       const heightMatch = fullTag.match(/\bheight=["']?(\d+)/i);
-      if (widthMatch && parseInt(widthMatch[1], 10) < 100) continue;
-      if (heightMatch && parseInt(heightMatch[1], 10) < 100) continue;
+      if (widthMatch && parseInt(widthMatch[1], 10) < 200) continue;
+      if (heightMatch && parseInt(heightMatch[1], 10) < 200) continue;
 
       // Exclure les images trop petites par nom de fichier (WordPress resize suffix)
       const smallThumb = imageUrl.href.match(/-(\d+)x(\d+)\./);
@@ -284,7 +284,8 @@ function extractImageFromHtml(html: string, sourceUrl: URL): string | null {
         if (w < 200 || h < 100) continue;
       }
 
-      return imageUrl.href;
+      // Upgrader vers l'original sans suffixe de redimensionnement (-615x410.jpg → .jpg)
+      return upgradeWpImageUrl(imageUrl.href);
     } catch {
       // Ignore les attributs qui ne sont pas des URL valides.
     }
@@ -335,10 +336,10 @@ function extractFeaturedImage(post: WPPost): string | null {
   
   if (Array.isArray(media) && media.length > 0) {
     const m = media[0];
-    // Préférer la taille "large" ou "full" si disponible
+    // Préférer la taille "full" (original) puis "large" — qualité maximale
     const sizes = m.media_details?.sizes;
     if (sizes) {
-      const preferred = sizes["large"]?.source_url ?? sizes["medium_large"]?.source_url ?? sizes["full"]?.source_url;
+      const preferred = sizes["full"]?.source_url ?? sizes["large"]?.source_url ?? sizes["medium_large"]?.source_url;
       if (preferred) return preferred;
     }
     if (m.source_url) return m.source_url;
@@ -352,12 +353,21 @@ function extractFeaturedImage(post: WPPost): string | null {
       const url = imgMatch[1];
       // Vérifier que c'est bien une image de Chokarella, pas un emoji/icon
       if (ALLOWED_HOSTS.has(new URL(url, "https://chokarella.com").hostname.toLowerCase())) {
-        return url;
+        return upgradeWpImageUrl(url);
       }
     }
   }
   
   return null;
+}
+
+/**
+ * Upgrade une URL d'image WordPress redimensionnée (`-615x410.jpg`) vers
+ * l'original sans suffixe (`hero.jpg`). WordPress génère toujours les
+ * miniatures depuis l'original, qui reste accessible à la même date/chemin.
+ */
+export function upgradeWpImageUrl(url: string): string {
+  return url.replace(/-\d{2,5}x\d{2,5}(\.\w{3,4})(\?.*)?$/, "$1");
 }
 
 function extractAuthorName(post: WPPost): string | null {
