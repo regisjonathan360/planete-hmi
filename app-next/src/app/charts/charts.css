@@ -144,6 +144,10 @@
 .row { margin: 2.5rem 0; padding-top: 1.5rem; border-top: 1px solid rgba(244, 239, 228, 0.06); }
 .row:first-of-type { border-top: none; }
 .row__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1rem; margin-bottom: 0.85rem; }
+.row__logo {
+  width: 26px; height: 26px; align-self: center; flex-shrink: 0;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.15));
+}
 .row__name { font-family: Anton, Impact, sans-serif; font-size: 1.5rem; letter-spacing: 0.4px; margin: 0; color: var(--cream); }
 .row__ctx { color: var(--cream-dim); font-size: 0.85rem; }
 .row__spacer { flex: 1; }
@@ -159,7 +163,8 @@
   display: flex;
   gap: 1.1rem;
   overflow-x: auto;
-  padding: 0.2rem 0.2rem 0.6rem;
+  /* Padding horizontal suffisant pour ne pas couper les auras des numéros/covers */
+  padding: 0.4rem 0.75rem 0.8rem;
   scroll-snap-type: x proximity;
   scrollbar-width: thin;
   scrollbar-color: rgba(244,239,228,0.2) transparent;
@@ -169,20 +174,20 @@
 
 /* ---- Carte chanson verticale (transparente, style Audiomack) ---- */
 .card {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.5rem;
   min-width: 0;
   flex: 0 0 168px;
   width: 168px;
   scroll-snap-align: start;
 }
-.card__visual {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-}
-.card__coverlink { display: block; flex: 1; min-width: 0; border-radius: 10px; }
+/* Ligne 1 : numéro (col 1) + cover (col 2) — Ligne 2 : textes sous la cover uniquement */
+.card__rank { grid-column: 1; grid-row: 1; align-self: center; }
+.card__coverlink { grid-column: 2; grid-row: 1; display: block; min-width: 0; border-radius: 10px; }
+.card > .card__cover { grid-column: 2; grid-row: 1; }
+.card__meta { grid-column: 2; grid-row: 2; }
 .card__rank {
   font-family: Anton, Impact, sans-serif;
   font-size: 2rem;
@@ -264,11 +269,38 @@
   object-fit: cover;
   background: rgba(32,29,44,0.8);
   box-shadow: 0 8px 22px rgba(0,0,0,0.28);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
 }
 .card:hover .card__cover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 32px rgba(0,0,0,0.4);
+}
+
+/* Aura des covers, assortie à la couleur du numéro de classement */
+.card--1 .card__cover { animation: cover-glow-blue 1.2s ease-in-out infinite alternate; }
+.card--2 .card__cover { animation: cover-glow-white 1.3s ease-in-out infinite alternate; }
+.card--3 .card__cover { animation: cover-glow-gold 1.4s ease-in-out infinite alternate; }
+.card--4 .card__cover { animation: cover-glow-orange 1.4s ease-in-out infinite alternate; }
+.card--rest .card__cover { animation: cover-glow-red 1.5s ease-in-out infinite alternate; }
+
+@keyframes cover-glow-blue {
+  from { box-shadow: 0 0 10px rgba(70,183,255,0.25), 0 8px 22px rgba(0,0,0,0.28); }
+  to   { box-shadow: 0 0 24px rgba(70,183,255,0.6), 0 8px 22px rgba(0,0,0,0.28); }
+}
+@keyframes cover-glow-white {
+  from { box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 8px 22px rgba(0,0,0,0.28); }
+  to   { box-shadow: 0 0 22px rgba(255,255,255,0.5), 0 8px 22px rgba(0,0,0,0.28); }
+}
+@keyframes cover-glow-gold {
+  from { box-shadow: 0 0 10px rgba(255,200,0,0.25), 0 8px 22px rgba(0,0,0,0.28); }
+  to   { box-shadow: 0 0 24px rgba(255,210,0,0.55), 0 8px 22px rgba(0,0,0,0.28); }
+}
+@keyframes cover-glow-orange {
+  from { box-shadow: 0 0 10px rgba(255,140,0,0.25), 0 8px 22px rgba(0,0,0,0.28); }
+  to   { box-shadow: 0 0 24px rgba(255,140,0,0.55), 0 8px 22px rgba(0,0,0,0.28); }
+}
+@keyframes cover-glow-red {
+  from { box-shadow: 0 0 8px rgba(243,18,26,0.2), 0 8px 22px rgba(0,0,0,0.28); }
+  to   { box-shadow: 0 0 20px rgba(243,18,26,0.45), 0 8px 22px rgba(0,0,0,0.28); }
 }
 .card__meta { margin-top: 0.6rem; min-width: 0; text-align: center; }
 .card__title {
@@ -323,9 +355,8 @@
 /* ---- Responsive ---- */
 @media (max-width: 640px) {
   .track-scroll { gap: 0.75rem; scroll-snap-type: x mandatory; }
-  .card { flex: 0 0 148px; width: 148px; }
+  .card { flex: 0 0 148px; width: 148px; column-gap: 0.35rem; }
   .card__rank { font-size: 1.5rem; min-width: 1.25ch; }
-  .card__visual { gap: 0.35rem; }
   .card__cover { border-radius: 8px; }
   .card__title { font-size: 0.85rem; }
   .card__artist { font-size: 0.76rem; }

@@ -7,14 +7,30 @@ import { ChartUpdatedAt } from "./ChartUpdatedAt";
 import { ChartEmptyState } from "./ChartEmptyState";
 import { ChartStaleWarning } from "./ChartStaleWarning";
 
+/* eslint-disable @next/next/no-img-element */
+
+/** Logos officiels des plateformes (Simple Icons, couleurs de marque). */
+const PLATFORM_LOGOS: Record<string, { src: string; alt: string }> = {
+  youtube: { src: "/images/platforms/youtube.svg", alt: "YouTube" },
+  spotify: { src: "/images/platforms/spotify.svg", alt: "Spotify" },
+  audiomack: { src: "/images/platforms/audiomack.svg", alt: "Audiomack" },
+  deezer: { src: "/images/platforms/deezer.svg", alt: "Deezer" },
+  apple_music: { src: "/images/platforms/applemusic.svg", alt: "Apple Music" },
+  tiktok: { src: "/images/platforms/tiktok.svg", alt: "TikTok" },
+};
+
 /** Une rangée = un classement (Top 10 + lien Top 20). */
 export function PlatformChartRow({ row }: { row: ChartOverviewRow }) {
   const slug = SLUG_PAR_PLATEFORME[row.platform] ?? row.platform;
   const aDesEntrees = row.entries && row.entries.length > 0;
+  const logo = PLATFORM_LOGOS[row.platform];
 
   return (
     <section className="row" aria-label={row.display_name}>
       <div className="row__head">
+        {logo && (
+          <img className="row__logo" src={logo.src} alt="" aria-hidden="true" width={26} height={26} />
+        )}
         <h2 className="row__name">{row.display_name}</h2>
         {row.chart_context && <span className="row__ctx">{row.chart_context}</span>}
         <ChartSourceBadge ingestionMode={row.ingestion_mode} isStale={row.is_stale} />

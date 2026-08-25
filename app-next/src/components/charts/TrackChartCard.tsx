@@ -30,26 +30,24 @@ export function TrackChartCard({ entry }: { entry: ChartEntryView }) {
       artistSlug={slugs.artistSlug}
       trackSlug={slugs.trackSlug}
     >
-      <article className="card">
-        <div className="card__visual">
-          <div className={rankClass} aria-hidden="true">
-            {entry.filtered_position}
-          </div>
-          {entry.platform_url ? (
-            <a
-              className="card__coverlink"
-              href={entry.platform_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              tabIndex={-1}
-              aria-hidden="true"
-            >
-              {cover}
-            </a>
-          ) : (
-            cover
-          )}
+      <article className={`card ${pos <= 4 ? `card--${pos}` : "card--rest"}`}>
+        <div className={rankClass} aria-hidden="true">
+          {entry.filtered_position}
         </div>
+        {entry.platform_url ? (
+          <a
+            className="card__coverlink"
+            href={entry.platform_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            tabIndex={-1}
+            aria-hidden="true"
+          >
+            {cover}
+          </a>
+        ) : (
+          cover
+        )}
         <div className="card__meta">
           <p className="card__title">
             <span className="sr-only">Position {entry.filtered_position} : </span>
