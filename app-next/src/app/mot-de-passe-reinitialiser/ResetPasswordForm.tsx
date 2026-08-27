@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { traduireErreurAuth } from "@/lib/auth-errors";
+import { PasswordStrengthMeter } from "@/components/PasswordStrengthMeter";
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
@@ -27,7 +29,7 @@ export function ResetPasswordForm() {
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      setError(error.message);
+      setError(traduireErreurAuth(error.message));
       setLoading(false);
       return;
     }
@@ -45,11 +47,14 @@ export function ResetPasswordForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-        <input
-          type="password" required placeholder="Nouveau mot de passe (8 caractères min.)"
-          minLength={8} value={password} autoComplete="new-password"
-          onChange={(e) => setPassword(e.target.value)} style={inputStyle}
-        />
+        <div>
+          <input
+            type="password" required placeholder="Nouveau mot de passe (8 caractères min.)"
+            minLength={8} value={password} autoComplete="new-password"
+            onChange={(e) => setPassword(e.target.value)} style={inputStyle}
+          />
+          <PasswordStrengthMeter password={password} />
+        </div>
         <input
           type="password" required placeholder="Confirmer le mot de passe"
           minLength={8} value={confirm} autoComplete="new-password"

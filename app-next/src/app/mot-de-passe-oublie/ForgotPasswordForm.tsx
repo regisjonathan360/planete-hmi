@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { traduireErreurAuth } from "@/lib/auth-errors";
+import { Turnstile } from "@/components/Turnstile";
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -16,10 +19,13 @@ export function ForgotPasswordForm() {
 
     const supabase = createClient();
     const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent("/mot-de-passe-reinitialiser")}`;
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+      ...(captchaToken ? { captchaToken } : {}),
+    });
 
     if (error) {
-      setError(error.message);
+      setError(traduireErreurAuth(error.message));
       setLoading(false);
       return;
     }
@@ -50,6 +56,7 @@ export function ForgotPasswordForm() {
         onChange={(e) => setEmail(e.target.value)} style={inputStyle}
         autoComplete="email"
       />
+      <Turnstile onToken={setCaptchaToken} />
       {error && <p style={{ color: "#ff5c7c", fontSize: "0.85rem", marginTop: "0.5rem" }}>{error}</p>}
       <button
         type="submit" disabled={loading}

@@ -29,8 +29,8 @@ export default async function ComptePage() {
 
   // Fetch favorites count
   const { count: favCount } = await supabase
-    .from("favorites")
-    .select("id", { count: "exact", head: true })
+    .from("user_favorites")
+    .select("user_id", { count: "exact", head: true })
     .eq("user_id", user.id);
 
   return (
@@ -79,6 +79,7 @@ export default async function ComptePage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "2.5rem" }}>
             <QuickLink href="/arene" label="Arène communautaire" description="Battles, défis, discussions" icon="⚔️" />
             <QuickLink href="/compte/favoris" label="Mes favoris" description="Artistes sauvegardés" icon="❤️" />
+            <QuickLink href="/compte/securite" label="Sécurité" description="Mot de passe, email, RGPD" icon="🔒" />
             <QuickLink href="/arene/classement-membres" label="Classement" description="Top 50 membres" icon="🏆" />
             {profile && <QuickLink href="/arene/defis" label="Défis actifs" description="Gagne des points" icon="🎯" />}
           </div>

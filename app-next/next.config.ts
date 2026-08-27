@@ -18,6 +18,27 @@ const nextConfig: NextConfig = {
   
   // Security headers for SEO trust signals
   async headers() {
+    // CSP pragmatique (sans nonces, cf. guide Next.js) : le site utilise des
+    // styles inline (React), GA, des images/audio de nombreuses CDNs
+    // d'artistes et des embeds YouTube. La clé Supabase est injectée au build.
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+    const isDev = process.env.NODE_ENV === "development";
+    const csp = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com`,
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https:",
+      "media-src 'self' blob: https:",
+      "font-src 'self' data:",
+      `connect-src 'self' ${supabaseUrl} wss://${supabaseUrl.replace(/^https?:\/\//, "")} https://www.google-analytics.com https://region1.google-analytics.com https://challenges.cloudflare.com`,
+      "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://audiomack.com https://challenges.cloudflare.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'",
+      "upgrade-insecure-requests",
+    ].join("; ");
+
     return [
       {
         source: "/:path*",
@@ -41,6 +62,10 @@ const nextConfig: NextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: csp,
           },
         ],
       },
