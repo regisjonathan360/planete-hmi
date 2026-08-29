@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-28T17:18:10.801Z",
+    "genereLe": "2026-08-29T11:33:38.900Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Rete La",
+      "titre": "Adikte",
       "score": 27.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -76,17 +76,9 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "Manyen M La",
+      "titre": "M Pa Kyè",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Rise Again",
-      "score": 2.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
