@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-08-30T10:25:56.374Z",
+    "genereLe": "2026-08-31T11:30:56.894Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
       "topTitre": "Krazèd Fwaye",
       "metriques": {
-        "deezerFans": 8985,
+        "deezerFans": 8986,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 494718,
+        "deezerFans": 494950,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -52,7 +52,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
       "topTitre": "Ayo Girl (Haitian Konpa Remix)",
       "metriques": {
-        "deezerFans": 7913,
+        "deezerFans": 7914,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Adikte",
+      "topTitre": "Kraze",
       "metriques": {
-        "deezerFans": 10442,
+        "deezerFans": 10444,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -87,17 +87,17 @@
     {
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/d41d8cd98f00b204e9800998ecf8427e/250x250-000000-80-0-0.jpg",
-      "topTitre": "Messi (Sunset Mix)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 15,
+        "deezerFans": 7,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/254822142",
+        "deezer": "https://www.deezer.com/artist/59634622",
         "spotify": null,
         "youtube": null
       },
@@ -109,7 +109,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
       "topTitre": "Gason Malen",
       "metriques": {
-        "deezerFans": 6814,
+        "deezerFans": 6815,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Mete Limye Sou Mwen",
       "metriques": {
-        "deezerFans": 4925,
+        "deezerFans": 4926,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
       "topTitre": "Porque Brigamos",
       "metriques": {
-        "deezerFans": 41780,
+        "deezerFans": 41790,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
