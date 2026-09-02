@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-01T09:54:20.097Z",
+    "genereLe": "2026-09-02T09:25:48.725Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,6 +10,14 @@
   "classement": [
     {
       "rang": 1,
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Olha a Explosão",
+      "score": 96.7,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "titre": "4 Kampé",
@@ -17,26 +25,18 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
     {
-      "rang": 2,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "Porque Brigamos",
-      "score": 43.8,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg"
-    },
-    {
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Kraze",
-      "score": 27.5,
+      "titre": "Dyalòg",
+      "score": 27.6,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Krazèd Fwaye",
+      "titre": "Kenbe'l La",
       "score": 25.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg"
     },
@@ -52,7 +52,7 @@
       "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": "Gason Malen",
+      "titre": "Viens avec moi",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Mete Limye Sou Mwen",
+      "titre": "Legend",
       "score": 18.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
