@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-03T09:36:10.568Z",
+    "genereLe": "2026-09-04T09:27:41.194Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "rang": 1,
       "nom": "Kevinna",
       "genre": "Pop",
-      "titre": "Olha a Explosão",
-      "score": 96.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+      "titre": "Really Really",
+      "score": 76.9,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/21836193e781d1fce87bd1d74c323044/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 2,
@@ -36,7 +36,7 @@
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Kenbe'l La",
+      "titre": "Kokoye (feat. AndyBeatz, Toby Anbake, Paska, Costy Jay & Jea Fox)",
       "score": 25.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg"
     },
@@ -44,7 +44,7 @@
       "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Ayo Girl (Haitian Konpa Remix)",
+      "titre": "Fanm Sa a Move",
       "score": 24.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
     },
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "A.k.i.ko.",
+      "titre": "Jodiya",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
@@ -76,7 +76,7 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "M Pa Kyè",
+      "titre": "2KAWO",
       "score": 9.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
     }

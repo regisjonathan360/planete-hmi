@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-03T09:36:10.568Z",
+    "genereLe": "2026-09-04T09:27:41.194Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
-      "topTitre": "Kenbe'l La",
+      "topTitre": "Kokoye (feat. AndyBeatz, Toby Anbake, Paska, Costy Jay & Jea Fox)",
       "metriques": {
-        "deezerFans": 8992,
+        "deezerFans": 8994,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 495569,
+        "deezerFans": 495818,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -50,7 +50,7 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
-      "topTitre": "Ayo Girl (Haitian Konpa Remix)",
+      "topTitre": "Fanm Sa a Move",
       "metriques": {
         "deezerFans": 7916,
         "spotifyFollowers": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Dyalòg",
       "metriques": {
-        "deezerFans": 10454,
+        "deezerFans": 10457,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "A.k.i.ko.",
+      "topTitre": "Jodiya",
       "metriques": {
         "deezerFans": 6714,
         "spotifyFollowers": null,
@@ -221,7 +221,7 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "M Pa Kyè",
+      "topTitre": "2KAWO",
       "metriques": {
         "deezerFans": 2215,
         "spotifyFollowers": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
-      "topTitre": "Olha a Explosão",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/21836193e781d1fce87bd1d74c323044/250x250-000000-80-0-0.jpg",
+      "topTitre": "Really Really",
       "metriques": {
-        "deezerFans": 3784131,
+        "deezerFans": 696858,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5237400",
+        "deezer": "https://www.deezer.com/artist/2005121",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 96.7
+      "scoreHMI": 76.9
     }
   ]
 }
