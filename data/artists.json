@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-04T09:27:41.194Z",
+    "genereLe": "2026-09-05T08:55:38.793Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
       "topTitre": "Kokoye (feat. AndyBeatz, Toby Anbake, Paska, Costy Jay & Jea Fox)",
       "metriques": {
-        "deezerFans": 8994,
+        "deezerFans": 8996,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 495818,
+        "deezerFans": 496025,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Dyalòg",
       "metriques": {
-        "deezerFans": 10457,
+        "deezerFans": 10461,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -87,17 +87,17 @@
     {
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/d41d8cd98f00b204e9800998ecf8427e/250x250-000000-80-0-0.jpg",
-      "topTitre": "Messi (Sunset Mix)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 15,
+        "deezerFans": 7,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/254822142",
+        "deezer": "https://www.deezer.com/artist/59634622",
         "spotify": null,
         "youtube": null
       },
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Legend",
       "metriques": {
-        "deezerFans": 4930,
+        "deezerFans": 4931,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/21836193e781d1fce87bd1d74c323044/250x250-000000-80-0-0.jpg",
-      "topTitre": "Really Really",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
+      "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 696858,
+        "deezerFans": 3784185,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/2005121",
+        "deezer": "https://www.deezer.com/artist/5237400",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 76.9
+      "scoreHMI": 96.7
     }
   ]
 }
