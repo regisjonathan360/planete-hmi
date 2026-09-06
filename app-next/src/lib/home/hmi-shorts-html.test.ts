@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { buildHmiShortsHtml } from "./hmi-shorts-html";
 
 describe("buildHmiShortsHtml", () => {
-  it("rend un lecteur YouTube respectueux de la vie privée", () => {
-    const html = buildHmiShortsHtml([
+  it("rend un lecteur YouTube respectueux de la vie privée", async () => {
+    const { html } = await buildHmiShortsHtml([
       {
         id: "one",
         platform: "youtube",
@@ -20,8 +20,8 @@ describe("buildHmiShortsHtml", () => {
     expect(html).toContain("YouTube Shorts");
   });
 
-  it("échappe le contenu éditorial", () => {
-    const html = buildHmiShortsHtml([
+  it("échappe le contenu éditorial", async () => {
+    const { html } = await buildHmiShortsHtml([
       {
         id: "one",
         platform: "instagram",

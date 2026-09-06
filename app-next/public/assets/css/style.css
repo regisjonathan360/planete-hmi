@@ -493,6 +493,25 @@ a.section-link:hover { color: var(--flame-orange); }
   height: 100%;
   width: 100%;
 }
+.hmi-short__tiktok-embed {
+  height: 100%;
+  width: 100%;
+}
+.hmi-short__tiktok-embed .tiktok-embed {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  height: 100%;
+}
+.hmi-short__tiktok-embed .tiktok-embed > div {
+  height: 100% !important;
+}
+.hmi-short__tiktok-embed .tiktok-embed iframe {
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
 .hmi-short__platform {
   backdrop-filter: blur(12px);
   background: rgba(8, 7, 13, 0.82);
