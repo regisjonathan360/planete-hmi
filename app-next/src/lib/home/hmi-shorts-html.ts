@@ -4,6 +4,8 @@ import {
   type HmiShortPlatform,
 } from "@/lib/hmi-shorts";
 
+export const TIKTOK_EMBED_SCRIPT = '<script async src="https://platform.tiktok.com/embed.js"></script>';
+
 export interface PublicHmiShort {
   id: string;
   platform: HmiShortPlatform;
@@ -55,20 +57,30 @@ export function buildHmiShortsHtml(shorts: PublicHmiShort[]): string {
       const description = short.description ? escapeHtml(short.description) : "";
       const platform = escapeHtml(hmiShortPlatformLabel(short.platform));
 
-      const media = embedUrl
-        ? `<iframe
+      const media =
+        short.platform === "tiktok"
+          ? `<blockquote
+              class="tiktok-embed"
+              cite="${sourceUrl}"
+              ${short.external_id ? `data-video-id="${escapeHtml(short.external_id)}"` : ""}
+              style="max-width:100%;min-width:100%;"
+            >
+              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer">${title}</a>
+            </blockquote>`
+          : embedUrl
+            ? `<iframe
             src="${escapeHtml(embedUrl)}"
             title="HMI Shorts — ${title}"
             loading="lazy"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>`
-        : thumbnailUrl
-          ? `<a class="hmi-short__fallback" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
+            : thumbnailUrl
+              ? `<a class="hmi-short__fallback" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
               <img src="${thumbnailUrl}" alt="" loading="lazy" />
               <span>Voir la vidéo</span>
             </a>`
-          : `<a class="hmi-short__fallback hmi-short__fallback--plain" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
+              : `<a class="hmi-short__fallback hmi-short__fallback--plain" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
               <span class="hmi-short__play" aria-hidden="true">▶</span>
               <span>Voir la vidéo</span>
             </a>`;

@@ -25,13 +25,13 @@ const nextConfig: NextConfig = {
     const isDev = process.env.NODE_ENV === "development";
     const csp = [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com`,
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://platform.tiktok.com`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "media-src 'self' blob: https:",
       "font-src 'self' data:",
       `connect-src 'self' ${supabaseUrl} wss://${supabaseUrl.replace(/^https?:\/\//, "")} https://www.google-analytics.com https://region1.google-analytics.com https://challenges.cloudflare.com`,
-      "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://audiomack.com https://challenges.cloudflare.com",
+      "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://audiomack.com https://challenges.cloudflare.com https://www.tiktok.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
