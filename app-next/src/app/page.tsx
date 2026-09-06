@@ -110,10 +110,8 @@ export default async function HomePage() {
         filename="index.html"
         replacements={replacements}
         hideStaticHeader
+        loadTiktokEmbed={shorts.hasTikTok}
       />
-      {shorts.hasTikTok && (
-        <script async src="https://platform.tiktok.com/embed.js" />
-      )}
     </>
   );
 }

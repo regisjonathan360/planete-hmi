@@ -2,6 +2,12 @@
 
 import { useEffect } from "react";
 
+declare global {
+  interface Window {
+    tiktok?: { embed?: () => void };
+  }
+}
+
 /**
  * Reconnects the legacy HTML pages to the App Router lifecycle.
  *
@@ -11,7 +17,13 @@ import { useEffect } from "react";
  * would then remain at opacity 0 forever. This effect observes the freshly
  * mounted page and has a short failsafe so content is never left invisible.
  */
-export function StaticPageClientEffects({ rootId }: { rootId: string }) {
+export function StaticPageClientEffects({
+  rootId,
+  loadTiktokEmbed = false,
+}: {
+  rootId: string;
+  loadTiktokEmbed?: boolean;
+}) {
   useEffect(() => {
     const root = document.getElementById(rootId);
     if (!root) return;
@@ -61,6 +73,30 @@ export function StaticPageClientEffects({ rootId }: { rootId: string }) {
       observer.disconnect();
     };
   }, [rootId]);
+
+  useEffect(() => {
+    if (!loadTiktokEmbed) return;
+
+    if (typeof document === "undefined") return;
+
+    const existing = document.querySelector(
+      'script[src="https://platform.tiktok.com/embed.js"]',
+    );
+    if (!existing) {
+      const script = document.createElement("script");
+      script.src = "https://platform.tiktok.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    const timer = window.setTimeout(() => {
+      if (window.tiktok?.embed) {
+        window.tiktok.embed();
+      }
+    }, 500);
+
+    return () => window.clearTimeout(timer);
+  }, [loadTiktokEmbed]);
 
   return null;
 }

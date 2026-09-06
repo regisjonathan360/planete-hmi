@@ -12,10 +12,12 @@ export function StaticPage({
   filename,
   replacements = [],
   hideStaticHeader = false,
+  loadTiktokEmbed = false,
 }: {
   filename: string;
   replacements?: Array<{ marker: string; html: string }>;
   hideStaticHeader?: boolean;
+  loadTiktokEmbed?: boolean;
 }) {
   const rootId = `static-page-${filename.replace(/[^a-z0-9_-]/gi, "-")}`;
   let body = getStaticPageBody(filename);
@@ -71,7 +73,7 @@ export function StaticPage({
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: body }}
       />
-      <StaticPageClientEffects rootId={rootId} />
+      <StaticPageClientEffects rootId={rootId} loadTiktokEmbed={loadTiktokEmbed} />
       {scripts.map((src) => (
         <script key={src} src={src} defer />
       ))}
