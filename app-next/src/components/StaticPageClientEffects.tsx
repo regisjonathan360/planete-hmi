@@ -2,19 +2,42 @@
 
 import { useEffect } from "react";
 
-/**
- * Reconnects the legacy HTML pages to the App Router lifecycle.
- *
- * The legacy main.js runs once for the whole application. On a client-side
- * navigation, however, a new static page can be inserted after that script
- * has already registered its IntersectionObserver. Its `.reveal` elements
- * would then remain at opacity 0 forever. This effect observes the freshly
- * mounted page and has a short failsafe so content is never left invisible.
- */
+declare global {
+  interface Window {
+    tiktok?: { embed?: () => void };
+  }
+}
+
+const TIKTOK_EMBED_SRC = "https://www.tiktok.com/embed.js";
+
+function loadTiktokEmbeds(root: HTMLElement) {
+  const blockquotes = root.querySelectorAll("blockquote.tiktok-embed");
+  if (!blockquotes.length) return;
+
+  if (!document.querySelector(`script[src="${TIKTOK_EMBED_SRC}"]`)) {
+    const script = document.createElement("script");
+    script.src = TIKTOK_EMBED_SRC;
+    script.async = true;
+    document.body.appendChild(script);
+  }
+
+  const tryEmbed = () => {
+    if (window.tiktok?.embed) {
+      window.tiktok.embed();
+    }
+  };
+
+  setTimeout(tryEmbed, 300);
+  setTimeout(tryEmbed, 800);
+  setTimeout(tryEmbed, 1500);
+}
+
 export function StaticPageClientEffects({ rootId }: { rootId: string }) {
   useEffect(() => {
     const root = document.getElementById(rootId);
     if (!root) return;
+
+    loadTiktokEmbeds(root);
 
     const revealables = Array.from(
       root.querySelectorAll<HTMLElement>(".reveal:not(.is-visible)"),

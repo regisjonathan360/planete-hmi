@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SOURCE_KEY_PAR_SLUG } from "@/lib/charts/format";
 import { getPlatformChart } from "@/lib/charts/queries/get-platform-chart";
 import { buildAudiomackTickerHtml } from "@/lib/home/audiomack-ticker";
-import { buildHmiShortsHtml, TIKTOK_EMBED_SCRIPT_SRC, type PublicHmiShort } from "@/lib/home/hmi-shorts-html";
+import { buildHmiShortsHtml, type PublicHmiShort } from "@/lib/home/hmi-shorts-html";
 import { getPublishedHomepageChart } from "@/lib/home/homepage-chart";
 import { buildPodiumHtml } from "@/lib/home/podium-html";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -25,7 +25,7 @@ async function loadInitialUser() {
   return null;
 }
 
-async function loadShortsHtml(): Promise<{ html: string; hasTikTok: boolean }> {
+async function loadShortsHtml(): Promise<string> {
   try {
     const supabase = createAdminClient();
     const { data, error } = await supabase
@@ -38,12 +38,14 @@ async function loadShortsHtml(): Promise<{ html: string; hasTikTok: boolean }> {
       .order("published_at", { ascending: false })
       .limit(12);
     if (!error && data?.length) {
-      return buildHmiShortsHtml(data as PublicHmiShort[]);
+      const result = await buildHmiShortsHtml(data as PublicHmiShort[]);
+      return result.html;
     }
   } catch {
     // La page reste disponible si la sélection HMI Shorts est inaccessible.
   }
-  return buildHmiShortsHtml([]);
+  const result = await buildHmiShortsHtml([]);
+  return result.html;
 }
 
 async function loadTickerHtml() {
@@ -79,7 +81,7 @@ async function loadPodiumHtml() {
 }
 
 export default async function HomePage() {
-  const [initialUser, shorts, tickerHtml, podiumHtml] = await Promise.all([
+  const [initialUser, shortsHtml, tickerHtml, podiumHtml] = await Promise.all([
     loadInitialUser(),
     loadShortsHtml(),
     loadTickerHtml(),
@@ -88,7 +90,7 @@ export default async function HomePage() {
 
   const replacements = [
     { marker: "<!-- AUDIOMACK_TICKER -->", html: tickerHtml },
-    { marker: "<!-- HMI_SHORTS_CONTENT -->", html: shorts.html },
+    { marker: "<!-- HMI_SHORTS_CONTENT -->", html: shortsHtml },
   ];
 
   if (podiumHtml) {
@@ -106,9 +108,6 @@ export default async function HomePage() {
         replacements={replacements}
         hideStaticHeader
       />
-      {shorts.hasTikTok && (
-        <script async src={TIKTOK_EMBED_SCRIPT_SRC} />
-      )}
     </>
   );
 }

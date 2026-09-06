@@ -39,8 +39,9 @@ function safePublicUrl(value: string | null): string | null {
 
 async function fetchTikTokOembed(url: string): Promise<string | null> {
   try {
+    const clean = url.split("?")[0];
     const res = await fetch(
-      `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`,
+      `https://www.tiktok.com/oembed?url=${encodeURIComponent(clean)}`,
       { signal: AbortSignal.timeout(5_000), next: { revalidate: 86400 } },
     );
     if (!res.ok) return null;
