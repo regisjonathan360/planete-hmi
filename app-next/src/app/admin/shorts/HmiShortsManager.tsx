@@ -17,6 +17,12 @@ import {
 } from "@/lib/hmi-shorts";
 import styles from "./shorts-admin.module.css";
 
+declare global {
+  interface Window {
+    tiktok?: { embed?: () => void };
+  }
+}
+
 interface HmiShort {
   id: string;
   platform: HmiShortPlatform;
@@ -118,6 +124,26 @@ export function HmiShortsManager() {
     });
     return () => window.cancelAnimationFrame(frame);
   }, [loadShorts]);
+
+  useEffect(() => {
+    const hasTikTok = Object.keys(oembedHtml).length > 0;
+    if (!hasTikTok) return;
+
+    const src = "https://www.tiktok.com/embed.js";
+    if (!document.querySelector(`script[src="${src}"]`)) {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    const timers = [
+      window.setTimeout(() => { window.tiktok?.embed?.(); }, 300),
+      window.setTimeout(() => { window.tiktok?.embed?.(); }, 800),
+      window.setTimeout(() => { window.tiktok?.embed?.(); }, 1500),
+    ];
+    return () => timers.forEach(window.clearTimeout);
+  }, [oembedHtml]);
 
   async function createShort(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
