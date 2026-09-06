@@ -188,25 +188,41 @@
   width: 100%;
 }
 
-.tiktokEmbedWrapper {
+.tiktokFallback {
+  align-items: center;
+  color: var(--admin-text);
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  width: 100%;
-  overflow: hidden;
+  justify-content: center;
+  position: relative;
+  text-decoration: none;
 }
 
-.tiktokEmbedWrapper :global(.tiktok-embed) {
-  margin: 0;
-  padding: 0;
-}
-
-.tiktokEmbedWrapper :global(.tiktok-embed) > div {
-  height: 100% !important;
-}
-
-.tiktokEmbedWrapper :global(.tiktok-embed) iframe {
-  border: 0;
+.tiktokFallback img {
   height: 100%;
+  object-fit: cover;
   width: 100%;
+}
+
+.tiktokPlayOverlay {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  bottom: 1.5rem;
+  color: white;
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  left: 50%;
+  position: absolute;
+  top: auto;
+  transform: translateX(-50%);
+  width: 64px;
+}
+
+.tiktokFallback:hover .tiktokPlayOverlay {
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .preview > a {

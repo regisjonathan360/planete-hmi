@@ -59,14 +59,13 @@ export function buildHmiShortsHtml(shorts: PublicHmiShort[]): string {
 
       const media =
         short.platform === "tiktok"
-          ? `<blockquote
-              class="tiktok-embed"
-              cite="${sourceUrl}"
-              ${short.external_id ? `data-video-id="${escapeHtml(short.external_id)}"` : ""}
-              style="max-width:100%;min-width:100%;"
-            >
-              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer">${title}</a>
-            </blockquote>`
+          ? `<a class="hmi-short__fallback" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
+              ${thumbnailUrl ? `<img src="${thumbnailUrl}" alt="${title}" loading="lazy" />` : ""}
+              <span class="hmi-short__play-overlay" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
+              </span>
+              <span class="hmi-short__fallback-label">Voir sur TikTok</span>
+            </a>`
           : embedUrl
             ? `<iframe
             src="${escapeHtml(embedUrl)}"

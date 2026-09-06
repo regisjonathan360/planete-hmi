@@ -25,7 +25,7 @@ async function loadInitialUser() {
   return null;
 }
 
-async function loadShortsHtml(): Promise<{ html: string; hasTikTok: boolean }> {
+async function loadShortsHtml(): Promise<string> {
   try {
     const supabase = createAdminClient();
     const { data, error } = await supabase
@@ -38,13 +38,12 @@ async function loadShortsHtml(): Promise<{ html: string; hasTikTok: boolean }> {
       .order("published_at", { ascending: false })
       .limit(12);
     if (!error && data?.length) {
-      const hasTikTok = data.some((s) => s.platform === "tiktok");
-      return { html: buildHmiShortsHtml(data as PublicHmiShort[]), hasTikTok };
+      return buildHmiShortsHtml(data as PublicHmiShort[]);
     }
   } catch {
     // La page reste disponible si la sélection HMI Shorts est inaccessible.
   }
-  return { html: buildHmiShortsHtml([]), hasTikTok: false };
+  return buildHmiShortsHtml([]);
 }
 
 async function loadTickerHtml() {
@@ -80,14 +79,12 @@ async function loadPodiumHtml() {
 }
 
 export default async function HomePage() {
-  const [initialUser, shorts, tickerHtml, podiumHtml] = await Promise.all([
+  const [initialUser, shortsHtml, tickerHtml, podiumHtml] = await Promise.all([
     loadInitialUser(),
     loadShortsHtml(),
     loadTickerHtml(),
     loadPodiumHtml(),
   ]);
-
-  const shortsHtml = shorts.html;
 
   // Si le classement planétaire est publié, on remplace toute la section podium
   // du HTML statique par le vrai contenu.
@@ -110,7 +107,6 @@ export default async function HomePage() {
         filename="index.html"
         replacements={replacements}
         hideStaticHeader
-        loadTiktokEmbed={shorts.hasTikTok}
       />
     </>
   );

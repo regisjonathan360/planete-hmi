@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import {
   FiCheck,
   FiExternalLink,
@@ -16,12 +16,6 @@ import {
   type HmiShortPlatform,
 } from "@/lib/hmi-shorts";
 import styles from "./shorts-admin.module.css";
-
-declare global {
-  interface Window {
-    tiktok?: { embed?: () => void };
-  }
-}
 
 interface HmiShort {
   id: string;
@@ -62,34 +56,6 @@ export function HmiShortsManager() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState<{ text: string; error?: boolean } | null>(null);
-  const tiktokScriptLoaded = useRef(false);
-
-  useEffect(() => {
-    if (tiktokScriptLoaded.current) return;
-    if (typeof document === "undefined") return;
-    const existing = document.querySelector('script[src="https://platform.tiktok.com/embed.js"]');
-    if (existing) {
-      tiktokScriptLoaded.current = true;
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://platform.tiktok.com/embed.js";
-    script.async = true;
-    document.body.appendChild(script);
-    tiktokScriptLoaded.current = true;
-  }, []);
-
-  function refreshTiktokEmbeds() {
-    if (typeof window === "undefined") return;
-    const tiktoks = document.querySelectorAll("blockquote.tiktok-embed");
-    tiktoks.forEach((el) => {
-      if (el.getAttribute("data-tiktok-initialized")) return;
-      el.setAttribute("data-tiktok-initialized", "true");
-    });
-    if (window.tiktok?.embed) {
-      window.tiktok.embed();
-    }
-  }
 
   const notify = useCallback((text: string, error = false) => {
     setNotice({ text, error });
@@ -119,7 +85,6 @@ export function HmiShortsManager() {
       notify(error instanceof Error ? error.message : "Chargement impossible.", true);
     } finally {
       setLoading(false);
-      setTimeout(refreshTiktokEmbeds, 150);
     }
   }, [notify]);
 
@@ -314,22 +279,21 @@ export function HmiShortsManager() {
                 <article className={styles.card} key={short.id}>
                   <div className={styles.preview}>
                     {short.platform === "tiktok" ? (
-                      <div className={styles.tiktokEmbedWrapper}>
-                        <blockquote
-                          className="tiktok-embed"
-                          cite={short.source_url}
-                          data-video-id={short.external_id ?? undefined}
-                          style={{ maxWidth: "100%", minWidth: "100%" }}
-                        >
-                          <a
-                            href={short.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {short.title || "Voir sur TikTok"}
-                          </a>
-                        </blockquote>
-                      </div>
+                      <a
+                        href={short.source_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={styles.tiktokFallback}
+                      >
+                        {short.thumbnail_url ? (
+                          <img src={short.thumbnail_url} alt={short.title} loading="lazy" />
+                        ) : (
+                          <FiExternalLink aria-hidden="true" />
+                        )}
+                        <span className={styles.tiktokPlayOverlay}>
+                          <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
+                        </span>
+                      </a>
                     ) : embedUrl ? (
                       <iframe
                         src={embedUrl}

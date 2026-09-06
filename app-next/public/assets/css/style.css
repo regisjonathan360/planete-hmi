@@ -571,6 +571,31 @@ a.section-link:hover { color: var(--flame-orange); }
 }
 .hmi-short__fallback--plain { align-content: center; gap: 0.55rem; }
 .hmi-short__play { font-size: 1.35rem; }
+.hmi-short__play-overlay {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  bottom: 1.5rem;
+  color: white;
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 64px;
+  z-index: 2;
+  transition: background 0.2s;
+}
+.hmi-short__fallback:hover .hmi-short__play-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+.hmi-short__fallback-label {
+  bottom: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  z-index: 3;
+}
 .hmi-shorts-empty {
   align-items: center;
   border: 1px dashed var(--line);

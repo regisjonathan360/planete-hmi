@@ -2,12 +2,6 @@
 
 import { useEffect } from "react";
 
-declare global {
-  interface Window {
-    tiktok?: { embed?: () => void };
-  }
-}
-
 /**
  * Reconnects the legacy HTML pages to the App Router lifecycle.
  *
@@ -17,13 +11,7 @@ declare global {
  * would then remain at opacity 0 forever. This effect observes the freshly
  * mounted page and has a short failsafe so content is never left invisible.
  */
-export function StaticPageClientEffects({
-  rootId,
-  loadTiktokEmbed = false,
-}: {
-  rootId: string;
-  loadTiktokEmbed?: boolean;
-}) {
+export function StaticPageClientEffects({ rootId }: { rootId: string }) {
   useEffect(() => {
     const root = document.getElementById(rootId);
     if (!root) return;
@@ -36,8 +24,6 @@ export function StaticPageClientEffects({
     const reveal = (element: HTMLElement) => element.classList.add("is-visible");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // The hero is above the fold. Reveal it immediately so a route transition
-    // can never present an apparently empty home page while the observer warms up.
     const animationFrame = window.requestAnimationFrame(() => {
       revealables
         .filter((element) => element.closest(".hero"))
@@ -63,8 +49,6 @@ export function StaticPageClientEffects({
 
     revealables.forEach((element) => observer.observe(element));
 
-    // IntersectionObserver is normally immediate for the hero. The fallback
-    // protects visitors on a stalled transition or an unusual browser state.
     const fallback = window.setTimeout(() => revealables.forEach(reveal), 1200);
 
     return () => {
@@ -73,30 +57,6 @@ export function StaticPageClientEffects({
       observer.disconnect();
     };
   }, [rootId]);
-
-  useEffect(() => {
-    if (!loadTiktokEmbed) return;
-
-    if (typeof document === "undefined") return;
-
-    const existing = document.querySelector(
-      'script[src="https://platform.tiktok.com/embed.js"]',
-    );
-    if (!existing) {
-      const script = document.createElement("script");
-      script.src = "https://platform.tiktok.com/embed.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-
-    const timer = window.setTimeout(() => {
-      if (window.tiktok?.embed) {
-        window.tiktok.embed();
-      }
-    }, 500);
-
-    return () => window.clearTimeout(timer);
-  }, [loadTiktokEmbed]);
 
   return null;
 }
