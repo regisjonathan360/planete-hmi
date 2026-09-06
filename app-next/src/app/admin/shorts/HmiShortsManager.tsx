@@ -56,6 +56,7 @@ export function HmiShortsManager() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState<{ text: string; error?: boolean } | null>(null);
+  const [oembedHtml, setOembedHtml] = useState<Record<string, string>>({});
 
   const notify = useCallback((text: string, error = false) => {
     setNotice({ text, error });
@@ -81,6 +82,29 @@ export function HmiShortsManager() {
           ]),
         ),
       );
+
+      const tiktoks = rows.filter((s) => s.platform === "tiktok");
+      if (tiktoks.length > 0) {
+        const results = await Promise.all(
+          tiktoks.map(async (s) => {
+            try {
+              const res = await fetch(
+                `/api/oembed/tiktok?url=${encodeURIComponent(s.source_url)}`,
+              );
+              if (!res.ok) return null;
+              const data = await res.json();
+              return data.html ? { id: s.id, html: data.html as string } : null;
+            } catch {
+              return null;
+            }
+          }),
+        );
+        const map: Record<string, string> = {};
+        results.forEach((r) => {
+          if (r) map[r.id] = r.html;
+        });
+        setOembedHtml(map);
+      }
     } catch (error) {
       notify(error instanceof Error ? error.message : "Chargement impossible.", true);
     } finally {
@@ -278,7 +302,12 @@ export function HmiShortsManager() {
               return (
                 <article className={styles.card} key={short.id}>
                   <div className={styles.preview}>
-                    {short.platform === "tiktok" ? (
+                    {short.platform === "tiktok" && oembedHtml[short.id] ? (
+                      <div
+                        className={styles.tiktokEmbed}
+                        dangerouslySetInnerHTML={{ __html: oembedHtml[short.id] }}
+                      />
+                    ) : short.platform === "tiktok" ? (
                       <a
                         href={short.source_url}
                         target="_blank"

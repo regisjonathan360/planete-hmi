@@ -188,6 +188,30 @@
   width: 100%;
 }
 
+.tiktokEmbed {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.tiktokEmbed :global(.tiktok-embed) {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  height: 100%;
+}
+
+.tiktokEmbed :global(.tiktok-embed) > div {
+  height: 100% !important;
+}
+
+.tiktokEmbed :global(.tiktok-embed) iframe {
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
+
 .tiktokFallback {
   align-items: center;
   color: var(--admin-text);
