@@ -17,12 +17,6 @@ import {
 } from "@/lib/hmi-shorts";
 import styles from "./shorts-admin.module.css";
 
-declare global {
-  interface Window {
-    tiktok?: { embed?: () => void };
-  }
-}
-
 interface HmiShort {
   id: string;
   platform: HmiShortPlatform;
@@ -62,7 +56,6 @@ export function HmiShortsManager() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState<{ text: string; error?: boolean } | null>(null);
-  const [oembedHtml, setOembedHtml] = useState<Record<string, string>>({});
 
   const notify = useCallback((text: string, error = false) => {
     setNotice({ text, error });
@@ -76,47 +69,24 @@ export function HmiShortsManager() {
       if (!response.ok) throw new Error(result.error ?? "Chargement impossible.");
       const rows = (result.shorts ?? []) as HmiShort[];
       setShorts(rows);
-      setDrafts(
-        Object.fromEntries(
-          rows.map((short) => [
-            short.id,
-            {
-              title: short.title,
-              creatorName: short.creator_name ?? "",
-              displayOrder: short.display_order,
-            },
-          ]),
-        ),
-      );
-
-      const tiktoks = rows.filter((s) => s.platform === "tiktok");
-      if (tiktoks.length > 0) {
-        const results = await Promise.all(
-          tiktoks.map(async (s) => {
-            try {
-              const res = await fetch(
-                `/api/oembed/tiktok?url=${encodeURIComponent(s.source_url)}`,
-              );
-              if (!res.ok) return null;
-              const data = await res.json();
-              return data.html ? { id: s.id, html: data.html as string } : null;
-            } catch {
-              return null;
-            }
-          }),
+        setDrafts(
+          Object.fromEntries(
+            rows.map((short) => [
+              short.id,
+              {
+                title: short.title,
+                creatorName: short.creator_name ?? "",
+                displayOrder: short.display_order,
+              },
+            ]),
+          ),
         );
-        const map: Record<string, string> = {};
-        results.forEach((r) => {
-          if (r) map[r.id] = r.html;
-        });
-        setOembedHtml(map);
+      } catch (error) {
+        notify(error instanceof Error ? error.message : "Chargement impossible.", true);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      notify(error instanceof Error ? error.message : "Chargement impossible.", true);
-    } finally {
-      setLoading(false);
-    }
-  }, [notify]);
+    }, [notify]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -124,26 +94,6 @@ export function HmiShortsManager() {
     });
     return () => window.cancelAnimationFrame(frame);
   }, [loadShorts]);
-
-  useEffect(() => {
-    const hasTikTok = Object.keys(oembedHtml).length > 0;
-    if (!hasTikTok) return;
-
-    const src = "https://www.tiktok.com/embed.js";
-    if (!document.querySelector(`script[src="${src}"]`)) {
-      const script = document.createElement("script");
-      script.src = src;
-      script.async = true;
-      document.body.appendChild(script);
-    }
-
-    const timers = [
-      window.setTimeout(() => { window.tiktok?.embed?.(); }, 300),
-      window.setTimeout(() => { window.tiktok?.embed?.(); }, 800),
-      window.setTimeout(() => { window.tiktok?.embed?.(); }, 1500),
-    ];
-    return () => timers.forEach(window.clearTimeout);
-  }, [oembedHtml]);
 
   async function createShort(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -328,28 +278,7 @@ export function HmiShortsManager() {
               return (
                 <article className={styles.card} key={short.id}>
                   <div className={styles.preview}>
-                    {short.platform === "tiktok" && oembedHtml[short.id] ? (
-                      <div
-                        className={styles.tiktokEmbed}
-                        dangerouslySetInnerHTML={{ __html: oembedHtml[short.id] }}
-                      />
-                    ) : short.platform === "tiktok" ? (
-                      <a
-                        href={short.source_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={styles.tiktokFallback}
-                      >
-                        {short.thumbnail_url ? (
-                          <img src={short.thumbnail_url} alt={short.title} loading="lazy" />
-                        ) : (
-                          <FiExternalLink aria-hidden="true" />
-                        )}
-                        <span className={styles.tiktokPlayOverlay}>
-                          <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
-                        </span>
-                      </a>
-                    ) : embedUrl ? (
+                    {embedUrl ? (
                       <iframe
                         src={embedUrl}
                         title={`Aperçu de ${short.title}`}
@@ -359,8 +288,14 @@ export function HmiShortsManager() {
                       />
                     ) : (
                       <a href={short.source_url} target="_blank" rel="noreferrer">
-                        <FiExternalLink aria-hidden="true" />
-                        Ouvrir la vidéo
+                        {short.thumbnail_url ? (
+                          <img src={short.thumbnail_url} alt={short.title} loading="lazy" />
+                        ) : (
+                          <FiExternalLink aria-hidden="true" />
+                        )}
+                        <span className={styles.fallbackOverlay}>
+                          <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
+                        </span>
                       </a>
                     )}
                     <span className={`${styles.platform} ${styles[short.platform]}`}>
