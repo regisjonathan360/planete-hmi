@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-09T09:33:31.680Z",
+    "genereLe": "2026-09-10T09:32:44.972Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
       "topTitre": "Ou Mechan",
       "metriques": {
-        "deezerFans": 9004,
+        "deezerFans": 9005,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 497101,
+        "deezerFans": 497376,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,7 +49,7 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/0b7ae99a65b1a9451c07aee6fe81a582/250x250-000000-80-0-0.jpg",
       "topTitre": "Fè Lapli",
       "metriques": {
         "deezerFans": 7920,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Dyalòg",
+      "topTitre": "Ou se yon melodi",
       "metriques": {
-        "deezerFans": 10472,
+        "deezerFans": 10474,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -107,7 +107,7 @@
       "nom": "Wanito",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Gason Malen",
+      "topTitre": "Gad'on Rev",
       "metriques": {
         "deezerFans": 6817,
         "spotifyFollowers": null,
@@ -145,7 +145,7 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "Eskize Mwen (feat. DJ Bullet) (Raboday Mix)",
+      "topTitre": "Kontra Anile",
       "metriques": {
         "deezerFans": 4933,
         "spotifyFollowers": null,
@@ -183,7 +183,7 @@
       "nom": "BIC",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/84240697bd32e502dc2cf878636c76c5/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "topTitre": "jesus is back",
       "metriques": {
         "deezerFans": 32,
         "spotifyFollowers": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
-      "topTitre": "Quando Você Some / Sem Explicação (Ao Vivo)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
+      "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 41932,
+        "deezerFans": 3784303,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/132091652",
+        "deezer": "https://www.deezer.com/artist/5237400",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 43.9
+      "scoreHMI": 96.7
     }
   ]
 }
