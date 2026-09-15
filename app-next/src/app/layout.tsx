@@ -145,6 +145,7 @@ export default function RootLayout({
         <RadioPlayer />
         <Script src="/assets/js/main.js" strategy="afterInteractive" />
         <Script src="/assets/js/features.js" strategy="afterInteractive" />
+        <Script src="/assets/js/preview.js" strategy="afterInteractive" />
       </body>
     </html>
   );
