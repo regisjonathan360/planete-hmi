@@ -18,7 +18,7 @@ interface HeaderUser {
 export function SiteHeader({ initialUser }: { initialUser?: HeaderUser | null }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<HeaderUser | null>(initialUser ?? null);
-  const [authReady, setAuthReady] = useState(initialUser !== undefined);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
