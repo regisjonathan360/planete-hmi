@@ -1280,15 +1280,18 @@ a.section-link:hover { color: var(--flame-orange); }
 }
 
 /* ---------- Embrasement au survol ---------- */
+/* :focus-visible (clavier uniquement) au lieu de :focus-within :
+   après un clic sur le bouton play, celui-ci gardait le focus et la
+   flamme restait allumée même quand la souris quittait la carte. */
 .podium__card:hover > .podium-fire,
-.podium__card:focus-within > .podium-fire,
+.podium__card:has([data-preview-toggle]:focus-visible) > .podium-fire,
 .podium__card[data-preview-state="lecture"] > .podium-fire {
   opacity: 1;
 }
 
 /* La carte en feu passe devant ses voisines. */
 .podium__card:hover,
-.podium__card:focus-within,
+.podium__card:has([data-preview-toggle]:focus-visible),
 .podium__card[data-preview-state="lecture"] {
   z-index: 3;
   border-color: var(--fire-mid);
