@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-20T09:42:33.984Z",
+    "genereLe": "2026-09-21T10:35:30.950Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg",
-      "topTitre": "Inosan Yo (feat. Baky)",
+      "topTitre": "Apiye (feat. Zile)",
       "metriques": {
-        "deezerFans": 9021,
+        "deezerFans": 9023,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 500128,
+        "deezerFans": 500538,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,7 +49,7 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
       "topTitre": "Ayo Girl (Haitian Konpa Remix)",
       "metriques": {
         "deezerFans": 7937,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Rete La (Remix)",
+      "topTitre": "All on Me",
       "metriques": {
-        "deezerFans": 10495,
+        "deezerFans": 10498,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -90,7 +90,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 7,
+        "deezerFans": 9,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -107,7 +107,7 @@
       "nom": "Wanito",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Gad'on Rev",
+      "topTitre": "Gason Malen",
       "metriques": {
         "deezerFans": 6818,
         "spotifyFollowers": null,
@@ -145,7 +145,7 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "286",
+      "topTitre": "Koupab",
       "metriques": {
         "deezerFans": 4943,
         "spotifyFollowers": null,
@@ -221,9 +221,9 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "Do Me",
+      "topTitre": "Manyen m la (feat. Kenny Haiti)",
       "metriques": {
-        "deezerFans": 2215,
+        "deezerFans": 2216,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3784539,
+        "deezerFans": 3784564,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
