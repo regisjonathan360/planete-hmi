@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-25T10:06:41.478Z",
+    "genereLe": "2026-09-26T09:47:35.143Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -38,7 +38,7 @@
       "genre": "Konpa",
       "titre": "Fo Fim Kap Fèt",
       "score": 25.8,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3a693849e9532cf55fb122c51d883c9f/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 5,
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "Mèsi Lavi",
+      "titre": "Flanm",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },

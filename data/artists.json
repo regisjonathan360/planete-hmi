@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-25T10:06:41.478Z",
+    "genereLe": "2026-09-26T09:47:35.143Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -11,10 +11,10 @@
     {
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3a693849e9532cf55fb122c51d883c9f/250x250-000000-80-0-0.jpg",
       "topTitre": "Fo Fim Kap Fèt",
       "metriques": {
-        "deezerFans": 9034,
+        "deezerFans": 9035,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 501641,
+        "deezerFans": 501894,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Safe",
       "metriques": {
-        "deezerFans": 10513,
+        "deezerFans": 10516,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Mèsi Lavi",
+      "topTitre": "Flanm",
       "metriques": {
         "deezerFans": 6718,
         "spotifyFollowers": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Bon Pou Mwen",
       "metriques": {
-        "deezerFans": 4952,
+        "deezerFans": 4955,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3784658,
+        "deezerFans": 3784670,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
