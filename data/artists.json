@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-27T10:28:47.885Z",
+    "genereLe": "2026-09-28T11:36:35.765Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -11,10 +11,10 @@
     {
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3a693849e9532cf55fb122c51d883c9f/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
       "topTitre": "Fo Fim Kap Fèt",
       "metriques": {
-        "deezerFans": 9039,
+        "deezerFans": 9040,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 502120,
+        "deezerFans": 502369,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,10 +49,10 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
-      "topTitre": "Ayiti Se...",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg",
+      "topTitre": "Fanm Sa a Move",
       "metriques": {
-        "deezerFans": 7948,
+        "deezerFans": 7950,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Tolere w",
       "metriques": {
-        "deezerFans": 10519,
+        "deezerFans": 10521,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "Bon Pou Mwen",
+      "topTitre": "What's Next?",
       "metriques": {
-        "deezerFans": 4955,
+        "deezerFans": 4956,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,21 +163,21 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
+      "topTitre": "Lakou trankil",
       "metriques": {
-        "deezerFans": 17,
+        "deezerFans": 1231,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/220083935",
+        "deezer": "https://www.deezer.com/artist/5858154",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 0
+      "scoreHMI": 2.4
     },
     {
       "nom": "BIC",
@@ -240,9 +240,9 @@
       "nom": "Kevinna",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
-      "topTitre": "Olha a Explosão",
+      "topTitre": "Terremoto",
       "metriques": {
-        "deezerFans": 3784691,
+        "deezerFans": 3784717,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
