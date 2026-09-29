@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-28T11:36:35.765Z",
+    "genereLe": "2026-09-29T11:15:23.492Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
       "topTitre": "Fo Fim Kap Fèt",
       "metriques": {
-        "deezerFans": 9040,
+        "deezerFans": 9042,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -25,7 +25,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 25.8
+      "scoreHMI": 25.9
     },
     {
       "nom": "Joé Dwèt Filé",
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 502369,
+        "deezerFans": 502573,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -50,9 +50,9 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg",
-      "topTitre": "Fanm Sa a Move",
+      "topTitre": "Fè Lapli",
       "metriques": {
-        "deezerFans": 7950,
+        "deezerFans": 7951,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Tolere w",
       "metriques": {
-        "deezerFans": 10521,
+        "deezerFans": 10524,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -90,7 +90,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 9,
+        "deezerFans": 10,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "What's Next?",
       "metriques": {
-        "deezerFans": 4956,
+        "deezerFans": 4957,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -221,7 +221,7 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "Manyen m la (feat. Kenny Haiti)",
+      "topTitre": "Matelo",
       "metriques": {
         "deezerFans": 2220,
         "spotifyFollowers": null,
@@ -240,9 +240,9 @@
       "nom": "Kevinna",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
-      "topTitre": "Terremoto",
+      "topTitre": "Lovezinho",
       "metriques": {
-        "deezerFans": 3784717,
+        "deezerFans": 3784743,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,

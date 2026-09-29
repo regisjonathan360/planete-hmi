@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-28T11:36:35.765Z",
+    "genereLe": "2026-09-29T11:15:23.492Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,7 +12,7 @@
       "rang": 1,
       "nom": "Kevinna",
       "genre": "Pop",
-      "titre": "Terremoto",
+      "titre": "Lovezinho",
       "score": 96.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
     },
@@ -37,14 +37,14 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "titre": "Fo Fim Kap Fèt",
-      "score": 25.8,
+      "score": 25.9,
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Fanm Sa a Move",
+      "titre": "Fè Lapli",
       "score": 24.3,
       "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg"
     },
@@ -76,7 +76,7 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "Manyen m la (feat. Kenny Haiti)",
+      "titre": "Matelo",
       "score": 9.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
     },
