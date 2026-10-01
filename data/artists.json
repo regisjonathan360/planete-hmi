@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-09-30T11:03:20.801Z",
+    "genereLe": "2026-10-01T11:29:48.812Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
-      "topTitre": "Fo Fim Kap Fèt",
+      "topTitre": "An Kachet",
       "metriques": {
-        "deezerFans": 9045,
+        "deezerFans": 9049,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé II",
       "metriques": {
-        "deezerFans": 502883,
+        "deezerFans": 503100,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,10 +49,10 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/16a5a56c4ebdcfc9f89a55af82e22f05/250x250-000000-80-0-0.jpg",
       "topTitre": "Fè Lapli",
       "metriques": {
-        "deezerFans": 7953,
+        "deezerFans": 7957,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -63,7 +63,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 24.3
+      "scoreHMI": 24.4
     },
     {
       "nom": "Rutshelle Guillaume",
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Rete La (Remix)",
       "metriques": {
-        "deezerFans": 10528,
+        "deezerFans": 10533,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -107,7 +107,7 @@
       "nom": "Wanito",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Viens avec moi",
+      "topTitre": "Bezwen Mennaj",
       "metriques": {
         "deezerFans": 6819,
         "spotifyFollowers": null,
@@ -128,7 +128,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
       "topTitre": "Flanm",
       "metriques": {
-        "deezerFans": 6718,
+        "deezerFans": 6719,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "What's Next?",
       "metriques": {
-        "deezerFans": 4958,
+        "deezerFans": 4961,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,21 +163,21 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
+      "topTitre": "Lakou Trankil",
       "metriques": {
-        "deezerFans": 17,
+        "deezerFans": 1231,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/220083935",
+        "deezer": "https://www.deezer.com/artist/5858154",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 0
+      "scoreHMI": 2.4
     },
     {
       "nom": "BIC",
@@ -185,7 +185,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/84240697bd32e502dc2cf878636c76c5/250x250-000000-80-0-0.jpg",
       "topTitre": "jesus is back",
       "metriques": {
-        "deezerFans": 36,
+        "deezerFans": 38,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -221,7 +221,7 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "Matelo",
+      "topTitre": "M Pa Kyè",
       "metriques": {
         "deezerFans": 2220,
         "spotifyFollowers": null,
@@ -240,9 +240,9 @@
       "nom": "Kevinna",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
-      "topTitre": "Lovezinho",
+      "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3784784,
+        "deezerFans": 3784808,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
