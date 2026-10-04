@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-03T10:19:17.370Z",
+    "genereLe": "2026-10-04T11:03:08.314Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
-      "topTitre": "An Kachet",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 9051,
+        "deezerFans": 9055,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 503516,
+        "deezerFans": 503735,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -44,15 +44,15 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 73
+      "scoreHMI": 73.1
     },
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/16a5a56c4ebdcfc9f89a55af82e22f05/250x250-000000-80-0-0.jpg",
-      "topTitre": "Ayo Girl (Haitian Konpa Remix)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/f7d469f6f19184be377dd866959ca240/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 7958,
+        "deezerFans": 7959,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Rete La (Remix)",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 10538,
+        "deezerFans": 10543,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -82,7 +82,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 27.6
+      "scoreHMI": 27.7
     },
     {
       "nom": "Naïka",
@@ -107,7 +107,7 @@
       "nom": "Wanito",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Bezwen Mennaj",
+      "topTitre": null,
       "metriques": {
         "deezerFans": 6819,
         "spotifyFollowers": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Flanm",
+      "topTitre": null,
       "metriques": {
         "deezerFans": 6720,
         "spotifyFollowers": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "What's Next?",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 4963,
+        "deezerFans": 4966,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,27 +163,27 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/5145d55a5cea70f024fc6e7cfc538cdd/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 27,
+        "deezerFans": 1231,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/262215991",
+        "deezer": "https://www.deezer.com/artist/5858154",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 0
+      "scoreHMI": 2.4
     },
     {
       "nom": "BIC",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/84240697bd32e502dc2cf878636c76c5/250x250-000000-80-0-0.jpg",
-      "topTitre": "jesus is back",
+      "topTitre": null,
       "metriques": {
         "deezerFans": 38,
         "spotifyFollowers": null,
@@ -202,7 +202,7 @@
       "nom": "Vwadèzil",
       "genre": "Rabòday",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9ffa465479a45f27c8a8492c4fedcdec/250x250-000000-80-0-0.jpg",
-      "topTitre": "M'pap Fe Maleve (2005)",
+      "topTitre": null,
       "metriques": {
         "deezerFans": 181,
         "spotifyFollowers": null,
@@ -221,7 +221,7 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg",
-      "topTitre": "M Pa Kyè",
+      "topTitre": null,
       "metriques": {
         "deezerFans": 2220,
         "spotifyFollowers": null,
@@ -240,9 +240,9 @@
       "nom": "Kevinna",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
-      "topTitre": "Olha a Explosão",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 3784849,
+        "deezerFans": 3784885,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
