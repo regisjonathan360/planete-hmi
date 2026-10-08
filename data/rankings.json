@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-07T11:39:34.796Z",
+    "genereLe": "2026-10-08T11:54:24.417Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "Rihanna",
+      "titre": "Doucement",
       "score": 73.1,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -36,9 +36,9 @@
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "San Konsyans (Kanaval 2019)",
+      "titre": "Fo Fim Kap Fèt",
       "score": 25.9,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 5,
@@ -76,7 +76,7 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "M Pa Kyè",
+      "titre": "Manyen m la (feat. Kenny Haiti)",
       "score": 9.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
     },
