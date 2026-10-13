@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-12T12:57:51.028Z",
+    "genereLe": "2026-10-13T12:34:37.397Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Adikte",
+      "titre": "Good God",
       "score": 27.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "286",
+      "titre": "Love Pa Peye Bill",
       "score": 18.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
@@ -79,6 +79,14 @@
       "titre": "Manyen m la (feat. Kenny Haiti)",
       "score": 9.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 10,
+      "nom": "Belo",
+      "genre": "Reggae",
+      "titre": "Lakou trankil",
+      "score": 2.4,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
