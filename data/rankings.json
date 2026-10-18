@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-17T09:08:53.881Z",
+    "genereLe": "2026-10-18T09:26:01.896Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "4 Kampé",
+      "titre": "4 Kampé II",
       "score": 73.1,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Rete La (Remix)",
+      "titre": "Sere'm",
       "score": 27.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -36,23 +36,23 @@
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Tranble",
+      "titre": "Krazèd Fwaye",
       "score": 25.9,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/72ae8a7ced6b91b04b095fa8e1ec754c/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Ou Pati",
+      "titre": "Fè Lapli",
       "score": 24.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/67583a942c39e1573f923dd49165cb79/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": "Bezwen Mennaj",
+      "titre": "Gad'on Rev",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
@@ -76,9 +76,17 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "Manyen m la (feat. Kenny Haiti)",
+      "titre": "M Pa Kyè",
       "score": 9.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 10,
+      "nom": "Belo",
+      "genre": "Reggae",
+      "titre": "Rise Again",
+      "score": 2.5,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
