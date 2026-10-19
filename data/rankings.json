@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-18T09:26:01.896Z",
+    "genereLe": "2026-10-19T10:39:04.301Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,25 +10,25 @@
   "classement": [
     {
       "rang": 1,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "Olha a Explosão",
-      "score": 96.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+      "nom": "Joé Dwèt Filé",
+      "genre": "Konpa",
+      "titre": "Baddies",
+      "score": 73.1,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 2,
-      "nom": "Joé Dwèt Filé",
-      "genre": "Konpa",
-      "titre": "4 Kampé II",
-      "score": 73.1,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Só Eu Te Amei",
+      "score": 44,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Sere'm",
+      "titre": "M Pa La Anko",
       "score": 27.7,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Yon Vagabon Chanje",
+      "titre": "Ou Trouble'm",
       "score": 18.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
@@ -76,17 +76,9 @@
       "rang": 9,
       "nom": "Darline Desca",
       "genre": "Pop",
-      "titre": "M Pa Kyè",
+      "titre": "Manyen m la (feat. Kenny Haiti)",
       "score": 9.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Rise Again",
-      "score": 2.5,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
