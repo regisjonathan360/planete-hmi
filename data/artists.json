@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-20T09:55:42.562Z",
+    "genereLe": "2026-10-21T09:58:59.971Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
       "topTitre": "Krazèd Fwaye",
       "metriques": {
-        "deezerFans": 9080,
+        "deezerFans": 9081,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé",
+      "topTitre": "Slowly",
       "metriques": {
-        "deezerFans": 506368,
+        "deezerFans": 506470,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -50,9 +50,9 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/67583a942c39e1573f923dd49165cb79/250x250-000000-80-0-0.jpg",
-      "topTitre": "Fè Lapli",
+      "topTitre": "Ayo Girl (Haitian Konpa Remix)",
       "metriques": {
-        "deezerFans": 7978,
+        "deezerFans": 7979,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Good God",
+      "topTitre": "Rete La (Live)",
       "metriques": {
-        "deezerFans": 10587,
+        "deezerFans": 10589,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "Dènye Lèt (Depresyon)",
+      "topTitre": "Legend",
       "metriques": {
-        "deezerFans": 4979,
+        "deezerFans": 4980,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,17 +163,17 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/5145d55a5cea70f024fc6e7cfc538cdd/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 17,
+        "deezerFans": 28,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/220083935",
+        "deezer": "https://www.deezer.com/artist/262215991",
         "spotify": null,
         "youtube": null
       },
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3785252,
+        "deezerFans": 3785278,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
