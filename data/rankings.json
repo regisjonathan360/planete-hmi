@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-23T09:53:48.180Z",
+    "genereLe": "2026-10-24T09:23:21.657Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,19 +10,19 @@
   "classement": [
     {
       "rang": 1,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "Olha a Explosão",
-      "score": 96.7,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+      "nom": "Joé Dwèt Filé",
+      "genre": "Konpa",
+      "titre": "4 Kampé",
+      "score": 73.1,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 2,
-      "nom": "Joé Dwèt Filé",
-      "genre": "Konpa",
-      "titre": "Jolie madame (feat. Ronisia)",
-      "score": 73.1,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Te Love (Ao Vivo)",
+      "score": 62.4,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/5564de8a75c26ebb6cce0f1e70c77704/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 3,
@@ -36,7 +36,7 @@
       "rang": 4,
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "titre": "Krazèd Fwaye",
+      "titre": "Marry Me",
       "score": 25.9,
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg"
     },
@@ -44,7 +44,7 @@
       "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Ayo Girl (Haitian Konpa Remix)",
+      "titre": "Fè Lapli",
       "score": 24.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg"
     },
@@ -52,7 +52,7 @@
       "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": "Gad'on Rev",
+      "titre": "Disparisyon",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "Flanm",
+      "titre": "Djannie",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Bloke",
+      "titre": "Mete Limye Sou Mwen",
       "score": 18.9,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
