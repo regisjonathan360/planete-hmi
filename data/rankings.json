@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-25T09:42:05.800Z",
+    "genereLe": "2026-10-26T10:56:09.714Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -46,7 +46,7 @@
       "genre": "Konpa",
       "titre": "Fè Lapli",
       "score": 24.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/1881f170ce25afe6ce1eea9d2bd38912/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
@@ -79,6 +79,14 @@
       "titre": "M Pa Kyè",
       "score": 9.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 10,
+      "nom": "Belo",
+      "genre": "Reggae",
+      "titre": "Lakou trankil",
+      "score": 2.5,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }
