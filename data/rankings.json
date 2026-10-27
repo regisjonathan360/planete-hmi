@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-26T10:56:09.714Z",
+    "genereLe": "2026-10-27T10:20:26.863Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -52,7 +52,7 @@
       "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": "Disparisyon",
+      "titre": "Kisa'm Te Fèw Ki Mal",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "Djannie",
+      "titre": "A.k.i.ko.",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },
@@ -79,14 +79,6 @@
       "titre": "M Pa Kyè",
       "score": 9.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Lakou trankil",
-      "score": 2.5,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
     }
   ]
 }

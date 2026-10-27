@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-26T10:56:09.714Z",
+    "genereLe": "2026-10-27T10:20:26.863Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
       "topTitre": "Marry Me",
       "metriques": {
-        "deezerFans": 9084,
+        "deezerFans": 9085,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 507037,
+        "deezerFans": 507130,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Tolere w",
       "metriques": {
-        "deezerFans": 10603,
+        "deezerFans": 10606,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -107,7 +107,7 @@
       "nom": "Wanito",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Disparisyon",
+      "topTitre": "Kisa'm Te Fèw Ki Mal",
       "metriques": {
         "deezerFans": 6820,
         "spotifyFollowers": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Djannie",
+      "topTitre": "A.k.i.ko.",
       "metriques": {
         "deezerFans": 6725,
         "spotifyFollowers": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Mete Limye Sou Mwen",
       "metriques": {
-        "deezerFans": 4985,
+        "deezerFans": 4986,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,21 +163,21 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
-      "topTitre": "Lakou trankil",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/5145d55a5cea70f024fc6e7cfc538cdd/250x250-000000-80-0-0.jpg",
+      "topTitre": null,
       "metriques": {
-        "deezerFans": 1235,
+        "deezerFans": 29,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5858154",
+        "deezer": "https://www.deezer.com/artist/262215991",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 2.5
+      "scoreHMI": 0
     },
     {
       "nom": "BIC",
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/5564de8a75c26ebb6cce0f1e70c77704/250x250-000000-80-0-0.jpg",
       "topTitre": "LOVEZINHO DO PAI",
       "metriques": {
-        "deezerFans": 204096,
+        "deezerFans": 204104,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
