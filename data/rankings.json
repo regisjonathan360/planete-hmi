@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-10-27T10:20:26.863Z",
+    "genereLe": "2026-10-28T11:11:23.747Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -10,19 +10,19 @@
   "classement": [
     {
       "rang": 1,
+      "nom": "Kevinna",
+      "genre": "Pop",
+      "titre": "Terremoto",
+      "score": 96.7,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg"
+    },
+    {
+      "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "titre": "4 Kampé",
       "score": 73.1,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 2,
-      "nom": "Kevinna",
-      "genre": "Pop",
-      "titre": "LOVEZINHO DO PAI",
-      "score": 62.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/5564de8a75c26ebb6cce0f1e70c77704/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 3,
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Mete Limye Sou Mwen",
+      "titre": "Love Pa Peye Bill",
       "score": 18.9,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
