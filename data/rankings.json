@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-04T12:52:47.818Z",
+    "genereLe": "2026-11-05T13:01:14.976Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "4 Kampé",
+      "titre": "Baddies",
       "score": 73.2,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -29,7 +29,7 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "titre": "Distans",
-      "score": 27.7,
+      "score": 27.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
     {
@@ -44,15 +44,15 @@
       "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Fè Lapli",
+      "titre": "Ayo Girl (Haitian Konpa Remix)",
       "score": 24.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/cbffebb8039b49446b8aaadde84f15ac/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
       "nom": "Wanito",
       "genre": "Konpa",
-      "titre": "Biyografi Mwen",
+      "titre": "Kisa'm Te Fèw Ki Mal",
       "score": 22.5,
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg"
     },
@@ -68,7 +68,7 @@
       "rang": 8,
       "nom": "Baky",
       "genre": "Rap kreyòl",
-      "titre": "Doub Blan",
+      "titre": "Kite’m Motive’w",
       "score": 18.9,
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg"
     },
