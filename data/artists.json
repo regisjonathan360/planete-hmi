@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-09T13:44:48.141Z",
+    "genereLe": "2026-11-10T13:22:32.837Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg",
       "topTitre": "An Kachet",
       "metriques": {
-        "deezerFans": 9103,
+        "deezerFans": 9104,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé",
+      "topTitre": "Titanic",
       "metriques": {
-        "deezerFans": 509203,
+        "deezerFans": 509353,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,10 +49,10 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/c0aadb9abcf538f781f24bfffcf86a91/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/cbffebb8039b49446b8aaadde84f15ac/250x250-000000-80-0-0.jpg",
       "topTitre": "Fanm Sa a Move",
       "metriques": {
-        "deezerFans": 7998,
+        "deezerFans": 7999,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Distans",
       "metriques": {
-        "deezerFans": 10648,
+        "deezerFans": 10649,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -107,7 +107,7 @@
       "nom": "Wanito",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Bezwen Mennaj",
+      "topTitre": "Viens avec moi",
       "metriques": {
         "deezerFans": 6822,
         "spotifyFollowers": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Ou Trouble'm",
       "metriques": {
-        "deezerFans": 5002,
+        "deezerFans": 5004,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -202,7 +202,7 @@
       "nom": "Vwadèzil",
       "genre": "Rabòday",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9ffa465479a45f27c8a8492c4fedcdec/250x250-000000-80-0-0.jpg",
-      "topTitre": "M'pap Nan Pale Franse (2004)",
+      "topTitre": "Tèt Tizo Zo",
       "metriques": {
         "deezerFans": 181,
         "spotifyFollowers": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/4381e1615211249a6a1751ca18c2c290/250x250-000000-80-0-0.jpg",
-      "topTitre": "Lay Your Head Down",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
+      "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 52201,
+        "deezerFans": 3785778,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/1050",
+        "deezer": "https://www.deezer.com/artist/5237400",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 46.4
+      "scoreHMI": 96.7
     }
   ]
 }
