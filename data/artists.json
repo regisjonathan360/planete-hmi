@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-14T12:00:26.061Z",
+    "genereLe": "2026-11-15T12:36:59.901Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/72452f889324303f50ffeb6355889b74/250x250-000000-80-0-0.jpg",
-      "topTitre": "Sorry To My Ex",
+      "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 9108,
+        "deezerFans": 9109,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "Rihanna",
+      "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 509991,
+        "deezerFans": 510147,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -52,7 +52,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
       "topTitre": "Kenbe M'",
       "metriques": {
-        "deezerFans": 8001,
+        "deezerFans": 8002,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Distans",
       "metriques": {
-        "deezerFans": 10657,
+        "deezerFans": 10660,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Mwen Bezwen",
+      "topTitre": "Flanm",
       "metriques": {
         "deezerFans": 6728,
         "spotifyFollowers": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "Si Yo Vle (feat. TROUBLEBOY HITMAKER & Steves J Bryan)",
+      "topTitre": "Pote'l Banm",
       "metriques": {
-        "deezerFans": 5011,
+        "deezerFans": 5012,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -164,7 +164,7 @@
       "nom": "Belo",
       "genre": "Reggae",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg",
-      "topTitre": "Lakou trankil",
+      "topTitre": "Pa lage sa",
       "metriques": {
         "deezerFans": 1236,
         "spotifyFollowers": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3785948,
+        "deezerFans": 3785973,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
