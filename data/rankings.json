@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-16T13:28:58.881Z",
+    "genereLe": "2026-11-17T14:14:16.780Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "4 Kampé",
+      "titre": "Rihanna",
       "score": 73.2,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -46,7 +46,7 @@
       "genre": "Konpa",
       "titre": "Kenbe M'",
       "score": 24.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/cbffebb8039b49446b8aaadde84f15ac/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 6,
@@ -60,7 +60,7 @@
       "rang": 7,
       "nom": "Emeline Michel",
       "genre": "Racine",
-      "titre": "Flanm",
+      "titre": "A.k.i.ko.",
       "score": 22.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg"
     },

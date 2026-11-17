@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-16T13:28:58.881Z",
+    "genereLe": "2026-11-17T14:14:16.780Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé",
+      "topTitre": "Rihanna",
       "metriques": {
-        "deezerFans": 510305,
+        "deezerFans": 510355,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,10 +49,10 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/cbffebb8039b49446b8aaadde84f15ac/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
       "topTitre": "Kenbe M'",
       "metriques": {
-        "deezerFans": 8006,
+        "deezerFans": 8005,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Distans",
       "metriques": {
-        "deezerFans": 10664,
+        "deezerFans": 10667,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Flanm",
+      "topTitre": "A.k.i.ko.",
       "metriques": {
         "deezerFans": 6728,
         "spotifyFollowers": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3786014,
+        "deezerFans": 3786067,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
