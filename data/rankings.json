@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-17T14:14:16.780Z",
+    "genereLe": "2026-11-18T13:45:45.338Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "Rihanna",
+      "titre": "Baddies",
       "score": 73.2,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -28,7 +28,7 @@
       "rang": 3,
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
-      "titre": "Distans",
+      "titre": "Mwen Wè m nan ou",
       "score": 27.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg"
     },
@@ -44,7 +44,7 @@
       "rang": 5,
       "nom": "Mikaben",
       "genre": "Konpa",
-      "titre": "Kenbe M'",
+      "titre": "Ayo Girl (Haitian Konpa Remix)",
       "score": 24.4,
       "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg"
     },
@@ -78,15 +78,7 @@
       "genre": "Pop",
       "titre": "M Pa Kyè",
       "score": 9.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/aa311c6c82989ef47868cf9006bee4ba/250x250-000000-80-0-0.jpg"
-    },
-    {
-      "rang": 10,
-      "nom": "Belo",
-      "genre": "Reggae",
-      "titre": "Pa lage sa",
-      "score": 2.5,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/9685632d2e93266e19343967b8eb1eda/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist//250x250-000000-80-0-0.jpg"
     }
   ]
 }
