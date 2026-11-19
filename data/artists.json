@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-18T13:45:45.338Z",
+    "genereLe": "2026-11-19T14:15:31.238Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
       "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 9117,
+        "deezerFans": 9120,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -25,15 +25,15 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 25.9
+      "scoreHMI": 26
     },
     {
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "Baddies",
+      "topTitre": "4 Kampé II",
       "metriques": {
-        "deezerFans": 510417,
+        "deezerFans": 510487,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -50,9 +50,9 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
-      "topTitre": "Ayo Girl (Haitian Konpa Remix)",
+      "topTitre": "Ayiti Se...",
       "metriques": {
-        "deezerFans": 8005,
+        "deezerFans": 8007,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Mwen Wè m nan ou",
       "metriques": {
-        "deezerFans": 10672,
+        "deezerFans": 10678,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -145,9 +145,9 @@
       "nom": "Baky",
       "genre": "Rap kreyòl",
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
-      "topTitre": "Pote'l Banm",
+      "topTitre": "24/7",
       "metriques": {
-        "deezerFans": 5013,
+        "deezerFans": 5014,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
       "topTitre": "Olha a Explosão",
       "metriques": {
-        "deezerFans": 3786109,
+        "deezerFans": 3786155,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
