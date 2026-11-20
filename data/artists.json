@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-19T14:15:31.238Z",
+    "genereLe": "2026-11-20T13:55:31.476Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
       "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 9120,
+        "deezerFans": 9121,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé II",
+      "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 510487,
+        "deezerFans": 510566,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -128,7 +128,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
       "topTitre": "A.k.i.ko.",
       "metriques": {
-        "deezerFans": 6728,
+        "deezerFans": 6729,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "24/7",
       "metriques": {
-        "deezerFans": 5014,
+        "deezerFans": 5015,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,17 +163,17 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/5145d55a5cea70f024fc6e7cfc538cdd/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 29,
+        "deezerFans": 19,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/262215991",
+        "deezer": "https://www.deezer.com/artist/220083935",
         "spotify": null,
         "youtube": null
       },
@@ -202,7 +202,7 @@
       "nom": "Vwadèzil",
       "genre": "Rabòday",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9ffa465479a45f27c8a8492c4fedcdec/250x250-000000-80-0-0.jpg",
-      "topTitre": "Tèt Tizo Zo",
+      "topTitre": "Yo Samble Moun",
       "metriques": {
         "deezerFans": 181,
         "spotifyFollowers": null,
@@ -220,7 +220,7 @@
     {
       "nom": "Darline Desca",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist//250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/4c0d090bd2e7fed379ec433ae02e822c/250x250-000000-80-0-0.jpg",
       "topTitre": "M Pa Kyè",
       "metriques": {
         "deezerFans": 2226,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/3549481bbfd3415ba247b411eea2f8d0/250x250-000000-80-0-0.jpg",
-      "topTitre": "Olha a Explosão",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
+      "topTitre": "Quando Você Some / Defensor",
       "metriques": {
-        "deezerFans": 3786155,
+        "deezerFans": 42875,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5237400",
+        "deezer": "https://www.deezer.com/artist/132091652",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 96.7
+      "scoreHMI": 44.1
     }
   ]
 }
