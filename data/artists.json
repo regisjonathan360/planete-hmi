@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-21T13:20:00.354Z",
+    "genereLe": "2026-11-22T13:11:50.193Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
       "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 9121,
+        "deezerFans": 9122,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé",
+      "topTitre": "4 Kampé II",
       "metriques": {
-        "deezerFans": 510635,
+        "deezerFans": 510691,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Mwen Wè m nan ou",
       "metriques": {
-        "deezerFans": 10682,
+        "deezerFans": 10686,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -128,7 +128,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
       "topTitre": "A.k.i.ko.",
       "metriques": {
-        "deezerFans": 6729,
+        "deezerFans": 6731,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Koupab",
       "metriques": {
-        "deezerFans": 5015,
+        "deezerFans": 5016,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,17 +163,17 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/940c7465908d481119757c0fbf579b1a/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/5145d55a5cea70f024fc6e7cfc538cdd/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 19,
+        "deezerFans": 29,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/220083935",
+        "deezer": "https://www.deezer.com/artist/262215991",
         "spotify": null,
         "youtube": null
       },
@@ -204,7 +204,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/9ffa465479a45f27c8a8492c4fedcdec/250x250-000000-80-0-0.jpg",
       "topTitre": "Yo Samble Moun",
       "metriques": {
-        "deezerFans": 181,
+        "deezerFans": 182,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -221,9 +221,9 @@
       "nom": "Darline Desca",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/4c0d090bd2e7fed379ec433ae02e822c/250x250-000000-80-0-0.jpg",
-      "topTitre": "M Pa Kyè",
+      "topTitre": "M RENMEN W",
       "metriques": {
-        "deezerFans": 2226,
+        "deezerFans": 2227,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -240,9 +240,9 @@
       "nom": "Kevinna",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
-      "topTitre": "Quando Você Some / Defensor",
+      "topTitre": "Que Mal Te Fiz Eu (Ao Vivo)",
       "metriques": {
-        "deezerFans": 42890,
+        "deezerFans": 42907,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
