@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-22T13:11:50.193Z",
+    "genereLe": "2026-11-23T15:49:35.107Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé II",
       "metriques": {
-        "deezerFans": 510691,
+        "deezerFans": 510774,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -50,9 +50,9 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/16a5a56c4ebdcfc9f89a55af82e22f05/250x250-000000-80-0-0.jpg",
-      "topTitre": "Fè Lapli",
+      "topTitre": "DLO THO",
       "metriques": {
-        "deezerFans": 8010,
+        "deezerFans": 8011,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,7 +69,7 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Mwen Wè m nan ou",
+      "topTitre": "Can't Get over you",
       "metriques": {
         "deezerFans": 10686,
         "spotifyFollowers": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
       "topTitre": "Que Mal Te Fiz Eu (Ao Vivo)",
       "metriques": {
-        "deezerFans": 42907,
+        "deezerFans": 42929,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
