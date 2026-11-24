@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-23T15:49:35.107Z",
+    "genereLe": "2026-11-24T15:40:36.573Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
       "topTitre": "Tranble",
       "metriques": {
-        "deezerFans": 9122,
+        "deezerFans": 9124,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "4 Kampé II",
       "metriques": {
-        "deezerFans": 510774,
+        "deezerFans": 510848,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Can't Get over you",
       "metriques": {
-        "deezerFans": 10686,
+        "deezerFans": 10689,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -87,21 +87,21 @@
     {
       "nom": "Naïka",
       "genre": "Pop / R&B",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/2f692846e21b753d2061bfb2931dc7fa/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
+      "topTitre": "Back To Me",
       "metriques": {
-        "deezerFans": 13,
+        "deezerFans": 40754,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/59634622",
+        "deezer": "https://www.deezer.com/artist/5516666",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 0
+      "scoreHMI": 43.5
     },
     {
       "nom": "Wanito",
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Koupab",
       "metriques": {
-        "deezerFans": 5016,
+        "deezerFans": 5018,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -163,21 +163,21 @@
     {
       "nom": "Belo",
       "genre": "Reggae",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/5145d55a5cea70f024fc6e7cfc538cdd/250x250-000000-80-0-0.jpg",
-      "topTitre": null,
+      "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
+      "topTitre": "O Som do Povo Ninguém Silencia (Tema de Final de Ano Transcontinental)",
       "metriques": {
-        "deezerFans": 29,
+        "deezerFans": 534632,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/262215991",
+        "deezer": "https://www.deezer.com/artist/74478",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 0
+      "scoreHMI": 73.8
     },
     {
       "nom": "BIC",
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/8c4f69832e1316af0d95b4a28952ed27/250x250-000000-80-0-0.jpg",
-      "topTitre": "Que Mal Te Fiz Eu (Ao Vivo)",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/e552cd3638931fe0ea87ab87c8fa68a7/250x250-000000-80-0-0.jpg",
+      "topTitre": "Mamoncita",
       "metriques": {
-        "deezerFans": 42929,
+        "deezerFans": 15890,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/132091652",
+        "deezer": "https://www.deezer.com/artist/218766155",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 44.1
+      "scoreHMI": 32.5
     }
   ]
 }
