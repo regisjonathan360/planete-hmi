@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-24T15:40:36.573Z",
+    "genereLe": "2026-11-25T15:24:55.079Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé II",
+      "topTitre": "4 Kampé",
       "metriques": {
-        "deezerFans": 510848,
+        "deezerFans": 510957,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,10 +49,10 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/16a5a56c4ebdcfc9f89a55af82e22f05/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
       "topTitre": "DLO THO",
       "metriques": {
-        "deezerFans": 8011,
+        "deezerFans": 8010,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Can't Get over you",
       "metriques": {
-        "deezerFans": 10689,
+        "deezerFans": 10690,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -90,7 +90,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
       "topTitre": "Back To Me",
       "metriques": {
-        "deezerFans": 40754,
+        "deezerFans": 40817,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Koupab",
       "metriques": {
-        "deezerFans": 5018,
+        "deezerFans": 5019,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -164,9 +164,9 @@
       "nom": "Belo",
       "genre": "Reggae",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
-      "topTitre": "O Som do Povo Ninguém Silencia (Tema de Final de Ano Transcontinental)",
+      "topTitre": "Não Foi a Toa / Farol das Estrelas (Ao Vivo)",
       "metriques": {
-        "deezerFans": 534632,
+        "deezerFans": 534669,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -242,7 +242,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e552cd3638931fe0ea87ab87c8fa68a7/250x250-000000-80-0-0.jpg",
       "topTitre": "Mamoncita",
       "metriques": {
-        "deezerFans": 15890,
+        "deezerFans": 15894,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,

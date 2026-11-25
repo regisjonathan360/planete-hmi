@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-24T15:40:36.573Z",
+    "genereLe": "2026-11-25T15:24:55.079Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,7 +12,7 @@
       "rang": 1,
       "nom": "Belo",
       "genre": "Reggae",
-      "titre": "O Som do Povo Ninguém Silencia (Tema de Final de Ano Transcontinental)",
+      "titre": "Não Foi a Toa / Farol das Estrelas (Ao Vivo)",
       "score": 73.8,
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg"
     },
@@ -20,7 +20,7 @@
       "rang": 2,
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
-      "titre": "4 Kampé II",
+      "titre": "4 Kampé",
       "score": 73.2,
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg"
     },
@@ -62,7 +62,7 @@
       "genre": "Konpa",
       "titre": "DLO THO",
       "score": 24.4,
-      "photo": "https://cdn-images.dzcdn.net/images/artist/16a5a56c4ebdcfc9f89a55af82e22f05/250x250-000000-80-0-0.jpg"
+      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg"
     },
     {
       "rang": 8,
