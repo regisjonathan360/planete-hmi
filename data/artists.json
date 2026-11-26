@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-25T15:24:55.079Z",
+    "genereLe": "2026-11-26T14:55:37.138Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -12,9 +12,9 @@
       "nom": "Roody Roodboy",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
-      "topTitre": "Tranble",
+      "topTitre": "Ou Pa Gen Parèy",
       "metriques": {
-        "deezerFans": 9124,
+        "deezerFans": 9126,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "4 Kampé",
+      "topTitre": "Pretty Mama",
       "metriques": {
-        "deezerFans": 510957,
+        "deezerFans": 511034,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -50,9 +50,9 @@
       "nom": "Mikaben",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
-      "topTitre": "DLO THO",
+      "topTitre": "Ou Pati",
       "metriques": {
-        "deezerFans": 8010,
+        "deezerFans": 8011,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -88,9 +88,9 @@
       "nom": "Naïka",
       "genre": "Pop / R&B",
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
-      "topTitre": "Back To Me",
+      "topTitre": "ONE TRACK MIND",
       "metriques": {
-        "deezerFans": 40817,
+        "deezerFans": 40881,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -101,7 +101,7 @@
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 43.5
+      "scoreHMI": 43.6
     },
     {
       "nom": "Wanito",
@@ -126,7 +126,7 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "A.k.i.ko.",
+      "topTitre": "Mwen Bezwen",
       "metriques": {
         "deezerFans": 6731,
         "spotifyFollowers": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Koupab",
       "metriques": {
-        "deezerFans": 5019,
+        "deezerFans": 5020,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -164,9 +164,9 @@
       "nom": "Belo",
       "genre": "Reggae",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
-      "topTitre": "Não Foi a Toa / Farol das Estrelas (Ao Vivo)",
+      "topTitre": "O Som do Povo Ninguém Silencia (Tema de Final de Ano Transcontinental)",
       "metriques": {
-        "deezerFans": 534669,
+        "deezerFans": 534699,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/e552cd3638931fe0ea87ab87c8fa68a7/250x250-000000-80-0-0.jpg",
-      "topTitre": "Mamoncita",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/1fb6b3b5a793f4648d3734214bc0bacd/250x250-000000-80-0-0.jpg",
+      "topTitre": "Georgia",
       "metriques": {
-        "deezerFans": 15894,
+        "deezerFans": 16454,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/218766155",
+        "deezer": "https://www.deezer.com/artist/5925973",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 32.5
+      "scoreHMI": 32.9
     }
   ]
 }
