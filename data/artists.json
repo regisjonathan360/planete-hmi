@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-26T14:55:37.138Z",
+    "genereLe": "2026-11-27T14:52:19.855Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -11,10 +11,10 @@
     {
       "nom": "Roody Roodboy",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/b3d456ae38e42c4127232f7e44cd6ea6/250x250-000000-80-0-0.jpg",
-      "topTitre": "Ou Pa Gen Parèy",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
+      "topTitre": "Spécial (feat. Rutshelle)",
       "metriques": {
-        "deezerFans": 9126,
+        "deezerFans": 9128,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -31,9 +31,9 @@
       "nom": "Joé Dwèt Filé",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
-      "topTitre": "Pretty Mama",
+      "topTitre": "I don't know",
       "metriques": {
-        "deezerFans": 511034,
+        "deezerFans": 511119,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,10 +49,10 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/ea0c7e74dfd10c8748e433cd98eae2f1/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/67583a942c39e1573f923dd49165cb79/250x250-000000-80-0-0.jpg",
       "topTitre": "Ou Pati",
       "metriques": {
-        "deezerFans": 8011,
+        "deezerFans": 8012,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -69,9 +69,9 @@
       "nom": "Rutshelle Guillaume",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Can't Get over you",
+      "topTitre": "Adikte",
       "metriques": {
-        "deezerFans": 10690,
+        "deezerFans": 10693,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -88,9 +88,9 @@
       "nom": "Naïka",
       "genre": "Pop / R&B",
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
-      "topTitre": "ONE TRACK MIND",
+      "topTitre": "Back To Me",
       "metriques": {
-        "deezerFans": 40881,
+        "deezerFans": 40951,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -107,7 +107,7 @@
       "nom": "Wanito",
       "genre": "Konpa",
       "photo": "https://cdn-images.dzcdn.net/images/artist/0b54b16aee8cb81f86b3f98704ee59b4/250x250-000000-80-0-0.jpg",
-      "topTitre": "Kisa'm Te Fèw Ki Mal",
+      "topTitre": "Do Re Mi",
       "metriques": {
         "deezerFans": 6823,
         "spotifyFollowers": null,
@@ -126,9 +126,9 @@
       "nom": "Emeline Michel",
       "genre": "Racine",
       "photo": "https://cdn-images.dzcdn.net/images/artist/fe0dd380c6e2306c3bb812aa20465411/250x250-000000-80-0-0.jpg",
-      "topTitre": "Mwen Bezwen",
+      "topTitre": "Flanm",
       "metriques": {
-        "deezerFans": 6731,
+        "deezerFans": 6732,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -147,7 +147,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/c2d90b7a59a05f65a8bb25db678c14b5/250x250-000000-80-0-0.jpg",
       "topTitre": "Koupab",
       "metriques": {
-        "deezerFans": 5020,
+        "deezerFans": 5021,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -166,7 +166,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
       "topTitre": "O Som do Povo Ninguém Silencia (Tema de Final de Ano Transcontinental)",
       "metriques": {
-        "deezerFans": 534699,
+        "deezerFans": 534728,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -223,7 +223,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/4c0d090bd2e7fed379ec433ae02e822c/250x250-000000-80-0-0.jpg",
       "topTitre": "M RENMEN W",
       "metriques": {
-        "deezerFans": 2227,
+        "deezerFans": 2229,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -240,9 +240,9 @@
       "nom": "Kevinna",
       "genre": "Pop",
       "photo": "https://cdn-images.dzcdn.net/images/artist/1fb6b3b5a793f4648d3734214bc0bacd/250x250-000000-80-0-0.jpg",
-      "topTitre": "Georgia",
+      "topTitre": "Doggy",
       "metriques": {
-        "deezerFans": 16454,
+        "deezerFans": 16456,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
