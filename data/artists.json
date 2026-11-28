@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genereLe": "2026-11-27T14:52:19.855Z",
+    "genereLe": "2026-11-28T14:00:23.982Z",
     "nbArtistes": 13,
     "sources": [
       "Deezer"
@@ -14,7 +14,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/05ed215a0a3d0166f8266a474cfdc081/250x250-000000-80-0-0.jpg",
       "topTitre": "Spécial (feat. Rutshelle)",
       "metriques": {
-        "deezerFans": 9128,
+        "deezerFans": 9131,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -33,7 +33,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/3b19d72f5575c99e6cbbf45a236ddfeb/250x250-000000-80-0-0.jpg",
       "topTitre": "I don't know",
       "metriques": {
-        "deezerFans": 511119,
+        "deezerFans": 511191,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -49,7 +49,7 @@
     {
       "nom": "Mikaben",
       "genre": "Konpa",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/67583a942c39e1573f923dd49165cb79/250x250-000000-80-0-0.jpg",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/953afaf417b34586573aee871ef36c01/250x250-000000-80-0-0.jpg",
       "topTitre": "Ou Pati",
       "metriques": {
         "deezerFans": 8012,
@@ -71,7 +71,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/e6745af7f24bb376d7b56fc7d902fea4/250x250-000000-80-0-0.jpg",
       "topTitre": "Adikte",
       "metriques": {
-        "deezerFans": 10693,
+        "deezerFans": 10695,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -90,7 +90,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/cf687a228a7f86bf47aac95d40a34d23/250x250-000000-80-0-0.jpg",
       "topTitre": "Back To Me",
       "metriques": {
-        "deezerFans": 40951,
+        "deezerFans": 40999,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -164,9 +164,9 @@
       "nom": "Belo",
       "genre": "Reggae",
       "photo": "https://cdn-images.dzcdn.net/images/artist/9380889d24f24039372441fd3d97c4d9/250x250-000000-80-0-0.jpg",
-      "topTitre": "O Som do Povo Ninguém Silencia (Tema de Final de Ano Transcontinental)",
+      "topTitre": "Ainda Gosto de Você / Já Era",
       "metriques": {
-        "deezerFans": 534728,
+        "deezerFans": 534769,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -185,7 +185,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/84240697bd32e502dc2cf878636c76c5/250x250-000000-80-0-0.jpg",
       "topTitre": null,
       "metriques": {
-        "deezerFans": 42,
+        "deezerFans": 43,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -223,7 +223,7 @@
       "photo": "https://cdn-images.dzcdn.net/images/artist/4c0d090bd2e7fed379ec433ae02e822c/250x250-000000-80-0-0.jpg",
       "topTitre": "M RENMEN W",
       "metriques": {
-        "deezerFans": 2229,
+        "deezerFans": 2228,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
@@ -239,21 +239,21 @@
     {
       "nom": "Kevinna",
       "genre": "Pop",
-      "photo": "https://cdn-images.dzcdn.net/images/artist/1fb6b3b5a793f4648d3734214bc0bacd/250x250-000000-80-0-0.jpg",
-      "topTitre": "Doggy",
+      "photo": "https://cdn-images.dzcdn.net/images/artist/e552cd3638931fe0ea87ab87c8fa68a7/250x250-000000-80-0-0.jpg",
+      "topTitre": "Pocos Años Mil Errores",
       "metriques": {
-        "deezerFans": 16456,
+        "deezerFans": 15906,
         "spotifyFollowers": null,
         "spotifyPopularite": null,
         "youtubeAbonnes": null,
         "youtubeVues": null
       },
       "liens": {
-        "deezer": "https://www.deezer.com/artist/5925973",
+        "deezer": "https://www.deezer.com/artist/218766155",
         "spotify": null,
         "youtube": null
       },
-      "scoreHMI": 32.9
+      "scoreHMI": 32.5
     }
   ]
 }
